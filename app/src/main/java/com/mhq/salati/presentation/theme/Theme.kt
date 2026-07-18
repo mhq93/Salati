@@ -1,6 +1,5 @@
-package com.mhq.salati.ui.theme
+package com.mhq.salati.presentation.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

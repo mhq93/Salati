@@ -1,4 +1,4 @@
-package com.mhq.salati.ui.theme
+package com.mhq.salati.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
