@@ -9,5 +9,7 @@ data class PrayerTimings(
     val maghrib: String,
     val isha: String,
     val imsak: String,
-    val midnight: String
+    val midnight: String,
+    val firstThird: String,
+    val lastThird: String
 )
