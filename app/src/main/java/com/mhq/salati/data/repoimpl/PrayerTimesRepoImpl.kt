@@ -16,7 +16,12 @@ class PrayerTimesRepoImpl(
         method: Int
     ): Result<PrayerTimesResult> {
         return try {
-            val response = apiService.getTimings(date, latitude, longitude, method)
+            val response = apiService.getTimings(
+                date,
+                latitude,
+                longitude,
+                method
+            )
             Result.success(response.toDomain())
         } catch (e: Exception) {
             Result.failure(e)
