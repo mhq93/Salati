@@ -31,10 +31,8 @@ class HomeViewModel @Inject constructor(
 
     fun onIntent(intent: HomeContract.Intent) {
         when (intent) {
-            is HomeContract.Intent.Retry -> checkPermissionAndLoad()
             is HomeContract.Intent.LoadPrayerTimes -> checkPermissionAndLoad()
-            is HomeContract.Intent.AccessAppSettings -> Unit
-            is HomeContract.Intent.AccessDeviceLocationSettings -> Unit
+            is HomeContract.Intent.Retry -> checkPermissionAndLoad()
             is HomeContract.Intent.LocationPermissionGranted -> loadPrayerTimes()
             is HomeContract.Intent.LocationPermissionDenied -> {
                 _state.value = _state.value.copy(
@@ -46,6 +44,16 @@ class HomeViewModel @Inject constructor(
                         "Location permission is required to show prayer times."
                     }
                 )
+            }
+            is HomeContract.Intent.AccessAppSettings -> {
+                viewModelScope.launch {
+                    _effect.emit(HomeContract.Effect.NavigateToAppSettings)
+                }
+            }
+            is HomeContract.Intent.AccessDeviceLocationSettings -> {
+                viewModelScope.launch {
+                    _effect.emit(HomeContract.Effect.NavigateToLocationSettings)
+                }
             }
         }
     }

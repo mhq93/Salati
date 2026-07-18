@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SalatiTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    HomeContainer()
+                    SalatiApp()
                 }
             }
         }
@@ -30,6 +30,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     SalatiTheme {
-        HomeContainer()
+        SalatiApp()
     }
 }

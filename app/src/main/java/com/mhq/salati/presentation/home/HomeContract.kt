@@ -26,5 +26,7 @@ class HomeContract {
 
     sealed interface Effect {
         data class ShowError(val message: String) : Effect
+        data object NavigateToAppSettings : Effect
+        data object NavigateToLocationSettings : Effect
     }
 }
