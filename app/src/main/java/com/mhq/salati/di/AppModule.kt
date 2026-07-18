@@ -49,7 +49,9 @@ object AppModule {
             context,
             SalatiDatabase::class.java,
             "salati_database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
     }
 
     @Provides

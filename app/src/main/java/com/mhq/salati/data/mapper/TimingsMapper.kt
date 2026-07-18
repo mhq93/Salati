@@ -1,46 +1,51 @@
 package com.mhq.salati.data.mapper
 
+
 import com.mhq.salati.data.local.PrayerTimesEntity
+import com.mhq.salati.data.remote.dto.TimingsDataDto
 import com.mhq.salati.data.remote.dto.TimingsResponseDto
 import com.mhq.salati.domain.model.PrayerDate
 import com.mhq.salati.domain.model.PrayerTimesResult
 import com.mhq.salati.domain.model.PrayerTimings
 
-fun TimingsResponseDto.toDomain(): PrayerTimesResult {
-    val timingsDto = data.timings
-    val dateDto = data.date
+// Single-day response -> delegates to the shared helper below
+fun TimingsResponseDto.toDomain(): PrayerTimesResult = data.toDomainResult()
 
+// Shared field-mapping logic, used by both this file and CalendarMapper.kt
+internal fun TimingsDataDto.toDomainResult(): PrayerTimesResult {
     return PrayerTimesResult(
         timings = PrayerTimings(
-            fajr = timingsDto.fajr,
-            sunrise = timingsDto.sunrise,
-            dhuhr = timingsDto.dhuhr,
-            asr = timingsDto.asr,
-            sunset = timingsDto.sunset,
-            maghrib = timingsDto.maghrib,
-            isha = timingsDto.isha,
-            imsak = timingsDto.imsak,
-            midnight = timingsDto.midnight,
-            firstThird = timingsDto.firstThird,
-            lastThird = timingsDto.lastThird
+            fajr = timings.fajr,
+            sunrise = timings.sunrise,
+            dhuhr = timings.dhuhr,
+            asr = timings.asr,
+            sunset = timings.sunset,
+            maghrib = timings.maghrib,
+            isha = timings.isha,
+            imsak = timings.imsak,
+            midnight = timings.midnight,
+            firstThird = timings.firstThird,
+            lastThird = timings.lastThird
         ),
         date = PrayerDate(
-            readable = dateDto.readable,
-            gregorianDate = dateDto.gregorian.date,
-            hijriDate = dateDto.hijri.date,
-            hijriMonthName = dateDto.hijri.month.en,
-            hijriYear = dateDto.hijri.year
+            readable = date.readable,
+            gregorianDate = date.gregorian.date,
+            hijriDate = date.hijri.date,
+            hijriMonthName = date.hijri.month.en,
+            hijriYear = date.hijri.year
         )
     )
 }
 
+// domain -> entity (used after either the single-day or calendar path produces a PrayerTimesResult)
 fun PrayerTimesResult.toEntity(
-    date: String,
+    dateKey: String,
     latitude: Double,
-    longitude: Double
+    longitude: Double,
+    method: Int
 ): PrayerTimesEntity {
     return PrayerTimesEntity(
-        date = date,
+        date = dateKey,
         fajr = timings.fajr,
         sunrise = timings.sunrise,
         dhuhr = timings.dhuhr,
@@ -52,16 +57,18 @@ fun PrayerTimesResult.toEntity(
         midnight = timings.midnight,
         firstThird = timings.firstThird,
         lastThird = timings.lastThird,
-        readableDate = this.date.readable,
-        gregorianDate = this.date.gregorianDate,
-        hijriDate = this.date.hijriDate,
-        hijriMonthName = this.date.hijriMonthName,
-        hijriYear = this.date.hijriYear,
+        readableDate = date.readable,
+        gregorianDate = date.gregorianDate,
+        hijriDate = date.hijriDate,
+        hijriMonthName = date.hijriMonthName,
+        hijriYear = date.hijriYear,
         latitude = latitude,
-        longitude = longitude
+        longitude = longitude,
+        method = method
     )
 }
 
+// entity -> domain (used for cache hits)
 fun PrayerTimesEntity.toDomain(): PrayerTimesResult {
     return PrayerTimesResult(
         timings = PrayerTimings(
