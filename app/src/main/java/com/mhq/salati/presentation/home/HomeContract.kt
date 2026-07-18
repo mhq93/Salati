@@ -6,15 +6,22 @@ import com.mhq.salati.domain.model.PrayerTimings
 class HomeContract {
 
     data class State(
-        val isLoading: Boolean = false,
-        val timings: PrayerTimings? = null,
         val date: PrayerDate? = null,
-        val errorMessage: String? = null
+        val timings: PrayerTimings? = null,
+        val isLoading: Boolean = false,
+        val errorMessage: String? = null,
+        val locationPermissionRequired: Boolean = false,
+        val locationPermissionPermanentlyDenied: Boolean = false,
+        val locationServicesDisabled: Boolean = false
     )
 
     sealed interface Intent {
-        data object LoadPrayerTimes : Intent
         data object Retry : Intent
+        data object LoadPrayerTimes : Intent
+        data object AccessAppSettings : Intent
+        data object AccessDeviceLocationSettings : Intent
+        data object LocationPermissionGranted : Intent
+        data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
     }
 
     sealed interface Effect {

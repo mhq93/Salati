@@ -2,14 +2,15 @@ package com.mhq.salati.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mhq.salati.data.location.LocationProvider
 import com.mhq.salati.domain.usecases.GetPrayerTimesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getPrayerTimesUseCase: GetPrayerTimesUseCase
+    private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
+    private val locationProvider: LocationProvider
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeContract.State())
@@ -29,39 +31,78 @@ class HomeViewModel @Inject constructor(
 
     fun onIntent(intent: HomeContract.Intent) {
         when (intent) {
-            is HomeContract.Intent.LoadPrayerTimes -> loadPrayerTimes()
-            is HomeContract.Intent.Retry -> loadPrayerTimes()
+            is HomeContract.Intent.Retry -> checkPermissionAndLoad()
+            is HomeContract.Intent.LoadPrayerTimes -> checkPermissionAndLoad()
+            is HomeContract.Intent.AccessAppSettings -> Unit
+            is HomeContract.Intent.AccessDeviceLocationSettings -> Unit
+            is HomeContract.Intent.LocationPermissionGranted -> loadPrayerTimes()
+            is HomeContract.Intent.LocationPermissionDenied -> {
+                _state.value = _state.value.copy(
+                    locationPermissionRequired = false,
+                    locationPermissionPermanentlyDenied = intent.permanentlyDenied,
+                    errorMessage = if (intent.permanentlyDenied) {
+                        "Location permission permanently denied. Please enable it in Settings."
+                    } else {
+                        "Location permission is required to show prayer times."
+                    }
+                )
+            }
         }
+    }
+
+    private fun checkPermissionAndLoad() {
+        _state.value = _state.value.copy(
+            locationPermissionRequired = true,
+            locationPermissionPermanentlyDenied = false,
+            locationServicesDisabled = false,
+            errorMessage = null
+        )
     }
 
     private fun loadPrayerTimes() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true, errorMessage = null)
-
             val today = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Date())
 
-            // ⚠️ Hardcoded coordinates for now — replace with real location once
-            // the location feature is built (Alexandria used as placeholder).
-            val result = getPrayerTimesUseCase(
-                date = today,
-                latitude = 31.2058,
-                longitude = 29.9245
+            _state.value = _state.value.copy(
+                isLoading = true,
+                errorMessage = null,
+                locationPermissionRequired = false,
+                locationServicesDisabled = false,
+                locationPermissionPermanentlyDenied = false
             )
 
-            result.fold(
-                onSuccess = { prayerTimesResult ->
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                        timings = prayerTimesResult.timings,
-                        date = prayerTimesResult.date
-                    )
-                },
-                onFailure = { throwable ->
-                    val message = throwable.message ?: "Something went wrong"
-                    _state.value = _state.value.copy(isLoading = false, errorMessage = message)
-                    _effect.emit(HomeContract.Effect.ShowError(message))
-                }
-            )
+            if (!locationProvider.isLocationEnabled()) {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    locationServicesDisabled = true,
+                    errorMessage = "Location services are turned off. Please enable them."
+                )
+                return@launch
+            }
+
+            try {
+                val (latitude, longitude) = locationProvider.getCurrentLocation()
+                val result = getPrayerTimesUseCase(date = today, latitude = latitude, longitude = longitude)
+
+                result.fold(
+                    onSuccess = { prayerTimesResult ->
+                        _state.value = _state.value.copy(
+                            isLoading = false,
+                            timings = prayerTimesResult.timings,
+                            date = prayerTimesResult.date
+                        )
+                    },
+                    onFailure = { throwable ->
+                        val message = throwable.message ?: "Something went wrong"
+                        _state.value = _state.value.copy(isLoading = false, errorMessage = message)
+                        _effect.emit(HomeContract.Effect.ShowError(message))
+                    }
+                )
+            } catch (e: Exception) {
+                val message = "Failed to get location"
+                _state.value = _state.value.copy(isLoading = false, errorMessage = message)
+                _effect.emit(HomeContract.Effect.ShowError(message))
+            }
         }
     }
 }

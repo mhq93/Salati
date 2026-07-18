@@ -32,8 +32,22 @@ fun HomeContent(
 
             state.errorMessage != null -> {
                 Text(text = "Error: ${state.errorMessage}")
-                Button(onClick = { onIntent(HomeContract.Intent.Retry) }) {
-                    Text("Retry")
+                when {
+                    state.locationPermissionPermanentlyDenied -> {
+                        Button(onClick = { onIntent(HomeContract.Intent.AccessAppSettings) }) {
+                            Text("Open Settings")
+                        }
+                    }
+                    state.locationServicesDisabled -> {
+                        Button(onClick = { onIntent(HomeContract.Intent.AccessDeviceLocationSettings) }) {
+                            Text("Enable Location")
+                        }
+                    }
+                    else -> {
+                        Button(onClick = { onIntent(HomeContract.Intent.Retry) }) {
+                            Text("Retry")
+                        }
+                    }
                 }
             }
 
@@ -45,6 +59,10 @@ fun HomeContent(
                 Text(text = "Asr: ${state.timings.asr}")
                 Text(text = "Maghrib: ${state.timings.maghrib}")
                 Text(text = "Isha: ${state.timings.isha}")
+            }
+
+            else -> {
+                Text(text = "Waiting for location permission…")
             }
         }
     }
