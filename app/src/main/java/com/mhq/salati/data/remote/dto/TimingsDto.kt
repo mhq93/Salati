@@ -24,7 +24,7 @@ data class TimingsDto(
     @SerialName("Midnight")
     val midnight: String,
     @SerialName("Firstthird")
-    val firstthird: String,
+    val firstThird: String,
     @SerialName("Lastthird")
-    val lastthird: String
+    val lastThird: String
 )
