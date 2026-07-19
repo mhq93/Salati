@@ -1,42 +1,45 @@
 package com.mhq.salati.presentation.home
 
 import android.Manifest
-import android.app.Activity
 import android.content.pm.PackageManager
-import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.app.ActivityCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mhq.salati.presentation.common.HandleLocationPermissionEffects
+import com.mhq.salati.presentation.common.rememberLocationPermissionLauncher
 
 @Composable
 fun HomeContainer(
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val activity = context as? Activity
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val state by homeViewModel.state.collectAsStateWithLifecycle()
     val currentState by rememberUpdatedState(state)
 
+    HandleLocationPermissionEffects(homeViewModel.permissionEffect)
+
+    val permissionLauncher = rememberLocationPermissionLauncher(
+        onGranted = { homeViewModel.onIntent(HomeContract.Intent.LocationPermissionGranted) },
+        onDenied = { permanentlyDenied ->
+            homeViewModel.onIntent(HomeContract.Intent.LocationPermissionDenied(permanentlyDenied))
+        }
+    )
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME &&
-                (
-                        currentState.locationPermissionPermanentlyDenied ||
-                                currentState.locationServicesDisabled)
+                (currentState.locationPermission.permanentlyDenied || currentState.locationPermission.servicesDisabled)
             ) {
                 homeViewModel.onIntent(HomeContract.Intent.Retry)
             }
@@ -46,77 +49,19 @@ fun HomeContainer(
     }
 
     LaunchedEffect(Unit) {
-        homeViewModel.effect.collect { effect ->
-            when (effect) {
-                is HomeContract.Effect.NavigateToAppSettings -> {
-                    val settingsIntent = android.content.Intent(
-                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        android.net.Uri.fromParts(
-                            "package",
-                            context.packageName,
-                            null
-                        )
-                    )
-                    context.startActivity(settingsIntent)
-                }
-
-                is HomeContract.Effect.NavigateToLocationSettings -> {
-                    context.startActivity(
-                        android.content.Intent(
-                            Settings.ACTION_LOCATION_SOURCE_SETTINGS
-                        )
-                    )
-                }
-
-                is HomeContract.Effect.ShowError -> {
-                    // e.g. show a Snackbar/Toast here later
-                }
-            }
-        }
+        homeViewModel.onIntent(HomeContract.Intent.LoadPrayerTimes)
     }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            homeViewModel.onIntent(
-                HomeContract.Intent.LocationPermissionGranted
-            )
-        } else {
-            val canAskAgain = activity?.let {
-                ActivityCompat.shouldShowRequestPermissionRationale(
-                    it,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-            } ?: true
-            homeViewModel.onIntent(
-                HomeContract.Intent.LocationPermissionDenied(
-                    permanentlyDenied = !canAskAgain
-                )
-            )
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        homeViewModel.onIntent(
-            HomeContract.Intent.LoadPrayerTimes
-        )
-    }
-
-    LaunchedEffect(state.locationPermissionRequired) {
-        if (state.locationPermissionRequired) {
+    LaunchedEffect(state.locationPermission.required) {
+        if (state.locationPermission.required) {
             val hasPermission = ContextCompat.checkSelfPermission(
                 context, Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
 
             if (hasPermission) {
-                homeViewModel.onIntent(
-                    HomeContract.Intent.LocationPermissionGranted
-                )
+                homeViewModel.onIntent(HomeContract.Intent.LocationPermissionGranted)
             } else {
-                permissionLauncher.launch(
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
+                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             }
         }
     }
@@ -126,91 +71,3 @@ fun HomeContainer(
         onIntent = homeViewModel::onIntent
     )
 }
-
-//@Composable
-//fun HomeContainer(
-//    homeViewModel: HomeViewModel = hiltViewModel()
-//) {
-//    val state by homeViewModel.state.collectAsStateWithLifecycle()
-//    val currentState by rememberUpdatedState(state)
-//    val context = LocalContext.current
-//    val activity = context as? Activity
-//    val lifecycleOwner = LocalLifecycleOwner.current
-//
-//    DisposableEffect(lifecycleOwner) {
-//        val observer = LifecycleEventObserver { _, event ->
-//            if (event == Lifecycle.Event.ON_RESUME &&
-//                (currentState.locationPermissionPermanentlyDenied || currentState.locationServicesDisabled)
-//            ) {
-//                homeViewModel.onIntent(HomeContract.Intent.Retry)
-//            }
-//        }
-//        lifecycleOwner.lifecycle.addObserver(observer)
-//        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
-//    }
-//
-//    val onIntentWrapped: (HomeContract.Intent) -> Unit = { intent ->
-//        when (intent) {
-//            is HomeContract.Intent.AccessAppSettings -> {
-//                val settingsIntent = android.content.Intent(
-//                    android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-//                    android.net.Uri.fromParts("package", context.packageName, null)
-//                )
-//                context.startActivity(settingsIntent)
-//            }
-//            is HomeContract.Intent.AccessDeviceLocationSettings -> {
-//                val locationSettingsIntent = android.content.Intent(
-//                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS
-//                )
-//                context.startActivity(locationSettingsIntent)
-//            }
-//            else -> homeViewModel.onIntent(intent)
-//        }
-//    }
-//
-//    val permissionLauncher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.RequestPermission()
-//    ) { isGranted ->
-//        if (isGranted) {
-//            homeViewModel.onIntent(
-//                HomeContract.Intent.LocationPermissionGranted
-//            )
-//        } else {
-//            val canAskAgain = activity?.let {
-//                ActivityCompat.shouldShowRequestPermissionRationale(
-//                    it,
-//                    Manifest.permission.ACCESS_FINE_LOCATION
-//                )
-//            } ?: true
-//            homeViewModel.onIntent(
-//                HomeContract.Intent.LocationPermissionDenied(
-//                    permanentlyDenied = !canAskAgain
-//                )
-//            )
-//        }
-//    }
-//
-//    LaunchedEffect(Unit) {
-//        homeViewModel.onIntent(HomeContract.Intent.LoadPrayerTimes)
-//    }
-//
-//    LaunchedEffect(state.locationPermissionRequired) {
-//        if (state.locationPermissionRequired) {
-//            val hasPermission = ContextCompat.checkSelfPermission(
-//                context,
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            ) == PackageManager.PERMISSION_GRANTED
-//
-//            if (hasPermission) {
-//                homeViewModel.onIntent(HomeContract.Intent.LocationPermissionGranted)
-//            } else {
-//                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-//            }
-//        }
-//    }
-//
-//    HomeContent(
-//        state = state,
-//        onIntent = onIntentWrapped
-//    )
-//}

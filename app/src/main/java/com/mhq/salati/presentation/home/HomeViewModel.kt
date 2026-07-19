@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.data.location.LocationProvider
 import com.mhq.salati.domain.usecases.GetPrayerTimesUseCase
+import com.mhq.salati.presentation.common.LocationPermissionDelegate
+import com.mhq.salati.presentation.common.LocationPermissionEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,11 +25,22 @@ class HomeViewModel @Inject constructor(
     private val locationProvider: LocationProvider
 ) : ViewModel() {
 
+    private val permissionDelegate = LocationPermissionDelegate()
+    val permissionEffect: SharedFlow<LocationPermissionEffect> = permissionDelegate.effect
+
     private val _state = MutableStateFlow(HomeContract.State())
     val state: StateFlow<HomeContract.State> = _state.asStateFlow()
 
     private val _effect = MutableSharedFlow<HomeContract.Effect>()
     val effect: SharedFlow<HomeContract.Effect> = _effect.asSharedFlow()
+
+    init {
+        viewModelScope.launch {
+            permissionDelegate.state.collect { permissionState ->
+                _state.value = _state.value.copy(locationPermission = permissionState)
+            }
+        }
+    }
 
     fun onIntent(intent: HomeContract.Intent) {
         when (intent) {
@@ -35,9 +48,8 @@ class HomeViewModel @Inject constructor(
             is HomeContract.Intent.Retry -> checkPermissionAndLoad()
             is HomeContract.Intent.LocationPermissionGranted -> loadPrayerTimes()
             is HomeContract.Intent.LocationPermissionDenied -> {
+                permissionDelegate.onPermissionDenied(intent.permanentlyDenied)
                 _state.value = _state.value.copy(
-                    locationPermissionRequired = false,
-                    locationPermissionPermanentlyDenied = intent.permanentlyDenied,
                     errorMessage = if (intent.permanentlyDenied) {
                         "Location permission permanently denied. Please enable it in Settings."
                     } else {
@@ -46,43 +58,30 @@ class HomeViewModel @Inject constructor(
                 )
             }
             is HomeContract.Intent.AccessAppSettings -> {
-                viewModelScope.launch {
-                    _effect.emit(HomeContract.Effect.NavigateToAppSettings)
-                }
+                viewModelScope.launch { permissionDelegate.requestAppSettings() }
             }
             is HomeContract.Intent.AccessDeviceLocationSettings -> {
-                viewModelScope.launch {
-                    _effect.emit(HomeContract.Effect.NavigateToLocationSettings)
-                }
+                viewModelScope.launch { permissionDelegate.requestLocationSettings() }
             }
         }
     }
 
     private fun checkPermissionAndLoad() {
-        _state.value = _state.value.copy(
-            locationPermissionRequired = true,
-            locationPermissionPermanentlyDenied = false,
-            locationServicesDisabled = false,
-            errorMessage = null
-        )
+        permissionDelegate.requirePermission()
+        _state.value = _state.value.copy(errorMessage = null)
     }
 
     private fun loadPrayerTimes() {
         viewModelScope.launch {
+            permissionDelegate.reset()
+            _state.value = _state.value.copy(isLoading = true, errorMessage = null)
+
             val today = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Date())
 
-            _state.value = _state.value.copy(
-                isLoading = true,
-                errorMessage = null,
-                locationPermissionRequired = false,
-                locationServicesDisabled = false,
-                locationPermissionPermanentlyDenied = false
-            )
-
             if (!locationProvider.isLocationEnabled()) {
+                permissionDelegate.markServicesDisabled()
                 _state.value = _state.value.copy(
                     isLoading = false,
-                    locationServicesDisabled = true,
                     errorMessage = "Location services are turned off. Please enable them."
                 )
                 return@launch

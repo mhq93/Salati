@@ -33,18 +33,35 @@ fun HomeContent(
             state.errorMessage != null -> {
                 Text(text = "Error: ${state.errorMessage}")
                 when {
-                    state.locationPermissionPermanentlyDenied -> {
-                        Button(onClick = { onIntent(HomeContract.Intent.AccessAppSettings) }) {
+                    state.locationPermission.permanentlyDenied -> {
+                        Button(
+                            onClick = {
+                                onIntent(
+                                    HomeContract.Intent.AccessAppSettings
+                                )
+                            }
+                        ) {
                             Text("Open Settings")
                         }
                     }
-                    state.locationServicesDisabled -> {
-                        Button(onClick = { onIntent(HomeContract.Intent.AccessDeviceLocationSettings) }) {
+
+                    state.locationPermission.servicesDisabled -> {
+                        Button(onClick = {
+                            onIntent(
+                                HomeContract.Intent.AccessDeviceLocationSettings
+                            )
+                        }
+                        ) {
                             Text("Enable Location")
                         }
                     }
+
                     else -> {
-                        Button(onClick = { onIntent(HomeContract.Intent.Retry) }) {
+                        Button(
+                            onClick = {
+                                onIntent(HomeContract.Intent.Retry)
+                            }
+                        ) {
                             Text("Retry")
                         }
                     }

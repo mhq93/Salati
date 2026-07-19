@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.mhq.salati.data.location.LocationProvider
 import com.mhq.salati.data.sensor.CompassProvider
 import com.mhq.salati.domain.usecases.GetQiblaBearingUseCase
+import com.mhq.salati.presentation.common.LocationPermissionDelegate
+import com.mhq.salati.presentation.common.LocationPermissionEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,11 +24,22 @@ class QiblaViewModel @Inject constructor(
     private val getQiblaBearingUseCase: GetQiblaBearingUseCase
 ) : ViewModel() {
 
+    private val permissionDelegate = LocationPermissionDelegate()
+    val permissionEffect: SharedFlow<LocationPermissionEffect> = permissionDelegate.effect
+
     private val _state = MutableStateFlow(QiblaContract.State())
     val state: StateFlow<QiblaContract.State> = _state.asStateFlow()
 
     private val _effect = MutableSharedFlow<QiblaContract.Effect>()
     val effect: SharedFlow<QiblaContract.Effect> = _effect.asSharedFlow()
+
+    init {
+        viewModelScope.launch {
+            permissionDelegate.state.collect { permissionState ->
+                _state.value = _state.value.copy(locationPermission = permissionState)
+            }
+        }
+    }
 
     fun onIntent(intent: QiblaContract.Intent) {
         when (intent) {
@@ -34,9 +47,8 @@ class QiblaViewModel @Inject constructor(
             is QiblaContract.Intent.Retry -> checkPermissionAndLoad()
             is QiblaContract.Intent.LocationPermissionGranted -> loadQibla()
             is QiblaContract.Intent.LocationPermissionDenied -> {
+                permissionDelegate.onPermissionDenied(intent.permanentlyDenied)
                 _state.value = _state.value.copy(
-                    locationPermissionRequired = false,
-                    locationPermissionPermanentlyDenied = intent.permanentlyDenied,
                     errorMessage = if (intent.permanentlyDenied) {
                         "Location permission permanently denied. Please enable it in Settings."
                     } else {
@@ -45,52 +57,36 @@ class QiblaViewModel @Inject constructor(
                 )
             }
             is QiblaContract.Intent.AccessAppSettings -> {
-                viewModelScope.launch {
-                    _effect.emit(QiblaContract.Effect.NavigateToAppSettings)
-                }
+                viewModelScope.launch { permissionDelegate.requestAppSettings() }
             }
             is QiblaContract.Intent.AccessDeviceLocationSettings -> {
-                viewModelScope.launch {
-                    _effect.emit(QiblaContract.Effect.NavigateToLocationSettings)
-                }
+                viewModelScope.launch { permissionDelegate.requestLocationSettings() }
             }
         }
     }
 
     private fun checkPermissionAndLoad() {
-        _state.value = _state.value.copy(
-            locationPermissionRequired = true,
-            locationPermissionPermanentlyDenied = false,
-            locationServicesDisabled = false,
-            errorMessage = null
-        )
+        permissionDelegate.requirePermission()
+        _state.value = _state.value.copy(errorMessage = null)
     }
 
     private fun loadQibla() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(
-                isLoading = true,
-                errorMessage = null,
-                locationPermissionRequired = false,
-                locationServicesDisabled = false,
-                locationPermissionPermanentlyDenied = false
-            )
+            permissionDelegate.reset()
+            _state.value = _state.value.copy(isLoading = true, errorMessage = null)
 
             if (!locationProvider.isLocationEnabled()) {
+                permissionDelegate.markServicesDisabled()
                 _state.value = _state.value.copy(
                     isLoading = false,
-                    locationServicesDisabled = true,
-                    errorMessage = "Location services are turned off. Please, enable them."
+                    errorMessage = "Location services are turned off. Please enable them."
                 )
                 return@launch
             }
 
             try {
                 val (latitude, longitude) = locationProvider.getCurrentLocation()
-                val bearing = getQiblaBearingUseCase(
-                    latitude,
-                    longitude
-                )
+                val bearing = getQiblaBearingUseCase(latitude, longitude)
 
                 _state.value = _state.value.copy(
                     isLoading = false,
