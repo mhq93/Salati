@@ -8,6 +8,7 @@ import com.mhq.salati.data.location.LocationProvider
 import com.mhq.salati.data.remote.AladhanApiService
 import com.mhq.salati.data.remote.KtorClient
 import com.mhq.salati.data.repoimpl.PrayerTimesRepoImpl
+import com.mhq.salati.data.sensor.CompassProvider
 import com.mhq.salati.domain.repo.PrayerTimesRepository
 import dagger.Module
 import dagger.Provides
@@ -66,5 +67,13 @@ object AppModule {
         @ApplicationContext context: Context
     ): LocationProvider {
         return LocationProvider(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCompassProvider(
+        @ApplicationContext context: Context
+    ): CompassProvider {
+        return CompassProvider(context)
     }
 }
