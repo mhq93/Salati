@@ -93,8 +93,11 @@ class QiblaViewModel @Inject constructor(
                     qiblaBearing = bearing.toFloat()
                 )
 
-                compassProvider.getHeadingFlow().collect { heading ->
-                    _state.value = _state.value.copy(deviceHeading = heading)
+                compassProvider.getHeadingFlow().collect { reading ->
+                    _state.value = _state.value.copy(
+                        deviceHeading = reading.headingDegrees,
+                        compassAccuracy = reading.accuracy
+                    )
                 }
             } catch (e: Exception) {
                 val isSensorMissing = e.message?.contains("not available") == true

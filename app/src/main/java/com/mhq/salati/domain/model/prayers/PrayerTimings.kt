@@ -1,4 +1,4 @@
-package com.mhq.salati.domain.model
+package com.mhq.salati.domain.model.prayers
 
 data class PrayerTimings(
     val fajr: String,

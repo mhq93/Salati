@@ -1,7 +1,7 @@
 package com.mhq.salati.presentation.home
 
-import com.mhq.salati.domain.model.PrayerDate
-import com.mhq.salati.domain.model.PrayerTimings
+import com.mhq.salati.domain.model.prayers.PrayerDate
+import com.mhq.salati.domain.model.prayers.PrayerTimings
 import com.mhq.salati.presentation.common.LocationPermissionState
 
 class HomeContract {

@@ -1,5 +1,6 @@
 package com.mhq.salati.presentation.qibla
 
+import com.mhq.salati.domain.model.qibla.CompassAccuracy
 import com.mhq.salati.presentation.common.LocationPermissionState
 
 class QiblaContract {
@@ -8,6 +9,7 @@ class QiblaContract {
         val isLoading: Boolean = true,
         val qiblaBearing: Float? = null,
         val deviceHeading: Float = 0f,
+        val compassAccuracy: CompassAccuracy = CompassAccuracy.HIGH,
         val errorMessage: String? = null,
         val sensorUnavailable: Boolean = false,
         val locationPermission: LocationPermissionState = LocationPermissionState()

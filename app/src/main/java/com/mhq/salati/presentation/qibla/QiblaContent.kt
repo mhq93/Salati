@@ -13,7 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mhq.salati.presentation.qibla.components.CalibrationBanner
+import com.mhq.salati.presentation.qibla.components.RotatingCompassDial
+import com.mhq.salati.presentation.theme.SalatiTheme
 
 @Composable
 fun QiblaContent(
@@ -34,7 +38,9 @@ fun QiblaContent(
             }
 
             state.errorMessage != null -> {
-                Text(text = "Error: ${state.errorMessage}")
+                Text(
+                    text = "Error: ${state.errorMessage}"
+                )
                 when {
                     state.sensorUnavailable -> {
                         Text(
@@ -83,30 +89,47 @@ fun QiblaContent(
             }
 
             state.qiblaBearing != null -> {
-                // Rotation needed so the arrow always points toward Mecca,
-                // regardless of which way the phone is currently facing.
-                val rotationDegrees = state.qiblaBearing - state.deviceHeading
-
                 Text(
-                    text = "Qibla direction",
-                    style = MaterialTheme.typography.titleMedium
+                    text = "\uD83D\uDD4B",
+                    style = MaterialTheme.typography.displayMedium
                 )
 
-                CompassDial(
-                    rotationDegrees = rotationDegrees,
+                RotatingCompassDial(
+                    deviceHeading = state.deviceHeading,
+                    qiblaBearing = state.qiblaBearing,
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f)
-                        .padding(32.dp)
+                        .padding(24.dp)
                 )
 
-                Text(text = "Heading: ${state.deviceHeading.toInt()}°")
-                Text(text = "Qibla bearing: ${state.qiblaBearing.toInt()}°")
+                Text(
+                    text = "${state.deviceHeading.toInt()}°",
+                    style = MaterialTheme.typography.displaySmall
+                )
+
+                Text(
+                    text = "Approximate Qibla direction: ${state.qiblaBearing.toInt()}°",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                CalibrationBanner(accuracy = state.compassAccuracy)
             }
 
             else -> {
                 Text(text = "Waiting for location permission…")
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun QiblaContentPreview() {
+    SalatiTheme() {
+        QiblaContent(
+            state = QiblaContract.State(),
+            onIntent = {}
+        )
     }
 }

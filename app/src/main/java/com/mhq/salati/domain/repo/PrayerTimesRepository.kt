@@ -1,6 +1,6 @@
 package com.mhq.salati.domain.repo
 
-import com.mhq.salati.domain.model.PrayerTimesResult
+import com.mhq.salati.domain.model.prayers.PrayerTimesResult
 
 interface PrayerTimesRepository {
     suspend fun getTimings(

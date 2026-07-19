@@ -4,7 +4,7 @@ import com.mhq.salati.data.local.PrayerTimesDao
 import com.mhq.salati.data.mapper.toDomain
 import com.mhq.salati.data.mapper.toEntityList
 import com.mhq.salati.data.remote.AladhanApiService
-import com.mhq.salati.domain.model.PrayerTimesResult
+import com.mhq.salati.domain.model.prayers.PrayerTimesResult
 import com.mhq.salati.domain.repo.PrayerTimesRepository
 import kotlin.math.abs
 

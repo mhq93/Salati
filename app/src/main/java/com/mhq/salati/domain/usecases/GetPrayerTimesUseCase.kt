@@ -1,6 +1,6 @@
 package com.mhq.salati.domain.usecases
 
-import com.mhq.salati.domain.model.PrayerTimesResult
+import com.mhq.salati.domain.model.prayers.PrayerTimesResult
 import com.mhq.salati.domain.repo.PrayerTimesRepository
 import javax.inject.Inject
 

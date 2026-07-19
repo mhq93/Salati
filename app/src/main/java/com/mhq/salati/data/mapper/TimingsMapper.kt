@@ -4,9 +4,9 @@ package com.mhq.salati.data.mapper
 import com.mhq.salati.data.local.PrayerTimesEntity
 import com.mhq.salati.data.remote.dto.TimingsDataDto
 import com.mhq.salati.data.remote.dto.TimingsResponseDto
-import com.mhq.salati.domain.model.PrayerDate
-import com.mhq.salati.domain.model.PrayerTimesResult
-import com.mhq.salati.domain.model.PrayerTimings
+import com.mhq.salati.domain.model.prayers.PrayerDate
+import com.mhq.salati.domain.model.prayers.PrayerTimesResult
+import com.mhq.salati.domain.model.prayers.PrayerTimings
 
 // Single-day response -> delegates to the shared helper below
 fun TimingsResponseDto.toDomain(): PrayerTimesResult = data.toDomainResult()
