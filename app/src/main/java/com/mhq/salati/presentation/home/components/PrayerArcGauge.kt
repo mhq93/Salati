@@ -57,7 +57,7 @@ fun PrayerArcGauge(
     ) {
         Canvas(
             modifier = Modifier
-                .padding(horizontal = 44.dp)
+                .padding(horizontal = 24.dp)
                 .fillMaxWidth()
                 .height(160.dp)
         ) {

@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -87,17 +86,12 @@ fun HomeSuccessContent(
                 )
                 .padding(bottom = 24.dp)
         ) {
-            Text(
-                text = "Salati",
-                textAlign = TextAlign.Center,
-                color = Color.White,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp,
-                modifier = Modifier
+            DateBanner(
+                prayerDate = prayerDate,
+                modifier = modifier
+                    .align(Alignment.CenterHorizontally)
                     .padding(top = 20.dp)
-                    .fillMaxWidth(),
             )
-
             PrayerArcGauge(
                 currentTimeLabel = currentTimeLabel,
                 fajrLabel = prayerTimings.fajr,
@@ -107,7 +101,6 @@ fun HomeSuccessContent(
                 nowMinutes = nowMinutes,
                 modifier = Modifier.padding(top = 12.dp)
             )
-
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
@@ -123,7 +116,8 @@ fun HomeSuccessContent(
                     Text(
                         text = "Fajr",
                         color = Color.White.copy(alpha = 0.85f),
-                        fontSize = 16.sp
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = prayerTimings.fajr,
@@ -137,7 +131,8 @@ fun HomeSuccessContent(
                     Text(
                         text = "Isha",
                         color = Color.White.copy(alpha = 0.85f),
-                        fontSize = 16.sp
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = prayerTimings.isha,
@@ -147,7 +142,6 @@ fun HomeSuccessContent(
                 }
             }
         }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -163,12 +157,6 @@ fun HomeSuccessContent(
                     vertical = 20.dp
                 )
         ) {
-
-            DateBanner(
-                date = prayerDate,
-                modifier = modifier.align(Alignment.CenterHorizontally)
-            )
-
             PrayersList(
                 prayers = prayers,
                 currentPrayerName = currentPrayerName,
@@ -202,7 +190,8 @@ private fun HomeContentSuccessPreview() {
                     readable = "18 Jul 2026",
                     gregorianDate = "18-07-2026",
                     hijriDate = "03",
-                    hijriMonthName = "Muharram",
+                    hijriDay = "03",
+                    hijriMonth = "Muharram",
                     hijriYear = "1448"
                 )
             ),

@@ -27,7 +27,8 @@ internal fun TimingsDataDto.toDomainResult(): PrayerTimesResult {
             readable = date.readable,
             gregorianDate = date.gregorian.date,
             hijriDate = date.hijri.date,
-            hijriMonthName = date.hijri.month.en,
+            hijriDay = date.hijri.day,
+            hijriMonth = date.hijri.month.en,
             hijriYear = date.hijri.year
         )
     )
@@ -56,7 +57,8 @@ fun PrayerTimesResult.toEntity(
         readableDate = date.readable,
         gregorianDate = date.gregorianDate,
         hijriDate = date.hijriDate,
-        hijriMonthName = date.hijriMonthName,
+        hijriDay = date.hijriDay,
+        hijriMonth = date.hijriMonth,
         hijriYear = date.hijriYear,
         latitude = latitude,
         longitude = longitude,
@@ -84,7 +86,8 @@ fun PrayerTimesEntity.toDomain(): PrayerTimesResult {
             readable = readableDate,
             gregorianDate = gregorianDate,
             hijriDate = hijriDate,
-            hijriMonthName = hijriMonthName,
+            hijriDay = hijriDay,
+            hijriMonth = hijriMonth,
             hijriYear = hijriYear
         )
     )

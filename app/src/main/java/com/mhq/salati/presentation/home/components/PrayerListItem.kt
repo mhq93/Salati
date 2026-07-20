@@ -46,18 +46,10 @@ fun PrayerListItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                vertical = 16.dp,
+                vertical = 8.dp,
                 horizontal = 16.dp
             )
     ) {
-        Text(
-            text = prayerIcon,
-            fontSize = 24.sp,
-            modifier = Modifier.padding(
-                end = 16.dp
-            )
-        )
-
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.weight(1f)

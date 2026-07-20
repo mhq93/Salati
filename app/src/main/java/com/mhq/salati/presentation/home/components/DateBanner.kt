@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.domain.model.prayers.PrayerDate
@@ -16,7 +17,7 @@ import com.mhq.salati.presentation.theme.InkText
 
 @Composable
 fun DateBanner(
-    date: PrayerDate,
+    prayerDate: PrayerDate,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -29,9 +30,10 @@ fun DateBanner(
             )
     ){
         Text(
-            text = "${date.hijriDate}  ${date.hijriMonthName} ${date.hijriYear}H  ·  ${date.readable}",
+            text = "${prayerDate.hijriDay}  ${prayerDate.hijriMonth} ${prayerDate.hijriYear}  ·  ${prayerDate.readable}",
             color = InkText,
-            fontSize = 12.sp
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold
         )
     }
 
