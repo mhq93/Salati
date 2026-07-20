@@ -1,31 +1,27 @@
 package com.mhq.salati.data.mapper
 
-
 import com.mhq.salati.data.local.PrayerTimesEntity
 import com.mhq.salati.data.remote.dto.TimingsDataDto
-import com.mhq.salati.data.remote.dto.TimingsResponseDto
 import com.mhq.salati.domain.model.prayers.PrayerDate
 import com.mhq.salati.domain.model.prayers.PrayerTimesResult
 import com.mhq.salati.domain.model.prayers.PrayerTimings
-
-// Single-day response -> delegates to the shared helper below
-fun TimingsResponseDto.toDomain(): PrayerTimesResult = data.toDomainResult()
+import com.mhq.salati.util.TimeFormatter.sanitizeTimestamp
 
 // Shared field-mapping logic, used by both this file and CalendarMapper.kt
 internal fun TimingsDataDto.toDomainResult(): PrayerTimesResult {
     return PrayerTimesResult(
         timings = PrayerTimings(
-            fajr = timings.fajr,
-            sunrise = timings.sunrise,
-            dhuhr = timings.dhuhr,
-            asr = timings.asr,
-            sunset = timings.sunset,
-            maghrib = timings.maghrib,
-            isha = timings.isha,
-            imsak = timings.imsak,
-            midnight = timings.midnight,
-            firstThird = timings.firstThird,
-            lastThird = timings.lastThird
+            fajr = sanitizeTimestamp(timings.fajr),
+            sunrise = sanitizeTimestamp(timings.sunrise),
+            dhuhr = sanitizeTimestamp(timings.dhuhr),
+            asr = sanitizeTimestamp(timings.asr),
+            sunset = sanitizeTimestamp(timings.sunset),
+            maghrib = sanitizeTimestamp(timings.maghrib),
+            isha = sanitizeTimestamp(timings.isha),
+            imsak = sanitizeTimestamp(timings.imsak),
+            midnight = sanitizeTimestamp(timings.midnight),
+            firstThird = sanitizeTimestamp(timings.firstThird),
+            lastThird = sanitizeTimestamp(timings.lastThird)
         ),
         date = PrayerDate(
             readable = date.readable,

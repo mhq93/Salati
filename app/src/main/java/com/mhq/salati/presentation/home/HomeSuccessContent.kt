@@ -30,6 +30,7 @@ import com.mhq.salati.presentation.theme.HeaderGreenDark
 import com.mhq.salati.presentation.theme.HeaderGreenLight
 import com.mhq.salati.presentation.theme.SalatiTheme
 import com.mhq.salati.presentation.theme.SheetBackground
+import com.mhq.salati.util.TimeFormatter.parseTimeToMinutes
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -208,12 +209,4 @@ private fun HomeContentSuccessPreview() {
             onIntent = {}
         )
     }
-}
-
-/** Parses "HH:mm" (24-hour) into minutes since midnight. */
-private fun parseTimeToMinutes(time: String): Int {
-    val parts = time.split(":")
-    val hours = parts.getOrNull(0)?.toIntOrNull() ?: 0
-    val minutes = parts.getOrNull(1)?.toIntOrNull() ?: 0
-    return hours * 60 + minutes
 }

@@ -33,7 +33,7 @@ class PrayerTimesRepoImpl(
                 abs(cached.longitude - longitude) < COORDINATE_TOLERANCE
 
         if (isCacheValid) {
-            return Result.success(cached!!.toDomain())
+            return Result.success(cached.toDomain())
         }
 
         return try {
