@@ -3,11 +3,11 @@ package com.mhq.salati.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.data.location.LocationProvider
-import com.mhq.salati.domain.model.alarms.PrayerAlarm
-import com.mhq.salati.domain.repo.alarms.AlarmScheduler
 import com.mhq.salati.domain.repo.alarms.MutedPrayersRepository
 import com.mhq.salati.domain.usecases.alarms.ScheduleDailyPrayerAlarmsUseCase
 import com.mhq.salati.domain.usecases.alarms.ToggleMutePrayerUseCase
+import com.mhq.salati.domain.usecases.location.FetchAndSaveLocationUseCase
+import com.mhq.salati.domain.usecases.location.GetSavedLocationUseCase
 import com.mhq.salati.domain.usecases.prayers.GetCachedPrayerTimesUseCase
 import com.mhq.salati.domain.usecases.prayers.GetPrayerTimesUseCase
 import com.mhq.salati.presentation.common.location.LocationPermissionDelegate
@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -32,6 +33,8 @@ class HomeViewModel @Inject constructor(
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
     private val toggleMutePrayerUseCase: ToggleMutePrayerUseCase,
     private val scheduleDailyPrayerAlarmsUseCase: ScheduleDailyPrayerAlarmsUseCase,
+    private val getSavedLocationUseCase: GetSavedLocationUseCase,
+    private val fetchAndSaveLocationUseCase: FetchAndSaveLocationUseCase,
     private val locationProvider: LocationProvider
 ) : ViewModel() {
 
@@ -69,10 +72,12 @@ class HomeViewModel @Inject constructor(
                 currentDate.add(Calendar.DAY_OF_YEAR, -1)
                 loadPrayerTimes()
             }
+
             is HomeContract.Intent.NextDay -> {
                 currentDate.add(Calendar.DAY_OF_YEAR, 1)
                 loadPrayerTimes()
             }
+
             is HomeContract.Intent.LocationPermissionGranted -> loadPrayerTimes()
             is HomeContract.Intent.LocationPermissionDenied -> {
                 permissionDelegate.onPermissionDenied(intent.permanentlyDenied)
@@ -84,12 +89,15 @@ class HomeViewModel @Inject constructor(
                     }
                 )
             }
+
             is HomeContract.Intent.AccessAppSettings -> {
                 viewModelScope.launch { permissionDelegate.requestAppSettings() }
             }
+
             is HomeContract.Intent.AccessDeviceLocationSettings -> {
                 viewModelScope.launch { permissionDelegate.requestLocationSettings() }
             }
+
             is HomeContract.Intent.ToggleMute -> {
                 viewModelScope.launch {
                     val currentlyMuted = intent.prayerName in _state.value.mutedPrayers
@@ -109,22 +117,29 @@ class HomeViewModel @Inject constructor(
             permissionDelegate.reset()
             _state.value = _state.value.copy(errorMessage = null)
 
-            val today = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(currentDate.time)
-
-            if (!locationProvider.isLocationEnabled()) {
-                permissionDelegate.markServicesDisabled()
-                _state.value = _state.value.copy(
-                    isLoading = false,
-                    errorMessage = "Location services are turned off. Please enable them."
-                )
-                return@launch
-            }
+            val today =
+                SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                    .format(currentDate.time)
 
             try {
-                val location = locationProvider.getCurrentLocation()
+                val savedLocation = getSavedLocationUseCase().first()
+
+                val location = if (savedLocation != null) {
+                    savedLocation
+                } else {
+                    if (!locationProvider.isLocationEnabled()) {
+                        permissionDelegate.markServicesDisabled()
+                        _state.value = _state.value.copy(
+                            isLoading = false,
+                            errorMessage = "Location services are turned off. Please, enable them."
+                        )
+                        return@launch
+                    }
+                    fetchAndSaveLocationUseCase()
+                }
+
                 val latitude = location.latitude
                 val longitude = location.longitude
-                //val (latitude, longitude) = locationProvider.getCurrentLocation()
 
                 val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
                 if (cached != null) {
@@ -153,7 +168,7 @@ class HomeViewModel @Inject constructor(
                         )
                     },
                     onFailure = { throwable ->
-                        val message = throwable.message ?: "Something went wrong"
+                        val message = throwable.message ?: "Something went wrong."
                         _state.value = _state.value.copy(
                             isLoading = false,
                             errorMessage = message
@@ -162,12 +177,77 @@ class HomeViewModel @Inject constructor(
                     }
                 )
             } catch (e: Exception) {
-                val message = "Failed to get location"
+                val message = "Failed to get location."
                 _state.value = _state.value.copy(isLoading = false, errorMessage = message)
                 _effect.emit(HomeContract.Effect.ShowError(message))
             }
         }
     }
+
+//    private fun loadPrayerTimes() {
+//        viewModelScope.launch {
+//            permissionDelegate.reset()
+//            _state.value = _state.value.copy(errorMessage = null)
+//
+//            val today = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(currentDate.time)
+//
+//            if (!locationProvider.isLocationEnabled()) {
+//                permissionDelegate.markServicesDisabled()
+//                _state.value = _state.value.copy(
+//                    isLoading = false,
+//                    errorMessage = "Location services are turned off. Please enable them."
+//                )
+//                return@launch
+//            }
+//
+//            try {
+//                val location = locationProvider.getCurrentLocation()
+//                val latitude = location.latitude
+//                val longitude = location.longitude
+//                //val (latitude, longitude) = locationProvider.getCurrentLocation()
+//
+//                val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
+//                if (cached != null) {
+//                    _state.value = _state.value.copy(
+//                        isLoading = false,
+//                        timings = cached.timings,
+//                        date = cached.date
+//                    )
+//                    return@launch
+//                }
+//
+//                _state.value = _state.value.copy(isLoading = true)
+//
+//                val result = getPrayerTimesUseCase(
+//                    date = today,
+//                    latitude = latitude,
+//                    longitude = longitude
+//                )
+//
+//                result.fold(
+//                    onSuccess = { prayerTimesResult ->
+//                        _state.value = _state.value.copy(
+//                            isLoading = false,
+//                            timings = prayerTimesResult.timings,
+//                            date = prayerTimesResult.date
+//                        )
+//                    },
+//                    onFailure = { throwable ->
+//                        val message = throwable.message ?: "Something went wrong"
+//                        _state.value = _state.value.copy(
+//                            isLoading = false,
+//                            errorMessage = message
+//                        )
+//                        _effect.emit(HomeContract.Effect.ShowError(message))
+//                    }
+//                )
+//            } catch (e: Exception) {
+//                val message = "Failed to get location"
+//                _state.value = _state.value.copy(isLoading = false, errorMessage = message)
+//                _effect.emit(HomeContract.Effect.ShowError(message))
+//            }
+//        }
+//    }
 
     private suspend fun rescheduleAlarmsIfLoaded() {
         val timings = _state.value.timings ?: return
