@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.data.location.LocationProvider
 import com.mhq.salati.data.sensor.CompassProvider
-import com.mhq.salati.domain.usecases.GetQiblaBearingUseCase
-import com.mhq.salati.presentation.common.LocationPermissionDelegate
-import com.mhq.salati.presentation.common.LocationPermissionEffect
+import com.mhq.salati.domain.usecases.qibla.GetQiblaBearingUseCase
+import com.mhq.salati.presentation.common.location.LocationPermissionDelegate
+import com.mhq.salati.presentation.common.location.LocationPermissionEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

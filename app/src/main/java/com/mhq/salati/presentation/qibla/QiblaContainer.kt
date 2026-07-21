@@ -14,8 +14,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mhq.salati.presentation.common.HandleLocationPermissionEffects
-import com.mhq.salati.presentation.common.rememberLocationPermissionLauncher
+import com.mhq.salati.presentation.common.location.HandleLocationPermissionEffects
+import com.mhq.salati.presentation.common.location.rememberLocationPermissionLauncher
 
 @Composable
 fun QiblaContainer(

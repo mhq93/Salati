@@ -2,7 +2,7 @@ package com.mhq.salati.presentation.home
 
 import com.mhq.salati.domain.model.prayers.PrayerDate
 import com.mhq.salati.domain.model.prayers.PrayerTimings
-import com.mhq.salati.presentation.common.LocationPermissionState
+import com.mhq.salati.presentation.common.location.LocationPermissionState
 
 class HomeContract {
 
@@ -11,7 +11,8 @@ class HomeContract {
         val timings: PrayerTimings? = null,
         val date: PrayerDate? = null,
         val errorMessage: String? = null,
-        val locationPermission: LocationPermissionState = LocationPermissionState()
+        val locationPermission: LocationPermissionState = LocationPermissionState(),
+        val mutedPrayers: Set<String> = emptySet()
     )
 
     sealed interface Intent {
@@ -23,6 +24,7 @@ class HomeContract {
         data object AccessAppSettings : Intent
         data object AccessDeviceLocationSettings : Intent
         data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
+        data class ToggleMute(val prayerName: String) : Intent
     }
 
     sealed interface Effect {

@@ -1,4 +1,4 @@
-package com.mhq.salati.presentation.common
+package com.mhq.salati.presentation.common.location
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

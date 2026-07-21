@@ -2,6 +2,7 @@ package com.mhq.salati.presentation.home
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -14,8 +15,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mhq.salati.presentation.common.HandleLocationPermissionEffects
-import com.mhq.salati.presentation.common.rememberLocationPermissionLauncher
+import com.mhq.salati.presentation.common.location.HandleLocationPermissionEffects
+import com.mhq.salati.presentation.common.location.rememberLocationPermissionLauncher
+import com.mhq.salati.presentation.common.notifications.rememberNotificationPermissionLauncher
 
 @Composable
 fun HomeContainer(
@@ -29,11 +31,16 @@ fun HomeContainer(
 
     HandleLocationPermissionEffects(homeViewModel.permissionEffect)
 
-    val permissionLauncher = rememberLocationPermissionLauncher(
+    val locationPermissionLauncher = rememberLocationPermissionLauncher(
         onGranted = { homeViewModel.onIntent(HomeContract.Intent.LocationPermissionGranted) },
         onDenied = { permanentlyDenied ->
             homeViewModel.onIntent(HomeContract.Intent.LocationPermissionDenied(permanentlyDenied))
         }
+    )
+
+    val notificationPermissionLauncher = rememberNotificationPermissionLauncher(
+        onGranted = { /* proceed, e.g. mark alarms enabled */ },
+        onDenied = { /* show rationale or leave notifications off */ }
     )
 
     DisposableEffect(lifecycleOwner) {
@@ -61,7 +68,19 @@ fun HomeContainer(
             if (hasPermission) {
                 homeViewModel.onIntent(HomeContract.Intent.LocationPermissionGranted)
             } else {
-                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val granted = ContextCompat.checkSelfPermission(
+                context, Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (!granted) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
     }

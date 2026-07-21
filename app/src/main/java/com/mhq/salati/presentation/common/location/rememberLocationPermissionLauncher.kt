@@ -1,8 +1,9 @@
-package com.mhq.salati.presentation.common
+package com.mhq.salati.presentation.common.location
 
 import android.Manifest
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
@@ -12,7 +13,7 @@ import androidx.core.app.ActivityCompat
 fun rememberLocationPermissionLauncher(
     onGranted: () -> Unit,
     onDenied: (permanentlyDenied: Boolean) -> Unit
-): androidx.activity.result.ActivityResultLauncher<String> {
+): ActivityResultLauncher<String> {
     val context = LocalContext.current
     val activity = context as? Activity
 

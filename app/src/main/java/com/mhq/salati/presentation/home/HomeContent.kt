@@ -74,6 +74,7 @@ fun HomeContent(
             HomeSuccessContent(
                 prayerDate = state.date,
                 prayerTimings = state.timings,
+                mutedPrayers = state.mutedPrayers,
                 onIntent = onIntent,
                 modifier = modifier
             )
@@ -96,7 +97,7 @@ private fun HomeContentLoadingPreview() {
     SalatiTheme {
         HomeContent(
             state = HomeContract.State(isLoading = true),
-            onIntent = {}
+            onIntent = {},
         )
     }
 }

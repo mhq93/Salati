@@ -2,14 +2,15 @@ package com.mhq.salati.di
 
 import android.content.Context
 import androidx.room.Room
-import com.mhq.salati.data.local.PrayerTimesDao
+import com.mhq.salati.data.local.prayers.PrayerTimesDao
 import com.mhq.salati.data.local.SalatiDatabase
+import com.mhq.salati.data.local.alarms.MutedPrayerDao
 import com.mhq.salati.data.location.LocationProvider
 import com.mhq.salati.data.remote.AladhanApiService
 import com.mhq.salati.data.remote.KtorClient
-import com.mhq.salati.data.repoimpl.PrayerTimesRepoImpl
+import com.mhq.salati.data.repoimpl.prayers.PrayerTimesRepoImpl
 import com.mhq.salati.data.sensor.CompassProvider
-import com.mhq.salati.domain.repo.PrayerTimesRepository
+import com.mhq.salati.domain.repo.prayers.PrayerTimesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -75,5 +76,11 @@ object AppModule {
         @ApplicationContext context: Context
     ): CompassProvider {
         return CompassProvider(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMutedPrayerDao(database: SalatiDatabase): MutedPrayerDao {
+        return database.mutedPrayerDao()
     }
 }

@@ -1,7 +1,7 @@
-package com.mhq.salati.domain.usecases
+package com.mhq.salati.domain.usecases.prayers
 
 import com.mhq.salati.domain.model.prayers.PrayerTimesResult
-import com.mhq.salati.domain.repo.PrayerTimesRepository
+import com.mhq.salati.domain.repo.prayers.PrayerTimesRepository
 import javax.inject.Inject
 
 class GetCachedPrayerTimesUseCase @Inject constructor(

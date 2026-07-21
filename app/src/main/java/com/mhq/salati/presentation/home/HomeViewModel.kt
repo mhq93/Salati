@@ -3,10 +3,13 @@ package com.mhq.salati.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.data.location.LocationProvider
-import com.mhq.salati.domain.usecases.GetCachedPrayerTimesUseCase
-import com.mhq.salati.domain.usecases.GetPrayerTimesUseCase
-import com.mhq.salati.presentation.common.LocationPermissionDelegate
-import com.mhq.salati.presentation.common.LocationPermissionEffect
+import com.mhq.salati.domain.repo.alarms.MutedPrayersRepository
+import com.mhq.salati.domain.usecases.alarms.ScheduleDailyPrayerAlarmsUseCase
+import com.mhq.salati.domain.usecases.alarms.ToggleMutePrayerUseCase
+import com.mhq.salati.domain.usecases.prayers.GetCachedPrayerTimesUseCase
+import com.mhq.salati.domain.usecases.prayers.GetPrayerTimesUseCase
+import com.mhq.salati.presentation.common.location.LocationPermissionDelegate
+import com.mhq.salati.presentation.common.location.LocationPermissionEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,14 +20,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val mutedPrayersRepository: MutedPrayersRepository,
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
+    private val toggleMutePrayerUseCase: ToggleMutePrayerUseCase,
+    private val scheduleDailyPrayerAlarmsUseCase: ScheduleDailyPrayerAlarmsUseCase,
     private val locationProvider: LocationProvider
 ) : ViewModel() {
 
@@ -43,6 +48,13 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             permissionDelegate.state.collect { permissionState ->
                 _state.value = _state.value.copy(locationPermission = permissionState)
+            }
+        }
+
+        viewModelScope.launch {
+            mutedPrayersRepository.observeMutedPrayers().collect { muted ->
+                _state.value = _state.value.copy(mutedPrayers = muted)
+                rescheduleAlarmsIfLoaded()
             }
         }
     }
@@ -75,6 +87,12 @@ class HomeViewModel @Inject constructor(
             }
             is HomeContract.Intent.AccessDeviceLocationSettings -> {
                 viewModelScope.launch { permissionDelegate.requestLocationSettings() }
+            }
+            is HomeContract.Intent.ToggleMute -> {
+                viewModelScope.launch {
+                    val currentlyMuted = intent.prayerName in _state.value.mutedPrayers
+                    toggleMutePrayerUseCase(intent.prayerName, !currentlyMuted)
+                }
             }
         }
     }
@@ -137,5 +155,12 @@ class HomeViewModel @Inject constructor(
                 _effect.emit(HomeContract.Effect.ShowError(message))
             }
         }
+    }
+
+    private suspend fun rescheduleAlarmsIfLoaded() {
+        val timings = _state.value.timings ?: return
+        val date = _state.value.date ?: return
+        val dateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(currentDate.time)
+        scheduleDailyPrayerAlarmsUseCase(timings, dateKey, _state.value.mutedPrayers)
     }
 }

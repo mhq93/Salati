@@ -38,6 +38,7 @@ import java.util.Locale
 fun HomeSuccessContent(
     prayerDate: PrayerDate,
     prayerTimings: PrayerTimings,
+    mutedPrayers: Set<String>,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -163,6 +164,8 @@ fun HomeSuccessContent(
             PrayersList(
                 prayers = prayers,
                 currentPrayerName = currentPrayerName,
+                mutedPrayers = mutedPrayers,
+                onIntent = onIntent,
                 modifier = modifier
             )
         }

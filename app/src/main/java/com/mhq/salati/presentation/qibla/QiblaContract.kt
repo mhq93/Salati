@@ -1,7 +1,7 @@
 package com.mhq.salati.presentation.qibla
 
 import com.mhq.salati.domain.model.qibla.CompassAccuracy
-import com.mhq.salati.presentation.common.LocationPermissionState
+import com.mhq.salati.presentation.common.location.LocationPermissionState
 
 class QiblaContract {
 

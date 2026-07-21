@@ -36,11 +36,10 @@ fun PrayerListItem(
     prayerName: String,
     prayerTime: String,
     isHighlighted: Boolean,
+    isMuted: Boolean,
+    onMuteToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    var isMuted by remember { mutableStateOf(false) }
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -60,10 +59,7 @@ fun PrayerListItem(
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 24.sp
             )
-            Spacer(
-                modifier = modifier
-                    .height(8.dp)
-            )
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = prayerTime,
                 color = MutedSage,
@@ -71,9 +67,7 @@ fun PrayerListItem(
             )
         }
 
-        IconButton(
-            onClick = { isMuted = !isMuted }
-        ) {
+        IconButton(onClick = onMuteToggle) {
             Icon(
                 imageVector =
                     if (isMuted)
@@ -95,7 +89,9 @@ private fun PrayerListItemPreview() {
             prayerIcon = "Hi",
             prayerName = "Fajr",
             prayerTime = "04:00",
-            isHighlighted = true
+            isHighlighted = true,
+            isMuted = true,
+            onMuteToggle = {},
         )
     }
 }

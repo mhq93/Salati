@@ -1,6 +1,6 @@
 package com.mhq.salati.data.mapper
 
-import com.mhq.salati.data.local.PrayerTimesEntity
+import com.mhq.salati.data.local.prayers.PrayerTimesEntity
 import com.mhq.salati.data.remote.dto.TimingsDataDto
 import com.mhq.salati.domain.model.prayers.PrayerDate
 import com.mhq.salati.domain.model.prayers.PrayerTimesResult

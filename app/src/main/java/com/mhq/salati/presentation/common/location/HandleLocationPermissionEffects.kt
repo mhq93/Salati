@@ -1,4 +1,4 @@
-package com.mhq.salati.presentation.common
+package com.mhq.salati.presentation.common.location
 
 import android.content.Intent
 import android.net.Uri

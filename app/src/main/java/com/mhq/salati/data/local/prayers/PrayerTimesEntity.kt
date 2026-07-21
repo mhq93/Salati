@@ -1,4 +1,4 @@
-package com.mhq.salati.data.local
+package com.mhq.salati.data.local.prayers
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -1,4 +1,4 @@
-package com.mhq.salati.data.local
+package com.mhq.salati.data.local.prayers
 
 import androidx.room.Dao
 import androidx.room.Insert

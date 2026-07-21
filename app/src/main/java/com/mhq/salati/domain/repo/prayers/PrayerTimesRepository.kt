@@ -1,4 +1,4 @@
-package com.mhq.salati.domain.repo
+package com.mhq.salati.domain.repo.prayers
 
 import com.mhq.salati.domain.model.prayers.PrayerTimesResult
 

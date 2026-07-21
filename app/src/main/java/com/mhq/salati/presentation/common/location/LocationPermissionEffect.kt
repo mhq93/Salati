@@ -1,4 +1,4 @@
-package com.mhq.salati.presentation.common
+package com.mhq.salati.presentation.common.location
 
 sealed interface LocationPermissionEffect {
     data object NavigateToAppSettings : LocationPermissionEffect
