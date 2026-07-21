@@ -26,77 +26,18 @@ import androidx.compose.ui.unit.dp
 import com.mhq.salati.domain.model.qibla.CompassAccuracy
 import com.mhq.salati.presentation.theme.SalatiTheme
 
-//@Composable
-//fun CalibrationBanner(accuracy: CompassAccuracy) {
-//    var showInstructions by remember { mutableStateOf(false) }
-//
-//    val (statusText, dotColor) = when (accuracy) {
-//        CompassAccuracy.HIGH, CompassAccuracy.MEDIUM ->
-//            "Your phone sensor accuracy is good" to Color(0xFF4CAF50)
-//
-//        CompassAccuracy.LOW ->
-//            "Compass accuracy is low" to Color(0xFFFFC107)
-//
-//        CompassAccuracy.UNRELIABLE ->
-//            "Compass accuracy is unreliable" to Color(0xFFF44336)
-//    }
-//
-//    Row(
-//        verticalAlignment = Alignment.CenterVertically,
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        modifier = Modifier.fillMaxWidth().padding(16.dp)
-//    ) {
-//        Row(
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            Box(
-//                modifier = Modifier
-//                    .size(10.dp)
-//                    .background(
-//                        color = dotColor,
-//                        shape = RoundedCornerShape(
-//                            50
-//                        )
-//                    )
-//            )
-//            Text(
-//                text = statusText,
-//                style = MaterialTheme.typography.bodySmall,
-//                modifier = Modifier
-//                    .padding(
-//                        start = 8.dp
-//                    )
-//            )
-//        }
-//
-//        if (accuracy == CompassAccuracy.LOW || accuracy == CompassAccuracy.UNRELIABLE) {
-//            TextButton(onClick = { showInstructions = true }) {
-//                Text("CALIBRATE")
-//            }
-//        }
-//    }
-//
-//    if (showInstructions) {
-//        Text(
-//            text = "Move your phone in a figure-8 motion a few times to recalibrate the compass sensor.",
-//            style = MaterialTheme.typography.bodySmall,
-//            modifier = Modifier
-//                .padding(
-//                    top = 8.dp
-//                )
-//        )
-//    }
-//}
-
 @Composable
 fun CalibrationBanner(
     compassAccuracy: CompassAccuracy,
     onCalibrateClick: () -> Unit
 ) {
     val (label, dotColor) = when (compassAccuracy) {
-        CompassAccuracy.HIGH -> "Your phone's sensor accuracy is quite reliable." to Color(0xFF4CAF50)
-        CompassAccuracy.MEDIUM -> "Your phone's sensor accuracy is moderate." to Color(0xFFFFC107)
-        else -> "Your phone's sensor accuracy is low." to Color(0xFFF44336)
+        CompassAccuracy.HIGH ->
+            "Your phone's sensor accuracy is quite reliable." to Color(0xFF4CAF50)
+        CompassAccuracy.MEDIUM ->
+            "Your phone's sensor accuracy is moderate." to Color(0xFFFFC107)
+        else ->
+            "Your phone's sensor accuracy is low." to Color(0xFFF44336)
     }
 
     Surface(
@@ -127,7 +68,7 @@ fun CalibrationBanner(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
-                Text("Please calibrate")
+                Text("Recalibrate")
             }
         }
     }

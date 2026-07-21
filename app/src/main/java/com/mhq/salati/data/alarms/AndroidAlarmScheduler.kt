@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import com.mhq.salati.domain.model.alarms.PrayerAlarm
 import com.mhq.salati.domain.repo.alarms.AlarmScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -44,6 +45,12 @@ class AndroidAlarmScheduler @Inject constructor(
             AlarmManager.RTC_WAKEUP,
             alarm.triggerAtMillis,
             pendingIntent
+        )
+
+        Log.d(
+            "AlarmScheduler",
+            "Scheduling $alarm at ${alarm.triggerAtMillis}, " +
+                    "canScheduleExactAlarms=${alarmManager.canScheduleExactAlarms()}"
         )
     }
 

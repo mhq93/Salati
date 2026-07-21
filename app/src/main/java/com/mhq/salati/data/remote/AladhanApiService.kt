@@ -12,7 +12,6 @@ class AladhanApiService(private val client: HttpClient) {
         private const val BASE_URL = "https://api.aladhan.com/v1"
     }
 
-    //data for a year...
     suspend fun getCalendar(
         year: Int,
         latitude: Double,

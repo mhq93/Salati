@@ -3,6 +3,8 @@ package com.mhq.salati.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.data.location.LocationProvider
+import com.mhq.salati.domain.model.alarms.PrayerAlarm
+import com.mhq.salati.domain.repo.alarms.AlarmScheduler
 import com.mhq.salati.domain.repo.alarms.MutedPrayersRepository
 import com.mhq.salati.domain.usecases.alarms.ScheduleDailyPrayerAlarmsUseCase
 import com.mhq.salati.domain.usecases.alarms.ToggleMutePrayerUseCase
@@ -133,7 +135,11 @@ class HomeViewModel @Inject constructor(
 
                 _state.value = _state.value.copy(isLoading = true)
 
-                val result = getPrayerTimesUseCase(date = today, latitude = latitude, longitude = longitude)
+                val result = getPrayerTimesUseCase(
+                    date = today,
+                    latitude = latitude,
+                    longitude = longitude
+                )
 
                 result.fold(
                     onSuccess = { prayerTimesResult ->
@@ -145,7 +151,10 @@ class HomeViewModel @Inject constructor(
                     },
                     onFailure = { throwable ->
                         val message = throwable.message ?: "Something went wrong"
-                        _state.value = _state.value.copy(isLoading = false, errorMessage = message)
+                        _state.value = _state.value.copy(
+                            isLoading = false,
+                            errorMessage = message
+                        )
                         _effect.emit(HomeContract.Effect.ShowError(message))
                     }
                 )

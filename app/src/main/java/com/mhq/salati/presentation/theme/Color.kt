@@ -18,4 +18,5 @@ val AccentGreen = Color(0xFF2FA774)
 val SheetBackground = Color(0xFFFAF7F0)
 val MutedSage = Color(0xFF8A9A90)
 val GaugeTrackBright = Color(0xFFF5B942)
+val AccentOrange = Color(0xFFFBB15B)
 
