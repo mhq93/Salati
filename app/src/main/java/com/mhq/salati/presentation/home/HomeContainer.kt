@@ -21,6 +21,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mhq.salati.presentation.common.alarms.rememberExactAlarmPermissionLauncher
 import com.mhq.salati.presentation.common.location.HandleLocationPermissionEffects
+import com.mhq.salati.presentation.common.location.rememberGpsEnabled
 import com.mhq.salati.presentation.common.location.rememberLocationPermissionLauncher
 import com.mhq.salati.presentation.common.notifications.rememberNotificationPermissionLauncher
 
@@ -33,6 +34,7 @@ fun HomeContainer(
 
     val state by homeViewModel.state.collectAsStateWithLifecycle()
     val currentState by rememberUpdatedState(state)
+    val gpsEnabled by rememberGpsEnabled()
 
     //Handling location permissions...
     HandleLocationPermissionEffects(homeViewModel.permissionEffect)
@@ -70,6 +72,12 @@ fun HomeContainer(
             } else {
                 locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             }
+        }
+    }
+
+    LaunchedEffect(gpsEnabled) {
+        if (gpsEnabled && state.locationPermission.servicesDisabled) {
+            homeViewModel.onIntent(HomeContract.Intent.Retry)
         }
     }
 
