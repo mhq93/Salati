@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import com.mhq.salati.domain.model.alarms.PrayerAlarm
 import com.mhq.salati.domain.repo.alarms.AlarmScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -13,11 +14,24 @@ class AndroidAlarmScheduler @Inject constructor(
     @ApplicationContext private val context: Context
 ) : AlarmScheduler {
 
-    private val alarmManager = context.getSystemService(AlarmManager::class.java)
+    private val alarmManager =
+        context.getSystemService(AlarmManager::class.java)
 
     override fun schedule(alarm: PrayerAlarm) {
-        val intent = Intent(context, PrayerAlarmReceiver::class.java).apply {
-            putExtra(PrayerAlarmReceiver.EXTRA_PRAYER_NAME, alarm.prayerName)
+        if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+            && !alarmManager.canScheduleExactAlarms()
+            ) {
+            return
+        }
+
+        val intent = Intent(
+            context,
+            PrayerAlarmReceiver::class.java).apply {
+            putExtra(
+                PrayerAlarmReceiver.EXTRA_PRAYER_NAME,
+                alarm.prayerName
+            )
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -34,7 +48,10 @@ class AndroidAlarmScheduler @Inject constructor(
     }
 
     override fun cancel(prayerName: String) {
-        val intent = Intent(context, PrayerAlarmReceiver::class.java)
+        val intent = Intent(
+            context,
+            PrayerAlarmReceiver::class.java
+        )
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             prayerName.hashCode(),
@@ -45,6 +62,7 @@ class AndroidAlarmScheduler @Inject constructor(
     }
 
     override fun cancelAll() {
-        listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha").forEach { cancel(it) }
+        listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
+            .forEach { cancel(it) }
     }
 }
