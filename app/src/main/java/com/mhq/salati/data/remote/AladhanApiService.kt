@@ -24,6 +24,7 @@ class AladhanApiService(private val client: HttpClient) {
             parameter("longitude", longitude)
             parameter("year", year)
             parameter("method", method)
+            parameter("annual", true)
         }.body()
     }
 }

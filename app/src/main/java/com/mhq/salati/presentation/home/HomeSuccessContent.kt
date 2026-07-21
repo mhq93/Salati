@@ -38,6 +38,7 @@ import java.util.Locale
 fun HomeSuccessContent(
     prayerDate: PrayerDate,
     prayerTimings: PrayerTimings,
+    onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val currentTimeLabel = remember {
@@ -88,6 +89,8 @@ fun HomeSuccessContent(
         ) {
             DateBanner(
                 prayerDate = prayerDate,
+                onPreviousDay = { onIntent(HomeContract.Intent.PreviousDay) },
+                onNextDay = { onIntent(HomeContract.Intent.NextDay) },
                 modifier = modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 20.dp)

@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class CalendarResponseDto(
     val code: Int,
     val status: String,
-    val data: List<TimingsDataDto>
+    val data: Map<String, List<TimingsDataDto>>
 )

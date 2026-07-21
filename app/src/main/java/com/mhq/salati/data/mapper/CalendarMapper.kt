@@ -9,7 +9,7 @@ fun CalendarResponseDto.toEntityList(
     longitude: Double,
     method: Int
 ): List<PrayerTimesEntity> {
-    return data.map { dayData: TimingsDataDto ->
+    return data.values.flatten().map { dayData: TimingsDataDto ->
         val domainResult = dayData.toDomainResult()
         domainResult.toEntity(
             dateKey = dayData.date.gregorian.date,

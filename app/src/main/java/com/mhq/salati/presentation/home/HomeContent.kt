@@ -74,6 +74,7 @@ fun HomeContent(
             HomeSuccessContent(
                 prayerDate = state.date,
                 prayerTimings = state.timings,
+                onIntent = onIntent,
                 modifier = modifier
             )
         }

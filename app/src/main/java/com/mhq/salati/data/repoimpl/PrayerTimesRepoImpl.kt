@@ -9,37 +9,43 @@ import com.mhq.salati.domain.repo.PrayerTimesRepository
 import kotlin.math.abs
 
 class PrayerTimesRepoImpl(
-    private val apiService: AladhanApiService,
-    private val dao: PrayerTimesDao
+    private val aladhanApiService: AladhanApiService,
+    private val prayerTimesDao: PrayerTimesDao
 ) : PrayerTimesRepository {
 
     companion object {
-        // ~0.01 degrees is roughly 1km at the equator — generous enough to absorb
-        // GPS drift between fixes, tight enough to catch a real city/location change.
         private const val COORDINATE_TOLERANCE = 0.01
     }
 
-    override suspend fun getTimings(
+    override suspend fun getCachedTimings(
         date: String,
         latitude: Double,
         longitude: Double,
         method: Int
-    ): Result<PrayerTimesResult> {
-        val cached = dao.getByDate(date)
-
+    ): PrayerTimesResult? {
+        val cached = prayerTimesDao.getByDate(date)
         val isCacheValid = cached != null &&
                 cached.method == method &&
                 abs(cached.latitude - latitude) < COORDINATE_TOLERANCE &&
                 abs(cached.longitude - longitude) < COORDINATE_TOLERANCE
 
-        if (isCacheValid) {
-            return Result.success(cached.toDomain())
+        return if (isCacheValid) cached!!.toDomain() else null
+    }
+
+    override suspend fun getPrayerTimings(
+        date: String,
+        latitude: Double,
+        longitude: Double,
+        method: Int
+    ): Result<PrayerTimesResult> {
+        getCachedTimings(date, latitude, longitude, method)?.let {
+            return Result.success(it)
         }
 
         return try {
             val year = date.substringAfterLast("-").toInt()
 
-            val calendarResponse = apiService.getCalendar(
+            val calendarResponse = aladhanApiService.getCalendar(
                 year = year,
                 latitude = latitude,
                 longitude = longitude,
@@ -47,9 +53,9 @@ class PrayerTimesRepoImpl(
             )
 
             val entities = calendarResponse.toEntityList(latitude, longitude, method)
-            dao.insertAll(entities)
+            prayerTimesDao.insertAll(entities)
 
-            val todayEntity = dao.getByDate(date)
+            val todayEntity = prayerTimesDao.getByDate(date)
                 ?: return Result.failure(
                     IllegalStateException("Requested date not found in fetched calendar")
                 )

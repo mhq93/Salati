@@ -4,7 +4,7 @@ import com.mhq.salati.domain.model.prayers.PrayerTimesResult
 import com.mhq.salati.domain.repo.PrayerTimesRepository
 import javax.inject.Inject
 
-class GetPrayerTimesUseCase @Inject constructor(
+class GetCachedPrayerTimesUseCase @Inject constructor(
     private val prayerTimesRepository: PrayerTimesRepository
 ) {
     suspend operator fun invoke(
@@ -12,12 +12,7 @@ class GetPrayerTimesUseCase @Inject constructor(
         latitude: Double,
         longitude: Double,
         method: Int = 5
-    ): Result<PrayerTimesResult> {
-        return prayerTimesRepository.getPrayerTimings(
-            date,
-            latitude,
-            longitude,
-            method
-        )
+    ): PrayerTimesResult? {
+        return prayerTimesRepository.getCachedTimings(date, latitude, longitude, method)
     }
 }

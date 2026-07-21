@@ -17,6 +17,8 @@ class HomeContract {
     sealed interface Intent {
         data object LoadPrayerTimes : Intent
         data object Retry : Intent
+        data object PreviousDay : Intent
+        data object NextDay : Intent
         data object LocationPermissionGranted : Intent
         data object AccessAppSettings : Intent
         data object AccessDeviceLocationSettings : Intent
