@@ -121,7 +121,10 @@ class HomeViewModel @Inject constructor(
             }
 
             try {
-                val (latitude, longitude) = locationProvider.getCurrentLocation()
+                val location = locationProvider.getCurrentLocation()
+                val latitude = location.latitude
+                val longitude = location.longitude
+                //val (latitude, longitude) = locationProvider.getCurrentLocation()
 
                 val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
                 if (cached != null) {

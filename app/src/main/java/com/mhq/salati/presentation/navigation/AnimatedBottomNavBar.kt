@@ -35,12 +35,13 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.presentation.theme.AccentOrange
-import com.mhq.salati.presentation.theme.HeaderGreenDark
 import com.mhq.salati.presentation.theme.HeaderGreenLight
+import com.mhq.salati.presentation.theme.SalatiTheme
 
 @Composable
 fun AnimatedBottomNavBar(
@@ -49,9 +50,12 @@ fun AnimatedBottomNavBar(
     onItemSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var barWidthPx by remember { mutableIntStateOf(0) }
-    val density = LocalDensity.current
+
     val itemCount = items.size
+    val density = LocalDensity.current
+    var barWidthPx by remember { mutableIntStateOf(0) }
+
+
     val selectedIndex = items.indexOfFirst {
         it.route == selectedRoute
     }.coerceAtLeast(0)
@@ -68,9 +72,13 @@ fun AnimatedBottomNavBar(
         label = "notchCenter"
     )
 
+    //val barHeight = 88.dp
+    //val notchRadius = 34.dp
+    //val bubbleSize = 52.dp
+
     val barHeight = 88.dp
-    val notchRadius = 34.dp
-    val bubbleSize = 52.dp
+    val notchRadius = 32.dp
+    val bubbleSize = 56.dp
 
     Box(
         modifier = modifier
@@ -84,7 +92,8 @@ fun AnimatedBottomNavBar(
                 .onGloballyPositioned { barWidthPx = it.size.width }
         ) {
             val notchRadiusPx = notchRadius.toPx()
-            val cornerRadiusPx = 28.dp.toPx()
+            val cornerRadiusPx = 24.dp.toPx()
+            //val cornerRadiusPx = 28.dp.toPx()
 
             val path = Path().apply {
                 val w = size.width
@@ -126,7 +135,8 @@ fun AnimatedBottomNavBar(
 
         val clampedCenterPx = if (barWidthPx > 0) {
             val notchRadiusPx = with(density) { (notchRadius * 1.6f).toPx() }
-            val cornerRadiusPx = with(density) { 28.dp.toPx() }
+            val cornerRadiusPx = with(density) { 24.dp.toPx() }
+            //val cornerRadiusPx = with(density) { 28.dp.toPx() }
             animatedCenterPx.coerceIn(
                 notchRadiusPx + cornerRadiusPx,
                 barWidthPx - notchRadiusPx - cornerRadiusPx
@@ -155,7 +165,7 @@ fun AnimatedBottomNavBar(
                 imageVector = items[selectedIndex].icon,
                 contentDescription = items[selectedIndex].label,
                 tint = Color.White,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(24.dp)//22
             )
         }
 
@@ -163,7 +173,7 @@ fun AnimatedBottomNavBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(barHeight)
-                .padding(top = 28.dp),
+                .padding(top = 32.dp),//28
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Top
         ) {
@@ -184,11 +194,11 @@ fun AnimatedBottomNavBar(
                             imageVector = item.icon,
                             contentDescription = item.label,
                             tint = Color.White.copy(alpha = 0.6f),
-                            modifier = Modifier.size(22.dp)
+                            modifier = Modifier.size(24.dp)//22
                         )
                         Spacer(Modifier.height(4.dp))
                     } else {
-                        Spacer(Modifier.height(26.dp))
+                        Spacer(Modifier.height(24.dp))//26
                     }
                     Text(
                         text = item.label,
@@ -199,5 +209,17 @@ fun AnimatedBottomNavBar(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun AnimatedBottomNavBarPreview() {
+    SalatiTheme() {
+        AnimatedBottomNavBar(
+            items = emptyList(),
+            selectedRoute = "",
+            onItemSelected = {}
+        )
     }
 }

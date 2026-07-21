@@ -12,10 +12,12 @@ object KtorClient {
     val instance: HttpClient by lazy {
         HttpClient(CIO) {
             install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                    isLenient = true
-                })
+                json(
+                    Json {
+                        ignoreUnknownKeys = true
+                        isLenient = true
+                    }
+                )
             }
             install(Logging) {
                 level = LogLevel.INFO

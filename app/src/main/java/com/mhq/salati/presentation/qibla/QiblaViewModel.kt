@@ -85,7 +85,10 @@ class QiblaViewModel @Inject constructor(
             }
 
             try {
-                val (latitude, longitude) = locationProvider.getCurrentLocation()
+                val location = locationProvider.getCurrentLocation()
+                val latitude = location.latitude
+                val longitude = location.longitude
+                //val (latitude, longitude) = locationProvider.getCurrentLocation()
                 val bearing = getQiblaBearingUseCase(latitude, longitude)
 
                 _state.value = _state.value.copy(

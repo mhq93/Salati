@@ -3,6 +3,7 @@ package com.mhq.salati.data.alarms
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import androidx.core.location.component1
 import com.mhq.salati.data.location.LocationProvider
 import com.mhq.salati.domain.repo.alarms.MutedPrayersRepository
 import com.mhq.salati.domain.repo.prayers.PrayerTimesRepository
@@ -37,8 +38,12 @@ class BootReceiver : BroadcastReceiver() {
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
+                val location = locationProvider.getCurrentLocation()
+                val latitude = location.latitude
+                val longitude = location.longitude
+
                 val today = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Date())
-                val (latitude, longitude) = locationProvider.getCurrentLocation()
+                //val (latitude, longitude) = locationProvider.getCurrentLocation()
 
                 val cached = prayerTimesRepository.getCachedTimings(today, latitude, longitude)
                 val mutedPrayers = mutedPrayersRepository.getMutedPrayers()
