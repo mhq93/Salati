@@ -21,6 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.presentation.home.screens.HomeAwaitingLocationPermissions
+import com.mhq.salati.presentation.home.screens.HomeLoadingContent
 import com.mhq.salati.presentation.qibla.components.CalibrationBanner
 import com.mhq.salati.presentation.qibla.components.LocationPill
 import com.mhq.salati.presentation.qibla.components.RotatingCompassDial
