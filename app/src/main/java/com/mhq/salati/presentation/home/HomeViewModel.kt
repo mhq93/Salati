@@ -21,10 +21,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -115,7 +117,7 @@ class HomeViewModel @Inject constructor(
     private fun loadPrayerTimes() {
         viewModelScope.launch {
             permissionDelegate.reset()
-            _state.value = _state.value.copy(errorMessage = null)
+            _state.value = _state.value.copy(errorMessage = null,  isLoading = true)
 
             val today =
                 SimpleDateFormat("dd-MM-yyyy", Locale.US)
@@ -153,11 +155,13 @@ class HomeViewModel @Inject constructor(
 
                 _state.value = _state.value.copy(isLoading = true)
 
-                val result = getPrayerTimesUseCase(
-                    date = today,
-                    latitude = latitude,
-                    longitude = longitude
-                )
+                val result = withTimeoutOrNull(10_000L.milliseconds) {
+                    getPrayerTimesUseCase(
+                        date = today,
+                        latitude = latitude,
+                        longitude = longitude
+                    )
+                } ?: Result.failure(Exception("Request timed out. Check your connection."))
 
                 result.fold(
                     onSuccess = { prayerTimesResult ->
@@ -183,71 +187,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
-//    private fun loadPrayerTimes() {
-//        viewModelScope.launch {
-//            permissionDelegate.reset()
-//            _state.value = _state.value.copy(errorMessage = null)
-//
-//            val today = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(currentDate.time)
-//
-//            if (!locationProvider.isLocationEnabled()) {
-//                permissionDelegate.markServicesDisabled()
-//                _state.value = _state.value.copy(
-//                    isLoading = false,
-//                    errorMessage = "Location services are turned off. Please enable them."
-//                )
-//                return@launch
-//            }
-//
-//            try {
-//                val location = locationProvider.getCurrentLocation()
-//                val latitude = location.latitude
-//                val longitude = location.longitude
-//                //val (latitude, longitude) = locationProvider.getCurrentLocation()
-//
-//                val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
-//                if (cached != null) {
-//                    _state.value = _state.value.copy(
-//                        isLoading = false,
-//                        timings = cached.timings,
-//                        date = cached.date
-//                    )
-//                    return@launch
-//                }
-//
-//                _state.value = _state.value.copy(isLoading = true)
-//
-//                val result = getPrayerTimesUseCase(
-//                    date = today,
-//                    latitude = latitude,
-//                    longitude = longitude
-//                )
-//
-//                result.fold(
-//                    onSuccess = { prayerTimesResult ->
-//                        _state.value = _state.value.copy(
-//                            isLoading = false,
-//                            timings = prayerTimesResult.timings,
-//                            date = prayerTimesResult.date
-//                        )
-//                    },
-//                    onFailure = { throwable ->
-//                        val message = throwable.message ?: "Something went wrong"
-//                        _state.value = _state.value.copy(
-//                            isLoading = false,
-//                            errorMessage = message
-//                        )
-//                        _effect.emit(HomeContract.Effect.ShowError(message))
-//                    }
-//                )
-//            } catch (e: Exception) {
-//                val message = "Failed to get location"
-//                _state.value = _state.value.copy(isLoading = false, errorMessage = message)
-//                _effect.emit(HomeContract.Effect.ShowError(message))
-//            }
-//        }
-//    }
 
     private suspend fun rescheduleAlarmsIfLoaded() {
         val timings = _state.value.timings ?: return
