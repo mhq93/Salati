@@ -83,12 +83,12 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeContract.Intent.LocationPermissionGranted -> {
-                permissionDelegate.onPermissionGranted()
+                viewModelScope.launch { permissionDelegate.onPermissionGranted() }
                 loadPrayerTimes()
             }
 
             is HomeContract.Intent.LocationPermissionDenied -> {
-                permissionDelegate.onPermissionDenied(intent.permanentlyDenied)
+                viewModelScope.launch { permissionDelegate.onPermissionDenied(intent.permanentlyDenied) }
                 _state.value = _state.value.copy(
                     errorMessage = if (intent.permanentlyDenied) {
                         "Location permission permanently denied. Please enable it in Settings."
@@ -130,7 +130,7 @@ class HomeViewModel @Inject constructor(
     private fun loadPrayerTimes() {
         viewModelScope.launch {
             permissionDelegate.reset()
-            _state.value = _state.value.copy(errorMessage = null, isLoading = true)
+            _state.value = _state.value.copy(errorMessage = null)
 
             val today = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(currentDate.time)
 
@@ -140,12 +140,18 @@ class HomeViewModel @Inject constructor(
                 val location = if (savedLocation != null) {
                     savedLocation
                 } else {
+                    _state.value = _state.value.copy(isLoading = true)
                     if (!locationProvider.isLocationEnabled()) {
                         permissionDelegate.markServicesDisabled()
                         _state.value = _state.value.copy(
                             isLoading = false,
                             errorMessage = "Location services are turned off. Please, enable them."
                         )
+                        return@launch
+                    }
+                    if (!permissionChecker.hasLocationPermission()) {
+                        permissionDelegate.requirePermission()
+                        _state.value = _state.value.copy(isLoading = false)
                         return@launch
                     }
                     fetchAndSaveLocationUseCase()
@@ -164,7 +170,9 @@ class HomeViewModel @Inject constructor(
                     return@launch
                 }
 
-                val result = withTimeoutOrNull(15_000L.milliseconds) {
+                _state.value = _state.value.copy(isLoading = true)
+
+                val result = withTimeoutOrNull(5_000L.milliseconds) {
                     getPrayerTimesUseCase(
                         date = today,
                         latitude = latitude,
@@ -189,6 +197,9 @@ class HomeViewModel @Inject constructor(
                         _effect.emit(HomeContract.Effect.ShowError(message))
                     }
                 )
+            } catch (e: SecurityException) {
+                permissionDelegate.requirePermission()
+                _state.value = _state.value.copy(isLoading = false, errorMessage = null)
             } catch (e: Exception) {
                 val message = "Failed to get location."
                 _state.value = _state.value.copy(isLoading = false, errorMessage = message)

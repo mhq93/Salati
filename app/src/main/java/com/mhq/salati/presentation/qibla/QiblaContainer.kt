@@ -41,6 +41,9 @@ fun QiblaContainer(
                 is LocationPermissionEffect.RequestPermission -> {
                     permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                 }
+                is LocationPermissionEffect.PermissionResolved -> {
+                    // no-op here — only Home needs this to sequence the notification prompt
+                }
                 is LocationPermissionEffect.NavigateToAppSettings -> {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                         data = Uri.fromParts("package", context.packageName, null)

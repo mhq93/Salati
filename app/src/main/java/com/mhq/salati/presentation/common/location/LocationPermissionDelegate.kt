@@ -20,16 +20,19 @@ class LocationPermissionDelegate {
         _effect.emit(LocationPermissionEffect.RequestPermission)
     }
 
-    fun onPermissionGranted() {
+    suspend fun onPermissionGranted() {
         _state.value = LocationPermissionState(required = false)
+        _effect.emit(LocationPermissionEffect.PermissionResolved)
     }
 
-    fun markServicesDisabled() {
+    suspend fun markServicesDisabled() {
         _state.value = _state.value.copy(required = false, servicesDisabled = true)
+        _effect.emit(LocationPermissionEffect.PermissionResolved)
     }
 
-    fun onPermissionDenied(permanentlyDenied: Boolean) {
+    suspend fun onPermissionDenied(permanentlyDenied: Boolean) {
         _state.value = LocationPermissionState(permanentlyDenied = permanentlyDenied)
+        _effect.emit(LocationPermissionEffect.PermissionResolved)
     }
 
     fun reset() {

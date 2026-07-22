@@ -17,7 +17,7 @@ class LocationRepositoryImpl @Inject constructor(
     override val savedLocation: Flow<SavedLocation?> = locationDataStore.savedLocation
 
     override suspend fun fetchAndSaveLocation(): SavedLocation {
-        val location = withTimeout(10_000L.milliseconds) {
+        val location = withTimeout(5_000L.milliseconds) {
             locationProvider.getCurrentLocation()
         }
         locationDataStore.save(location.latitude, location.longitude)

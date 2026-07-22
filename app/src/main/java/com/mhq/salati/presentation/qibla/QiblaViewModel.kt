@@ -20,10 +20,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class QiblaViewModel @Inject constructor(
-    private val locationProvider: LocationProvider,
-    private val compassProvider: CompassProvider,
     private val getQiblaBearingUseCase: GetQiblaBearingUseCase,
-    private val permissionChecker: PermissionChecker
+    private val locationProvider: LocationProvider,
+    private val permissionChecker: PermissionChecker,
+    private val compassProvider: CompassProvider
 ) : ViewModel() {
 
     private val permissionDelegate = LocationPermissionDelegate()
@@ -48,11 +48,11 @@ class QiblaViewModel @Inject constructor(
             is QiblaContract.Intent.LoadQibla -> checkPermissionAndLoad()
             is QiblaContract.Intent.Retry -> checkPermissionAndLoad()
             is QiblaContract.Intent.LocationPermissionGranted -> {
-                permissionDelegate.onPermissionGranted()
+                viewModelScope.launch { permissionDelegate.onPermissionGranted() }
                 loadQibla()
             }
             is QiblaContract.Intent.LocationPermissionDenied -> {
-                permissionDelegate.onPermissionDenied(intent.permanentlyDenied)
+                viewModelScope.launch { permissionDelegate.onPermissionDenied(intent.permanentlyDenied) }
                 _state.value = _state.value.copy(
                     errorMessage = if (intent.permanentlyDenied) {
                         "Location permission permanently denied. Please enable it in Settings."

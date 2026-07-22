@@ -36,15 +36,14 @@ fun HomeContainer(
 
     val state by homeViewModel.state.collectAsStateWithLifecycle()
     val gpsEnabled by rememberGpsEnabled()
+    var locationFlowResolved by remember { mutableStateOf(false) }
 
     val locationPermissionLauncher = rememberLocationPermissionLauncher(
         onGranted = {
             homeViewModel.onIntent(HomeContract.Intent.LocationPermissionGranted)
         },
         onDenied = { permanentlyDenied ->
-            homeViewModel.onIntent(
-                HomeContract.Intent.LocationPermissionDenied(permanentlyDenied)
-            )
+            homeViewModel.onIntent(HomeContract.Intent.LocationPermissionDenied(permanentlyDenied))
         }
     )
 
@@ -58,24 +57,19 @@ fun HomeContainer(
         homeViewModel.permissionEffect.collect { effect ->
             when (effect) {
                 is LocationPermissionEffect.RequestPermission -> {
-                    locationPermissionLauncher.launch(
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    )
+                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                }
+                is LocationPermissionEffect.PermissionResolved -> {
+                    locationFlowResolved = true
                 }
                 is LocationPermissionEffect.NavigateToAppSettings -> {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts(
-                            "package",
-                            context.packageName,
-                            null
-                        )
+                        data = Uri.fromParts("package", context.packageName, null)
                     }
                     context.startActivity(intent)
                 }
                 is LocationPermissionEffect.NavigateToLocationSettings -> {
-                    context.startActivity(
-                        Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                    )
+                    context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                 }
             }
         }
@@ -84,8 +78,7 @@ fun HomeContainer(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME &&
-                (state.locationPermission.permanentlyDenied
-                        || state.locationPermission.servicesDisabled)
+                (state.locationPermission.permanentlyDenied || state.locationPermission.servicesDisabled)
             ) {
                 homeViewModel.onIntent(HomeContract.Intent.Retry)
             }
@@ -105,31 +98,19 @@ fun HomeContainer(
         onResult = { /* user returned from settings; re-check on next schedule attempt */ }
     )
 
-    LaunchedEffect(Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    LaunchedEffect(locationFlowResolved) {
+        if (locationFlowResolved && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val alarmManager = context.getSystemService(AlarmManager::class.java)
             if (!alarmManager.canScheduleExactAlarms()) {
                 val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                    data = Uri.fromParts(
-                        "package",
-                        context.packageName,
-                        null
-                    )
+                    data = Uri.fromParts("package", context.packageName, null)
                 }
                 exactAlarmLauncher.launch(intent)
             }
         }
     }
 
-    //Handling notifications... request once the location permission flow has settled
-    var locationFlowResolved by remember { mutableStateOf(false) }
-
-    LaunchedEffect(state.locationPermission.required) {
-        if (!state.locationPermission.required) {
-            locationFlowResolved = true
-        }
-    }
-
+    //Handling notifications... only once the location permission decision is fully settled
     LaunchedEffect(locationFlowResolved) {
         if (locationFlowResolved && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val granted = ContextCompat.checkSelfPermission(
@@ -137,9 +118,7 @@ fun HomeContainer(
             ) == PackageManager.PERMISSION_GRANTED
 
             if (!granted) {
-                notificationPermissionLauncher.launch(
-                    Manifest.permission.POST_NOTIFICATIONS
-                )
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
     }
