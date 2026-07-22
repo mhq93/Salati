@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.data.location.LocationProvider
 import com.mhq.salati.data.sensor.CompassProvider
+import com.mhq.salati.domain.permissions.PermissionChecker
 import com.mhq.salati.domain.usecases.qibla.GetQiblaBearingUseCase
 import com.mhq.salati.presentation.common.location.LocationPermissionDelegate
 import com.mhq.salati.presentation.common.location.LocationPermissionEffect
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class QiblaViewModel @Inject constructor(
     private val locationProvider: LocationProvider,
     private val compassProvider: CompassProvider,
-    private val getQiblaBearingUseCase: GetQiblaBearingUseCase
+    private val getQiblaBearingUseCase: GetQiblaBearingUseCase,
+    private val permissionChecker: PermissionChecker
 ) : ViewModel() {
 
     private val permissionDelegate = LocationPermissionDelegate()
@@ -45,7 +47,10 @@ class QiblaViewModel @Inject constructor(
         when (intent) {
             is QiblaContract.Intent.LoadQibla -> checkPermissionAndLoad()
             is QiblaContract.Intent.Retry -> checkPermissionAndLoad()
-            is QiblaContract.Intent.LocationPermissionGranted -> loadQibla()
+            is QiblaContract.Intent.LocationPermissionGranted -> {
+                permissionDelegate.onPermissionGranted()
+                loadQibla()
+            }
             is QiblaContract.Intent.LocationPermissionDenied -> {
                 permissionDelegate.onPermissionDenied(intent.permanentlyDenied)
                 _state.value = _state.value.copy(
@@ -66,8 +71,15 @@ class QiblaViewModel @Inject constructor(
     }
 
     private fun checkPermissionAndLoad() {
-        permissionDelegate.requirePermission()
         _state.value = _state.value.copy(errorMessage = null)
+        viewModelScope.launch {
+            if (permissionChecker.hasLocationPermission()) {
+                permissionDelegate.onPermissionGranted()
+                loadQibla()
+            } else {
+                permissionDelegate.requirePermission()
+            }
+        }
     }
 
     private fun loadQibla() {
@@ -88,7 +100,6 @@ class QiblaViewModel @Inject constructor(
                 val location = locationProvider.getCurrentLocation()
                 val latitude = location.latitude
                 val longitude = location.longitude
-                //val (latitude, longitude) = locationProvider.getCurrentLocation()
                 val bearing = getQiblaBearingUseCase(latitude, longitude)
 
                 _state.value = _state.value.copy(

@@ -15,8 +15,13 @@ class LocationPermissionDelegate {
     private val _effect = MutableSharedFlow<LocationPermissionEffect>()
     val effect: SharedFlow<LocationPermissionEffect> = _effect.asSharedFlow()
 
-    fun requirePermission() {
+    suspend fun requirePermission() {
         _state.value = LocationPermissionState(required = true)
+        _effect.emit(LocationPermissionEffect.RequestPermission)
+    }
+
+    fun onPermissionGranted() {
+        _state.value = LocationPermissionState(required = false)
     }
 
     fun markServicesDisabled() {

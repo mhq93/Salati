@@ -3,6 +3,7 @@ package com.mhq.salati.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.data.location.LocationProvider
+import com.mhq.salati.domain.permissions.PermissionChecker
 import com.mhq.salati.domain.repo.alarms.MutedPrayersRepository
 import com.mhq.salati.domain.usecases.alarms.ScheduleDailyPrayerAlarmsUseCase
 import com.mhq.salati.domain.usecases.alarms.ToggleMutePrayerUseCase
@@ -37,7 +38,8 @@ class HomeViewModel @Inject constructor(
     private val scheduleDailyPrayerAlarmsUseCase: ScheduleDailyPrayerAlarmsUseCase,
     private val getSavedLocationUseCase: GetSavedLocationUseCase,
     private val fetchAndSaveLocationUseCase: FetchAndSaveLocationUseCase,
-    private val locationProvider: LocationProvider
+    private val locationProvider: LocationProvider,
+    private val permissionChecker: PermissionChecker
 ) : ViewModel() {
 
     private val permissionDelegate = LocationPermissionDelegate()
@@ -80,7 +82,11 @@ class HomeViewModel @Inject constructor(
                 loadPrayerTimes()
             }
 
-            is HomeContract.Intent.LocationPermissionGranted -> loadPrayerTimes()
+            is HomeContract.Intent.LocationPermissionGranted -> {
+                permissionDelegate.onPermissionGranted()
+                loadPrayerTimes()
+            }
+
             is HomeContract.Intent.LocationPermissionDenied -> {
                 permissionDelegate.onPermissionDenied(intent.permanentlyDenied)
                 _state.value = _state.value.copy(
@@ -110,18 +116,23 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun checkPermissionAndLoad() {
-        permissionDelegate.requirePermission()
         _state.value = _state.value.copy(errorMessage = null)
+        viewModelScope.launch {
+            if (permissionChecker.hasLocationPermission()) {
+                permissionDelegate.onPermissionGranted()
+                loadPrayerTimes()
+            } else {
+                permissionDelegate.requirePermission()
+            }
+        }
     }
 
     private fun loadPrayerTimes() {
         viewModelScope.launch {
             permissionDelegate.reset()
-            _state.value = _state.value.copy(errorMessage = null,  isLoading = true)
+            _state.value = _state.value.copy(errorMessage = null, isLoading = true)
 
-            val today =
-                SimpleDateFormat("dd-MM-yyyy", Locale.US)
-                    .format(currentDate.time)
+            val today = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(currentDate.time)
 
             try {
                 val savedLocation = getSavedLocationUseCase().first()
@@ -153,9 +164,7 @@ class HomeViewModel @Inject constructor(
                     return@launch
                 }
 
-                _state.value = _state.value.copy(isLoading = true)
-
-                val result = withTimeoutOrNull(10_000L.milliseconds) {
+                val result = withTimeoutOrNull(15_000L.milliseconds) {
                     getPrayerTimesUseCase(
                         date = today,
                         latitude = latitude,

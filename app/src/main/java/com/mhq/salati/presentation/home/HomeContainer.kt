@@ -13,17 +13,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mhq.salati.presentation.common.alarms.rememberExactAlarmPermissionLauncher
-import com.mhq.salati.presentation.common.location.HandleLocationPermissionEffects
+import com.mhq.salati.presentation.common.location.LocationPermissionEffect
 import com.mhq.salati.presentation.common.location.rememberGpsEnabled
 import com.mhq.salati.presentation.common.location.rememberLocationPermissionLauncher
 import com.mhq.salati.presentation.common.notifications.rememberNotificationPermissionLauncher
@@ -36,66 +35,68 @@ fun HomeContainer(
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val state by homeViewModel.state.collectAsStateWithLifecycle()
-    val currentState by rememberUpdatedState(state)
-    var locationRequestResolved by remember { mutableStateOf(false) }
     val gpsEnabled by rememberGpsEnabled()
-
-    //Handling location permissions...
-    HandleLocationPermissionEffects(homeViewModel.permissionEffect)
 
     val locationPermissionLauncher = rememberLocationPermissionLauncher(
         onGranted = {
             homeViewModel.onIntent(HomeContract.Intent.LocationPermissionGranted)
-            locationRequestResolved = true
         },
         onDenied = { permanentlyDenied ->
-            homeViewModel.onIntent(HomeContract.Intent.LocationPermissionDenied(permanentlyDenied))
-            locationRequestResolved = true
+            homeViewModel.onIntent(
+                HomeContract.Intent.LocationPermissionDenied(permanentlyDenied)
+            )
         }
     )
 
+    val notificationPermissionLauncher = rememberNotificationPermissionLauncher(
+        onGranted = { /* proceed, e.g. mark alarms enabled */ },
+        onDenied = { /* show rationale or leave notifications off */ }
+    )
+
+    // Reacts to one-shot decisions made by the ViewModel — never decides anything itself
+    LaunchedEffect(Unit) {
+        homeViewModel.permissionEffect.collect { effect ->
+            when (effect) {
+                is LocationPermissionEffect.RequestPermission -> {
+                    locationPermissionLauncher.launch(
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    )
+                }
+                is LocationPermissionEffect.NavigateToAppSettings -> {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts(
+                            "package",
+                            context.packageName,
+                            null
+                        )
+                    }
+                    context.startActivity(intent)
+                }
+                is LocationPermissionEffect.NavigateToLocationSettings -> {
+                    context.startActivity(
+                        Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    )
+                }
+            }
+        }
+    }
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                when {
-                    currentState.locationPermission.servicesDisabled -> {
-                        homeViewModel.onIntent(HomeContract.Intent.LocationPermissionGranted)
-                    }
-                    currentState.locationPermission.permanentlyDenied -> {
-                        val hasPermission = ContextCompat.checkSelfPermission(
-                            context, Manifest.permission.ACCESS_FINE_LOCATION
-                        ) == PackageManager.PERMISSION_GRANTED
-
-                        if (hasPermission) {
-                            homeViewModel.onIntent(HomeContract.Intent.LocationPermissionGranted)
-                        }
-                        // else: still denied, do nothing, screen stays as-is
-                    }
-                }
+            if (event == Lifecycle.Event.ON_RESUME &&
+                (state.locationPermission.permanentlyDenied
+                        || state.locationPermission.servicesDisabled)
+            ) {
+                homeViewModel.onIntent(HomeContract.Intent.Retry)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    LaunchedEffect(state.locationPermission.required) {
-        if (state.locationPermission.required) {
-            val hasPermission = ContextCompat.checkSelfPermission(
-                context, Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-
-            if (hasPermission) {
-                homeViewModel.onIntent(HomeContract.Intent.LocationPermissionGranted)
-                locationRequestResolved = true
-            } else {
-                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-            }
-        }
-    }
-
     LaunchedEffect(gpsEnabled) {
         if (gpsEnabled && state.locationPermission.servicesDisabled) {
-            homeViewModel.onIntent(HomeContract.Intent.LocationPermissionGranted)
+            homeViewModel.onIntent(HomeContract.Intent.Retry)
         }
     }
 
@@ -120,20 +121,25 @@ fun HomeContainer(
         }
     }
 
-    //Handling notifications...
-    val notificationPermissionLauncher = rememberNotificationPermissionLauncher(
-        onGranted = { /* proceed, e.g. mark alarms enabled */ },
-        onDenied = { /* show rationale or leave notifications off */ }
-    )
+    //Handling notifications... request once the location permission flow has settled
+    var locationFlowResolved by remember { mutableStateOf(false) }
 
-    LaunchedEffect(locationRequestResolved) {
-        if (locationRequestResolved && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    LaunchedEffect(state.locationPermission.required) {
+        if (!state.locationPermission.required) {
+            locationFlowResolved = true
+        }
+    }
+
+    LaunchedEffect(locationFlowResolved) {
+        if (locationFlowResolved && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val granted = ContextCompat.checkSelfPermission(
                 context, Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
 
             if (!granted) {
-                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                notificationPermissionLauncher.launch(
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
             }
         }
     }

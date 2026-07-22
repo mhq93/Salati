@@ -1,6 +1,7 @@
 package com.mhq.salati.presentation.common.location
 
-sealed interface LocationPermissionEffect {
-    data object NavigateToAppSettings : LocationPermissionEffect
-    data object NavigateToLocationSettings : LocationPermissionEffect
+sealed class LocationPermissionEffect {
+    object RequestPermission : LocationPermissionEffect()
+    object NavigateToAppSettings : LocationPermissionEffect()
+    object NavigateToLocationSettings : LocationPermissionEffect()
 }

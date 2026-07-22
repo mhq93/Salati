@@ -1,20 +1,20 @@
 package com.mhq.salati.presentation.qibla
 
 import android.Manifest
-import android.content.pm.PackageManager
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mhq.salati.presentation.common.location.HandleLocationPermissionEffects
+import com.mhq.salati.presentation.common.location.LocationPermissionEffect
 import com.mhq.salati.presentation.common.location.rememberLocationPermissionLauncher
 
 @Composable
@@ -24,9 +24,6 @@ fun QiblaContainer(
     val state by qiblaViewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val currentState by rememberUpdatedState(state)
-
-    HandleLocationPermissionEffects(qiblaViewModel.permissionEffect)
 
     val permissionLauncher = rememberLocationPermissionLauncher(
         onGranted = { qiblaViewModel.onIntent(QiblaContract.Intent.LocationPermissionGranted) },
@@ -37,11 +34,30 @@ fun QiblaContainer(
         }
     )
 
+    // Reacts to one-shot decisions made by the ViewModel — never decides anything itself
+    LaunchedEffect(Unit) {
+        qiblaViewModel.permissionEffect.collect { effect ->
+            when (effect) {
+                is LocationPermissionEffect.RequestPermission -> {
+                    permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                }
+                is LocationPermissionEffect.NavigateToAppSettings -> {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                    }
+                    context.startActivity(intent)
+                }
+                is LocationPermissionEffect.NavigateToLocationSettings -> {
+                    context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+            }
+        }
+    }
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME &&
-                (currentState.locationPermission.permanentlyDenied
-                        || currentState.locationPermission.servicesDisabled)
+                (state.locationPermission.permanentlyDenied || state.locationPermission.servicesDisabled)
             ) {
                 qiblaViewModel.onIntent(QiblaContract.Intent.Retry)
             }
@@ -52,20 +68,6 @@ fun QiblaContainer(
 
     LaunchedEffect(Unit) {
         qiblaViewModel.onIntent(QiblaContract.Intent.LoadQibla)
-    }
-
-    LaunchedEffect(state.locationPermission.required) {
-        if (state.locationPermission.required) {
-            val hasPermission = ContextCompat.checkSelfPermission(
-                context, Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-
-            if (hasPermission) {
-                qiblaViewModel.onIntent(QiblaContract.Intent.LocationPermissionGranted)
-            } else {
-                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-            }
-        }
     }
 
     QiblaContent(
