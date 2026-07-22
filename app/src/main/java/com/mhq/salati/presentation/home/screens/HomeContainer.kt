@@ -1,4 +1,4 @@
-package com.mhq.salati.presentation.home
+package com.mhq.salati.presentation.home.screens
 
 import android.Manifest
 import android.app.AlarmManager
@@ -26,6 +26,8 @@ import com.mhq.salati.presentation.common.location.LocationPermissionEffect
 import com.mhq.salati.presentation.common.location.rememberGpsEnabled
 import com.mhq.salati.presentation.common.location.rememberLocationPermissionLauncher
 import com.mhq.salati.presentation.common.notifications.rememberNotificationPermissionLauncher
+import com.mhq.salati.presentation.home.HomeContract
+import com.mhq.salati.presentation.home.HomeViewModel
 
 @Composable
 fun HomeContainer(

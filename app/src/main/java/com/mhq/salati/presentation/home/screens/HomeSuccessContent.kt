@@ -1,4 +1,4 @@
-package com.mhq.salati.presentation.home
+package com.mhq.salati.presentation.home.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.domain.model.prayers.PrayerDate
 import com.mhq.salati.domain.model.prayers.PrayerTimings
+import com.mhq.salati.presentation.home.HomeContract
 import com.mhq.salati.presentation.home.components.DateBanner
 import com.mhq.salati.presentation.home.components.PrayerArcGauge
 import com.mhq.salati.presentation.home.components.PrayersList
