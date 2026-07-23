@@ -16,7 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mhq.salati.presentation.theme.SalatiTheme
 
 @Composable
 fun LocationPill(locationName: String) {
@@ -47,5 +49,15 @@ fun LocationPill(locationName: String) {
                 modifier = Modifier.size(18.dp)
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun LocationPillPreview() {
+    SalatiTheme() {
+        LocationPill(
+            locationName = "Alexandria, Egypt"
+        )
     }
 }
