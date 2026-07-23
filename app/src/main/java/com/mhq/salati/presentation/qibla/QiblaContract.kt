@@ -6,7 +6,7 @@ import com.mhq.salati.presentation.common.location.LocationPermissionState
 class QiblaContract {
 
     data class State(
-        val isLoading: Boolean = true,
+        val isLoading: Boolean = false,
         val qiblaBearing: Float? = null,
         val deviceHeading: Float = 0f,
         val compassAccuracy: CompassAccuracy = CompassAccuracy.HIGH,

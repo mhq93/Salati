@@ -17,7 +17,7 @@ import com.mhq.salati.presentation.home.screens.HomeContainer
 import com.mhq.salati.presentation.navigation.AnimatedBottomNavBar
 import com.mhq.salati.presentation.navigation.BottomNavItem
 import com.mhq.salati.presentation.navigation.Screen
-import com.mhq.salati.presentation.qibla.QiblaContainer
+import com.mhq.salati.presentation.qibla.screens.QiblaContainer
 import com.mhq.salati.presentation.settings.SettingsContainer
 
 @Composable

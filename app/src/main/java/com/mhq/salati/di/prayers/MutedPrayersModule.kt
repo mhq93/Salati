@@ -1,4 +1,4 @@
-package com.mhq.salati.di.alarms
+package com.mhq.salati.di.prayers
 
 import com.mhq.salati.data.repoimpl.alarms.MutedPrayersRepoImpl
 import com.mhq.salati.domain.repo.alarms.MutedPrayersRepository

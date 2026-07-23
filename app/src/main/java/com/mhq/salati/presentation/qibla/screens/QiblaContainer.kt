@@ -1,4 +1,4 @@
-package com.mhq.salati.presentation.qibla
+package com.mhq.salati.presentation.qibla.screens
 
 import android.Manifest
 import android.content.Intent
@@ -15,17 +15,21 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mhq.salati.presentation.common.location.LocationPermissionEffect
+import com.mhq.salati.presentation.common.location.rememberGpsEnabled
 import com.mhq.salati.presentation.common.location.rememberLocationPermissionLauncher
+import com.mhq.salati.presentation.qibla.QiblaContract
+import com.mhq.salati.presentation.qibla.QiblaViewModel
 
 @Composable
 fun QiblaContainer(
     qiblaViewModel: QiblaViewModel = hiltViewModel()
 ) {
-    val state by qiblaViewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val state by qiblaViewModel.state.collectAsStateWithLifecycle()
+    val gpsEnabled by rememberGpsEnabled()
 
-    val permissionLauncher = rememberLocationPermissionLauncher(
+    val locationPermissionLauncher = rememberLocationPermissionLauncher(
         onGranted = { qiblaViewModel.onIntent(QiblaContract.Intent.LocationPermissionGranted) },
         onDenied = { permanentlyDenied ->
             qiblaViewModel.onIntent(
@@ -39,19 +43,39 @@ fun QiblaContainer(
         qiblaViewModel.permissionEffect.collect { effect ->
             when (effect) {
                 is LocationPermissionEffect.RequestPermission -> {
-                    permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                 }
+
                 is LocationPermissionEffect.PermissionResolved -> {
                     // no-op here — only Home needs this to sequence the notification prompt
                 }
+
                 is LocationPermissionEffect.NavigateToAppSettings -> {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts("package", context.packageName, null)
+                        data = Uri.fromParts(
+                            "package",
+                            context.packageName,
+                            null
+                        )
                     }
                     context.startActivity(intent)
                 }
+
                 is LocationPermissionEffect.NavigateToLocationSettings -> {
-                    context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                    context.startActivity(
+                        Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    )
+                }
+            }
+        }
+    }
+
+    // Reacts to one-shot decisions made by the ViewModel — never decides anything itself
+    LaunchedEffect(Unit) {
+        qiblaViewModel.effect.collect { effect ->
+            when (effect) {
+                is QiblaContract.Effect.ShowError -> {
+                    // TODO: surface via snackbar/toast — same mechanism as Home
                 }
             }
         }
@@ -60,7 +84,8 @@ fun QiblaContainer(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME &&
-                (state.locationPermission.permanentlyDenied || state.locationPermission.servicesDisabled)
+                (state.locationPermission.permanentlyDenied
+                        || state.locationPermission.servicesDisabled)
             ) {
                 qiblaViewModel.onIntent(QiblaContract.Intent.Retry)
             }
@@ -71,6 +96,12 @@ fun QiblaContainer(
 
     LaunchedEffect(Unit) {
         qiblaViewModel.onIntent(QiblaContract.Intent.LoadQibla)
+    }
+
+    LaunchedEffect(gpsEnabled) {
+        if (gpsEnabled && state.locationPermission.servicesDisabled) {
+            qiblaViewModel.onIntent(QiblaContract.Intent.Retry)
+        }
     }
 
     QiblaContent(

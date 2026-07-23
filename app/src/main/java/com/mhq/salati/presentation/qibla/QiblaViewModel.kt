@@ -9,6 +9,7 @@ import com.mhq.salati.domain.usecases.qibla.GetQiblaBearingUseCase
 import com.mhq.salati.presentation.common.location.LocationPermissionDelegate
 import com.mhq.salati.presentation.common.location.LocationPermissionEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -16,7 +17,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class QiblaViewModel @Inject constructor(
@@ -35,6 +38,8 @@ class QiblaViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<QiblaContract.Effect>()
     val effect: SharedFlow<QiblaContract.Effect> = _effect.asSharedFlow()
 
+    private var loadJob: Job? = null
+
     init {
         viewModelScope.launch {
             permissionDelegate.state.collect { permissionState ->
@@ -51,6 +56,7 @@ class QiblaViewModel @Inject constructor(
                 viewModelScope.launch { permissionDelegate.onPermissionGranted() }
                 loadQibla()
             }
+
             is QiblaContract.Intent.LocationPermissionDenied -> {
                 viewModelScope.launch { permissionDelegate.onPermissionDenied(intent.permanentlyDenied) }
                 _state.value = _state.value.copy(
@@ -61,9 +67,11 @@ class QiblaViewModel @Inject constructor(
                     }
                 )
             }
+
             is QiblaContract.Intent.AccessAppSettings -> {
                 viewModelScope.launch { permissionDelegate.requestAppSettings() }
             }
+
             is QiblaContract.Intent.AccessDeviceLocationSettings -> {
                 viewModelScope.launch { permissionDelegate.requestLocationSettings() }
             }
@@ -83,24 +91,44 @@ class QiblaViewModel @Inject constructor(
     }
 
     private fun loadQibla() {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             permissionDelegate.reset()
-            _state.value = _state.value.copy(isLoading = true, errorMessage = null)
+            _state.value = _state.value.copy(
+                isLoading = true,
+                errorMessage = null,
+                sensorUnavailable = false
+            )
 
             if (!locationProvider.isLocationEnabled()) {
                 permissionDelegate.markServicesDisabled()
                 _state.value = _state.value.copy(
                     isLoading = false,
-                    errorMessage = "Location services are turned off. Please enable them."
+                    errorMessage = "Location services are turned off. Please, enable them."
                 )
                 return@launch
             }
 
             try {
-                val location = locationProvider.getCurrentLocation()
+                val location = withTimeoutOrNull(15_000L.milliseconds) {
+                    locationProvider.getCurrentLocation()
+                }
+
+                if (location == null) {
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        errorMessage = "Failed to get location"
+                    )
+                    _effect.emit(QiblaContract.Effect.ShowError("Failed to get location"))
+                    return@launch
+                }
+
                 val latitude = location.latitude
                 val longitude = location.longitude
-                val bearing = getQiblaBearingUseCase(latitude, longitude)
+                val bearing = getQiblaBearingUseCase(
+                    latitude,
+                    longitude
+                )
 
                 _state.value = _state.value.copy(
                     isLoading = false,
@@ -116,6 +144,7 @@ class QiblaViewModel @Inject constructor(
             } catch (e: Exception) {
                 val isSensorMissing = e.message?.contains("not available") == true
                 val message = e.message ?: "Failed to load Qibla direction"
+
                 _state.value = _state.value.copy(
                     isLoading = false,
                     errorMessage = message,

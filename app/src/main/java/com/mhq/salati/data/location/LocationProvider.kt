@@ -76,8 +76,9 @@ class LocationProvider(
 
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                val location = result.lastLocation
                 fusedLocationClient.removeLocationUpdates(this)
+                if (!cont.isActive) return
+                val location = result.lastLocation
                 if (location != null) cont.resume(location)
                 else cont.resumeWithException(IllegalStateException("LOCATION_UNAVAILABLE"))
             }
@@ -85,6 +86,7 @@ class LocationProvider(
             override fun onLocationAvailability(availability: LocationAvailability) {
                 if (!availability.isLocationAvailable) {
                     fusedLocationClient.removeLocationUpdates(this)
+                    if (!cont.isActive) return
                     cont.resumeWithException(IllegalStateException("LOCATION_UNAVAILABLE"))
                 }
             }
@@ -95,7 +97,9 @@ class LocationProvider(
             callback,
             Looper.getMainLooper()
         )
-            .addOnFailureListener { cont.resumeWithException(it) }
+            .addOnFailureListener {
+                if (cont.isActive) cont.resumeWithException(it)
+            }
 
         return callback
     }

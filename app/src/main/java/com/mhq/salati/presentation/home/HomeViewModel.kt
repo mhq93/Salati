@@ -14,6 +14,7 @@ import com.mhq.salati.domain.usecases.prayers.GetPrayerTimesUseCase
 import com.mhq.salati.presentation.common.location.LocationPermissionDelegate
 import com.mhq.salati.presentation.common.location.LocationPermissionEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -44,6 +45,7 @@ class HomeViewModel @Inject constructor(
 
     private val permissionDelegate = LocationPermissionDelegate()
     val permissionEffect: SharedFlow<LocationPermissionEffect> = permissionDelegate.effect
+    private var alarmAndNotificationPermissionsChecked = false
 
     private val _state = MutableStateFlow(HomeContract.State())
     val state: StateFlow<HomeContract.State> = _state.asStateFlow()
@@ -53,25 +55,49 @@ class HomeViewModel @Inject constructor(
 
     private var currentDate: Calendar = Calendar.getInstance()
 
+    private var loadJob: Job? = null
+
     init {
         viewModelScope.launch {
             permissionDelegate.state.collect { permissionState ->
-                _state.value = _state.value.copy(locationPermission = permissionState)
+                _state.value = _state.value.copy(
+                    locationPermission = permissionState
+                )
             }
         }
 
         viewModelScope.launch {
-            mutedPrayersRepository.observeMutedPrayers().collect { muted ->
-                _state.value = _state.value.copy(mutedPrayers = muted)
+            mutedPrayersRepository.observeMutedPrayers().collect { mutedPrayers ->
+                _state.value = _state.value.copy(
+                    mutedPrayers = mutedPrayers
+                )
                 rescheduleAlarmsIfLoaded()
+            }
+        }
+
+        // Reacts to the same PermissionResolved signal the Container used to key
+        // locationFlowResolved off of — now the ViewModel makes the decision and
+        // emits one-shot effects instead of the Container deciding directly.
+        viewModelScope.launch {
+            permissionDelegate.effect.collect { effect ->
+                if (effect is LocationPermissionEffect.PermissionResolved &&
+                    !alarmAndNotificationPermissionsChecked
+                ) {
+                    alarmAndNotificationPermissionsChecked = true
+                    checkExactAlarmAndNotificationPermissions()
+                }
             }
         }
     }
 
     fun onIntent(intent: HomeContract.Intent) {
         when (intent) {
-            is HomeContract.Intent.LoadPrayerTimes -> checkPermissionAndLoad()
-            is HomeContract.Intent.Retry -> checkPermissionAndLoad()
+            is HomeContract.Intent.LoadPrayerTimes ->
+                checkPermissionAndLoad()
+
+            is HomeContract.Intent.Retry ->
+                checkPermissionAndLoad()
+
             is HomeContract.Intent.PreviousDay -> {
                 currentDate.add(Calendar.DAY_OF_YEAR, -1)
                 loadPrayerTimes()
@@ -83,15 +109,19 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeContract.Intent.LocationPermissionGranted -> {
-                viewModelScope.launch { permissionDelegate.onPermissionGranted() }
+                viewModelScope.launch {
+                    permissionDelegate.onPermissionGranted()
+                }
                 loadPrayerTimes()
             }
 
             is HomeContract.Intent.LocationPermissionDenied -> {
-                viewModelScope.launch { permissionDelegate.onPermissionDenied(intent.permanentlyDenied) }
+                viewModelScope.launch {
+                    permissionDelegate.onPermissionDenied(intent.permanentlyDenied)
+                }
                 _state.value = _state.value.copy(
                     errorMessage = if (intent.permanentlyDenied) {
-                        "Location permission permanently denied. Please enable it in Settings."
+                        "Location permission permanently denied. Please, enable it via Settings."
                     } else {
                         "Location permission is required to show prayer times."
                     }
@@ -99,17 +129,24 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeContract.Intent.AccessAppSettings -> {
-                viewModelScope.launch { permissionDelegate.requestAppSettings() }
+                viewModelScope.launch {
+                    permissionDelegate.requestAppSettings()
+                }
             }
 
             is HomeContract.Intent.AccessDeviceLocationSettings -> {
-                viewModelScope.launch { permissionDelegate.requestLocationSettings() }
+                viewModelScope.launch {
+                    permissionDelegate.requestLocationSettings()
+                }
             }
 
             is HomeContract.Intent.ToggleMute -> {
                 viewModelScope.launch {
                     val currentlyMuted = intent.prayerName in _state.value.mutedPrayers
-                    toggleMutePrayerUseCase(intent.prayerName, !currentlyMuted)
+                    toggleMutePrayerUseCase(
+                        intent.prayerName,
+                        !currentlyMuted
+                    )
                 }
             }
         }
@@ -127,12 +164,24 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private suspend fun checkExactAlarmAndNotificationPermissions() {
+        if (!permissionChecker.canScheduleExactAlarms()) {
+            _effect.emit(HomeContract.Effect.RequestExactAlarmPermission)
+        }
+        if (!permissionChecker.hasNotificationPermission()) {
+            _effect.emit(HomeContract.Effect.RequestNotificationPermission)
+        }
+    }
+
     private fun loadPrayerTimes() {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             permissionDelegate.reset()
             _state.value = _state.value.copy(errorMessage = null)
 
-            val today = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(currentDate.time)
+            val today =
+                SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                    .format(currentDate.time)
 
             try {
                 val savedLocation = getSavedLocationUseCase().first()
@@ -141,6 +190,7 @@ class HomeViewModel @Inject constructor(
                     savedLocation
                 } else {
                     _state.value = _state.value.copy(isLoading = true)
+
                     if (!locationProvider.isLocationEnabled()) {
                         permissionDelegate.markServicesDisabled()
                         _state.value = _state.value.copy(
@@ -149,6 +199,7 @@ class HomeViewModel @Inject constructor(
                         )
                         return@launch
                     }
+
                     if (!permissionChecker.hasLocationPermission()) {
                         permissionDelegate.requirePermission()
                         _state.value = _state.value.copy(isLoading = false)
@@ -159,14 +210,15 @@ class HomeViewModel @Inject constructor(
 
                 val latitude = location.latitude
                 val longitude = location.longitude
-
                 val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
+
                 if (cached != null) {
                     _state.value = _state.value.copy(
                         isLoading = false,
                         timings = cached.timings,
                         date = cached.date
                     )
+                    rescheduleAlarmsIfLoaded()
                     return@launch
                 }
 
@@ -178,7 +230,9 @@ class HomeViewModel @Inject constructor(
                         latitude = latitude,
                         longitude = longitude
                     )
-                } ?: Result.failure(Exception("Request timed out. Check your connection."))
+                } ?: Result.failure(
+                    Exception("Request timed out. Check your connection.")
+                )
 
                 result.fold(
                     onSuccess = { prayerTimesResult ->
@@ -187,6 +241,7 @@ class HomeViewModel @Inject constructor(
                             timings = prayerTimesResult.timings,
                             date = prayerTimesResult.date
                         )
+                        rescheduleAlarmsIfLoaded()
                     },
                     onFailure = { throwable ->
                         val message = throwable.message ?: "Something went wrong."
@@ -194,16 +249,26 @@ class HomeViewModel @Inject constructor(
                             isLoading = false,
                             errorMessage = message
                         )
-                        _effect.emit(HomeContract.Effect.ShowError(message))
+                        _effect.emit(
+                            HomeContract.Effect.ShowError(message)
+                        )
                     }
                 )
             } catch (e: SecurityException) {
                 permissionDelegate.requirePermission()
-                _state.value = _state.value.copy(isLoading = false, errorMessage = null)
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    errorMessage = null
+                )
             } catch (e: Exception) {
                 val message = "Failed to get location."
-                _state.value = _state.value.copy(isLoading = false, errorMessage = message)
-                _effect.emit(HomeContract.Effect.ShowError(message))
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    errorMessage = message
+                )
+                _effect.emit(
+                    HomeContract.Effect.ShowError(message)
+                )
             }
         }
     }
@@ -211,7 +276,10 @@ class HomeViewModel @Inject constructor(
     private suspend fun rescheduleAlarmsIfLoaded() {
         val timings = _state.value.timings ?: return
         val date = _state.value.date ?: return
-        val dateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(currentDate.time)
+        val dateKey =
+            SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                .format(currentDate.time)
+
         scheduleDailyPrayerAlarmsUseCase(timings, dateKey, _state.value.mutedPrayers)
     }
 }

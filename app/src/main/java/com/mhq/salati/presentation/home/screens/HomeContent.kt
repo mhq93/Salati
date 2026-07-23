@@ -3,6 +3,8 @@ package com.mhq.salati.presentation.home.screens
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.mhq.salati.presentation.common.screens.AwaitingLocationPermissions
+import com.mhq.salati.presentation.common.screens.LoadingContent
 import com.mhq.salati.presentation.home.HomeContract
 import com.mhq.salati.presentation.theme.SalatiTheme
 
@@ -14,7 +16,7 @@ fun HomeContent(
 ) {
     when {
         state.isLoading -> {
-            HomeLoadingContent(modifier = modifier)
+            LoadingContent(modifier = modifier)
         }
 
         state.errorMessage != null -> {
@@ -37,7 +39,7 @@ fun HomeContent(
         }
 
         else -> {
-            HomeAwaitingLocationPermissions()
+            AwaitingLocationPermissions(modifier = modifier)
         }
     }
 }

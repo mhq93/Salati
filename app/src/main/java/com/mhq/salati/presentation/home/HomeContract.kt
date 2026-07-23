@@ -28,6 +28,8 @@ class HomeContract {
     }
 
     sealed interface Effect {
+        data object RequestExactAlarmPermission : Effect
+        data object RequestNotificationPermission : Effect
         data class ShowError(val message: String) : Effect
     }
 }
