@@ -1,0 +1,11 @@
+package com.mhq.salati.domain.usecases.settings
+
+import com.mhq.salati.domain.model.settings.AdhanSound
+import com.mhq.salati.domain.repo.settings.SettingsRepository
+import javax.inject.Inject
+
+class UpdateAdhanSoundUseCase @Inject constructor(
+    private val repository: SettingsRepository
+) {
+    suspend operator fun invoke(sound: AdhanSound) = repository.setAdhanSound(sound)
+}
