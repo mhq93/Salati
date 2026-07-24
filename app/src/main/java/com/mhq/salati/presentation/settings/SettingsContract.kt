@@ -6,7 +6,6 @@ import com.mhq.salati.domain.model.settings.CalculationMethod
 import com.mhq.salati.domain.model.settings.Madhab
 import com.mhq.salati.domain.model.settings.ThemeMode
 
-
 object SettingsContract {
 
     data class State(

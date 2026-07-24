@@ -35,8 +35,8 @@ import com.mhq.salati.presentation.home.HomeContract
 import com.mhq.salati.presentation.home.components.DateBanner
 import com.mhq.salati.presentation.home.components.PrayerArcGauge
 import com.mhq.salati.presentation.home.components.PrayersList
-import com.mhq.salati.presentation.theme.HeaderGreenDark
-import com.mhq.salati.presentation.theme.HeaderGreenLight
+import com.mhq.salati.presentation.theme.DarkGreen
+import com.mhq.salati.presentation.theme.DarkGreenLight
 import com.mhq.salati.presentation.theme.SalatiTheme
 import com.mhq.salati.presentation.theme.SheetBackground
 import com.mhq.salati.util.TimeFormatter.parseTimeToMinutes
@@ -93,7 +93,7 @@ fun HomeSuccessContent(
                     .onGloballyPositioned { headerHeightPx = it.size.height }
                     .background(
                         Brush.verticalGradient(
-                            listOf(HeaderGreenDark, HeaderGreenLight)
+                            listOf(DarkGreen, DarkGreenLight)
                         ),
                         shape = RoundedCornerShape(
                             bottomStart = 32.dp,

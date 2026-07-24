@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.presentation.theme.AccentOrange
-import com.mhq.salati.presentation.theme.HeaderGreenLight
+import com.mhq.salati.presentation.theme.DarkGreenLight
 import com.mhq.salati.presentation.theme.SalatiTheme
 
 @Composable
@@ -162,7 +162,7 @@ fun AnimatedBottomNavBar(
 
             drawPath(
                 path = path,
-                color = HeaderGreenLight
+                color = DarkGreenLight
             )
         }
 

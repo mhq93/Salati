@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Salati</string>
+    <string name="customize_your_prayer_experience">Customize your prayer experience</string>
+    <string name="settings">Settings</string>
 </resources>
