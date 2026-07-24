@@ -19,7 +19,7 @@ fun PrayersList(
         modifier = modifier
             .padding(top = 16.dp)
     ) {
-        prayers.forEach { (name, time) ->
+        prayers.forEach { (icon, name, time) ->
             PrayerListItem(
                 prayerName = name,
                 prayerTime = time,
