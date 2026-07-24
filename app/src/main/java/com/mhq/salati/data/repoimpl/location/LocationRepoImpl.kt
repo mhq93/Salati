@@ -9,7 +9,7 @@ import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
-class LocationRepositoryImpl @Inject constructor(
+class LocationRepoImpl @Inject constructor(
     private val locationDataStore: LocationDataStore,
     private val locationProvider: LocationProvider
 ) : LocationRepository {

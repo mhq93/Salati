@@ -2,7 +2,7 @@ package com.mhq.salati.di.location
 
 import android.content.Context
 import com.mhq.salati.data.local.location.LocationDataStore
-import com.mhq.salati.data.repoimpl.location.LocationRepositoryImpl
+import com.mhq.salati.data.repoimpl.location.LocationRepoImpl
 import com.mhq.salati.domain.repo.location.LocationRepository
 import dagger.Binds
 import dagger.Module
@@ -19,7 +19,7 @@ abstract class LocationModule {
     @Binds
     @Singleton
     abstract fun bindLocationRepository(
-        impl: LocationRepositoryImpl
+        impl: LocationRepoImpl
     ): LocationRepository
 
     companion object {
