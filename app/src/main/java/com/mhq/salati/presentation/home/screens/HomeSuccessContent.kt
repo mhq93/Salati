@@ -2,22 +2,31 @@ package com.mhq.salati.presentation.home.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.domain.model.prayers.PrayerDate
@@ -65,7 +74,6 @@ fun HomeSuccessContent(
         Triple("🌙", "Isha", prayerTimings.isha)
     )
 
-    // "Current" prayer = the last one whose time has already passed today.
     val currentPrayerName = remember(prayerTimings) {
         prayers
             .map { it.second to parseTimeToMinutes(it.third) }
@@ -74,102 +82,125 @@ fun HomeSuccessContent(
             ?.first
     }
 
-    Column(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(HeaderGreenDark, HeaderGreenLight)
-                    ),
-                    shape = RoundedCornerShape(
-                        bottomStart = 32.dp,
-                        bottomEnd = 32.dp
-                    )
-                )
-                .padding(bottom = 24.dp)
-        ) {
-            DateBanner(
-                prayerDate = prayerDate,
-                onPreviousDay = { onIntent(HomeContract.Intent.PreviousDay) },
-                onNextDay = { onIntent(HomeContract.Intent.NextDay) },
-                modifier = modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 20.dp)
-            )
-            PrayerArcGauge(
-                currentTimeLabel = currentTimeLabel,
-                fajrLabel = prayerTimings.fajr,
-                ishaLabel = prayerTimings.isha,
-                fajrMinutes = fajrMinutes,
-                ishaMinutes = ishaMinutes,
-                nowMinutes = nowMinutes,
-                modifier = Modifier.padding(top = 12.dp)
-            )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+    var headerHeightPx by remember { mutableIntStateOf(0) }
+    var bannerHeightPx by remember { mutableIntStateOf(0) }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .onGloballyPositioned { headerHeightPx = it.size.height }
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(HeaderGreenDark, HeaderGreenLight)
+                        ),
+                        shape = RoundedCornerShape(
+                            bottomStart = 32.dp,
+                            bottomEnd = 32.dp
+                        )
+                    )
                     .padding(
-                        horizontal = 32.dp,
+                        top = 20.dp,
+                        bottom = 40.dp
+                    )
+            ) {
+                PrayerArcGauge(
+                    currentTimeLabel = currentTimeLabel,
+                    fajrLabel = prayerTimings.fajr,
+                    ishaLabel = prayerTimings.isha,
+                    fajrMinutes = fajrMinutes,
+                    ishaMinutes = ishaMinutes,
+                    nowMinutes = nowMinutes,
+                    modifier = Modifier.padding(top = 12.dp)
+                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = 32.dp,
+                            vertical = 8.dp
+                        )
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            "Fajr",
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            prayerTimings.fajr,
+                            color = Color.White,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            "Isha",
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            prayerTimings.isha,
+                            color = Color.White,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 24.dp,
+                            topEnd = 24.dp
+                        )
+                    )
+                    .background(SheetBackground)
+                    .padding(
+                        horizontal = 16.dp,
                         vertical = 8.dp
                     )
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Fajr",
-                        color = Color.White.copy(alpha = 0.85f),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                Spacer(
+                    modifier = Modifier.height(
+                        16.dp
                     )
-                    Text(
-                        text = prayerTimings.fajr,
-                        color = Color.White,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Isha",
-                        color = Color.White.copy(alpha = 0.85f),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = prayerTimings.isha,
-                        color = Color.White,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
+                )
+
+                PrayersList(
+                    prayers = prayers,
+                    currentPrayerName = currentPrayerName,
+                    mutedPrayers = mutedPrayers,
+                    onIntent = onIntent,
+                    modifier = modifier
+                )
             }
         }
-        Column(
+
+        DateBanner(
+            prayerDate = prayerDate,
+            onPreviousDay = { onIntent(HomeContract.Intent.PreviousDay) },
+            onNextDay = { onIntent(HomeContract.Intent.NextDay) },
             modifier = Modifier
-                .fillMaxSize()
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 24.dp,
-                        topEnd = 24.dp
+                .align(Alignment.TopCenter)
+                .onGloballyPositioned { bannerHeightPx = it.size.height }
+                .offset {
+                    IntOffset(
+                        x = 0,
+                        y = headerHeightPx - bannerHeightPx / 2
                     )
-                )
-                .background(SheetBackground)
-                .padding(
-                    horizontal = 20.dp,
-                    vertical = 20.dp
-                )
-        ) {
-            PrayersList(
-                prayers = prayers,
-                currentPrayerName = currentPrayerName,
-                mutedPrayers = mutedPrayers,
-                onIntent = onIntent,
-                modifier = modifier
-            )
-        }
+                }
+        )
     }
 }
 

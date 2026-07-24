@@ -2,19 +2,16 @@ package com.mhq.salati.presentation.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -66,13 +63,18 @@ fun DateBanner(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 16.dp)
         ) {
             Text(
                 text = "${prayerDate.hijriDay} ${prayerDate.hijriMonth} ${prayerDate.hijriYear}",
                 color = AccentGreen,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = 12.sp,
+                    maxFontSize = 20.sp,
+                    stepSize = 1.sp
+                )
             )
             Text(
                 text = prayerDate.readable,

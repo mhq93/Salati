@@ -16,16 +16,18 @@ fun PrayersList(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.padding(top = 16.dp)
+        modifier = modifier
+            .padding(top = 16.dp)
     ) {
-        prayers.forEach { (icon, name, time) ->
+        prayers.forEach { (name, time) ->
             PrayerListItem(
-                prayerIcon = icon,
                 prayerName = name,
                 prayerTime = time,
-                isHighlighted = name == currentPrayerName,
-                isMuted = name in mutedPrayers,
-                onMuteToggle = { onIntent(HomeContract.Intent.ToggleMute(name)) }
+                isPrayerHighlighted = name == currentPrayerName,
+                isPrayerAdhanMuted = name in mutedPrayers,
+                onMutePrayerToggle = {
+                    onIntent(HomeContract.Intent.ToggleMute(name))
+                }
             )
         }
     }
