@@ -77,6 +77,12 @@ fun QiblaContainer(
                 is QiblaContract.Effect.ShowError -> {
                     // TODO: surface via snackbar/toast — same mechanism as Home
                 }
+                is QiblaContract.Effect.LocationPickerNotImplemented -> {
+                    // TODO: navigate to location picker once built
+                }
+                is QiblaContract.Effect.CompassCalibrationNotImplemented -> {
+                    // TODO: show calibration guidance once designed
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ import com.mhq.salati.domain.model.settings.AppLanguage
 import com.mhq.salati.domain.model.settings.CalculationMethod
 import com.mhq.salati.domain.model.settings.Madhab
 import com.mhq.salati.domain.model.settings.ThemeMode
+import com.mhq.salati.presentation.settings.components.SelectorType
 
 object SettingsContract {
 
@@ -16,6 +17,7 @@ object SettingsContract {
         val themeMode: ThemeMode = ThemeMode.SYSTEM,
         val language: AppLanguage = AppLanguage.ENGLISH,
         val adhanSound: AdhanSound = AdhanSound.DEFAULT,
+        val activeSelector: SelectorType? = null,
         val hijriDateOffset: Int = 0,
         val appVersion: String = ""
     )
@@ -29,6 +31,8 @@ object SettingsContract {
         data class SelectAdhanSound(val sound: AdhanSound) : Intent
         data object IncrementHijriOffset : Intent
         data object DecrementHijriOffset : Intent
+        data class OpenSelector(val type: SelectorType) : Intent
+        data object CloseSelector : Intent
         data object RateApp : Intent
         data object ShareApp : Intent
         data object ContactSupport : Intent

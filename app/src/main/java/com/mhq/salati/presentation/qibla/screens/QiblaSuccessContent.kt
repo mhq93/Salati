@@ -6,12 +6,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,6 +23,7 @@ fun QiblaSuccessContent(
     deviceHeading: Float,
     qiblaBearing: Float,
     compassAccuracy: CompassAccuracy,
+    onRecalibrateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -36,9 +35,7 @@ fun QiblaSuccessContent(
             fontSize = 40.sp
         )
 
-        Spacer(
-            Modifier.height(8.dp)
-        )
+        Spacer(Modifier.height(16.dp))//8
 
         RotatingCompassDial(
             deviceHeading = deviceHeading,
@@ -49,29 +46,11 @@ fun QiblaSuccessContent(
                 .padding(8.dp)
         )
 
-        Spacer(
-            Modifier.height(20.dp)
-        )
-
-        Text(
-            text = "The Qibla direction is ${"%.2f".format(qiblaBearing)}° from North, " +
-                    "and the distance to the Kaaba is approximately 7397 kilometers.",
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        Spacer(
-            Modifier.height(16.dp)
-        )
+        Spacer(Modifier.height(28.dp))//20
 
         CalibrationBanner(
             compassAccuracy = compassAccuracy,
-            onCalibrateClick = { /* TODO */ }
-        )
-
-        Spacer(
-            Modifier.height(16.dp)
+            onRecalibrateClick = onRecalibrateClick
         )
     }
 }
@@ -83,7 +62,8 @@ private fun QiblaSuccessContentPreview() {
         QiblaSuccessContent(
             deviceHeading = 1.0f,
             qiblaBearing = 1.0f,
-            compassAccuracy = CompassAccuracy.HIGH
+            compassAccuracy = CompassAccuracy.HIGH,
+            onRecalibrateClick = {}
         )
     }
 }

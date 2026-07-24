@@ -1,4 +1,4 @@
-package com.mhq.salati.presentation.settings.components
+package com.mhq.salati.presentation.qibla.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,18 +31,13 @@ import com.mhq.salati.presentation.theme.DarkGreenLight
 import com.mhq.salati.presentation.theme.SalatiTheme
 
 @Composable
-fun SettingsHeader(
-    modifier: Modifier = Modifier
-) {
+fun QiblaHeader() {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .background(
                 Brush.verticalGradient(
-                    listOf(
-                        DarkGreenLight,
-                        DarkGreen
-                    )
+                    listOf(DarkGreenLight, DarkGreen)
                 )
             )
             .padding(
@@ -53,34 +48,34 @@ fun SettingsHeader(
             )
     ) {
         Column {
-//            Box(
-//                contentAlignment = Alignment.Center,
-//                modifier = modifier
-//                    .size(56.dp)
-//                    .clip(RoundedCornerShape(16.dp))
-//                    .background(Color.White.copy(alpha = 0.12f))
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Default.Settings,
-//                    tint = AccentGold,
-//                    contentDescription = null,
-//                    modifier = modifier.size(28.dp)
-//                )
-//            }
+        //            Box(
+        //                contentAlignment = Alignment.Center,
+        //                modifier = Modifier
+        //                    .size(56.dp)
+        //                    .clip(RoundedCornerShape(16.dp))
+        //                    .background(Color.White.copy(alpha = 0.12f)),
+        //            ) {
+        //                Icon(
+        //                    imageVector = Icons.Default.Explore,
+        //                    tint = AccentGold,
+        //                    contentDescription = null,
+        //                    modifier = Modifier.size(28.dp)
+        //                )
+        //            }
             Spacer(
-                modifier.height(16.dp)
+                Modifier.height(16.dp)
             )
             Text(
-                text = stringResource(R.string.settings),
+                text = stringResource(R.string.qibla_direction),
                 color = Color.White,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(
-                modifier.height(4.dp)
+                Modifier.height(4.dp)
             )
             Text(
-                text = stringResource(R.string.customize_your_app_experience),
+                text = stringResource(R.string.face_the_kaaba_wherever_you_are),
                 color = Color.White.copy(alpha = 0.7f),
                 fontSize = 14.sp
             )
@@ -90,8 +85,8 @@ fun SettingsHeader(
 
 @Preview
 @Composable
-private fun SettingsHeaderPreview() {
+private fun QiblaHeaderPreview() {
     SalatiTheme() {
-        SettingsHeader()
+        QiblaHeader()
     }
 }

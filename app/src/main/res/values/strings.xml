@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Salati</string>
-    <string name="customize_your_prayer_experience">Customize your prayer experience</string>
+    <string name="customize_your_app_experience">Customize your app experience</string>
     <string name="settings">Settings</string>
+    <string name="qibla_direction">Qibla Direction</string>
+    <string name="face_the_kaaba_wherever_you_are">Face the Kaaba wherever you are</string>
 </resources>

@@ -80,6 +80,13 @@ class QiblaViewModel @Inject constructor(
             is QiblaContract.Intent.AccessDeviceLocationSettings -> {
                 viewModelScope.launch { permissionDelegate.requestLocationSettings() }
             }
+
+            QiblaContract.Intent.LocationPillClicked -> {
+                viewModelScope.launch { _effect.emit(QiblaContract.Effect.LocationPickerNotImplemented) }
+            }
+            QiblaContract.Intent.RecalibrateClicked -> {
+                viewModelScope.launch { _effect.emit(QiblaContract.Effect.CompassCalibrationNotImplemented) }
+            }
         }
     }
 

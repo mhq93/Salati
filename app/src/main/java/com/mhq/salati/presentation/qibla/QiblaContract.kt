@@ -22,9 +22,13 @@ class QiblaContract {
         data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
         data object AccessAppSettings : Intent
         data object AccessDeviceLocationSettings : Intent
+        data object LocationPillClicked : Intent
+        data object RecalibrateClicked : Intent
     }
 
     sealed interface Effect {
         data class ShowError(val message: String) : Effect
+        data object LocationPickerNotImplemented : Effect
+        data object CompassCalibrationNotImplemented : Effect
     }
 }

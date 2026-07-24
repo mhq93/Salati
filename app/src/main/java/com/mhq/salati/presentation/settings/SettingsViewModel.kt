@@ -65,6 +65,8 @@ class SettingsViewModel @Inject constructor(
             is Intent.SelectAdhanSound -> updateAdhanSound(intent.sound)
             Intent.IncrementHijriOffset -> updateHijriOffset(_state.value.hijriDateOffset + 1)
             Intent.DecrementHijriOffset -> updateHijriOffset(_state.value.hijriDateOffset - 1)
+            is Intent.OpenSelector -> _state.value = _state.value.copy(activeSelector = intent.type)
+            Intent.CloseSelector -> _state.value = _state.value.copy(activeSelector = null)
             Intent.RateApp -> emitEffect(Effect.OpenPlayStoreListing)
             Intent.ShareApp -> emitEffect(Effect.LaunchShareSheet)
             Intent.ContactSupport -> emitEffect(Effect.OpenEmailClient)

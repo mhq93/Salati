@@ -23,21 +23,17 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mhq.salati.presentation.settings.components.SelectorType
 import com.mhq.salati.presentation.settings.SettingsContract.Intent
 import com.mhq.salati.presentation.settings.SettingsContract.State
-import com.mhq.salati.presentation.settings.components.SettingsSelectionSheet
+import com.mhq.salati.presentation.settings.components.SelectorType
 import com.mhq.salati.presentation.settings.components.SettingsActionRow
 import com.mhq.salati.presentation.settings.components.SettingsCard
 import com.mhq.salati.presentation.settings.components.SettingsDivider
 import com.mhq.salati.presentation.settings.components.SettingsHeader
 import com.mhq.salati.presentation.settings.components.SettingsSectionHeader
+import com.mhq.salati.presentation.settings.components.SettingsSelectionSheet
 import com.mhq.salati.presentation.settings.components.SettingsSelectorRow
 import com.mhq.salati.presentation.settings.components.SettingsStepperRow
 import com.mhq.salati.presentation.settings.components.SettingsSwitchRow
@@ -50,14 +46,12 @@ fun SettingsContent(
     onIntent: (Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var activeSelector by remember { mutableStateOf<SelectorType?>(null) }
-
     Box(
         modifier = modifier
             .background(SheetBackground)
     ) {
         LazyColumn(
-            contentPadding = PaddingValues(bottom = 32.dp),
+            contentPadding = PaddingValues(bottom = 140.dp + 32.dp),
             modifier = Modifier.fillMaxSize()
         ) {
             item { SettingsHeader() }
@@ -90,7 +84,7 @@ fun SettingsContent(
                             title = "Adhan Sound",
                             valueLabel = state.adhanSound.displayName,
                             isEnabled = state.notificationsEnabled,
-                            onClick = { activeSelector = SelectorType.AdhanSound }
+                            onClick = { onIntent(Intent.OpenSelector(SelectorType.AdhanSound)) }
                         )
                     }
 
@@ -107,7 +101,7 @@ fun SettingsContent(
                             icon = Icons.Default.Explore,
                             title = "Calculation Method",
                             valueLabel = state.calculationMethod.displayName,
-                            onClick = { activeSelector = SelectorType.CalculationMethod }
+                            onClick = { onIntent(Intent.OpenSelector(SelectorType.CalculationMethod)) }
                         )
 
                         SettingsDivider()
@@ -116,7 +110,7 @@ fun SettingsContent(
                             icon = Icons.Default.School,
                             title = "Asr Madhab",
                             valueLabel = state.madhab.displayName,
-                            onClick = { activeSelector = SelectorType.Madhab }
+                            onClick = { onIntent(Intent.OpenSelector(SelectorType.Madhab)) }
                         )
                     }
 
@@ -133,7 +127,7 @@ fun SettingsContent(
                             icon = Icons.Default.DarkMode,
                             title = "Theme",
                             valueLabel = state.themeMode.displayName,
-                            onClick = { activeSelector = SelectorType.Theme }
+                            onClick = { onIntent(Intent.OpenSelector(SelectorType.Theme)) }
                         )
 
                         SettingsDivider()
@@ -142,7 +136,7 @@ fun SettingsContent(
                             icon = Icons.Default.Language,
                             title = "Language",
                             valueLabel = state.language.displayName,
-                            onClick = { activeSelector = SelectorType.Language }
+                            onClick = { onIntent(Intent.OpenSelector(SelectorType.Language))}
                         )
                     }
 
@@ -210,15 +204,15 @@ fun SettingsContent(
         }
     }
 
-    activeSelector?.let { selector ->
+    state.activeSelector?.let { selector ->
         SettingsSelectionSheet(
             state = state,
             selector = selector,
             onSelect = { intent ->
                 onIntent(intent)
-                activeSelector = null
+                onIntent(Intent.CloseSelector)
             },
-            onDismiss = { activeSelector = null }
+            onDismiss = { onIntent(Intent.CloseSelector) }
         )
     }
 }

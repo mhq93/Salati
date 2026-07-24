@@ -29,4 +29,7 @@ val Timberwolf = Color(0xFFC5C5C5)
 val GaugeTrackBright = Color(0xFFF5B942)
 val AccentGold = Color(0xFFC9A24B)
 val AccentOrange = Color(0xFFFBB15B)
+val MaterialGreen = Color(0xFF4CAF50)
+val MaterialAmber = Color(0xFFFFC107)
+val MaterialRed = Color(0xFFF44336)
 val CardBackground = Color.White
