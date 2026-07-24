@@ -1,4 +1,4 @@
-package com.mhq.salati.data.local.datastore
+package com.mhq.salati.data.local.location
 
 import android.content.Context
 import androidx.datastore.core.DataStore

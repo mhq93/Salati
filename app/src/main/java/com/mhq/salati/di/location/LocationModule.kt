@@ -1,7 +1,7 @@
 package com.mhq.salati.di.location
 
 import android.content.Context
-import com.mhq.salati.data.local.datastore.LocationDataStore
+import com.mhq.salati.data.local.location.LocationDataStore
 import com.mhq.salati.data.repoimpl.location.LocationRepositoryImpl
 import com.mhq.salati.domain.repo.location.LocationRepository
 import dagger.Binds

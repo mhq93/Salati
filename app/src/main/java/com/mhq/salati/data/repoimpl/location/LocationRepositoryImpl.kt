@@ -1,6 +1,6 @@
 package com.mhq.salati.data.repoimpl.location
 
-import com.mhq.salati.data.local.datastore.LocationDataStore
+import com.mhq.salati.data.local.location.LocationDataStore
 import com.mhq.salati.domain.model.location.SavedLocation
 import com.mhq.salati.data.location.LocationProvider
 import com.mhq.salati.domain.repo.location.LocationRepository
