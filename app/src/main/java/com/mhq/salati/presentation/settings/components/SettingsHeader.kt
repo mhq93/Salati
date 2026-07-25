@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -45,9 +46,10 @@ fun SettingsHeader(
                     )
                 )
             )
+            .statusBarsPadding()
             .padding(
-                top = 32.dp,//56
-                bottom = 56.dp,//32
+                //top = 32.dp,//56
+                bottom = 32.dp,//56
                 start = 24.dp,
                 end = 24.dp
             )

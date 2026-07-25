@@ -26,12 +26,6 @@ import com.mhq.salati.presentation.theme.SalatiTheme
 import kotlin.math.cos
 import kotlin.math.sin
 
-/**
- * Semicircular gauge spanning Fajr -> Isha, with a marker showing where
- * "now" falls within that span. fajrMinutes/ishaMinutes/nowMinutes are all
- * minutes-since-midnight (see parseTimeToMinutes in HomeContent.kt).
- */
-
 @Composable
 fun PrayerArcGauge(
     currentTimeLabel: String,

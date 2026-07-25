@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -85,7 +86,11 @@ fun HomeSuccessContent(
     var headerHeightPx by remember { mutableIntStateOf(0) }
     var bannerHeightPx by remember { mutableIntStateOf(0) }
 
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(SheetBackground)
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
@@ -100,8 +105,9 @@ fun HomeSuccessContent(
                             bottomEnd = 32.dp
                         )
                     )
+                    .statusBarsPadding()
                     .padding(
-                        top = 20.dp,
+                        //top = 20.dp,
                         bottom = 40.dp
                     )
             ) {

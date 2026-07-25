@@ -33,3 +33,14 @@ val MaterialGreen = Color(0xFF4CAF50)
 val MaterialAmber = Color(0xFFFFC107)
 val MaterialRed = Color(0xFFF44336)
 val CardBackground = Color.White
+
+
+// --- New tokens needed for dark mode (light mode reuses existing tokens above) ---
+val SheetBackgroundDark = Color(0xFF121514)     // dark counterpart to SheetBackground
+val CardBackgroundDark = Color(0xFF1E2422)      // dark counterpart to CardBackground, sits above SheetBackgroundDark]
+val DividerLight = Color(0xFF1C2B22).copy(alpha = 0.06f)
+val InkTextDark = Color(0xFFE9ECEA)             // dark counterpart to InkText (near-white, slightly warm)
+val DividerDark = Color(0xFFFFFFFF).copy(alpha = 0.08f)
+val ErrorContainerLight = Color(0xFFFBE9E7)
+val ErrorContainerDark = Color(0xFF3A1F1D)
+val OnAccentGreen = Color.White                 // text/icons placed on AccentGreen chips (both modes)

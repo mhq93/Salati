@@ -148,17 +148,17 @@ fun AnimatedBottomNavBar(
                 close()
             }
 
-            drawContext.canvas.nativeCanvas.apply {
-                val shadowPaint = android.graphics.Paint().apply {
-                    color = android.graphics.Color.BLACK
-                    alpha = 35
-                    setShadowLayer(
-                        12.dp.toPx(), 0f, 4.dp.toPx(),
-                        android.graphics.Color.BLACK
-                    )
-                }
-                drawPath(path.asAndroidPath(), shadowPaint)
-            }
+//            drawContext.canvas.nativeCanvas.apply {
+//                val shadowPaint = android.graphics.Paint().apply {
+//                    color = android.graphics.Color.BLACK
+//                    alpha = 12//35
+//                    setShadowLayer(
+//                        6.dp.toPx(), 0f, 4.dp.toPx(),//12
+//                        android.graphics.Color.BLACK
+//                    )
+//                }
+//                drawPath(path.asAndroidPath(), shadowPaint)
+//            }
 
             drawPath(
                 path = path,
