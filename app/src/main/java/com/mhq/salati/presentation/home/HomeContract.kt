@@ -1,5 +1,6 @@
 package com.mhq.salati.presentation.home
 
+import com.mhq.salati.domain.model.alarms.AdhanPlaybackState
 import com.mhq.salati.domain.model.prayers.PrayerDate
 import com.mhq.salati.domain.model.prayers.PrayerTimings
 import com.mhq.salati.presentation.common.location.LocationPermissionState
@@ -12,6 +13,7 @@ class HomeContract {
         val date: PrayerDate? = null,
         val errorMessage: String? = null,
         val locationPermission: LocationPermissionState = LocationPermissionState(),
+        val adhanPlayback: AdhanPlaybackState = AdhanPlaybackState.Idle,
         val mutedPrayers: Set<String> = emptySet()
     )
 
@@ -24,6 +26,7 @@ class HomeContract {
         data object AccessAppSettings : Intent
         data object AccessDeviceLocationSettings : Intent
         data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
+        data object StopAdhanClicked : Intent
         data class ToggleMute(val prayerName: String) : Intent
     }
 

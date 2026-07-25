@@ -107,7 +107,6 @@ fun HomeSuccessContent(
                     )
                     .statusBarsPadding()
                     .padding(
-                        //top = 20.dp,
                         bottom = 40.dp
                     )
             ) {
@@ -167,8 +166,8 @@ fun HomeSuccessContent(
                     .fillMaxSize()
                     .clip(
                         RoundedCornerShape(
-                            topStart = 24.dp,
-                            topEnd = 24.dp
+                            topStart = 32.dp,
+                            topEnd = 32.dp
                         )
                     )
                     .background(SheetBackground)

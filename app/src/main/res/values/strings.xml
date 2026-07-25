@@ -4,4 +4,7 @@
     <string name="settings">Settings</string>
     <string name="qibla_direction">Qibla Direction</string>
     <string name="face_the_kaaba_wherever_you_are">Face the Kaaba wherever you are</string>
+    <string name="adhan_playing_title">Prayer time is due</string>
+    <string name="adhan_playing_body">It\'s time for Al-%1$s prayer</string>
+    <string name="stop">Stop</string>
 </resources>

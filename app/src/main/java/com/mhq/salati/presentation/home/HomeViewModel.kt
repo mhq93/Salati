@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.mhq.salati.data.location.LocationProvider
 import com.mhq.salati.domain.permissions.PermissionChecker
 import com.mhq.salati.domain.repo.alarms.MutedPrayersRepository
+import com.mhq.salati.domain.usecases.alarms.ObserveAdhanPlaybackStateUseCase
 import com.mhq.salati.domain.usecases.alarms.ScheduleDailyPrayerAlarmsUseCase
+import com.mhq.salati.domain.usecases.alarms.StopAdhanPlaybackUseCase
 import com.mhq.salati.domain.usecases.alarms.ToggleMutePrayerUseCase
 import com.mhq.salati.domain.usecases.location.FetchAndSaveLocationUseCase
 import com.mhq.salati.domain.usecases.location.GetSavedLocationUseCase
@@ -22,6 +24,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.text.SimpleDateFormat
@@ -36,6 +41,8 @@ class HomeViewModel @Inject constructor(
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
     private val toggleMutePrayerUseCase: ToggleMutePrayerUseCase,
+    private val observeAdhanPlaybackStateUseCase: ObserveAdhanPlaybackStateUseCase,
+    private val stopAdhanPlaybackUseCase: StopAdhanPlaybackUseCase,
     private val scheduleDailyPrayerAlarmsUseCase: ScheduleDailyPrayerAlarmsUseCase,
     private val getSavedLocationUseCase: GetSavedLocationUseCase,
     private val fetchAndSaveLocationUseCase: FetchAndSaveLocationUseCase,
@@ -88,6 +95,10 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+
+        observeAdhanPlaybackStateUseCase()
+            .onEach { playback -> _state.update { it.copy(adhanPlayback = playback) } }
+            .launchIn(viewModelScope)
     }
 
     fun onIntent(intent: HomeContract.Intent) {
@@ -149,6 +160,8 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
+            HomeContract.Intent.StopAdhanClicked -> stopAdhanPlaybackUseCase()
         }
     }
 
