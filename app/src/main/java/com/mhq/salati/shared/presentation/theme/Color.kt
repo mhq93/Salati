@@ -33,6 +33,8 @@ val MaterialGreen = Color(0xFF4CAF50)
 val MaterialAmber = Color(0xFFFFC107)
 val MaterialRed = Color(0xFFF44336)
 val CardBackground = Color.White
+val Prayed = Color(0xFF1D9E75)
+val Missed = Color(0xFFD84C3E)
 
 
 // --- New tokens needed for dark mode (light mode reuses existing tokens above) ---

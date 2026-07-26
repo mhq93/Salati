@@ -3,6 +3,7 @@ package com.mhq.salati.shared
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
@@ -18,6 +19,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.mhq.salati.home.presentation.screens.HomeContainer
 import com.mhq.salati.onboarding.presentation.screens.OnboardingContainer
+import com.mhq.salati.prayertracker.presentation.screens.PrayerTrackerContainer
 import com.mhq.salati.qibla.presentation.screens.QiblaContainer
 import com.mhq.salati.settings.presentation.screens.SettingsContainer
 import com.mhq.salati.shared.navigation.AnimatedBottomNavBar
@@ -32,6 +34,7 @@ fun SalatiApp(startDestination: Screen) {
     val items = listOf(
         BottomNavItem(Screen.Home.route, "Home", Icons.Default.Home),
         BottomNavItem(Screen.Qibla.route, "Qibla", Icons.Default.Explore),
+        BottomNavItem(Screen.PrayerTracker.route,"Tracker", Icons.Filled.CheckCircle),
         BottomNavItem(Screen.Settings.route, "Settings", Icons.Default.Settings)
     )
 
@@ -87,6 +90,9 @@ fun SalatiApp(startDestination: Screen) {
             }
             composable(Screen.Qibla.route) {
                 QiblaContainer()
+            }
+            composable(Screen.PrayerTracker.route) {
+                PrayerTrackerContainer()
             }
             composable(Screen.Settings.route) {
                 SettingsContainer()

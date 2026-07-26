@@ -1,0 +1,56 @@
+package com.mhq.salati.prayertracker.presentation.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.mhq.salati.prayertracker.presentation.components.CalendarMonthView
+import com.mhq.salati.prayertracker.presentation.components.PrayerStatusList
+import com.mhq.salati.prayertracker.presentation.components.PrayerTrackerHeader
+import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.Intent
+import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.State
+import com.mhq.salati.shared.presentation.theme.SheetBackground
+
+@Composable
+fun PrayerTrackerContent(
+    state: State,
+    onIntent: (Intent) -> Unit
+) {
+    Box(modifier = Modifier.fillMaxSize().background(SheetBackground)) { // safety-net background, same fix as Home seam
+        Column(modifier = Modifier.fillMaxSize()) {
+            PrayerTrackerHeader(streak = state.currentStreak)
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .offset(y = (-24).dp) // overlap seam, same as Home/Qibla/Settings sheets
+                    .background(SheetBackground, shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
+                    .padding(horizontal = 20.dp, vertical = 24.dp)
+            ) {
+                CalendarMonthView(
+                    selectedMonth = state.selectedMonth,
+                    selectedDate = state.selectedDate,
+                    dayStatus = state.monthDayStatus,
+                    onDateSelected = { onIntent(Intent.DateSelected(it)) },
+                    onMonthChanged = { onIntent(Intent.MonthChanged(it)) }
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                PrayerStatusList(
+                    selectedDate = state.selectedDate,
+                    records = state.selectedDateRecords,
+                    onPrayerTapped = { onIntent(Intent.PrayerTileTapped(it)) }
+                )
+            }
+        }
+    }
+}

@@ -5,5 +5,6 @@ sealed class Screen(val route: String) {
     object AwaitingLocationPermissions : Screen("awaiting_location_permissions")
     data object Home : Screen("home")
     data object Qibla : Screen("qibla")
+    data object PrayerTracker : Screen("prayer_tracker")
     data object Settings : Screen("settings")
 }
