@@ -1,6 +1,7 @@
 package com.mhq.salati.location.di
 
 import android.content.Context
+import com.mhq.salati.location.data.LocationProvider
 import com.mhq.salati.location.data.local.LocationDataStore
 import com.mhq.salati.location.data.repoimpl.LocationRepoImpl
 import com.mhq.salati.location.domain.repo.LocationRepository
@@ -28,5 +29,11 @@ abstract class LocationModule {
         fun provideLocationDataStore(
             @ApplicationContext context: Context
         ): LocationDataStore = LocationDataStore(context)
+
+        @Provides
+        @Singleton
+        fun provideLocationProvider(
+            @ApplicationContext context: Context
+        ): LocationProvider = LocationProvider(context)
     }
 }
