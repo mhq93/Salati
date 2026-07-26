@@ -10,7 +10,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable
-fun AwaitingLocationPermissions(modifier: Modifier = Modifier) {
+fun AwaitingLocationPermissions(
+    modifier: Modifier = Modifier
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier.fillMaxSize()

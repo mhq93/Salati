@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.presentation.theme.AccentOrange
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
+import com.mhq.salati.shared.presentation.theme.SheetBackground
 
 @Composable
 fun AnimatedBottomNavBar(
@@ -107,6 +108,7 @@ fun AnimatedBottomNavBar(
         modifier = modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.navigationBars)
+            .background(SheetBackground)
     ) {
         Canvas(
             modifier = Modifier
