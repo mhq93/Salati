@@ -1,11 +1,11 @@
 package com.mhq.salati.prayertimes.data.repoimpl
 
-import com.mhq.salati.prayertimes.data.api.AladhanApiService
-import com.mhq.salati.prayertimes.data.mapper.toDomain
-import com.mhq.salati.prayertimes.data.mapper.toEntityList
-import com.mhq.salati.prayertimes.domain.model.PrayerTimesResult
-import com.mhq.salati.prayertimes.domain.repo.PrayerTimesRepository
-import com.mhq.salati.prayertimes.data.local.PrayerTimesDao
+import com.mhq.salati.home.data.api.AladhanApiService
+import com.mhq.salati.home.data.mapper.toDomain
+import com.mhq.salati.home.data.mapper.toEntityList
+import com.mhq.salati.home.domain.model.PrayerTimesResult
+import com.mhq.salati.home.domain.repo.PrayerTimesRepository
+import com.mhq.salati.home.data.local.PrayerTimesDao
 import kotlin.math.abs
 
 class PrayerTimesRepoImpl(

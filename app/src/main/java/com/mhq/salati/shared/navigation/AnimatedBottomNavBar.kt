@@ -1,4 +1,4 @@
-package com.mhq.salati.navigation
+package com.mhq.salati.shared.navigation
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring

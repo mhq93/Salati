@@ -1,4 +1,4 @@
-package com.mhq.salati.prayertimes.presentation.screens
+package com.mhq.salati.home.presentation.screens
 
 import android.Manifest
 import android.content.Intent
@@ -19,8 +19,8 @@ import com.mhq.salati.permissions.location.LocationPermissionEffect
 import com.mhq.salati.permissions.location.rememberGpsEnabled
 import com.mhq.salati.permissions.location.rememberLocationPermissionLauncher
 import com.mhq.salati.permissions.notifications.rememberNotificationPermissionLauncher
-import com.mhq.salati.prayertimes.presentation.contract.HomeContract
-import com.mhq.salati.prayertimes.presentation.viewmodel.HomeViewModel
+import com.mhq.salati.home.presentation.contract.HomeContract
+import com.mhq.salati.home.presentation.viewmodel.HomeViewModel
 
 @Composable
 fun HomeContainer(

@@ -1,4 +1,4 @@
-package com.mhq.salati.prayertimes.presentation.screens
+package com.mhq.salati.home.presentation.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.permissions.location.LocationPermissionState
-import com.mhq.salati.prayertimes.presentation.contract.HomeContract
+import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable

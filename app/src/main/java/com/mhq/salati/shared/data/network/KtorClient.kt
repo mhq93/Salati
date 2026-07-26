@@ -1,4 +1,4 @@
-package com.mhq.salati.prayertimes.data.client
+package com.mhq.salati.shared.data.network
 
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig

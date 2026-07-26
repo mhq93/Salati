@@ -1,4 +1,4 @@
-package com.mhq.salati.prayertimes.presentation.viewmodel
+package com.mhq.salati.home.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,9 +13,9 @@ import com.mhq.salati.location.data.LocationProvider
 import com.mhq.salati.location.domain.usecases.FetchAndSaveLocationUseCase
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
 import com.mhq.salati.permissions.domain.PermissionChecker
-import com.mhq.salati.prayertimes.domain.usecases.GetCachedPrayerTimesUseCase
-import com.mhq.salati.prayertimes.domain.usecases.GetPrayerTimesUseCase
-import com.mhq.salati.prayertimes.presentation.contract.HomeContract
+import com.mhq.salati.home.domain.usecases.GetCachedPrayerTimesUseCase
+import com.mhq.salati.home.domain.usecases.GetPrayerTimesUseCase
+import com.mhq.salati.home.presentation.contract.HomeContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow

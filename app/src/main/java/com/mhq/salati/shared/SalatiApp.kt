@@ -13,10 +13,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.mhq.salati.navigation.AnimatedBottomNavBar
-import com.mhq.salati.navigation.BottomNavItem
-import com.mhq.salati.navigation.Screen
-import com.mhq.salati.prayertimes.presentation.screens.HomeContainer
+import com.mhq.salati.shared.navigation.AnimatedBottomNavBar
+import com.mhq.salati.shared.navigation.BottomNavItem
+import com.mhq.salati.shared.navigation.Screen
+import com.mhq.salati.home.presentation.screens.HomeContainer
 import com.mhq.salati.qibla.presentation.screens.QiblaContainer
 import com.mhq.salati.settings.presentation.screens.SettingsContainer
 

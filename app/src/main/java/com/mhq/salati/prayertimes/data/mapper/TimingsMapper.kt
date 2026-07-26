@@ -1,10 +1,10 @@
 package com.mhq.salati.prayertimes.data.mapper
 
-import com.mhq.salati.prayertimes.data.local.PrayerTimesEntity
-import com.mhq.salati.prayertimes.data.dto.TimingsDataDto
-import com.mhq.salati.prayertimes.domain.model.PrayerDate
-import com.mhq.salati.prayertimes.domain.model.PrayerTimesResult
-import com.mhq.salati.prayertimes.domain.model.PrayerTimings
+import com.mhq.salati.home.data.local.PrayerTimesEntity
+import com.mhq.salati.home.data.dto.TimingsDataDto
+import com.mhq.salati.home.domain.model.PrayerDate
+import com.mhq.salati.home.domain.model.PrayerTimesResult
+import com.mhq.salati.home.domain.model.PrayerTimings
 import com.mhq.salati.shared.utils.TimeFormatter.sanitizeTimestamp
 
 // Shared field-mapping logic, used by both this file and CalendarMapper.kt

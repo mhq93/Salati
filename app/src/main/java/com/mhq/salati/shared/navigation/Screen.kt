@@ -1,4 +1,4 @@
-package com.mhq.salati.navigation
+package com.mhq.salati.shared.navigation
 
 sealed class Screen(val route: String) {
     data object Home : Screen("home")

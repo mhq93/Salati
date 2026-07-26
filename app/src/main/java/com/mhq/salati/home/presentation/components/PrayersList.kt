@@ -1,11 +1,11 @@
-package com.mhq.salati.prayertimes.presentation.components
+package com.mhq.salati.home.presentation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mhq.salati.prayertimes.presentation.contract.HomeContract
+import com.mhq.salati.home.presentation.contract.HomeContract
 
 @Composable
 fun PrayersList(

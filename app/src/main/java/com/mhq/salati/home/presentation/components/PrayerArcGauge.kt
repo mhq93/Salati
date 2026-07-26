@@ -1,4 +1,4 @@
-package com.mhq.salati.prayertimes.presentation.components
+package com.mhq.salati.home.presentation.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box

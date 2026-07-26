@@ -1,8 +1,8 @@
-package com.mhq.salati.prayertimes.presentation.contract
+package com.mhq.salati.home.presentation.contract
 
 import com.mhq.salati.adhan.domain.model.AdhanPlaybackState
-import com.mhq.salati.prayertimes.domain.model.PrayerDate
-import com.mhq.salati.prayertimes.domain.model.PrayerTimings
+import com.mhq.salati.home.domain.model.PrayerDate
+import com.mhq.salati.home.domain.model.PrayerTimings
 import com.mhq.salati.permissions.location.LocationPermissionState
 
 class HomeContract {

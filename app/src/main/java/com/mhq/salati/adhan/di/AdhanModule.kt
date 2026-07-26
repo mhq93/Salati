@@ -20,12 +20,4 @@ abstract class AdhanModule {
     abstract fun bindAdhanPlaybackController(
         impl: AdhanPlaybackControllerImpl
     ): AdhanPlaybackController
-
-    companion object {
-        @Provides
-        @Singleton
-        fun provideMutedPrayerDao(database: SalatiDatabase): MutedPrayerDao {
-            return database.mutedPrayerDao()
-        }
-    }
 }

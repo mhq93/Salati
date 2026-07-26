@@ -1,4 +1,4 @@
-package com.mhq.salati.navigation
+package com.mhq.salati.shared.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

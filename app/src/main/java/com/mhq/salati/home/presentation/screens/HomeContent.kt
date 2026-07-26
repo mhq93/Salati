@@ -1,9 +1,9 @@
-package com.mhq.salati.prayertimes.presentation.screens
+package com.mhq.salati.home.presentation.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.mhq.salati.prayertimes.presentation.contract.HomeContract
+import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.shared.presentation.screens.AwaitingLocationPermissions
 import com.mhq.salati.shared.presentation.screens.LoadingContent
 import com.mhq.salati.shared.presentation.theme.SalatiTheme

@@ -6,7 +6,7 @@ import android.content.Intent
 import com.mhq.salati.location.data.LocationProvider
 import com.mhq.salati.permissions.domain.PermissionChecker
 import com.mhq.salati.adhan.domain.repo.MutedPrayersRepository
-import com.mhq.salati.prayertimes.domain.repo.PrayerTimesRepository
+import com.mhq.salati.home.domain.repo.PrayerTimesRepository
 import com.mhq.salati.adhan.domain.usecases.ScheduleDailyPrayerAlarmsUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope

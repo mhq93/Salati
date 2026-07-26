@@ -1,6 +1,6 @@
 package com.mhq.salati.shared.di
 
-import com.mhq.salati.prayertimes.data.client.KtorClient
+import com.mhq.salati.shared.data.network.KtorClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

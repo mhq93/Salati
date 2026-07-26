@@ -1,4 +1,4 @@
-package com.mhq.salati.prayertimes.presentation.screens
+package com.mhq.salati.home.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,12 +30,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mhq.salati.prayertimes.domain.model.PrayerDate
-import com.mhq.salati.prayertimes.domain.model.PrayerTimings
-import com.mhq.salati.prayertimes.presentation.components.DateBanner
-import com.mhq.salati.prayertimes.presentation.components.PrayerArcGauge
-import com.mhq.salati.prayertimes.presentation.components.PrayersList
-import com.mhq.salati.prayertimes.presentation.contract.HomeContract
+import com.mhq.salati.home.domain.model.PrayerDate
+import com.mhq.salati.home.domain.model.PrayerTimings
+import com.mhq.salati.home.presentation.components.DateBanner
+import com.mhq.salati.home.presentation.components.PrayerArcGauge
+import com.mhq.salati.home.presentation.components.PrayersList
+import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
