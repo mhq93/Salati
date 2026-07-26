@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name=".SalatiApplication"
+        android:name="com.mhq.salati.shared.SalatiApplication"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -25,17 +25,17 @@
         android:theme="@style/Theme.Salati">
 
         <service
-            android:name=".data.service.AdhanPlaybackService"
+            android:name="com.mhq.salati.adhan.data.AdhanPlaybackService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
         <receiver
-            android:name=".data.alarms.PrayerAlarmReceiver"
+            android:name="com.mhq.salati.adhan.data.PrayerAlarmReceiver"
             android:exported="false" />
 
         <receiver
-            android:name=".data.alarms.BootReceiver"
+            android:name="com.mhq.salati.adhan.data.BootReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -43,7 +43,7 @@
         </receiver>
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.mhq.salati.shared.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Salati"
