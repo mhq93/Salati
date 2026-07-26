@@ -1,4 +1,4 @@
-package com.mhq.salati.adhan
+package com.mhq.salati.permissions.exactalarm
 
 import android.content.Intent
 import androidx.activity.compose.ManagedActivityResultLauncher

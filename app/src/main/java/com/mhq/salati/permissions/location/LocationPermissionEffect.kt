@@ -1,4 +1,4 @@
-package com.mhq.salati.location
+package com.mhq.salati.permissions.location
 
 sealed class LocationPermissionEffect {
     object RequestPermission : LocationPermissionEffect()

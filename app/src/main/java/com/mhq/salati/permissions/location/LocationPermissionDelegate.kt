@@ -1,4 +1,4 @@
-package com.mhq.salati.location
+package com.mhq.salati.permissions.location
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

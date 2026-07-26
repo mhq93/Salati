@@ -1,4 +1,4 @@
-package com.mhq.salati.location
+package com.mhq.salati.permissions.location
 
 data class LocationPermissionState(
     val required: Boolean = false,

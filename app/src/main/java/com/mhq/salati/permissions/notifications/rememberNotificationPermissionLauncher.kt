@@ -1,4 +1,4 @@
-package com.mhq.salati.notifications
+package com.mhq.salati.permissions.notifications
 
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult

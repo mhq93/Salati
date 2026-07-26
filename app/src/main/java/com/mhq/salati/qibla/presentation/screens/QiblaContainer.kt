@@ -14,9 +14,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mhq.salati.location.LocationPermissionEffect
-import com.mhq.salati.location.rememberGpsEnabled
-import com.mhq.salati.location.rememberLocationPermissionLauncher
+import com.mhq.salati.permissions.location.LocationPermissionEffect
+import com.mhq.salati.permissions.location.rememberGpsEnabled
+import com.mhq.salati.permissions.location.rememberLocationPermissionLauncher
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.qibla.presentation.viewmodel.QiblaViewModel
 

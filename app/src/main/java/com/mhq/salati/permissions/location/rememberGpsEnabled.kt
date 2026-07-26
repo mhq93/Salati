@@ -1,4 +1,4 @@
-package com.mhq.salati.location
+package com.mhq.salati.permissions.location
 
 import android.content.BroadcastReceiver
 import android.content.Context

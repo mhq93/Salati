@@ -2,8 +2,8 @@ package com.mhq.salati.qibla.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.location.LocationPermissionDelegate
-import com.mhq.salati.location.LocationPermissionEffect
+import com.mhq.salati.permissions.location.LocationPermissionDelegate
+import com.mhq.salati.permissions.location.LocationPermissionEffect
 import com.mhq.salati.location.data.LocationProvider
 import com.mhq.salati.location.domain.usecases.FetchAndSaveLocationUseCase
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase

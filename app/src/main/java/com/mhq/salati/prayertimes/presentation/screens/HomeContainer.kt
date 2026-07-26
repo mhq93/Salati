@@ -14,11 +14,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mhq.salati.adhan.rememberExactAlarmPermissionLauncher
-import com.mhq.salati.location.LocationPermissionEffect
-import com.mhq.salati.location.rememberGpsEnabled
-import com.mhq.salati.location.rememberLocationPermissionLauncher
-import com.mhq.salati.notifications.rememberNotificationPermissionLauncher
+import com.mhq.salati.permissions.exactalarm.rememberExactAlarmPermissionLauncher
+import com.mhq.salati.permissions.location.LocationPermissionEffect
+import com.mhq.salati.permissions.location.rememberGpsEnabled
+import com.mhq.salati.permissions.location.rememberLocationPermissionLauncher
+import com.mhq.salati.permissions.notifications.rememberNotificationPermissionLauncher
 import com.mhq.salati.prayertimes.presentation.contract.HomeContract
 import com.mhq.salati.prayertimes.presentation.viewmodel.HomeViewModel
 

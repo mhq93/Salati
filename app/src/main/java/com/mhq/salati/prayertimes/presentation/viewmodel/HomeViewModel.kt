@@ -7,8 +7,8 @@ import com.mhq.salati.adhan.domain.usecases.ObserveAdhanPlaybackStateUseCase
 import com.mhq.salati.adhan.domain.usecases.ScheduleDailyPrayerAlarmsUseCase
 import com.mhq.salati.adhan.domain.usecases.StopAdhanPlaybackUseCase
 import com.mhq.salati.adhan.domain.usecases.ToggleMutePrayerUseCase
-import com.mhq.salati.location.LocationPermissionDelegate
-import com.mhq.salati.location.LocationPermissionEffect
+import com.mhq.salati.permissions.location.LocationPermissionDelegate
+import com.mhq.salati.permissions.location.LocationPermissionEffect
 import com.mhq.salati.location.data.LocationProvider
 import com.mhq.salati.location.domain.usecases.FetchAndSaveLocationUseCase
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase

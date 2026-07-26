@@ -1,4 +1,4 @@
-package com.mhq.salati.location
+package com.mhq.salati.permissions.location
 
 import android.Manifest
 import android.app.Activity

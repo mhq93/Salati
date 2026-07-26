@@ -3,7 +3,7 @@ package com.mhq.salati.prayertimes.presentation.contract
 import com.mhq.salati.adhan.domain.model.AdhanPlaybackState
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
-import com.mhq.salati.location.LocationPermissionState
+import com.mhq.salati.permissions.location.LocationPermissionState
 
 class HomeContract {
 
