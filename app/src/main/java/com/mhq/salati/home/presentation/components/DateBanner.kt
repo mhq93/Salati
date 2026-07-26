@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mhq.salati.home.domain.model.PrayerDate
+import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.shared.presentation.theme.AccentGreen
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.SalatiTheme

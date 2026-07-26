@@ -1,7 +1,7 @@
 package com.mhq.salati.prayertimes.domain.usecases
 
-import com.mhq.salati.home.domain.model.PrayerTimesResult
-import com.mhq.salati.home.domain.repo.PrayerTimesRepository
+import com.mhq.salati.prayertimes.domain.model.PrayerTimesResult
+import com.mhq.salati.prayertimes.domain.repo.PrayerTimesRepository
 import javax.inject.Inject
 
 class GetPrayerTimesUseCase @Inject constructor(

@@ -1,8 +1,8 @@
 package com.mhq.salati.adhan.domain.usecases
 
 import com.mhq.salati.adhan.domain.model.PrayerAlarm
-import com.mhq.salati.home.domain.model.PrayerTimings
 import com.mhq.salati.adhan.domain.repo.AlarmScheduler
+import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
