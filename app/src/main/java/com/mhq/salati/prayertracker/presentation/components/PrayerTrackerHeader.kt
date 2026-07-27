@@ -38,7 +38,7 @@ fun PrayerTrackerHeader(
     streak: Int,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .background(
@@ -55,11 +55,14 @@ fun PrayerTrackerHeader(
             )
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f, fill = false)
+            ) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
@@ -83,7 +86,9 @@ fun PrayerTrackerHeader(
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(
+                        modifier = Modifier.height(4.dp)
+                    )
                     Text(
                         text = stringResource(R.string.track_your_five_daily_prayers),
                         color = Color.White.copy(alpha = 0.7f),

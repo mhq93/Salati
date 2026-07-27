@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.settings.presentation.components.SelectorType
 import com.mhq.salati.settings.presentation.components.SettingsActionRow
@@ -37,6 +38,7 @@ import com.mhq.salati.settings.presentation.components.SettingsStepperRow
 import com.mhq.salati.settings.presentation.components.SettingsSwitchRow
 import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
 import com.mhq.salati.settings.presentation.contract.SettingsContract.State
+import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import com.mhq.salati.shared.presentation.theme.SheetBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -213,6 +215,17 @@ fun SettingsContent(
                 onIntent(Intent.CloseSelector)
             },
             onDismiss = { onIntent(Intent.CloseSelector) }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SettingsContentPreview() {
+    SalatiTheme() {
+        SettingsContent(
+            state = State(),
+            onIntent = {}
         )
     }
 }

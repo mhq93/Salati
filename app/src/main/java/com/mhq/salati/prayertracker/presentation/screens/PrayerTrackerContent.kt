@@ -41,7 +41,6 @@ fun PrayerTrackerContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .offset(y = (-24).dp)
                     .background(SheetBackground)
                     .padding(
                         horizontal = 20.dp,

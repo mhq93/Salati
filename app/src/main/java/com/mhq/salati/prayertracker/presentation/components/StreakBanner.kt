@@ -28,7 +28,7 @@ fun StreakBanner(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .background(
                 color = DarkGreenLight,
                 shape = RoundedCornerShape(50)
