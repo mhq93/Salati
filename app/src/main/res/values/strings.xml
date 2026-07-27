@@ -18,4 +18,14 @@
     <string name="skip">Skip</string>
     <string name="track_your_five_daily_prayers">Track your five daily prayers</string>
     <string name="prayer_tracker">Prayer tracker</string>
+    <string name="fajr">Fajr</string>
+    <string name="dhuhr">Dhuhr</string>
+    <string name="asr">Asr</string>
+    <string name="maghrib">Maghrib</string>
+    <string name="isha">Isha</string>
+    <string name="imsak">Imsak</string>
+    <string name="shorouq">Shorouq</string>
+    <string name="first_third">First Third</string>
+    <string name="midnight">Midnight</string>
+    <string name="last_third">Last Third</string>
 </resources>

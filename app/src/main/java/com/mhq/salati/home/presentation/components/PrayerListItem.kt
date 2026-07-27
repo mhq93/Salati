@@ -36,7 +36,7 @@ fun PrayerListItem(
     modifier: Modifier = Modifier
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
         modifier = modifier
             .fillMaxWidth()
             .padding(
@@ -54,11 +54,9 @@ fun PrayerListItem(
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 24.sp
             )
-
             Spacer(
                 modifier = Modifier.height(8.dp)
             )
-
             Text(
                 text = prayerTime,
                 color = MutedSage,

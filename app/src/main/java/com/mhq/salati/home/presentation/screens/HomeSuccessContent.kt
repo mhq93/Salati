@@ -25,11 +25,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
 import com.mhq.salati.home.presentation.components.DateBanner
 import com.mhq.salati.home.presentation.components.PrayerArcGauge
 import com.mhq.salati.home.presentation.components.PrayersList
@@ -68,11 +70,19 @@ fun HomeSuccessContent(
     }
 
     val prayers = listOf(
-        Triple("🌄", "Fajr", prayerTimings.fajr),
-        Triple("☀️", "Dhuhr", prayerTimings.dhuhr),
-        Triple("🌤️", "Asr", prayerTimings.asr),
-        Triple("🌇", "Maghrib", prayerTimings.maghrib),
-        Triple("🌙", "Isha", prayerTimings.isha)
+        Triple("🌄", stringResource(R.string.fajr), prayerTimings.fajr),
+        Triple("☀️", stringResource(R.string.dhuhr), prayerTimings.dhuhr),
+        Triple("🌤️", stringResource(R.string.asr), prayerTimings.asr),
+        Triple("🌇", stringResource(R.string.maghrib), prayerTimings.maghrib),
+        Triple("🌙", stringResource(R.string.isha), prayerTimings.isha)
+    )
+
+    val minorTimings = listOf(
+        Triple("🌄", stringResource(R.string.imsak), prayerTimings.imsak),
+        Triple("☀️", stringResource(R.string.shorouq), prayerTimings.sunrise),
+        Triple("🌙️", stringResource(R.string.first_third), prayerTimings.firstThird),
+        Triple("🌙", stringResource(R.string.midnight), prayerTimings.midnight),
+        Triple("🌙", stringResource(R.string.last_third), prayerTimings.lastThird)
     )
 
     val currentPrayerName = remember(prayerTimings) {
@@ -184,8 +194,9 @@ fun HomeSuccessContent(
 
                 PrayersList(
                     prayers = prayers,
-                    currentPrayerName = currentPrayerName,
-                    mutedPrayers = mutedPrayers,
+                    minorTimings = minorTimings,
+                    currentTimingName = currentPrayerName,
+                    mutedTimings = mutedPrayers,
                     onIntent = onIntent,
                     modifier = modifier
                 )
