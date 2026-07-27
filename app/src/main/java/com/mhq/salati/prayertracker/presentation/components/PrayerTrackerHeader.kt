@@ -1,6 +1,7 @@
 package com.mhq.salati.prayertracker.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,15 +10,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -49,53 +51,45 @@ fun PrayerTrackerHeader(streak: Int) {
                 end = 24.dp
             )
     ) {
-        Text(
-            text = stringResource(R.string.prayer_tracker),
-            color = Color.White,
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(
-            modifier = Modifier.height(4.dp)
-        )
-        Text(
-            text = stringResource(R.string.track_your_five_daily_prayers),
-            color = Color.White.copy(alpha = 0.7f),
-            fontSize = 14.sp
-        )
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
-
-        if (streak > 0) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .background(
-                        color = DarkGreenLight,
-                        shape = RoundedCornerShape(50)
-                    )
-                    .padding(
-                        horizontal = 14.dp,
-                        vertical = 8.dp
-                    )
+                    .size(56.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.White.copy(alpha = 0.12f)),
             ) {
                 Icon(
-                    Icons.Filled.LocalFireDepartment,
-                    contentDescription = null,
+                    imageVector = Icons.Default.CheckCircle,
                     tint = AccentGold,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(
-                    modifier = Modifier.width(6.dp)
-                )
-                Text(
-                    text = "$streak day streak",
-                    color = Color.White,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp)
                 )
             }
+            Column(
+                modifier = Modifier.padding(start = 16.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.prayer_tracker),
+                    color = Color.White,
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(
+                    modifier = Modifier.height(4.dp)
+                )
+                Text(
+                    text = stringResource(R.string.track_your_five_daily_prayers),
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 14.sp
+                )
+            }
+        }
+
+        if (streak > 0) {
+            StreakBanner(streak)
         }
     }
 }
