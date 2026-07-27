@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.prayertracker.domain.model.DayStatus
 import com.mhq.salati.prayertracker.domain.model.PrayerStatus
+import com.mhq.salati.prayertracker.domain.model.PrayerType
 import com.mhq.salati.prayertracker.domain.usecases.GetCurrentStreakUseCase
 import com.mhq.salati.prayertracker.domain.usecases.ObservePrayerRecordsForDateUseCase
 import com.mhq.salati.prayertracker.domain.usecases.ObservePrayerRecordsForMonthUseCase
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -49,21 +51,24 @@ class PrayerTrackerViewModel @Inject constructor(
     fun onIntent(intent: Intent) {
         when (intent) {
             is Intent.DateSelected -> {
-                _state.value = _state.value.copy(selectedDate = intent.date)
+                _state.update { it.copy(selectedDate = intent.date) }
                 loadDate(intent.date)
             }
+
             is Intent.MonthChanged -> {
                 val newMonth = _state.value.selectedMonth.plusMonths(intent.delta.toLong())
-                _state.value = _state.value.copy(selectedMonth = newMonth)
+                _state.update { it.copy(selectedMonth = newMonth) }
                 loadMonth(newMonth)
             }
+
             is Intent.PrayerTileTapped -> {
-                if (_state.value.selectedDate.isAfter(LocalDate.now())) return // future days locked
-                _state.value = _state.value.copy(dialogPrayer = intent.prayer)
+                if (_state.value.selectedDate.isAfter(LocalDate.now())) return
+                _state.update { it.copy(dialogPrayer = intent.prayer) }
             }
+
             Intent.ConfirmPrayed -> applyDialogResult(PrayerStatus.PRAYED)
             Intent.ConfirmMissed -> applyDialogResult(PrayerStatus.MISSED)
-            Intent.DismissDialog -> _state.value = _state.value.copy(dialogPrayer = null)
+            Intent.DismissDialog -> _state.update { it.copy(dialogPrayer = null) }
         }
     }
 
@@ -72,7 +77,7 @@ class PrayerTrackerViewModel @Inject constructor(
         val date = _state.value.selectedDate
         viewModelScope.launch {
             setStatus(date, prayer, status)
-            _state.value = _state.value.copy(dialogPrayer = null)
+            _state.update { it.copy(dialogPrayer = null) }
             refreshStreak()
         }
     }
@@ -83,9 +88,13 @@ class PrayerTrackerViewModel @Inject constructor(
             .onEach { recordsByDate ->
                 val today = LocalDate.now()
                 val statusMap = recordsByDate.mapValues { (date, records) ->
-                    dayStatusFor(date, records, today)
+                    dayStatusFor(
+                        date,
+                        records,
+                        today
+                    )
                 }
-                _state.value = _state.value.copy(monthDayStatus = statusMap, isLoading = false)
+                _state.update { it.copy(monthDayStatus = statusMap, isLoading = false) }
             }
             .launchIn(viewModelScope)
     }
@@ -93,24 +102,24 @@ class PrayerTrackerViewModel @Inject constructor(
     private fun loadDate(date: LocalDate) {
         dateJob?.cancel()
         dateJob = observeDate(date)
-            .onEach { records -> _state.value = _state.value.copy(selectedDateRecords = records) }
+            .onEach { records -> _state.update { it.copy(selectedDateRecords = records) } }
             .launchIn(viewModelScope)
     }
 
     private fun refreshStreak() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(currentStreak = getCurrentStreak())
+            _state.update { it.copy(currentStreak = getCurrentStreak()) }
         }
     }
 
     private fun dayStatusFor(
         date: LocalDate,
-        records: Map<com.mhq.salati.prayertracker.domain.model.PrayerType, PrayerStatus>,
+        records: Map<PrayerType, PrayerStatus>,
         today: LocalDate
     ): DayStatus = when {
         date.isAfter(today) -> DayStatus.FUTURE
         records.values.any { it == PrayerStatus.MISSED } -> DayStatus.HAS_MISSED
-        com.mhq.salati.prayertracker.domain.model.PrayerType.entries.all { records[it] == PrayerStatus.PRAYED } -> DayStatus.ALL_PRAYED
+        PrayerType.entries.all { records[it] == PrayerStatus.PRAYED } -> DayStatus.ALL_PRAYED
         else -> DayStatus.IN_PROGRESS
     }
 }
