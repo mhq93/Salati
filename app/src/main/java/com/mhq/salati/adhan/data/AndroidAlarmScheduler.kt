@@ -73,7 +73,18 @@ class AndroidAlarmScheduler @Inject constructor(
     }
 
     override fun cancelAll() {
-        listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
+        listOf(
+            "Fajr",
+            "Dhuhr",
+            "Asr",
+            "Maghrib",
+            "Isha",
+            "Imsak",
+            "Shorouq",
+            "First Third",
+            "Midnight",
+            "Last Third"
+        )
             .forEach { cancel(it) }
     }
 }

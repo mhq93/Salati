@@ -21,8 +21,13 @@ class ScheduleDailyPrayerAlarmsUseCase @Inject constructor(
                 "Dhuhr" to timings.dhuhr,
                 "Asr" to timings.asr,
                 "Maghrib" to timings.maghrib,
-                "Isha" to timings.isha
-            )
+                "Isha" to timings.isha,
+                "Imsak" to timings.imsak,
+                "Shorouq" to timings.sunrise,
+                "First Third" to timings.firstThird,
+                "Midnight" to timings.midnight,
+                "Last Third" to timings.lastThird
+                )
 
             prayerMap.forEach { (name, time) ->
                 if (name in mutedPrayers) {

@@ -83,9 +83,6 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-        // Reacts to the same PermissionResolved signal the Container used to key
-        // locationFlowResolved off of — now the ViewModel makes the decision and
-        // emits one-shot effects instead of the Container deciding directly.
         viewModelScope.launch {
             permissionDelegate.effect.collect { effect ->
                 if (effect is LocationPermissionEffect.PermissionResolved &&
