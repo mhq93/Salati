@@ -35,8 +35,7 @@ fun QiblaHeader() {
             )
             .statusBarsPadding()
             .padding(
-                //top = 32.dp,//56
-                bottom = 32.dp,//56
+                bottom = 32.dp,
                 start = 24.dp,
                 end = 24.dp
             )

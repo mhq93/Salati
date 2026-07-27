@@ -18,45 +18,77 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
 import com.mhq.salati.shared.presentation.theme.AccentGold
 import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
+import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable
 fun PrayerTrackerHeader(streak: Int) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(DarkGreen) // background BEFORE statusBarsPadding — full-bleed fix, per convention
+            .background(
+                Brush.verticalGradient(
+                    listOf(DarkGreenLight, DarkGreen)
+                )
+            )
             .statusBarsPadding()
-            .padding(horizontal = 20.dp, vertical = 20.dp)
+            .padding(
+                top = 24.dp,
+                bottom = 32.dp,
+                start = 24.dp,
+                end = 24.dp
+            )
     ) {
         Text(
-            text = "Prayer tracker",
+            text = stringResource(R.string.prayer_tracker),
             color = Color.White,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Medium
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(
+            modifier = Modifier.height(4.dp)
+        )
         Text(
-            text = "Track your five daily prayers",
+            text = stringResource(R.string.track_your_five_daily_prayers),
             color = Color.White.copy(alpha = 0.7f),
             fontSize = 14.sp
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(
+            modifier = Modifier.height(16.dp)
+        )
+
         if (streak > 0) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .background(DarkGreenLight, shape = RoundedCornerShape(50))
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
+                    .background(
+                        color = DarkGreenLight,
+                        shape = RoundedCornerShape(50)
+                    )
+                    .padding(
+                        horizontal = 14.dp,
+                        vertical = 8.dp
+                    )
             ) {
-                Icon(Icons.Filled.LocalFireDepartment, contentDescription = null, tint = AccentGold, modifier = Modifier.size(18.dp))
-                Spacer(modifier = Modifier.width(6.dp))
+                Icon(
+                    Icons.Filled.LocalFireDepartment,
+                    contentDescription = null,
+                    tint = AccentGold,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(
+                    modifier = Modifier.width(6.dp)
+                )
                 Text(
                     text = "$streak day streak",
                     color = Color.White,
@@ -65,5 +97,15 @@ fun PrayerTrackerHeader(streak: Int) {
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PrayerTrackerHeaderPreview() {
+    SalatiTheme() {
+        PrayerTrackerHeader(
+            streak = 0
+        )
     }
 }

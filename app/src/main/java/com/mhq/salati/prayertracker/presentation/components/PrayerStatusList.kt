@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.prayertracker.domain.model.PrayerStatus
@@ -30,6 +32,7 @@ import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.Missed
 import com.mhq.salati.shared.presentation.theme.MutedSlate
 import com.mhq.salati.shared.presentation.theme.Prayed
+import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import java.time.LocalDate
 
 @Composable
@@ -39,22 +42,31 @@ fun PrayerStatusList(
     onPrayerTapped: (PrayerType) -> Unit
 ) {
     val locked = selectedDate.isAfter(LocalDate.now())
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
         PrayerType.entries.forEach { prayer ->
             val status = records[prayer] ?: PrayerStatus.PENDING
-            Row(
+
+            Column(
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .weight(1f)
                     .clip(RoundedCornerShape(16.dp))
                     .background(CardBackground)
                     .clickable(enabled = !locked) { onPrayerTapped(prayer) }
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+                    .padding(
+                        horizontal = 4.dp,
+                        vertical = 16.dp
+                    ),
+
+                ) {
                 Text(
                     text = prayer.displayName,
-                    fontSize = 15.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = if (locked) MutedSlate else InkText
                 )
@@ -64,14 +76,14 @@ fun PrayerStatusList(
                     PrayerStatus.PENDING -> Box(
                         modifier = Modifier
                             .size(28.dp)
-                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .clip(CircleShape)
                             .background(Color.Transparent)
                     ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(2.dp)
-                                .clip(androidx.compose.foundation.shape.CircleShape)
+                                .clip(CircleShape)
                                 .background(MutedSlate.copy(alpha = 0.15f))
                         )
                     }
@@ -81,3 +93,14 @@ fun PrayerStatusList(
     }
 }
 
+@Preview
+@Composable
+private fun PrayerStatusListPreview() {
+    SalatiTheme() {
+        PrayerStatusList(
+            selectedDate = LocalDate.now(),
+            records = emptyMap(),
+            onPrayerTapped = {}
+        )
+    }
+}

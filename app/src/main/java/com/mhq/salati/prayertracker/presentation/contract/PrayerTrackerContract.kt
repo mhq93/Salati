@@ -27,6 +27,6 @@ object PrayerTrackerContract {
     }
 
     sealed interface Effect {
-        data class ShowError(val message: String) : Effect // TODO: same as Home/Qibla/Settings
+        data class ShowError(val message: String) : Effect
     }
 }

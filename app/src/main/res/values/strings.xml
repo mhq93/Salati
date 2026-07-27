@@ -7,4 +7,15 @@
     <string name="adhan_playing_title">Prayer time is due</string>
     <string name="adhan_playing_body">It\'s time for Al-%1$s prayer</string>
     <string name="stop">Stop</string>
+    <string name="get_started">Get Started</string>
+    <string name="next">Next</string>
+    <string name="never_miss_a_prayer">Never Miss a Prayer</string>
+    <string name="accurate_prayer_times_calculated_for_your_exact_location">Accurate prayer times calculated for your exact location, updated automatically throughout the day.</string>
+    <string name="find_your_qibla">Find Your Qibla</string>
+    <string name="a_precise_live_compass_points_you_toward_the_kaaba_wherever_you_are">A precise, live compass points you toward the Kaaba wherever you are.</string>
+    <string name="gentle_reminders">Gentle Reminders</string>
+    <string name="custom_adhan_alerts_for_every_prayer_fully_in_your_control">Custom Adhan alerts for every prayer, fully in your control.</string>
+    <string name="skip">Skip</string>
+    <string name="track_your_five_daily_prayers">Track your five daily prayers</string>
+    <string name="prayer_tracker">Prayer tracker</string>
 </resources>
