@@ -19,16 +19,20 @@ class AndroidAlarmScheduler @Inject constructor(
         context.getSystemService(AlarmManager::class.java)
 
     override fun schedule(alarm: PrayerAlarm) {
-        if (
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
             && !alarmManager.canScheduleExactAlarms()
-            ) {
+        ) {
+            Log.w(
+                "AlarmScheduler",
+                "Cannot schedule ${alarm.prayerName}: exact alarm permission denied"
+            )
             return
         }
 
         val intent = Intent(
             context,
-            PrayerAlarmReceiver::class.java).apply {
+            PrayerAlarmReceiver::class.java
+        ).apply {
             putExtra(
                 PrayerAlarmReceiver.EXTRA_PRAYER_NAME,
                 alarm.prayerName

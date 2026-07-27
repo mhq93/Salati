@@ -1,6 +1,5 @@
 package com.mhq.salati.adhan.data
 
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
@@ -39,7 +38,6 @@ class AdhanPlaybackService : Service() {
         return START_NOT_STICKY
     }
 
-    @SuppressLint("ForegroundServiceType")
     private fun startPlayback(prayerName: String) {
         val notification = buildNotification(prayerName)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

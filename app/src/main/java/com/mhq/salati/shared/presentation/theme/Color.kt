@@ -15,6 +15,7 @@ val Obsidian = Color(0xFF1C1C1C)
 val DeepGunmetal = Color(0xFF16191B)
 val InkText = Color(0xFF1C2B22)
 val DarkGreen = Color(0xFF0B3D2E)
+val PrimaryGreen = Color(0xFF103A31)
 val DarkGreenLight = Color(0xFF1D5C46) //0xFF14523E
 val GaugeTrackDim = Color(0xFF2A5E48)
 val AccentGreen = Color(0xFF2FA774)
