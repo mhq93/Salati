@@ -1,4 +1,4 @@
-package com.mhq.salati.shared.domain
+package com.mhq.salati.shared.domain.usecases
 
 import com.mhq.salati.onboarding.domain.usecase.GetOnboardingCompletedUseCase
 import com.mhq.salati.permissions.domain.PermissionChecker

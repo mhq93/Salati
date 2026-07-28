@@ -1,6 +1,7 @@
 package com.mhq.salati.home.presentation.contract
 
 import com.mhq.salati.adhan.domain.model.AdhanPlaybackState
+import com.mhq.salati.home.domain.model.NextPrayerInfo
 import com.mhq.salati.permissions.location.LocationPermissionState
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
@@ -11,6 +12,8 @@ class HomeContract {
         val isLoading: Boolean = false,
         val timings: PrayerTimings? = null,
         val date: PrayerDate? = null,
+        val currentPrayerName: String? = null,
+        val nextPrayerInfo: NextPrayerInfo? = null,
         val errorMessage: String? = null,
         val locationPermission: LocationPermissionState = LocationPermissionState(),
         val adhanPlayback: AdhanPlaybackState = AdhanPlaybackState.Idle,
@@ -22,6 +25,7 @@ class HomeContract {
         data object Retry : Intent
         data object PreviousDay : Intent
         data object NextDay : Intent
+        data object NextPrayerWindowElapsed : Intent
         data object LocationPermissionGranted : Intent
         data object AccessAppSettings : Intent
         data object AccessDeviceLocationSettings : Intent

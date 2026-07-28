@@ -1,10 +1,8 @@
 package com.mhq.salati.home.presentation.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -23,17 +20,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
+import com.mhq.salati.home.domain.model.NextPrayerInfo
 import com.mhq.salati.home.presentation.components.DateBanner
-import com.mhq.salati.home.presentation.components.PrayerArcGauge
+import com.mhq.salati.home.presentation.components.PrayerCountdownRing
 import com.mhq.salati.home.presentation.components.PrayersList
 import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
@@ -42,32 +37,17 @@ import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import com.mhq.salati.shared.presentation.theme.SheetBackground
-import com.mhq.salati.shared.utils.TimeFormatter.parseTimeToMinutes
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun HomeSuccessContent(
     prayerDate: PrayerDate,
     prayerTimings: PrayerTimings,
+    nextPrayerInfo: NextPrayerInfo?,
+    currentPrayerName: String?,
     mutedPrayers: Set<String>,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val currentTimeLabel = remember {
-        SimpleDateFormat("hh:mm a", Locale.US).format(Date())
-    }
-    val nowMinutes = remember(prayerTimings) {
-        val now = SimpleDateFormat("HH:mm", Locale.US).format(Date())
-        parseTimeToMinutes(now)
-    }
-    val fajrMinutes = remember(prayerTimings) {
-        parseTimeToMinutes(prayerTimings.fajr)
-    }
-    val ishaMinutes = remember(prayerTimings) {
-        parseTimeToMinutes(prayerTimings.isha)
-    }
 
     val prayers = listOf(
         Triple("🌄", stringResource(R.string.fajr), prayerTimings.fajr),
@@ -85,14 +65,6 @@ fun HomeSuccessContent(
         Triple("🌙", stringResource(R.string.last_third), prayerTimings.lastThird)
     )
 
-    val currentPrayerName = remember(prayerTimings) {
-        prayers
-            .map { it.second to parseTimeToMinutes(it.third) }
-            .filter { it.second <= nowMinutes }
-            .maxByOrNull { it.second }
-            ?.first
-    }
-
     var headerHeightPx by remember { mutableIntStateOf(0) }
     var bannerHeightPx by remember { mutableIntStateOf(0) }
 
@@ -103,6 +75,7 @@ fun HomeSuccessContent(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
                     .onGloballyPositioned { headerHeightPx = it.size.height }
@@ -120,57 +93,16 @@ fun HomeSuccessContent(
                         bottom = 40.dp
                     )
             ) {
-                PrayerArcGauge(
-                    currentTimeLabel = currentTimeLabel,
-                    fajrLabel = prayerTimings.fajr,
-                    ishaLabel = prayerTimings.isha,
-                    fajrMinutes = fajrMinutes,
-                    ishaMinutes = ishaMinutes,
-                    nowMinutes = nowMinutes,
-                    modifier = Modifier.padding(top = 12.dp)
-                )
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = 32.dp,
-                            vertical = 8.dp
-                        )
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            "Fajr",
-                            color = Color.White.copy(alpha = 0.85f),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            prayerTimings.fajr,
-                            color = Color.White,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            "Isha",
-                            color = Color.White.copy(alpha = 0.85f),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            prayerTimings.isha,
-                            color = Color.White,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
+                nextPrayerInfo?.let {
+                    PrayerCountdownRing(
+                        nextPrayerName = it.name,
+                        spanStartMillis = nextPrayerInfo.spanStartMillis,
+                        spanEndMillis = nextPrayerInfo.spanEndMillis,
+                        onWindowElapsed = { onIntent(HomeContract.Intent.NextPrayerWindowElapsed) },
+                        modifier = Modifier.padding(top = 12.dp)
+                    )
                 }
             }
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -191,7 +123,6 @@ fun HomeSuccessContent(
                         16.dp
                     )
                 )
-
                 PrayersList(
                     prayers = prayers,
                     minorTimings = minorTimings,
@@ -202,7 +133,6 @@ fun HomeSuccessContent(
                 )
             }
         }
-
         DateBanner(
             prayerDate = prayerDate,
             onPreviousDay = { onIntent(HomeContract.Intent.PreviousDay) },
@@ -220,7 +150,7 @@ fun HomeSuccessContent(
     }
 }
 
-@Preview(showBackground = true, name = "Home - Success")
+@Preview
 @Composable
 private fun HomeContentSuccessPreview() {
     SalatiTheme {

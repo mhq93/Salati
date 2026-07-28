@@ -28,10 +28,12 @@ fun HomeContent(
             )
         }
 
-        state.timings != null && state.date != null -> {
+        state.timings != null && state.date != null && state.nextPrayerInfo != null -> {
             HomeSuccessContent(
                 prayerDate = state.date,
                 prayerTimings = state.timings,
+                nextPrayerInfo = state.nextPrayerInfo,
+                currentPrayerName = state.currentPrayerName,
                 mutedPrayers = state.mutedPrayers,
                 onIntent = onIntent,
                 modifier = modifier

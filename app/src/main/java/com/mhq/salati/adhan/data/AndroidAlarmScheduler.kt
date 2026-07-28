@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import com.mhq.salati.adhan.domain.model.PrayerAlarm
 import com.mhq.salati.adhan.domain.repo.AlarmScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,10 +21,6 @@ class AndroidAlarmScheduler @Inject constructor(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
             && !alarmManager.canScheduleExactAlarms()
         ) {
-            Log.w(
-                "AlarmScheduler",
-                "Cannot schedule ${alarm.prayerName}: exact alarm permission denied"
-            )
             return
         }
 
@@ -49,12 +44,6 @@ class AndroidAlarmScheduler @Inject constructor(
             AlarmManager.RTC_WAKEUP,
             alarm.triggerAtMillis,
             pendingIntent
-        )
-
-        Log.d(
-            "AlarmScheduler",
-            "Scheduling $alarm at ${alarm.triggerAtMillis}, " +
-                    "canScheduleExactAlarms=${alarmManager.canScheduleExactAlarms()}"
         )
     }
 
