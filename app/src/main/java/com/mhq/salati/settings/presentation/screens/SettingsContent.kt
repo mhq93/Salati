@@ -53,7 +53,7 @@ fun SettingsContent(
             .background(SheetBackground)
     ) {
         LazyColumn(
-            contentPadding = PaddingValues(bottom = 140.dp + 32.dp),
+            contentPadding = PaddingValues(bottom = 40.dp),
             modifier = Modifier.fillMaxSize()
         ) {
             item { SettingsHeader() }
