@@ -51,12 +51,12 @@ fun DateBanner(
             onClick = onPreviousDay,
             modifier = Modifier
                 .size(24.dp)
-                .background(AccentOrange, CircleShape)//AccentGreen
+                .background(AccentOrange, CircleShape)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "Previous day",
-                tint = Color.White
+                tint = InkText
             )
         }
 
@@ -68,7 +68,7 @@ fun DateBanner(
         ) {
             Text(
                 text = "${prayerDate.hijriDay} ${prayerDate.hijriMonth} ${prayerDate.hijriYear}",
-                color = AccentOrange, //AccentGreen
+                color = AccentOrange,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 autoSize = TextAutoSize.StepBased(
@@ -79,7 +79,7 @@ fun DateBanner(
             )
             Text(
                 text = prayerDate.readable,
-                color = AccentOrange, //InkText
+                color = AccentOrange,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -89,12 +89,12 @@ fun DateBanner(
             onClick = onNextDay,
             modifier = Modifier
                 .size(24.dp)
-                .background(AccentOrange, CircleShape)//AccentGreen
+                .background(AccentOrange, CircleShape)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "Next day",
-                tint = Color.White
+                tint = InkText
             )
         }
     }

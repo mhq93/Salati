@@ -46,11 +46,12 @@ fun QiblaSuccessContent(
                 .padding(8.dp)
         )
 
-        Spacer(Modifier.height(28.dp))//20
+        Spacer(Modifier.height(20.dp))//20
 
         CalibrationBanner(
             compassAccuracy = compassAccuracy,
-            onRecalibrateClick = onRecalibrateClick
+            onRecalibrateClick = onRecalibrateClick,
+            modifier = Modifier.padding(16.dp)
         )
     }
 }

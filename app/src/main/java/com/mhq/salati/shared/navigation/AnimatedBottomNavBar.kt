@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.presentation.theme.AccentOrange
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
+import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import com.mhq.salati.shared.presentation.theme.SheetBackground
 
@@ -192,7 +193,7 @@ fun AnimatedBottomNavBar(
             Icon(
                 imageVector = items[selectedIndex].icon,
                 contentDescription = items[selectedIndex].label,
-                tint = Color.White,
+                tint = InkText,
                 modifier = Modifier.size(28.dp)
             )
         }

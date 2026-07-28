@@ -43,54 +43,76 @@ fun PrayerStatusList(
 ) {
     val locked = selectedDate.isAfter(LocalDate.now())
 
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier.fillMaxWidth()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        PrayerType.entries.forEach { prayer ->
-            val status = records[prayer] ?: PrayerStatus.PENDING
+        Text(
+            text = "Track your prayers",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            color = InkText,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            PrayerType.entries.forEach { prayer ->
+                val status = records[prayer] ?: PrayerStatus.PENDING
 
-            Column(
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(CardBackground)
-                    .clickable(enabled = !locked) { onPrayerTapped(prayer) }
-                    .padding(
-                        horizontal = 4.dp,
-                        vertical = 16.dp
-                    ),
+                Column(
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(CardBackground)
+                        .clickable(enabled = !locked) { onPrayerTapped(prayer) }
+                        .padding(
+                            horizontal = 4.dp,
+                            vertical = 8.dp
+                        ),
 
-                ) {
-                Text(
-                    text = prayer.displayName,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = if (locked) MutedSlate else InkText
-                )
-                when (status) {
-                    PrayerStatus.PRAYED -> StatusBadge(icon = Icons.Filled.Check, color = Prayed)
-                    PrayerStatus.MISSED -> StatusBadge(icon = Icons.Filled.Close, color = Missed)
-                    PrayerStatus.PENDING -> Box(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(CircleShape)
-                            .background(Color.Transparent)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(2.dp)
-                                .clip(CircleShape)
-                                .background(MutedSlate.copy(alpha = 0.15f))
+                    Text(
+                        text = prayer.displayName,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = if (locked) MutedSlate else InkText,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    when (status) {
+                        PrayerStatus.PRAYED -> StatusBadge(
+                            icon = Icons.Filled.Check,
+                            color = Prayed
                         )
+
+                        PrayerStatus.MISSED -> StatusBadge(
+                            icon = Icons.Filled.Close,
+                            color = Missed
+                        )
+
+                        PrayerStatus.PENDING -> Box(
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clip(CircleShape)
+                                .background(Color.Transparent)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(2.dp)
+                                    .clip(CircleShape)
+                                    .background(MutedSlate.copy(alpha = 0.15f))
+                            )
+                        }
                     }
                 }
             }
         }
     }
+
+
 }
 
 @Preview

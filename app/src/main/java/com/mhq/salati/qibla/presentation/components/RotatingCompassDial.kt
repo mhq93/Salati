@@ -2,6 +2,7 @@ package com.mhq.salati.qibla.presentation.components
 
 
 import android.graphics.BlurMaskFilter
+import android.graphics.Paint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.presentation.theme.AccentEmerald
@@ -36,6 +38,7 @@ import com.mhq.salati.shared.presentation.theme.MetallicSilver
 import com.mhq.salati.shared.presentation.theme.MutedSlate
 import com.mhq.salati.shared.presentation.theme.ObsidianDark
 import com.mhq.salati.shared.presentation.theme.PrimaryGreen
+import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -88,29 +91,36 @@ fun RotatingCompassDial(
 
     // Reused native Paint objects — allocated once, not per frame.
     val chassisShadowPaint = remember {
-        android.graphics.Paint().apply {
+        Paint().apply {
             color = android.graphics.Color.BLACK
             alpha = 140
             maskFilter = BlurMaskFilter(16f, BlurMaskFilter.Blur.OUTER)
         }
     }
     val pointerShadowPaint = remember {
-        android.graphics.Paint().apply {
+        Paint().apply {
             color = android.graphics.Color.BLACK
             alpha = 160
             maskFilter = BlurMaskFilter(4f, BlurMaskFilter.Blur.NORMAL)
         }
     }
 
-    Box(modifier = modifier.size(320.dp), contentAlignment = Alignment.Center) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier.size(320.dp)
+    ) {
 
-        // LAYER 1 — static bezel + shadow. drawWithCache: rebuilt only on size change, never on heading change.
+        // LAYER 1 — static bezel + shadow. drawWithCache:
+        // rebuilt only on size change, never on heading change.
         Canvas(
             modifier = Modifier
                 .size(300.dp)
                 .drawWithCache {
                     val radius = size.minDimension / 2f
-                    val center = Offset(size.width / 2f, size.height / 2f)
+                    val center = Offset(
+                        size.width / 2f,
+                        size.height / 2f
+                    )
                     onDrawBehind {
                         drawContext.canvas.nativeCanvas.drawCircle(
                             center.x,
@@ -121,9 +131,11 @@ fun RotatingCompassDial(
                         drawCircle(
                             brush = Brush.radialGradient(
                                 colors = listOf(DeepGunmetal, ObsidianDark),
-                                center = center, radius = radius
+                                center = center,
+                                radius = radius
                             ),
-                            radius = radius, center = center
+                            radius = radius,
+                            center = center
                         )
                         drawCircle(
                             Color.White.copy(alpha = 0.08f),
@@ -141,12 +153,22 @@ fun RotatingCompassDial(
                 }
         ) {}
 
-        // LAYER 2 — rotating instrument field. Redraws every frame (unavoidable, it's rotating), but zero allocations.
-        Canvas(modifier = Modifier.size(280.dp)) {
+        // LAYER 2 — rotating instrument field.
+        // Redraws every frame (unavoidable, it's rotating),
+        // but zero allocations.
+        Canvas(
+            modifier = Modifier.size(280.dp)
+        ) {
             val radius = size.minDimension / 2f
-            val center = Offset(size.width / 2f, size.height / 2f)
+            val center = Offset(
+                size.width / 2f,
+                size.height / 2f
+            )
 
-            rotate(degrees = -smoothedHeading, pivot = center) {
+            rotate(
+                degrees = -smoothedHeading,
+                pivot = center
+            ) {
 
                 for (angle in 0 until 360 step 10) {
                     val angleRad = Math.toRadians((angle - 90).toDouble())
@@ -154,7 +176,10 @@ fun RotatingCompassDial(
                     val tickLength = if (isMajor) 12.dp.toPx() else 6.dp.toPx()
                     val tickWidth = if (isMajor) 1.5.dp.toPx() else 1.dp.toPx()
                     val tickColor =
-                        if (isMajor) MetallicSilver.copy(alpha = 0.8f) else MutedSlate.copy(alpha = 0.35f)
+                        if (isMajor)
+                            MetallicSilver.copy(alpha = 0.8f)
+                        else 
+                            MutedSlate.copy(alpha = 0.35f)
 
                     val startRadius = radius - 10.dp.toPx() - tickLength
                     val endRadius = radius - 10.dp.toPx()
@@ -174,7 +199,7 @@ fun RotatingCompassDial(
                     )
 
                     degreeLabels[angle]?.let { layout ->
-                        if (angle % 90 != 0) {   // skip 0/90/180/270 — cardinal letters own those spots
+                        if (angle % 90 != 0) {
                             val textRadius = startRadius - 16.dp.toPx()
                             val textX = center.x + textRadius * cos(angleRad).toFloat()
                             val textY = center.y + textRadius * sin(angleRad).toFloat()
@@ -247,13 +272,17 @@ fun RotatingCompassDial(
             }
         }
 
-        // LAYER 3 — static center spindle + fixed top heading indicator. Also drawWithCache: draw once.
+        // LAYER 3 — static center spindle + fixed top heading indicator.
+        // Also, drawWithCache: draw once.
         Canvas(
             modifier = Modifier
                 .size(280.dp)
                 .drawWithCache {
                     val radius = size.minDimension / 2f
-                    val center = Offset(size.width / 2f, size.height / 2f)
+                    val center = Offset(
+                        size.width / 2f,
+                        size.height / 2f
+                    )
                     onDrawBehind {
                         drawLine(
                             PrimaryGreen,
@@ -283,5 +312,16 @@ fun RotatingCompassDial(
                     }
                 }
         ) {}
+    }
+}
+
+@Preview
+@Composable
+private fun RotatingCompassDialPreview() {
+    SalatiTheme() {
+        RotatingCompassDial(
+            deviceHeading = 1f,
+            qiblaBearing = 1f
+        )
     }
 }

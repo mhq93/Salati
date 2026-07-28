@@ -34,22 +34,23 @@ import com.mhq.salati.shared.presentation.theme.SheetBackground
 @Composable
 fun CalibrationBanner(
     compassAccuracy: CompassAccuracy,
-    onRecalibrateClick: () -> Unit
+    onRecalibrateClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val (label, dotColor) = when (compassAccuracy) {
         CompassAccuracy.HIGH ->
-            "Your phone's sensor accuracy is excellent." to MaterialGreen
+            "Sensor accuracy is excellent." to MaterialGreen
         CompassAccuracy.MEDIUM ->
-            "Your phone's sensor accuracy is moderate." to MaterialAmber
+            "Sensor accuracy is moderate." to MaterialAmber
         else ->
-            "Your phone's sensor accuracy is poor." to MaterialRed
+            "Sensor accuracy is poor." to MaterialRed
     }
 
     Surface(
         shape = RoundedCornerShape(18.dp),
         color = SheetBackground,
         border = BorderStroke(1.dp, DarkGreen.copy(alpha = 0.08f)),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
