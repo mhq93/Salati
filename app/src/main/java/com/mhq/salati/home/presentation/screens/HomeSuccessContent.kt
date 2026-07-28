@@ -42,6 +42,7 @@ import com.mhq.salati.shared.presentation.theme.SheetBackground
 fun HomeSuccessContent(
     prayerDate: PrayerDate,
     prayerTimings: PrayerTimings,
+    remainingMillis: Long,
     nextPrayerInfo: NextPrayerInfo?,
     currentPrayerName: String?,
     mutedPrayers: Set<String>,
@@ -98,7 +99,7 @@ fun HomeSuccessContent(
                         nextPrayerName = it.name,
                         spanStartMillis = nextPrayerInfo.spanStartMillis,
                         spanEndMillis = nextPrayerInfo.spanEndMillis,
-                        onWindowElapsed = { onIntent(HomeContract.Intent.NextPrayerWindowElapsed) },
+                        remainingMillis = remainingMillis,
                         modifier = Modifier.padding(top = 12.dp)
                     )
                 }

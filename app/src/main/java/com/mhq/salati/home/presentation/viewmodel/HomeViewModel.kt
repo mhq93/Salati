@@ -21,6 +21,7 @@ import com.mhq.salati.prayertimes.domain.usecases.GetPrayerTimesUseCase
 import com.mhq.salati.shared.domain.usecases.ParseTimeToMinutesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.text.SimpleDateFormat
@@ -69,7 +71,8 @@ class HomeViewModel @Inject constructor(
 
     private var currentDate: Calendar = Calendar.getInstance()
 
-    private var loadJob: Job? = null
+    private var loadPrayerTimesJob: Job? = null
+    private var tickerJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -122,8 +125,6 @@ class HomeViewModel @Inject constructor(
                 currentDate.add(Calendar.DAY_OF_YEAR, 1)
                 loadPrayerTimes()
             }
-
-            is HomeContract.Intent.NextPrayerWindowElapsed -> onNextPrayerWindowElapsed()
 
             is HomeContract.Intent.LocationPermissionGranted -> {
                 viewModelScope.launch {
@@ -193,8 +194,8 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadPrayerTimes() {
-        loadJob?.cancel()
-        loadJob = viewModelScope.launch {
+        loadPrayerTimesJob?.cancel()
+        loadPrayerTimesJob = viewModelScope.launch {
             permissionDelegate.reset()
             _state.value = _state.value.copy(errorMessage = null)
 
@@ -232,6 +233,7 @@ class HomeViewModel @Inject constructor(
                 val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
 
                 if (cached != null) {
+                    val info = calculateNextPrayerInfoUseCase(cached.timings, today)
                     _state.value = _state.value.copy(
                         isLoading = false,
                         timings = cached.timings,
@@ -239,6 +241,7 @@ class HomeViewModel @Inject constructor(
                         nextPrayerInfo = calculateNextPrayerInfoUseCase(cached.timings, today)
 
                     )
+                    startCountdownTicker(info.spanEndMillis)
                     rescheduleAlarmsIfLoaded()
                     return@launch
                 }
@@ -257,12 +260,14 @@ class HomeViewModel @Inject constructor(
 
                 result.fold(
                     onSuccess = { prayerTimesResult ->
+                        val info = calculateNextPrayerInfoUseCase(prayerTimesResult.timings, today)
                         _state.value = _state.value.copy(
                             isLoading = false,
                             timings = prayerTimesResult.timings,
                             date = prayerTimesResult.date,
                             nextPrayerInfo = calculateNextPrayerInfoUseCase(prayerTimesResult.timings, today)
                         )
+                        startCountdownTicker(info.spanEndMillis)
                         rescheduleAlarmsIfLoaded()
                     },
                     onFailure = { throwable ->
@@ -291,6 +296,21 @@ class HomeViewModel @Inject constructor(
                 _effect.emit(
                     HomeContract.Effect.ShowError(message)
                 )
+            }
+        }
+    }
+
+    private fun startCountdownTicker(spanEndMillis: Long) {
+        tickerJob?.cancel()
+        tickerJob = viewModelScope.launch {
+            while (isActive) {
+                val remaining = (spanEndMillis - System.currentTimeMillis()).coerceAtLeast(0)
+                _state.update { it.copy(remainingMillis = remaining) }
+                if (remaining <= 0) {
+                    onNextPrayerWindowElapsed()
+                    break
+                }
+                delay(1000.milliseconds)
             }
         }
     }
@@ -325,10 +345,12 @@ class HomeViewModel @Inject constructor(
     private fun recomputeNextPrayerInfo() {
         val timings = _state.value.timings ?: return
         val date = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(currentDate.time)
+        val info = calculateNextPrayerInfoUseCase(timings, date)
         _state.value = _state.value.copy(
-            nextPrayerInfo = calculateNextPrayerInfoUseCase(timings, date),
+            nextPrayerInfo = info,
             currentPrayerName = calculateCurrentPrayerName(timings)
         )
+        startCountdownTicker(info.spanEndMillis)
     }
 
     private suspend fun rescheduleAlarmsIfLoaded() {
@@ -339,5 +361,10 @@ class HomeViewModel @Inject constructor(
                 .format(currentDate.time)
 
         scheduleDailyPrayerAlarmsUseCase(timings, dateKey, _state.value.mutedPrayers)
+    }
+
+    override fun onCleared() {
+        tickerJob?.cancel()
+        super.onCleared()
     }
 }

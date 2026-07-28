@@ -32,6 +32,7 @@ fun HomeContent(
             HomeSuccessContent(
                 prayerDate = state.date,
                 prayerTimings = state.timings,
+                remainingMillis = state.remainingMillis,
                 nextPrayerInfo = state.nextPrayerInfo,
                 currentPrayerName = state.currentPrayerName,
                 mutedPrayers = state.mutedPrayers,

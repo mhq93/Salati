@@ -14,6 +14,7 @@ class HomeContract {
         val date: PrayerDate? = null,
         val currentPrayerName: String? = null,
         val nextPrayerInfo: NextPrayerInfo? = null,
+        val remainingMillis: Long = 0L,
         val errorMessage: String? = null,
         val locationPermission: LocationPermissionState = LocationPermissionState(),
         val adhanPlayback: AdhanPlaybackState = AdhanPlaybackState.Idle,
@@ -25,7 +26,6 @@ class HomeContract {
         data object Retry : Intent
         data object PreviousDay : Intent
         data object NextDay : Intent
-        data object NextPrayerWindowElapsed : Intent
         data object LocationPermissionGranted : Intent
         data object AccessAppSettings : Intent
         data object AccessDeviceLocationSettings : Intent

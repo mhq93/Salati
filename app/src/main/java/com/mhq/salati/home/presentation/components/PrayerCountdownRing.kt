@@ -10,11 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -30,35 +25,21 @@ import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.presentation.theme.AccentEmerald
 import com.mhq.salati.shared.presentation.theme.AccentGold
 import com.mhq.salati.shared.presentation.theme.GaugeTrackDim
-import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
-import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun PrayerCountdownRing(
     nextPrayerName: String,
     spanStartMillis: Long,
     spanEndMillis: Long,
-    onWindowElapsed: () -> Unit,
+    remainingMillis: Long,
     modifier: Modifier = Modifier
 ) {
-    var nowMillis by remember(spanEndMillis) {
-        mutableLongStateOf(System.currentTimeMillis())
-    }
 
-    LaunchedEffect(spanEndMillis) {
-        while (nowMillis < spanEndMillis) {
-            delay(1000.milliseconds)
-            nowMillis = System.currentTimeMillis()
-        }
-        onWindowElapsed()
-    }
-
-    val remainingMillis = (spanEndMillis - nowMillis).coerceAtLeast(0)
     val countdownLabel = remainingMillis.toCountdownLabel()
+    val nowMillis = spanEndMillis - remainingMillis
 
     val progressFraction = if (spanEndMillis > spanStartMillis) {
         ((nowMillis - spanStartMillis).toFloat() / (spanEndMillis - spanStartMillis).toFloat())
@@ -159,7 +140,7 @@ private fun PrayerCountdownRingPreview() {
             nextPrayerName = "Fajr",
             spanStartMillis = 1L,
             spanEndMillis = 1L,
-            onWindowElapsed = {}
+            remainingMillis = 1L
         )
     }
 }
