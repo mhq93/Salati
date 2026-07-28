@@ -28,4 +28,19 @@
     <string name="first_third">First Third</string>
     <string name="midnight">Midnight</string>
     <string name="last_third">Last Third</string>
+    <string name="prayer_notifications">Prayer Notifications</string>
+    <string name="get_alerted_at_each_prayer_time">Get alerted at each prayer time</string>
+    <string name="adhan_sound">Adhan Sound</string>
+    <string name="prayer_calculation">Prayer Calculation</string>
+    <string name="calculation_method">Calculation Method</string>
+    <string name="asr_madhab">Asr Madhab</string>
+    <string name="appearance">Appearance</string>
+    <string name="hijri_calendar">Hijri Calendar</string>
+    <string name="date_adjustment">Date Adjustment</string>
+    <string name="correct_for_local_moon_sighting">Correct for local moon sighting</string>
+    <string name="about">About</string>
+    <string name="rate_salati">Rate Salati</string>
+    <string name="share_with_friends">Share with Friends</string>
+    <string name="contact_support">Contact Support</string>
+    <string name="version">Version</string>
 </resources>
