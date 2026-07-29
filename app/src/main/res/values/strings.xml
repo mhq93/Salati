@@ -44,4 +44,16 @@
     <string name="contact_support">Contact Support</string>
     <string name="version">Version</string>
     <string name="location_not_found">Location Not Found</string>
+
+    <string name="location_permission_permanently_denied">Location permission permanently denied. Please enable it in Settings.</string>
+    <string name="location_permission_required">Location permission is required to show Qibla direction.</string>
+    <string name="location_services_disabled">Location services are turned off. Please, enable them.</string>
+    <string name="failed_to_get_location">Failed to get location</string>
+    <string name="failed_to_load_qibla_direction">Failed to load Qibla direction</string>
+    <string name="this_device_doesn_t_have_the_sensors_needed_for_a_compass">This device doesn\'t have the sensors needed for a compass.</string>
+    <string name="qibla_direction_can_t_be_shown_here">Qibla direction can\'t be shown here.</string>
+    <string name="retry">Retry</string>
+    <string name="enable_location">Enable Location</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="error">Error: %1$s</string>
 </resources>

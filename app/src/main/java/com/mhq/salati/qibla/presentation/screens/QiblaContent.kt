@@ -4,12 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.mhq.salati.qibla.presentation.components.QiblaHeader
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
+import com.mhq.salati.shared.presentation.components.asString
 import com.mhq.salati.shared.presentation.screens.AwaitingLocationPermissions
 import com.mhq.salati.shared.presentation.screens.LoadingContent
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
@@ -39,7 +41,8 @@ fun QiblaContent(
 
                 state.errorMessage != null -> {
                     QiblaErrorContent(
-                        errorMessage = state.errorMessage,
+                        //errorMessage = state.errorMessage,
+                        errorMessage = state.errorMessage.asString(),
                         sensorUnavailable = state.sensorUnavailable,
                         locationPermission = state.locationPermission,
                         onIntent = onIntent,

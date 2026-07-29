@@ -10,9 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mhq.salati.R
 import com.mhq.salati.permissions.location.LocationPermissionState
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
@@ -30,18 +32,24 @@ fun QiblaErrorContent(
         contentAlignment = Alignment.Center,
         modifier = modifier
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = "Error: $errorMessage")
-            Spacer(Modifier.height(12.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.error, errorMessage)
+            )
+            Spacer(
+                Modifier.height(12.dp)
+            )
             when {
                 sensorUnavailable -> {
                     Text(
-                        text = "This device doesn't have the sensors needed for a compass.",
+                        text = stringResource(R.string.this_device_doesn_t_have_the_sensors_needed_for_a_compass),
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = "Qibla direction can't be shown here.",
+                        text = stringResource(R.string.qibla_direction_can_t_be_shown_here),
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center
                     )
@@ -51,8 +59,9 @@ fun QiblaErrorContent(
                     Button(
                         onClick = {
                             onIntent(QiblaContract.Intent.AccessAppSettings)
-                        }) {
-                        Frame.Text("Open Settings")
+                        }
+                    ) {
+                        Frame.Text(stringResource(R.string.open_settings))
                     }
                 }
 
@@ -60,8 +69,9 @@ fun QiblaErrorContent(
                     Button(
                         onClick = {
                             onIntent(QiblaContract.Intent.AccessDeviceLocationSettings)
-                        }) {
-                        Text("Enable Location")
+                        }
+                    ) {
+                        Text(stringResource(R.string.enable_location))
                     }
                 }
 
@@ -69,8 +79,9 @@ fun QiblaErrorContent(
                     Button(
                         onClick = {
                             onIntent(QiblaContract.Intent.Retry)
-                        }) {
-                        Text("Retry")
+                        }
+                    ) {
+                        Text(stringResource(R.string.retry))
                     }
                 }
             }

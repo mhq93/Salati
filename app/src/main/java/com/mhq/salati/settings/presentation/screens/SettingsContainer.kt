@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
@@ -11,22 +12,28 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mhq.salati.settings.presentation.contract.SettingsContract.Effect
 import com.mhq.salati.settings.presentation.viewmodel.SettingsViewModel
+import com.mhq.salati.shared.presentation.components.LocalSnackbarHostState
+import com.mhq.salati.shared.presentation.components.asString
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import android.content.Intent as AndroidIntent
 
 @Composable
 fun SettingsContainer(
     settingsViewModel: SettingsViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
 ) {
     val state by settingsViewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val snackbarHostState = LocalSnackbarHostState.current
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        settingsViewModel.effect.collectLatest { effect ->
+        settingsViewModel.effect.collect { effect ->
             when (effect) {
                 is Effect.ShowError -> {
-                    // TODO: wire to the app-wide snackbar/toast mechanism once decided (same open item as Home/Qibla)
+                    scope.launch {
+                        snackbarHostState.showSnackbar(effect.message.asString(context))
+                    }
                 }
 
                 Effect.LaunchShareSheet -> {
@@ -92,6 +99,6 @@ fun SettingsContainer(
     SettingsContent(
         state = state,
         onIntent = settingsViewModel::onIntent,
-        modifier = modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     )
 }

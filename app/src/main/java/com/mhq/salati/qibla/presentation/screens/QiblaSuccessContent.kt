@@ -50,7 +50,7 @@ fun QiblaSuccessContent(
             LocationPill(
                 locationName = locationName,
                 onClick = onLocationPillClick,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
+                modifier = Modifier.fillMaxWidth().padding(4.dp)
             )
             Spacer(
                 Modifier.height(32.dp)

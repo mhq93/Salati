@@ -5,6 +5,8 @@ import com.mhq.salati.home.domain.model.NextPrayerInfo
 import com.mhq.salati.permissions.location.LocationPermissionState
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
+import com.mhq.salati.settings.presentation.contract.SettingsContract
+import com.mhq.salati.shared.presentation.components.UiText
 
 class HomeContract {
 
@@ -35,8 +37,9 @@ class HomeContract {
     }
 
     sealed interface Effect {
+        //data class ShowError(val message: String) : Effect
+        data class ShowError(val message: UiText) : Effect
         data object RequestExactAlarmPermission : Effect
         data object RequestNotificationPermission : Effect
-        data class ShowError(val message: String) : Effect
     }
 }

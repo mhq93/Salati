@@ -2,6 +2,7 @@ package com.mhq.salati.qibla.presentation.contract
 
 import com.mhq.salati.permissions.location.LocationPermissionState
 import com.mhq.salati.qibla.domain.model.CompassAccuracy
+import com.mhq.salati.shared.presentation.components.UiText
 
 class QiblaContract {
 
@@ -9,7 +10,8 @@ class QiblaContract {
         val isLoading: Boolean = false,
         val qiblaBearing: Float? = null,
         val deviceHeading: Float = 0f,
-        val errorMessage: String? = null,
+        //val errorMessage: String? = null,
+        val errorMessage: UiText? = null,
         val sensorUnavailable: Boolean = false,
         val compassAccuracy: CompassAccuracy = CompassAccuracy.HIGH,
         val isCalibrationGuideVisible: Boolean = false,
@@ -30,7 +32,8 @@ class QiblaContract {
     }
 
     sealed interface Effect {
-        data class ShowError(val message: String) : Effect
+        //data class ShowError(val message: String) : Effect
+        data class ShowError(val message: UiText) : Effect
         data object LocationPickerNotImplemented : Effect
     }
 }

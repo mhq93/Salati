@@ -1,11 +1,13 @@
 package com.mhq.salati.settings.presentation.contract
 
+import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.settings.domain.model.AdhanSound
 import com.mhq.salati.settings.domain.model.AppLanguage
 import com.mhq.salati.settings.domain.model.CalculationMethod
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.settings.domain.model.ThemeMode
 import com.mhq.salati.settings.presentation.components.SelectorType
+import com.mhq.salati.shared.presentation.components.UiText
 
 object SettingsContract {
 
@@ -39,7 +41,8 @@ object SettingsContract {
     }
 
     sealed interface Effect {
-        data class ShowError(val message: String) : Effect
+        //data class ShowError(val message: String) : Effect
+        data class ShowError(val message: UiText) : Effect
         data object LaunchShareSheet : Effect
         data object OpenPlayStoreListing : Effect
         data object OpenEmailClient : Effect

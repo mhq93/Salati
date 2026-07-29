@@ -2,6 +2,7 @@ package com.mhq.salati.qibla.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mhq.salati.R
 import com.mhq.salati.location.data.LocationProvider
 import com.mhq.salati.location.domain.model.SavedLocation
 import com.mhq.salati.location.domain.usecases.FetchAndSaveLocationUseCase
@@ -12,6 +13,7 @@ import com.mhq.salati.permissions.location.LocationPermissionEffect
 import com.mhq.salati.qibla.data.sensor.CompassProvider
 import com.mhq.salati.qibla.domain.usecases.GetQiblaBearingUseCase
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
+import com.mhq.salati.shared.presentation.components.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.TimeoutCancellationException
@@ -73,9 +75,12 @@ class QiblaViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         errorMessage = if (intent.permanentlyDenied) {
-                            "Location permission permanently denied. Please, enable it from Settings."
+                            //"Location permission permanently denied. Please, enable it from Settings."
+                            UiText.Res(R.string.location_permission_permanently_denied)
+
                         } else {
-                            "Location permission is required to show Qibla direction."
+                            //"Location permission is required to show Qibla direction."
+                            UiText.Res(R.string.location_permission_required)
                         }
                     )
                 }
@@ -146,7 +151,8 @@ class QiblaViewModel @Inject constructor(
                         _state.update {
                             it.copy(
                                 isLoading = false,
-                                errorMessage = "Location services are turned off. Please, enable them."
+                                errorMessage = UiText.Res(R.string.location_services_disabled)
+                                //errorMessage = "Location services are turned off. Please, enable them."
                             )
                         }
                         return@launch
@@ -182,16 +188,21 @@ class QiblaViewModel @Inject constructor(
                     }
                 }
             } catch (e: TimeoutCancellationException) {
+                val message = UiText.Res(R.string.failed_to_get_location)
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = "Failed to get location"
+                        errorMessage = message
+                        //errorMessage = "Failed to get location"
                     )
                 }
-                _effect.emit(QiblaContract.Effect.ShowError("Failed to get location"))
+                //_effect.emit(QiblaContract.Effect.ShowError("Failed to get location"))
+                _effect.emit(QiblaContract.Effect.ShowError(message))
             } catch (e: Exception) {
                 val isSensorMissing = e.message?.contains("not available") == true
-                val message = e.message ?: "Failed to load Qibla direction"
+                val message = e.message?.let { UiText.Raw(it) }
+                    ?: UiText.Res(R.string.failed_to_load_qibla_direction)
+                //val message = e.message ?: "Failed to load Qibla direction"
                 _state.update {
                     it.copy(
                         isLoading = false,
