@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -21,10 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
 import com.mhq.salati.shared.presentation.theme.AccentGreen
 import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.InkText
@@ -33,16 +36,20 @@ import com.mhq.salati.shared.presentation.theme.SheetBackground
 
 @Composable
 fun LocationPill(
-    locationName: String,
+    locationName: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .clip(RoundedCornerShape(50))
             .border(
-                border = BorderStroke(1.dp, DarkGreen.copy(alpha = 0.08f)),
+                border = BorderStroke(
+                    1.dp,
+                    DarkGreen.copy(alpha = 0.08f)
+                ),
                 shape = CircleShape
             )
             .background(SheetBackground)
@@ -66,7 +73,7 @@ fun LocationPill(
             )
         }
         Text(
-            text = locationName,
+            text = locationName ?: stringResource(R.string.location_not_found),
             color = InkText,
             fontSize = 16.dp.value.sp,
             fontWeight = FontWeight.Medium,
@@ -74,10 +81,10 @@ fun LocationPill(
             modifier = Modifier.padding(horizontal = 12.dp)
         )
         Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(24.dp)
                 .background(AccentGreen, CircleShape),
-            contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,

@@ -2,12 +2,13 @@ package com.mhq.salati.qibla.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.permissions.location.LocationPermissionDelegate
-import com.mhq.salati.permissions.location.LocationPermissionEffect
 import com.mhq.salati.location.data.LocationProvider
+import com.mhq.salati.location.domain.model.SavedLocation
 import com.mhq.salati.location.domain.usecases.FetchAndSaveLocationUseCase
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
 import com.mhq.salati.permissions.domain.PermissionChecker
+import com.mhq.salati.permissions.location.LocationPermissionDelegate
+import com.mhq.salati.permissions.location.LocationPermissionEffect
 import com.mhq.salati.qibla.data.sensor.CompassProvider
 import com.mhq.salati.qibla.domain.usecases.GetQiblaBearingUseCase
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
@@ -31,8 +32,7 @@ class QiblaViewModel @Inject constructor(
     private val fetchAndSaveLocationUseCase: FetchAndSaveLocationUseCase,
     private val permissionChecker: PermissionChecker,
     private val locationProvider: LocationProvider,
-    private val compassProvider: CompassProvider,
-
+    private val compassProvider: CompassProvider
     ) : ViewModel() {
 
     private val permissionDelegate = LocationPermissionDelegate()
@@ -85,6 +85,7 @@ class QiblaViewModel @Inject constructor(
             QiblaContract.Intent.LocationPillClicked -> {
                 viewModelScope.launch { _effect.emit(QiblaContract.Effect.LocationPickerNotImplemented) }
             }
+
             QiblaContract.Intent.RecalibrateClicked -> {
                 viewModelScope.launch { _effect.emit(QiblaContract.Effect.CompassCalibrationNotImplemented) }
             }
@@ -127,13 +128,6 @@ class QiblaViewModel @Inject constructor(
                         )
                         return@launch
                     }
-
-                    if (!permissionChecker.hasLocationPermission()) {
-                        permissionDelegate.requirePermission()
-                        _state.value = _state.value.copy(isLoading = false)
-                        return@launch
-                    }
-
                     fetchAndSaveLocationUseCase()
                 }
 
@@ -143,7 +137,9 @@ class QiblaViewModel @Inject constructor(
 
                 _state.value = _state.value.copy(
                     isLoading = false,
-                    qiblaBearing = bearing.toFloat()
+                    qiblaBearing = bearing.toFloat(),
+                    locationName = location.toDisplayName()
+
                 )
 
                 compassProvider.getHeadingFlow().collect { reading ->
@@ -169,5 +165,12 @@ class QiblaViewModel @Inject constructor(
                 _effect.emit(QiblaContract.Effect.ShowError(message))
             }
         }
+    }
+
+    private fun SavedLocation.toDisplayName(): String? = when {
+        cityName != null && countryName != null -> cityName
+        cityName != null -> cityName
+        countryName != null -> countryName
+        else -> null
     }
 }

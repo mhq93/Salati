@@ -25,7 +25,7 @@ import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable
 fun QiblaSuccessContent(
-    locationName: String,
+    locationName: String?,
     deviceHeading: Float,
     qiblaBearing: Float,
     compassAccuracy: CompassAccuracy,
@@ -49,7 +49,8 @@ fun QiblaSuccessContent(
         ) {
             LocationPill(
                 locationName = locationName,
-                onClick = onLocationPillClick
+                onClick = onLocationPillClick,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
             )
             Spacer(
                 Modifier.height(32.dp)

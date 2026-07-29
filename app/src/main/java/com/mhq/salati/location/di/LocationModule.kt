@@ -1,6 +1,9 @@
 package com.mhq.salati.location.di
 
 import android.content.Context
+import com.mhq.salati.location.data.AndroidGeocoderProvider
+import com.mhq.salati.location.data.AndroidLocationProvider
+import com.mhq.salati.location.data.GeocoderProvider
 import com.mhq.salati.location.data.LocationProvider
 import com.mhq.salati.location.data.local.LocationDataStore
 import com.mhq.salati.location.data.repoimpl.LocationRepoImpl
@@ -23,17 +26,23 @@ abstract class LocationModule {
         impl: LocationRepoImpl
     ): LocationRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindLocationProvider(
+        impl: AndroidLocationProvider
+    ): LocationProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindGeocoderProvider(
+        impl: AndroidGeocoderProvider
+    ): GeocoderProvider
+
     companion object {
         @Provides
         @Singleton
         fun provideLocationDataStore(
             @ApplicationContext context: Context
         ): LocationDataStore = LocationDataStore(context)
-
-        @Provides
-        @Singleton
-        fun provideLocationProvider(
-            @ApplicationContext context: Context
-        ): LocationProvider = LocationProvider(context)
     }
 }

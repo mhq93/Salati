@@ -32,10 +32,8 @@ class AndroidGeocoderProvider @Inject constructor(
                 (address?.locality ?: address?.subAdminArea) to address?.countryName
             }
         } catch (e: TimeoutCancellationException) {
-            Log.w("GeocoderProvider", "Reverse geocode timed out", e)
             null to null
         } catch (e: IOException) {
-            Log.w("GeocoderProvider", "Reverse geocode failed", e)
             null to null
         }
     }

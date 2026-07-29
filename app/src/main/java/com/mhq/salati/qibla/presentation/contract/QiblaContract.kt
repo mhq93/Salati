@@ -13,7 +13,7 @@ class QiblaContract {
         val errorMessage: String? = null,
         val sensorUnavailable: Boolean = false,
         val locationPermission: LocationPermissionState = LocationPermissionState(),
-        val locationName: String = ""
+        val locationName: String? = null
     )
 
     sealed interface Intent {
