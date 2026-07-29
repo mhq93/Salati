@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,8 +33,8 @@ class QiblaViewModel @Inject constructor(
     private val fetchAndSaveLocationUseCase: FetchAndSaveLocationUseCase,
     private val permissionChecker: PermissionChecker,
     private val locationProvider: LocationProvider,
-    private val compassProvider: CompassProvider
-    ) : ViewModel() {
+    private val compassProvider: CompassProvider,
+) : ViewModel() {
 
     private val permissionDelegate = LocationPermissionDelegate()
     val permissionEffect: SharedFlow<LocationPermissionEffect> = permissionDelegate.effect
@@ -49,7 +50,7 @@ class QiblaViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             permissionDelegate.state.collect { permissionState ->
-                _state.value = _state.value.copy(locationPermission = permissionState)
+                _state.update { it.copy(locationPermission = permissionState) }
             }
         }
     }
@@ -65,13 +66,15 @@ class QiblaViewModel @Inject constructor(
 
             is QiblaContract.Intent.LocationPermissionDenied -> {
                 viewModelScope.launch { permissionDelegate.onPermissionDenied(intent.permanentlyDenied) }
-                _state.value = _state.value.copy(
-                    errorMessage = if (intent.permanentlyDenied) {
-                        "Location permission permanently denied. Please enable it in Settings."
-                    } else {
-                        "Location permission is required to show Qibla direction."
-                    }
-                )
+                _state.update {
+                    it.copy(
+                        errorMessage = if (intent.permanentlyDenied) {
+                            "Location permission permanently denied. Please enable it in Settings."
+                        } else {
+                            "Location permission is required to show Qibla direction."
+                        }
+                    )
+                }
             }
 
             is QiblaContract.Intent.AccessAppSettings -> {
@@ -85,7 +88,6 @@ class QiblaViewModel @Inject constructor(
             QiblaContract.Intent.LocationPillClicked -> {
                 viewModelScope.launch { _effect.emit(QiblaContract.Effect.LocationPickerNotImplemented) }
             }
-
             QiblaContract.Intent.RecalibrateClicked -> {
                 viewModelScope.launch { _effect.emit(QiblaContract.Effect.CompassCalibrationNotImplemented) }
             }
@@ -93,7 +95,7 @@ class QiblaViewModel @Inject constructor(
     }
 
     private fun checkPermissionAndLoad() {
-        _state.value = _state.value.copy(errorMessage = null)
+        _state.update { it.copy(errorMessage = null) }
         viewModelScope.launch {
             if (permissionChecker.hasLocationPermission()) {
                 permissionDelegate.onPermissionGranted()
@@ -108,11 +110,13 @@ class QiblaViewModel @Inject constructor(
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             permissionDelegate.reset()
-            _state.value = _state.value.copy(
-                isLoading = true,
-                errorMessage = null,
-                sensorUnavailable = false
-            )
+            _state.update {
+                it.copy(
+                    isLoading = true,
+                    errorMessage = null,
+                    sensorUnavailable = false
+                )
+            }
 
             try {
                 val savedLocation = getSavedLocationUseCase().first()
@@ -122,12 +126,21 @@ class QiblaViewModel @Inject constructor(
                 } else {
                     if (!locationProvider.isLocationEnabled()) {
                         permissionDelegate.markServicesDisabled()
-                        _state.value = _state.value.copy(
-                            isLoading = false,
-                            errorMessage = "Location services are turned off. Please, enable them."
-                        )
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = "Location services are turned off. Please, enable them."
+                            )
+                        }
                         return@launch
                     }
+
+                    if (!permissionChecker.hasLocationPermission()) {
+                        permissionDelegate.requirePermission()
+                        _state.update { it.copy(isLoading = false) }
+                        return@launch
+                    }
+
                     fetchAndSaveLocationUseCase()
                 }
 
@@ -135,40 +148,47 @@ class QiblaViewModel @Inject constructor(
                 val longitude = location.longitude
                 val bearing = getQiblaBearingUseCase(latitude, longitude)
 
-                _state.value = _state.value.copy(
-                    isLoading = false,
-                    qiblaBearing = bearing.toFloat(),
-                    locationName = location.toDisplayName()
-
-                )
-
-                compassProvider.getHeadingFlow().collect { reading ->
-                    _state.value = _state.value.copy(
-                        deviceHeading = reading.headingDegrees,
-                        compassAccuracy = reading.accuracy
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        qiblaBearing = bearing.toFloat(),
+                        locationName = location.toDisplayName()
                     )
                 }
+
+                compassProvider.getHeadingFlow(latitude, longitude).collect { reading ->
+                    _state.update {
+                        it.copy(
+                            deviceHeading = reading.headingDegrees,
+                            compassAccuracy = reading.accuracy
+                        )
+                    }
+                }
             } catch (e: TimeoutCancellationException) {
-                _state.value = _state.value.copy(
-                    isLoading = false,
-                    errorMessage = "Failed to get location"
-                )
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Failed to get location"
+                    )
+                }
                 _effect.emit(QiblaContract.Effect.ShowError("Failed to get location"))
             } catch (e: Exception) {
                 val isSensorMissing = e.message?.contains("not available") == true
                 val message = e.message ?: "Failed to load Qibla direction"
-                _state.value = _state.value.copy(
-                    isLoading = false,
-                    errorMessage = message,
-                    sensorUnavailable = isSensorMissing
-                )
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = message,
+                        sensorUnavailable = isSensorMissing
+                    )
+                }
                 _effect.emit(QiblaContract.Effect.ShowError(message))
             }
         }
     }
 
     private fun SavedLocation.toDisplayName(): String? = when {
-        cityName != null && countryName != null -> cityName
+        cityName != null && countryName != null -> "$cityName, $countryName"
         cityName != null -> cityName
         countryName != null -> countryName
         else -> null
