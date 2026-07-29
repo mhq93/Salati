@@ -45,7 +45,7 @@ class QiblaViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<QiblaContract.Effect>()
     val effect: SharedFlow<QiblaContract.Effect> = _effect.asSharedFlow()
 
-    private var loadJob: Job? = null
+    private var loadQiblaJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -60,16 +60,20 @@ class QiblaViewModel @Inject constructor(
             is QiblaContract.Intent.LoadQibla -> checkPermissionAndLoad()
             is QiblaContract.Intent.Retry -> checkPermissionAndLoad()
             is QiblaContract.Intent.LocationPermissionGranted -> {
-                viewModelScope.launch { permissionDelegate.onPermissionGranted() }
+                viewModelScope.launch {
+                    permissionDelegate.onPermissionGranted()
+                }
                 loadQibla()
             }
 
             is QiblaContract.Intent.LocationPermissionDenied -> {
-                viewModelScope.launch { permissionDelegate.onPermissionDenied(intent.permanentlyDenied) }
+                viewModelScope.launch {
+                    permissionDelegate.onPermissionDenied(intent.permanentlyDenied)
+                }
                 _state.update {
                     it.copy(
                         errorMessage = if (intent.permanentlyDenied) {
-                            "Location permission permanently denied. Please enable it in Settings."
+                            "Location permission permanently denied. Please, enable it from Settings."
                         } else {
                             "Location permission is required to show Qibla direction."
                         }
@@ -78,18 +82,33 @@ class QiblaViewModel @Inject constructor(
             }
 
             is QiblaContract.Intent.AccessAppSettings -> {
-                viewModelScope.launch { permissionDelegate.requestAppSettings() }
+                viewModelScope.launch {
+                    permissionDelegate.requestAppSettings()
+                }
             }
 
             is QiblaContract.Intent.AccessDeviceLocationSettings -> {
-                viewModelScope.launch { permissionDelegate.requestLocationSettings() }
+                viewModelScope.launch {
+                    permissionDelegate.requestLocationSettings()
+                }
             }
 
-            QiblaContract.Intent.LocationPillClicked -> {
-                viewModelScope.launch { _effect.emit(QiblaContract.Effect.LocationPickerNotImplemented) }
+            is QiblaContract.Intent.LocationPillClicked -> {
+                viewModelScope.launch {
+                    _effect.emit(QiblaContract.Effect.LocationPickerNotImplemented)
+                }
             }
-            QiblaContract.Intent.RecalibrateClicked -> {
-                viewModelScope.launch { _effect.emit(QiblaContract.Effect.CompassCalibrationNotImplemented) }
+
+            is QiblaContract.Intent.RecalibrateClicked -> {
+                _state.update {
+                    it.copy(isCalibrationGuideVisible = true)
+                }
+            }
+
+            is QiblaContract.Intent.DismissCalibrationGuide -> {
+                _state.update {
+                    it.copy(isCalibrationGuideVisible = false)
+                }
             }
         }
     }
@@ -107,8 +126,8 @@ class QiblaViewModel @Inject constructor(
     }
 
     private fun loadQibla() {
-        loadJob?.cancel()
-        loadJob = viewModelScope.launch {
+        loadQiblaJob?.cancel()
+        loadQiblaJob = viewModelScope.launch {
             permissionDelegate.reset()
             _state.update {
                 it.copy(
@@ -117,10 +136,8 @@ class QiblaViewModel @Inject constructor(
                     sensorUnavailable = false
                 )
             }
-
             try {
                 val savedLocation = getSavedLocationUseCase().first()
-
                 val location = if (savedLocation != null) {
                     savedLocation
                 } else {

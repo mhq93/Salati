@@ -4,10 +4,13 @@ import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -17,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mhq.salati.permissions.location.LocationPermissionEffect
 import com.mhq.salati.permissions.location.rememberGpsEnabled
 import com.mhq.salati.permissions.location.rememberLocationPermissionLauncher
+import com.mhq.salati.qibla.presentation.components.CompassCalibrationOverlay
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.qibla.presentation.viewmodel.QiblaViewModel
 
@@ -80,9 +84,6 @@ fun QiblaContainer(
                 is QiblaContract.Effect.LocationPickerNotImplemented -> {
                     // TODO: navigate to location picker once built
                 }
-                is QiblaContract.Effect.CompassCalibrationNotImplemented -> {
-                    // TODO: show calibration guidance once designed
-                }
             }
         }
     }
@@ -110,8 +111,17 @@ fun QiblaContainer(
         }
     }
 
-    QiblaContent(
-        state = state,
-        onIntent = qiblaViewModel::onIntent
-    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        QiblaContent(
+            state = state,
+            onIntent = qiblaViewModel::onIntent
+        )
+
+        if (state.isCalibrationGuideVisible) {
+            CompassCalibrationOverlay(
+                accuracy = state.compassAccuracy,
+                onDismiss = { qiblaViewModel.onIntent(QiblaContract.Intent.DismissCalibrationGuide) }
+            )
+        }
+    }
 }
