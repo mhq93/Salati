@@ -40,15 +40,13 @@ class CompassProvider(
                 SensorManager.getOrientation(rotationMatrix, orientationAngles)
 
                 val azimuthRadians = orientationAngles[0]
-                //var azimuthDegrees = Math.toDegrees(azimuthRadians.toDouble()).toFloat()
-                //if (azimuthDegrees < 0) azimuthDegrees += 360f
                 var magneticAzimuth = Math.toDegrees(azimuthRadians.toDouble()).toFloat()
                 if (magneticAzimuth < 0) magneticAzimuth += 360f
 
                 val declination = GeomagneticField(
                     latitude.toFloat(),
                     longitude.toFloat(),
-                    0f, // altitude — sea level is fine, declination barely varies with it
+                    0f,
                     System.currentTimeMillis()
                 ).declination
 
@@ -56,7 +54,6 @@ class CompassProvider(
                 if (trueAzimuth < 0) trueAzimuth += 360f
                 if (trueAzimuth >= 360) trueAzimuth -= 360f
 
-                //trySend(CompassReading(azimuthDegrees, currentAccuracy))
                 trySend(CompassReading(trueAzimuth, currentAccuracy))
             }
 

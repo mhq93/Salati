@@ -23,7 +23,6 @@ class GetQiblaBearingUseCase @Inject constructor(){
         val bearingRadians = atan2(y, x)
         val bearingDegrees = Math.toDegrees(bearingRadians)
 
-        // Normalize to 0-360
         return (bearingDegrees + 360) % 360
     }
 }
