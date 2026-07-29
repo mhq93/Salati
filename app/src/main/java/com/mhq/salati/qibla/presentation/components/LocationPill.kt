@@ -1,6 +1,8 @@
 package com.mhq.salati.qibla.presentation.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -18,13 +20,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.presentation.theme.AccentGreen
+import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
+import com.mhq.salati.shared.presentation.theme.SheetBackground
 
 @Composable
 fun LocationPill(
@@ -36,7 +41,11 @@ fun LocationPill(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .clip(RoundedCornerShape(50))
-            .background(Color.White)
+            .border(
+                border = BorderStroke(1.dp, DarkGreen.copy(alpha = 0.08f)),
+                shape = CircleShape
+            )
+            .background(SheetBackground)
             .clickable(onClick = onClick)
             .padding(
                 horizontal = 16.dp,
@@ -56,7 +65,6 @@ fun LocationPill(
                 modifier = Modifier.size(14.dp)
             )
         }
-
         Text(
             text = locationName,
             color = InkText,
@@ -65,7 +73,6 @@ fun LocationPill(
             maxLines = 1,
             modifier = Modifier.padding(horizontal = 12.dp)
         )
-
         Box(
             modifier = Modifier
                 .size(24.dp)
