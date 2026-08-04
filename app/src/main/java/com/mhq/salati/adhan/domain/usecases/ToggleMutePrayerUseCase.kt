@@ -6,7 +6,7 @@ import javax.inject.Inject
 class ToggleMutePrayerUseCase @Inject constructor(
     private val mutedPrayersRepository: MutedPrayersRepository
 ) {
-    suspend operator fun invoke(prayerName: String, muted: Boolean) {
-        mutedPrayersRepository.toggleMute(prayerName, muted)
+    suspend operator fun invoke(date: String, prayerName: String, muted: Boolean) {
+        mutedPrayersRepository.toggleMute(date, prayerName, muted)
     }
 }

@@ -57,7 +57,7 @@ class BootReceiver : BroadcastReceiver() {
                 val today = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Date())
 
                 val cached = prayerTimesRepository.getCachedTimings(today, latitude, longitude)
-                val mutedPrayers = mutedPrayersRepository.getMutedPrayers()
+                val mutedPrayers = mutedPrayersRepository.getMutedPrayers(today)   // CHANGED — was getMutedPrayers()
 
                 if (cached != null) {
                     scheduleDailyPrayerAlarmsUseCase(cached.timings, today, mutedPrayers)

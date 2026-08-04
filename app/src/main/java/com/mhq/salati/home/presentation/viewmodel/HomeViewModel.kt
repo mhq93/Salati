@@ -74,6 +74,7 @@ class HomeViewModel @Inject constructor(
 
     private var loadPrayerTimesJob: Job? = null
     private var tickCounterJob: Job? = null
+    private var mutedPrayersJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -82,12 +83,8 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-        viewModelScope.launch {
-            mutedPrayersRepository.observeMutedPrayers().collect { mutedPrayers ->
-                _state.update { it.copy(mutedPrayers = mutedPrayers) }
-                rescheduleAlarmsIfLoaded()
-            }
-        }
+        viewModelScope.launch { mutedPrayersRepository.purgePastDates() }
+        observeMutedPrayersForCurrentDate()
 
         viewModelScope.launch {
             permissionDelegate.effect.collect { effect ->
@@ -114,6 +111,7 @@ class HomeViewModel @Inject constructor(
                     state.currentDate.apply { add(Calendar.DAY_OF_YEAR, -1) }
                     state.copy(currentDate = state.currentDate)
                 }
+                observeMutedPrayersForCurrentDate()
                 loadPrayerTimes()
             }
 
@@ -122,6 +120,7 @@ class HomeViewModel @Inject constructor(
                     state.currentDate.apply { add(Calendar.DAY_OF_YEAR, 1) }
                     state.copy(currentDate = state.currentDate)
                 }
+                observeMutedPrayersForCurrentDate()
                 loadPrayerTimes()
             }
 
@@ -161,8 +160,9 @@ class HomeViewModel @Inject constructor(
 
             is HomeContract.Intent.ToggleMute -> {
                 viewModelScope.launch {
+                    val dateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
                     val currentlyMuted = intent.prayerName in _state.value.mutedPrayers
-                    toggleMutePrayerUseCase(intent.prayerName, !currentlyMuted)
+                    toggleMutePrayerUseCase(dateKey, intent.prayerName, !currentlyMuted)
                 }
             }
 
@@ -348,6 +348,17 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun observeMutedPrayersForCurrentDate() {
+        mutedPrayersJob?.cancel()
+        val dateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
+        mutedPrayersJob = viewModelScope.launch {
+            mutedPrayersRepository.observeMutedPrayers(dateKey).collect { mutedPrayers ->
+                _state.update { it.copy(mutedPrayers = mutedPrayers) }
+                rescheduleAlarmsIfLoaded()
+            }
+        }
+    }
+
     private fun onNextPrayerWindowElapsed() {
         if (_state.value.nextPrayerInfo?.crossesIntoNextDay == true) {
             _state.update { state ->
@@ -397,10 +408,14 @@ class HomeViewModel @Inject constructor(
     private suspend fun rescheduleAlarmsIfLoaded() {
         val timings = _state.value.timings ?: return
         val date = _state.value.date ?: return
-        val dateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US)
-            .format(_state.value.currentDate.time)
 
-        scheduleDailyPrayerAlarmsUseCase(timings, dateKey, _state.value.mutedPrayers)
+        val browsedDateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
+        val todayKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Calendar.getInstance().time)
+
+        if (browsedDateKey != todayKey) return
+
+        val todaysMutedPrayers = mutedPrayersRepository.getMutedPrayers(todayKey)
+        scheduleDailyPrayerAlarmsUseCase(timings, todayKey, todaysMutedPrayers)
     }
 
     override fun onCleared() {
