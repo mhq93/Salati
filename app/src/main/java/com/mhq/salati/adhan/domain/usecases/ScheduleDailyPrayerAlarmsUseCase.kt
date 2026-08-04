@@ -1,5 +1,6 @@
 package com.mhq.salati.adhan.domain.usecases
 
+import com.mhq.PrayerAlarmNames
 import com.mhq.salati.adhan.domain.model.PrayerAlarm
 import com.mhq.salati.adhan.domain.repo.AlarmScheduler
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
@@ -27,7 +28,7 @@ class ScheduleDailyPrayerAlarmsUseCase @Inject constructor(
                 "First Third" to timings.firstThird,
                 "Midnight" to timings.midnight,
                 "Last Third" to timings.lastThird
-                )
+            )
 
             prayerMap.forEach { (name, time) ->
                 if (name in mutedPrayers) {
@@ -37,7 +38,13 @@ class ScheduleDailyPrayerAlarmsUseCase @Inject constructor(
 
                 val triggerMillis = parseToEpochMillis(date, time, zoneId)
                 if (triggerMillis > System.currentTimeMillis()) {
-                    alarmScheduler.schedule(PrayerAlarm(name, triggerMillis))
+                    alarmScheduler.schedule(
+                        PrayerAlarm(
+                            prayerName = name,
+                            triggerAtMillis = triggerMillis,
+                            isMinorTiming = name in PrayerAlarmNames.MINOR
+                        )
+                    )
                 }
             }
         }

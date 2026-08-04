@@ -32,18 +32,24 @@ class AdhanPlaybackService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            ACTION_START -> startPlayback(intent.getStringExtra(EXTRA_PRAYER_NAME) ?: "Prayer")
+            ACTION_START -> startPlayback(
+                prayerName = intent.getStringExtra(EXTRA_PRAYER_NAME) ?: "Prayer",
+                isMinorTiming = intent.getBooleanExtra(
+                    EXTRA_IS_MINOR_TIMING,
+                    false
+                )
+            )
+
             ACTION_STOP -> stopPlayback()
         }
         return START_NOT_STICKY
     }
 
-    private fun startPlayback(prayerName: String) {
-        val notification = buildNotification(prayerName)
+    private fun startPlayback(prayerName: String, isMinorTiming: Boolean) {
+        val notification = buildNotification(prayerName, isMinorTiming)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(
-                NOTIFICATION_ID,
-                notification,
+                NOTIFICATION_ID, notification,
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
             )
         } else {
@@ -56,7 +62,9 @@ class AdhanPlaybackService : Service() {
             .build()
 
         audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-        focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE)
+        focusRequest = AudioFocusRequest.Builder(
+            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE
+        )
             .setAudioAttributes(attrs)
             .build()
 
@@ -68,7 +76,7 @@ class AdhanPlaybackService : Service() {
 
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(attrs)
-            setDataSource(this@AdhanPlaybackService, adhanUri())
+            setDataSource(this@AdhanPlaybackService, soundUri(isMinorTiming))
             setOnPreparedListener { it.start() }
             setOnCompletionListener { stopPlayback() }
             setOnErrorListener { _, _, _ -> stopPlayback(); true }
@@ -85,22 +93,41 @@ class AdhanPlaybackService : Service() {
         stopSelf()
     }
 
-    private fun adhanUri(): Uri = "android.resource://$packageName/${R.raw.adhan}".toUri()
+    private fun soundUri(isMinorTiming: Boolean): Uri {
+        val resId = if (isMinorTiming) R.raw.alert else R.raw.adhan
+        return "android.resource://$packageName/$resId".toUri()
+    }
 
-    private fun buildNotification(prayerName: String): Notification {
-        val stopIntent =
-            Intent(this, AdhanPlaybackService::class.java).apply { action = ACTION_STOP }
+    private fun buildNotification(timingName: String, isMinorTiming: Boolean): Notification {
+        val stopIntent = Intent(this, AdhanPlaybackService::class.java)
+            .apply { action = ACTION_STOP }
         val stopPendingIntent = PendingIntent.getService(
             this, 0, stopIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+
+        val title = if (isMinorTiming) {
+            getString(R.string.minor_timing_playing_title, timingName)
+        } else {
+            getString(R.string.adhan_playing_title)
+        }
+        val body = if (isMinorTiming) {
+            getString(R.string.minor_timing_playing_body, timingName)
+        } else {
+            getString(R.string.adhan_playing_body, timingName)
+        }
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(getString(R.string.adhan_playing_title))
-            .setContentText(getString(R.string.adhan_playing_body, prayerName))
+            .setContentTitle(title)
+            .setContentText(body)
             .setSmallIcon(R.drawable.ic_notification)
             .setSilent(true)
             .setOngoing(true)
-            .addAction(R.drawable.ic_stop, getString(R.string.stop), stopPendingIntent)
+            .addAction(
+                R.drawable.ic_stop,
+                getString(R.string.stop),
+                stopPendingIntent
+            )
             .build()
     }
 
@@ -115,6 +142,7 @@ class AdhanPlaybackService : Service() {
         const val ACTION_START = "com.mhq.salati.action.START_ADHAN"
         const val ACTION_STOP = "com.mhq.salati.action.STOP_ADHAN"
         const val EXTRA_PRAYER_NAME = "extra_prayer_name"
+        const val EXTRA_IS_MINOR_TIMING = "extra_is_minor_timing"
         private const val NOTIFICATION_ID = 501
         const val CHANNEL_ID = "adhan_playback_channel"
     }

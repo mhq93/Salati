@@ -68,4 +68,6 @@
     <string name="couldn_t_update_hijri_offset">Couldn\'t update Hijri offset</string>
     <string name="exact_alarms_are_disabled_prayer_alerts_may_not_ring_on_time">Exact alarms are disabled — prayer alerts may not ring on time.</string>
     <string name="notifications_are_disabled_you_won_t_see_prayer_reminders">Notifications are disabled — you won\'t see prayer reminders.</string>
+    <string name="minor_timing_playing_title">%1$s</string>
+    <string name="minor_timing_playing_body">It\'s time for %1$s</string>
 </resources>

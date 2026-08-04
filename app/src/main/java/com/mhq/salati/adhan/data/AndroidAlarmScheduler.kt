@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import com.mhq.PrayerAlarmNames
 import com.mhq.salati.adhan.domain.model.PrayerAlarm
 import com.mhq.salati.adhan.domain.repo.AlarmScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,14 +25,9 @@ class AndroidAlarmScheduler @Inject constructor(
             return
         }
 
-        val intent = Intent(
-            context,
-            PrayerAlarmReceiver::class.java
-        ).apply {
-            putExtra(
-                PrayerAlarmReceiver.EXTRA_PRAYER_NAME,
-                alarm.prayerName
-            )
+        val intent = Intent(context, PrayerAlarmReceiver::class.java).apply {
+            putExtra(PrayerAlarmReceiver.EXTRA_PRAYER_NAME, alarm.prayerName)
+            putExtra(PrayerAlarmReceiver.EXTRA_IS_MINOR_TIMING, alarm.isMinorTiming)   // ADDED
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -62,18 +58,6 @@ class AndroidAlarmScheduler @Inject constructor(
     }
 
     override fun cancelAll() {
-        listOf(
-            "Fajr",
-            "Dhuhr",
-            "Asr",
-            "Maghrib",
-            "Isha",
-            "Imsak",
-            "Shorouq",
-            "First Third",
-            "Midnight",
-            "Last Third"
-        )
-            .forEach { cancel(it) }
+        PrayerAlarmNames.ALL.forEach { cancel(it) }   // CHANGED — was hardcoded list
     }
 }

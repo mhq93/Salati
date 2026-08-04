@@ -16,16 +16,11 @@ class AdhanPlaybackControllerImpl @Inject constructor(
 
     override val playbackState: StateFlow<AdhanPlaybackState> = stateHolder.state
 
-    override fun start(prayerName: String) {
-        val intent = Intent(
-            context,
-            AdhanPlaybackService::class.java
-        ).apply {
+    override fun start(prayerName: String, isMinorTiming: Boolean) {
+        val intent = Intent(context, AdhanPlaybackService::class.java).apply {
             action = AdhanPlaybackService.ACTION_START
-            putExtra(
-                AdhanPlaybackService.EXTRA_PRAYER_NAME,
-                prayerName
-            )
+            putExtra(AdhanPlaybackService.EXTRA_PRAYER_NAME, prayerName)
+            putExtra(AdhanPlaybackService.EXTRA_IS_MINOR_TIMING, isMinorTiming)
         }
         ContextCompat.startForegroundService(context, intent)
     }
