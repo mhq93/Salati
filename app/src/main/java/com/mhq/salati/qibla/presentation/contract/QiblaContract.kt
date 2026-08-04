@@ -10,14 +10,13 @@ class QiblaContract {
         val isLoading: Boolean = false,
         val qiblaBearing: Float? = null,
         val deviceHeading: Float = 0f,
-        //val errorMessage: String? = null,
-        val errorMessage: UiText? = null,
         val sensorUnavailable: Boolean = false,
         val compassAccuracy: CompassAccuracy = CompassAccuracy.HIGH,
         val isCalibrationGuideVisible: Boolean = false,
         val locationPermission: LocationPermissionState = LocationPermissionState(),
-        val locationName: String? = null
-    )
+        val locationName: String? = null,
+        val errorMessage: UiText? = null
+        )
 
     sealed interface Intent {
         data object LoadQibla : Intent
@@ -32,7 +31,6 @@ class QiblaContract {
     }
 
     sealed interface Effect {
-        //data class ShowError(val message: String) : Effect
         data class ShowError(val message: UiText) : Effect
         data object LocationPickerNotImplemented : Effect
     }

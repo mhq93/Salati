@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class QiblaViewModel @Inject constructor(
@@ -75,11 +76,8 @@ class QiblaViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         errorMessage = if (intent.permanentlyDenied) {
-                            //"Location permission permanently denied. Please, enable it from Settings."
                             UiText.Res(R.string.location_permission_permanently_denied)
-
                         } else {
-                            //"Location permission is required to show Qibla direction."
                             UiText.Res(R.string.location_permission_required)
                         }
                     )
@@ -152,7 +150,6 @@ class QiblaViewModel @Inject constructor(
                             it.copy(
                                 isLoading = false,
                                 errorMessage = UiText.Res(R.string.location_services_disabled)
-                                //errorMessage = "Location services are turned off. Please, enable them."
                             )
                         }
                         return@launch
@@ -193,16 +190,17 @@ class QiblaViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         errorMessage = message
-                        //errorMessage = "Failed to get location"
                     )
                 }
-                //_effect.emit(QiblaContract.Effect.ShowError("Failed to get location"))
-                _effect.emit(QiblaContract.Effect.ShowError(message))
+                _effect.emit(
+                    QiblaContract.Effect.ShowError(message)
+                )
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 val isSensorMissing = e.message?.contains("not available") == true
                 val message = e.message?.let { UiText.Raw(it) }
                     ?: UiText.Res(R.string.failed_to_load_qibla_direction)
-                //val message = e.message ?: "Failed to load Qibla direction"
                 _state.update {
                     it.copy(
                         isLoading = false,
@@ -210,7 +208,9 @@ class QiblaViewModel @Inject constructor(
                         sensorUnavailable = isSensorMissing
                     )
                 }
-                _effect.emit(QiblaContract.Effect.ShowError(message))
+                _effect.emit(
+                    QiblaContract.Effect.ShowError(message)
+                )
             }
         }
     }

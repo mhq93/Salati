@@ -2,6 +2,7 @@ package com.mhq.salati.home.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mhq.salati.R
 import com.mhq.salati.adhan.domain.repo.MutedPrayersRepository
 import com.mhq.salati.adhan.domain.usecases.ObserveAdhanPlaybackStateUseCase
 import com.mhq.salati.adhan.domain.usecases.ScheduleDailyPrayerAlarmsUseCase
@@ -19,6 +20,7 @@ import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.prayertimes.domain.usecases.GetCachedPrayerTimesUseCase
 import com.mhq.salati.prayertimes.domain.usecases.GetPrayerTimesUseCase
 import com.mhq.salati.shared.domain.usecases.ParseTimeToMinutesUseCase
+import com.mhq.salati.shared.presentation.components.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -40,23 +42,24 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val locationProvider: LocationProvider,
+    private val permissionChecker: PermissionChecker,
     private val mutedPrayersRepository: MutedPrayersRepository,
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
-    private val calculateNextPrayerInfoUseCase: CalculateNextPrayerInfoUseCase,
-    private val parseTimeToMinutesUseCase: ParseTimeToMinutesUseCase,
-    private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
-    private val toggleMutePrayerUseCase: ToggleMutePrayerUseCase,
-    private val observeAdhanPlaybackStateUseCase: ObserveAdhanPlaybackStateUseCase,
-    private val stopAdhanPlaybackUseCase: StopAdhanPlaybackUseCase,
-    private val scheduleDailyPrayerAlarmsUseCase: ScheduleDailyPrayerAlarmsUseCase,
     private val getSavedLocationUseCase: GetSavedLocationUseCase,
     private val fetchAndSaveLocationUseCase: FetchAndSaveLocationUseCase,
-    private val locationProvider: LocationProvider,
-    private val permissionChecker: PermissionChecker
+    private val toggleMutePrayerUseCase: ToggleMutePrayerUseCase,
+    private val stopAdhanPlaybackUseCase: StopAdhanPlaybackUseCase,
+    private val parseTimeToMinutesUseCase: ParseTimeToMinutesUseCase,
+    private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
+    private val calculateNextPrayerInfoUseCase: CalculateNextPrayerInfoUseCase,
+    private val observeAdhanPlaybackStateUseCase: ObserveAdhanPlaybackStateUseCase,
+    private val scheduleDailyPrayerAlarmsUseCase: ScheduleDailyPrayerAlarmsUseCase
 ) : ViewModel() {
 
     private val permissionDelegate = LocationPermissionDelegate()
@@ -69,25 +72,19 @@ class HomeViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<HomeContract.Effect>()
     val effect: SharedFlow<HomeContract.Effect> = _effect.asSharedFlow()
 
-    private var currentDate: Calendar = Calendar.getInstance()
-
     private var loadPrayerTimesJob: Job? = null
-    private var tickerJob: Job? = null
+    private var tickCounterJob: Job? = null
 
     init {
         viewModelScope.launch {
             permissionDelegate.state.collect { permissionState ->
-                _state.value = _state.value.copy(
-                    locationPermission = permissionState
-                )
+                _state.update { it.copy(locationPermission = permissionState) }
             }
         }
 
         viewModelScope.launch {
             mutedPrayersRepository.observeMutedPrayers().collect { mutedPrayers ->
-                _state.value = _state.value.copy(
-                    mutedPrayers = mutedPrayers
-                )
+                _state.update { it.copy(mutedPrayers = mutedPrayers) }
                 rescheduleAlarmsIfLoaded()
             }
         }
@@ -110,19 +107,21 @@ class HomeViewModel @Inject constructor(
 
     fun onIntent(intent: HomeContract.Intent) {
         when (intent) {
-            is HomeContract.Intent.LoadPrayerTimes ->
-                checkPermissionAndLoad()
-
-            is HomeContract.Intent.Retry ->
-                checkPermissionAndLoad()
-
+            is HomeContract.Intent.LoadPrayerTimes -> checkPermissionAndLoad()
+            is HomeContract.Intent.Retry -> checkPermissionAndLoad()
             is HomeContract.Intent.PreviousDay -> {
-                currentDate.add(Calendar.DAY_OF_YEAR, -1)
+                _state.update { state ->
+                    state.currentDate.apply { add(Calendar.DAY_OF_YEAR, -1) }
+                    state.copy(currentDate = state.currentDate)
+                }
                 loadPrayerTimes()
             }
 
             is HomeContract.Intent.NextDay -> {
-                currentDate.add(Calendar.DAY_OF_YEAR, 1)
+                _state.update { state ->
+                    state.currentDate.apply { add(Calendar.DAY_OF_YEAR, 1) }
+                    state.copy(currentDate = state.currentDate)
+                }
                 loadPrayerTimes()
             }
 
@@ -137,13 +136,15 @@ class HomeViewModel @Inject constructor(
                 viewModelScope.launch {
                     permissionDelegate.onPermissionDenied(intent.permanentlyDenied)
                 }
-                _state.value = _state.value.copy(
-                    errorMessage = if (intent.permanentlyDenied) {
-                        "Location permission permanently denied. Please, enable it via Settings."
-                    } else {
-                        "Location permission is required to show prayer times."
-                    }
-                )
+                _state.update {
+                    it.copy(
+                        errorMessage = if (intent.permanentlyDenied) {
+                            UiText.Res(R.string.location_permission_permanently_denied_please_enable_it_via_settings)
+                        } else {
+                            UiText.Res(R.string.location_permission_is_required_to_show_prayer_times)
+                        }
+                    )
+                }
             }
 
             is HomeContract.Intent.AccessAppSettings -> {
@@ -161,19 +162,41 @@ class HomeViewModel @Inject constructor(
             is HomeContract.Intent.ToggleMute -> {
                 viewModelScope.launch {
                     val currentlyMuted = intent.prayerName in _state.value.mutedPrayers
-                    toggleMutePrayerUseCase(
-                        intent.prayerName,
-                        !currentlyMuted
-                    )
+                    toggleMutePrayerUseCase(intent.prayerName, !currentlyMuted)
                 }
             }
 
-            HomeContract.Intent.StopAdhanClicked -> stopAdhanPlaybackUseCase()
+            is HomeContract.Intent.RecheckSystemPermissions -> {
+                viewModelScope.launch {
+                    val hasExactAlarm = permissionChecker.canScheduleExactAlarms()
+                    _state.update {
+                        it.copy(
+                            hasExactAlarmPermission = hasExactAlarm,
+                            hasNotificationPermission = permissionChecker.hasNotificationPermission()
+                        )
+                    }
+                    if (hasExactAlarm) rescheduleAlarmsIfLoaded()
+                }
+            }
+
+            is HomeContract.Intent.NotificationPermissionResult -> {
+                _state.update { it.copy(hasNotificationPermission = intent.granted) }
+            }
+
+            is HomeContract.Intent.ExactAlarmBannerClicked -> {
+                viewModelScope.launch { _effect.emit(HomeContract.Effect.RequestExactAlarmPermission) }
+            }
+
+            is HomeContract.Intent.NotificationBannerClicked -> {
+                viewModelScope.launch { _effect.emit(HomeContract.Effect.RequestNotificationPermission) }
+            }
+
+            is HomeContract.Intent.StopAdhanClicked -> stopAdhanPlaybackUseCase()
         }
     }
 
     private fun checkPermissionAndLoad() {
-        _state.value = _state.value.copy(errorMessage = null)
+        _state.update { it.copy(errorMessage = null) }
         viewModelScope.launch {
             if (permissionChecker.hasLocationPermission()) {
                 permissionDelegate.onPermissionGranted()
@@ -185,44 +208,48 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun checkExactAlarmAndNotificationPermissions() {
-        if (!permissionChecker.canScheduleExactAlarms()) {
-            _effect.emit(HomeContract.Effect.RequestExactAlarmPermission)
+        val hasExactAlarm = permissionChecker.canScheduleExactAlarms()
+        val hasNotification = permissionChecker.hasNotificationPermission()
+        _state.update {
+            it.copy(
+                hasExactAlarmPermission = hasExactAlarm,
+                hasNotificationPermission = hasNotification
+            )
         }
-        if (!permissionChecker.hasNotificationPermission()) {
-            _effect.emit(HomeContract.Effect.RequestNotificationPermission)
-        }
+        if (!hasExactAlarm) _effect.emit(HomeContract.Effect.RequestExactAlarmPermission)
+        if (!hasNotification) _effect.emit(HomeContract.Effect.RequestNotificationPermission)
     }
 
     private fun loadPrayerTimes() {
         loadPrayerTimesJob?.cancel()
         loadPrayerTimesJob = viewModelScope.launch {
             permissionDelegate.reset()
-            _state.value = _state.value.copy(errorMessage = null)
+            _state.update { it.copy(errorMessage = null) }
 
-            val today =
-                SimpleDateFormat("dd-MM-yyyy", Locale.US)
-                    .format(currentDate.time)
+            val today = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                .format(_state.value.currentDate.time)
 
             try {
                 val savedLocation = getSavedLocationUseCase().first()
-
                 val location = if (savedLocation != null) {
                     savedLocation
                 } else {
-                    _state.value = _state.value.copy(isLoading = true)
+                    _state.update { it.copy(isLoading = true) }
 
                     if (!locationProvider.isLocationEnabled()) {
                         permissionDelegate.markServicesDisabled()
-                        _state.value = _state.value.copy(
-                            isLoading = false,
-                            errorMessage = "Location services are turned off. Please, enable them."
-                        )
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = UiText.Res(R.string.location_services_disabled)
+                            )
+                        }
                         return@launch
                     }
 
                     if (!permissionChecker.hasLocationPermission()) {
                         permissionDelegate.requirePermission()
-                        _state.value = _state.value.copy(isLoading = false)
+                        _state.update { it.copy(isLoading = false) }
                         return@launch
                     }
                     fetchAndSaveLocationUseCase()
@@ -230,23 +257,26 @@ class HomeViewModel @Inject constructor(
 
                 val latitude = location.latitude
                 val longitude = location.longitude
+                _state.update { it.copy(latitude = latitude, longitude = longitude) }
                 val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
 
                 if (cached != null) {
-                    val info = calculateNextPrayerInfoUseCase(cached.timings, today)
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                        timings = cached.timings,
-                        date = cached.date,
-                        nextPrayerInfo = calculateNextPrayerInfoUseCase(cached.timings, today)
-
-                    )
+                    val info = calculateNextPrayerInfoUseCase(cached.timings, today, latitude, longitude)
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            timings = cached.timings,
+                            date = cached.date,
+                            nextPrayerInfo = info,
+                            currentPrayerName = calculateCurrentPrayerName(cached.timings)
+                        )
+                    }
                     startCountdownTicker(info.spanEndMillis)
                     rescheduleAlarmsIfLoaded()
                     return@launch
                 }
 
-                _state.value = _state.value.copy(isLoading = true)
+                _state.update { it.copy(isLoading = true) }
 
                 val result = withTimeoutOrNull(5_000L.milliseconds) {
                     getPrayerTimesUseCase(
@@ -254,55 +284,58 @@ class HomeViewModel @Inject constructor(
                         latitude = latitude,
                         longitude = longitude
                     )
-                } ?: Result.failure(
-                    Exception("Request timed out. Check your connection.")
-                )
+                } ?: Result.failure(Exception("Request timed out. Check your connection."))
 
                 result.fold(
                     onSuccess = { prayerTimesResult ->
-                        val info = calculateNextPrayerInfoUseCase(prayerTimesResult.timings, today)
-                        _state.value = _state.value.copy(
-                            isLoading = false,
-                            timings = prayerTimesResult.timings,
-                            date = prayerTimesResult.date,
-                            nextPrayerInfo = calculateNextPrayerInfoUseCase(prayerTimesResult.timings, today)
+                        val info = calculateNextPrayerInfoUseCase(
+                            prayerTimesResult.timings, today, latitude, longitude
                         )
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                timings = prayerTimesResult.timings,
+                                date = prayerTimesResult.date,
+                                nextPrayerInfo = info,
+                                currentPrayerName = calculateCurrentPrayerName(prayerTimesResult.timings)
+                            )
+                        }
                         startCountdownTicker(info.spanEndMillis)
                         rescheduleAlarmsIfLoaded()
                     },
                     onFailure = { throwable ->
-                        val message = throwable.message ?: "Something went wrong."
-                        _state.value = _state.value.copy(
-                            isLoading = false,
-                            errorMessage = message
-                        )
-                        _effect.emit(
-                            HomeContract.Effect.ShowError(message)
-                        )
+                        val message = throwable.message?.let { UiText.Raw(it) }
+                            ?: UiText.Res(R.string.something_went_wrong)
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = message
+                            )
+                        }
+                        _effect.emit(HomeContract.Effect.ShowError(message))
                     }
                 )
             } catch (e: SecurityException) {
                 permissionDelegate.requirePermission()
-                _state.value = _state.value.copy(
-                    isLoading = false,
-                    errorMessage = null
-                )
+                _state.update { it.copy(isLoading = false, errorMessage = null) }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                val message = "Failed to get location."
-                _state.value = _state.value.copy(
-                    isLoading = false,
-                    errorMessage = message
-                )
-                _effect.emit(
-                    HomeContract.Effect.ShowError(message)
-                )
+                val message = UiText.Res(R.string.failed_to_get_location)
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = message
+                    )
+                }
+                _effect.emit(HomeContract.Effect.ShowError(message))
             }
         }
     }
 
     private fun startCountdownTicker(spanEndMillis: Long) {
-        tickerJob?.cancel()
-        tickerJob = viewModelScope.launch {
+        tickCounterJob?.cancel()
+        tickCounterJob = viewModelScope.launch {
             while (isActive) {
                 val remaining = (spanEndMillis - System.currentTimeMillis()).coerceAtLeast(0)
                 _state.update { it.copy(remainingMillis = remaining) }
@@ -317,10 +350,13 @@ class HomeViewModel @Inject constructor(
 
     private fun onNextPrayerWindowElapsed() {
         if (_state.value.nextPrayerInfo?.crossesIntoNextDay == true) {
-            currentDate.add(Calendar.DAY_OF_YEAR, 1)
+            _state.update { state ->
+                state.currentDate.apply { add(Calendar.DAY_OF_YEAR, 1) }
+                state.copy(currentDate = state.currentDate)
+            }
             loadPrayerTimes()
         } else {
-            recomputeNextPrayerInfo()
+            viewModelScope.launch { recomputeNextPrayerInfo() }
         }
     }
 
@@ -342,29 +378,33 @@ class HomeViewModel @Inject constructor(
             ?.first
     }
 
-    private fun recomputeNextPrayerInfo() {
+    private suspend fun recomputeNextPrayerInfo() {
         val timings = _state.value.timings ?: return
-        val date = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(currentDate.time)
-        val info = calculateNextPrayerInfoUseCase(timings, date)
-        _state.value = _state.value.copy(
-            nextPrayerInfo = info,
-            currentPrayerName = calculateCurrentPrayerName(timings)
-        )
+        val latitude = _state.value.latitude ?: return
+        val longitude = _state.value.longitude ?: return
+        val date = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+            .format(_state.value.currentDate.time)
+        val info = calculateNextPrayerInfoUseCase(timings, date, latitude, longitude)
+        _state.update {
+            it.copy(
+                nextPrayerInfo = info,
+                currentPrayerName = calculateCurrentPrayerName(timings)
+            )
+        }
         startCountdownTicker(info.spanEndMillis)
     }
 
     private suspend fun rescheduleAlarmsIfLoaded() {
         val timings = _state.value.timings ?: return
         val date = _state.value.date ?: return
-        val dateKey =
-            SimpleDateFormat("dd-MM-yyyy", Locale.US)
-                .format(currentDate.time)
+        val dateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+            .format(_state.value.currentDate.time)
 
         scheduleDailyPrayerAlarmsUseCase(timings, dateKey, _state.value.mutedPrayers)
     }
 
     override fun onCleared() {
-        tickerJob?.cancel()
+        tickCounterJob?.cancel()
         super.onCleared()
     }
 }

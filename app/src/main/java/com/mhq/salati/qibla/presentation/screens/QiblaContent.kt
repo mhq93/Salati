@@ -41,7 +41,6 @@ fun QiblaContent(
 
                 state.errorMessage != null -> {
                     QiblaErrorContent(
-                        //errorMessage = state.errorMessage,
                         errorMessage = state.errorMessage.asString(),
                         sensorUnavailable = state.sensorUnavailable,
                         locationPermission = state.locationPermission,

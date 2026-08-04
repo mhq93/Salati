@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
 import com.mhq.salati.permissions.location.LocationPermissionState
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
+import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import io.ktor.websocket.Frame
 
@@ -36,7 +37,8 @@ fun QiblaErrorContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(R.string.error, errorMessage)
+                text = stringResource(R.string.error, errorMessage),
+                color = DarkGreen
             )
             Spacer(
                 Modifier.height(12.dp)
@@ -61,7 +63,7 @@ fun QiblaErrorContent(
                             onIntent(QiblaContract.Intent.AccessAppSettings)
                         }
                     ) {
-                        Frame.Text(stringResource(R.string.open_settings))
+                        Text(stringResource(R.string.open_settings))
                     }
                 }
 

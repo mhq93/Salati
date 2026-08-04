@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.shared.presentation.theme.AccentEmerald
 import com.mhq.salati.shared.presentation.theme.AccentOrange
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
 import com.mhq.salati.shared.presentation.theme.InkText
@@ -58,7 +59,7 @@ fun AnimatedBottomNavBar(
     onItemSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val unselectedContentColor = Color(0xFF1E352F)
+    val unselectedContentColor = AccentEmerald
     val selectedContentColor = AccentOrange
 
     val itemCount = items.size
@@ -257,7 +258,9 @@ fun AnimatedBottomNavBar(
 
                     Text(
                         text = item.label,
-                        color = if (isSelected) selectedContentColor else unselectedContentColor.copy(alpha = 0.8f),
+                        color = if (isSelected) selectedContentColor else unselectedContentColor.copy(
+                            alpha = 0.8f
+                        ),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )

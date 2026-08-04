@@ -40,28 +40,49 @@ fun HomeContainer(
 
     val locationPermissionLauncher = rememberLocationPermissionLauncher(
         onGranted = {
-            homeViewModel.onIntent(HomeContract.Intent.LocationPermissionGranted)
+            homeViewModel.onIntent(
+                HomeContract.Intent.LocationPermissionGranted
+            )
         },
         onDenied = { permanentlyDenied ->
-            homeViewModel.onIntent(HomeContract.Intent.LocationPermissionDenied(permanentlyDenied))
+            homeViewModel.onIntent(
+                HomeContract.Intent.LocationPermissionDenied(
+                    permanentlyDenied
+                )
+            )
         }
     )
 
     val notificationPermissionLauncher = rememberNotificationPermissionLauncher(
-        onGranted = { /* proceed, e.g. mark alarms enabled */ },
-        onDenied = { /* show rationale or leave notifications off */ }
+        onGranted = {
+            homeViewModel.onIntent(
+                HomeContract.Intent.NotificationPermissionResult(
+                    granted = true
+                )
+            )
+        },
+        onDenied = {
+            homeViewModel.onIntent(
+                HomeContract.Intent.NotificationPermissionResult(
+                    granted = false
+                )
+            )
+        }
     )
 
     val exactAlarmLauncher = rememberExactAlarmPermissionLauncher(
-        onResult = { /* user returned from settings; re-check on next schedule attempt */ }
+        onResult = {
+            homeViewModel.onIntent(
+                HomeContract.Intent.RecheckSystemPermissions) }
     )
 
-    // Reacts to one-shot decisions made by the ViewModel — never decides anything itself
     LaunchedEffect(Unit) {
         homeViewModel.permissionEffect.collect { effect ->
             when (effect) {
                 is LocationPermissionEffect.RequestPermission -> {
-                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                    locationPermissionLauncher.launch(
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    )
                 }
 
                 is LocationPermissionEffect.PermissionResolved -> {
@@ -70,20 +91,24 @@ fun HomeContainer(
 
                 is LocationPermissionEffect.NavigateToAppSettings -> {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts("package", context.packageName, null)
+                        data = Uri.fromParts(
+                            "package",
+                            context.packageName,
+                            null
+                        )
                     }
                     context.startActivity(intent)
                 }
 
                 is LocationPermissionEffect.NavigateToLocationSettings -> {
-                    context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                    context.startActivity(
+                        Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    )
                 }
             }
         }
     }
 
-    // Reacts to one-shot decisions made by the ViewModel — same rule as above,
-    // now covers exact-alarm and notification permission requests too
     LaunchedEffect(Unit) {
         homeViewModel.effect.collect { effect ->
             when (effect) {
@@ -109,10 +134,11 @@ fun HomeContainer(
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME &&
-                (state.locationPermission.permanentlyDenied || state.locationPermission.servicesDisabled)
-            ) {
-                homeViewModel.onIntent(HomeContract.Intent.Retry)
+            if (event == Lifecycle.Event.ON_RESUME) {
+                if (state.locationPermission.permanentlyDenied || state.locationPermission.servicesDisabled) {
+                    homeViewModel.onIntent(HomeContract.Intent.Retry)
+                }
+                homeViewModel.onIntent(HomeContract.Intent.RecheckSystemPermissions)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)

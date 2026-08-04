@@ -56,4 +56,16 @@
     <string name="enable_location">Enable Location</string>
     <string name="open_settings">Open Settings</string>
     <string name="error">Error: %1$s</string>
+    <string name="location_permission_permanently_denied_please_enable_it_via_settings">Location permission permanently denied. Please, enable it via Settings.</string>
+    <string name="location_permission_is_required_to_show_prayer_times">Location permission is required to show prayer times.</string>
+    <string name="something_went_wrong">Something went wrong.</string>
+    <string name="couldn_t_update_notification_settings">Couldn\'t update notification settings</string>
+    <string name="couldn_t_update_calculation_method">Couldn\'t update calculation method</string>
+    <string name="couldn_t_update_madhab">Couldn\'t update madhab</string>
+    <string name="couldn_t_update_theme">Couldn\'t update theme</string>
+    <string name="couldn_t_update_language">Couldn\'t update language</string>
+    <string name="couldn_t_update_adhan_sound">Couldn\'t update adhan sound</string>
+    <string name="couldn_t_update_hijri_offset">Couldn\'t update Hijri offset</string>
+    <string name="exact_alarms_are_disabled_prayer_alerts_may_not_ring_on_time">Exact alarms are disabled — prayer alerts may not ring on time.</string>
+    <string name="notifications_are_disabled_you_won_t_see_prayer_reminders">Notifications are disabled — you won\'t see prayer reminders.</string>
 </resources>
