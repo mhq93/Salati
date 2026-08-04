@@ -20,10 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
 
 @AndroidEntryPoint
 class AdhanPlaybackService : Service() {
@@ -34,7 +31,6 @@ class AdhanPlaybackService : Service() {
     private var mediaPlayer: MediaPlayer? = null
     private var audioManager: AudioManager? = null
     private var focusRequest: AudioFocusRequest? = null
-    private var currentIsMinorTiming: Boolean = false
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -43,22 +39,23 @@ class AdhanPlaybackService : Service() {
         when (intent?.action) {
             ACTION_START -> startPlayback(
                 prayerName = intent.getStringExtra(EXTRA_PRAYER_NAME) ?: "Prayer",
-                isMinorTiming = intent.getBooleanExtra(EXTRA_IS_MINOR_TIMING, false)
+                isMinorTiming = intent.getBooleanExtra(EXTRA_IS_MINOR_TIMING, false),
+                isMuted = intent.getBooleanExtra(EXTRA_IS_MUTED, false)
             )
             ACTION_STOP -> stopPlayback()
         }
         return START_NOT_STICKY
     }
 
-    private fun startPlayback(prayerName: String, isMinorTiming: Boolean) {
-        currentIsMinorTiming = isMinorTiming
-
+    private fun startPlayback(prayerName: String, isMinorTiming: Boolean, isMuted: Boolean) {
         val notification = buildNotification(prayerName, isMinorTiming)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
         } else {
             startForeground(NOTIFICATION_ID, notification)
         }
+
+        if (isMuted) return
 
         val attrs = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_ALARM)
@@ -147,6 +144,7 @@ class AdhanPlaybackService : Service() {
         const val ACTION_STOP = "com.mhq.salati.action.STOP_ADHAN"
         const val EXTRA_PRAYER_NAME = "extra_prayer_name"
         const val EXTRA_IS_MINOR_TIMING = "extra_is_minor_timing"
+        const val EXTRA_IS_MUTED = "extra_is_muted"
         private const val NOTIFICATION_ID = 501
         const val CHANNEL_ID = "adhan_playback_channel"
     }

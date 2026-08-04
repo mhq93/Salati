@@ -6,6 +6,6 @@ import javax.inject.Inject
 class StartAdhanPlaybackUseCase @Inject constructor(
     private val controller: AdhanPlaybackController
 ) {
-    operator fun invoke(prayerName: String, isMinorTiming: Boolean) =
-        controller.start(prayerName, isMinorTiming)
+    operator fun invoke(prayerName: String, isMinorTiming: Boolean, isMuted: Boolean) =
+        controller.start(prayerName, isMinorTiming, isMuted)
 }

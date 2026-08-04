@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface AdhanPlaybackController {
     val playbackState: StateFlow<AdhanPlaybackState>
-    fun start(prayerName: String, isMinorTiming: Boolean)
+    fun start(prayerName: String, isMinorTiming: Boolean, isMuted: Boolean)
     fun stop()
 }

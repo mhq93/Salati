@@ -27,7 +27,8 @@ class AndroidAlarmScheduler @Inject constructor(
 
         val intent = Intent(context, PrayerAlarmReceiver::class.java).apply {
             putExtra(PrayerAlarmReceiver.EXTRA_PRAYER_NAME, alarm.prayerName)
-            putExtra(PrayerAlarmReceiver.EXTRA_IS_MINOR_TIMING, alarm.isMinorTiming)   // ADDED
+            putExtra(PrayerAlarmReceiver.EXTRA_IS_MINOR_TIMING, alarm.isMinorTiming)
+            putExtra(PrayerAlarmReceiver.EXTRA_IS_MUTED, alarm.isMuted)
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -58,6 +59,6 @@ class AndroidAlarmScheduler @Inject constructor(
     }
 
     override fun cancelAll() {
-        PrayerAlarmNames.ALL.forEach { cancel(it) }   // CHANGED — was hardcoded list
+        PrayerAlarmNames.ALL.forEach { cancel(it) }
     }
 }

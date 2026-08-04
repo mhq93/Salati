@@ -31,18 +31,14 @@ class ScheduleDailyPrayerAlarmsUseCase @Inject constructor(
             )
 
             prayerMap.forEach { (name, time) ->
-                if (name in mutedPrayers) {
-                    alarmScheduler.cancel(name)
-                    return@forEach
-                }
-
                 val triggerMillis = parseToEpochMillis(date, time, zoneId)
                 if (triggerMillis > System.currentTimeMillis()) {
                     alarmScheduler.schedule(
                         PrayerAlarm(
                             prayerName = name,
                             triggerAtMillis = triggerMillis,
-                            isMinorTiming = name in PrayerAlarmNames.MINOR
+                            isMinorTiming = name in PrayerAlarmNames.MINOR,
+                            isMuted = name in mutedPrayers
                         )
                     )
                 }
