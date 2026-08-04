@@ -268,7 +268,7 @@ class HomeViewModel @Inject constructor(
                             timings = cached.timings,
                             date = cached.date,
                             nextPrayerInfo = info,
-                            currentPrayerName = calculateCurrentPrayerName(cached.timings)
+                            currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(cached.timings) else null
                         )
                     }
                     startCountdownTicker(info.spanEndMillis)
@@ -297,7 +297,7 @@ class HomeViewModel @Inject constructor(
                                 timings = prayerTimesResult.timings,
                                 date = prayerTimesResult.date,
                                 nextPrayerInfo = info,
-                                currentPrayerName = calculateCurrentPrayerName(prayerTimesResult.timings)
+                                currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(prayerTimesResult.timings) else null
                             )
                         }
                         startCountdownTicker(info.spanEndMillis)
@@ -359,6 +359,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun isBrowsingToday(): Boolean {
+        val browsedDateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
+        val todayKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Calendar.getInstance().time)
+        return browsedDateKey == todayKey
+    }
+
     private fun onNextPrayerWindowElapsed() {
         if (_state.value.nextPrayerInfo?.crossesIntoNextDay == true) {
             _state.update { state ->
@@ -399,7 +405,7 @@ class HomeViewModel @Inject constructor(
         _state.update {
             it.copy(
                 nextPrayerInfo = info,
-                currentPrayerName = calculateCurrentPrayerName(timings)
+                currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(timings) else null
             )
         }
         startCountdownTicker(info.spanEndMillis)
