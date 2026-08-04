@@ -5,10 +5,12 @@ import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.prayertimes.domain.usecases.GetCachedPrayerTimesUseCase
 import com.mhq.salati.prayertimes.domain.usecases.GetPrayerTimesUseCase
 import com.mhq.salati.shared.domain.usecases.ParseToEpochMillisUseCase
+import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 class CalculateNextPrayerInfoUseCase @Inject constructor(
     private val parseToEpochMillisUseCase: ParseToEpochMillisUseCase,
@@ -90,12 +92,13 @@ class CalculateNextPrayerInfoUseCase @Inject constructor(
             return parseToEpochMillisUseCase(yesterday, cached.timings.isha, zoneId)
         }
 
-        val fetched = getPrayerTimesUseCase(yesterday, latitude, longitude).getOrNull()
+        val fetched = withTimeoutOrNull(5_000L.milliseconds) {
+            getPrayerTimesUseCase(yesterday, latitude, longitude).getOrNull()
+        }
         if (fetched != null) {
             return parseToEpochMillisUseCase(yesterday, fetched.timings.isha, zoneId)
         }
 
-        // Offline + never cached: approximate using today's Isha clock-time on yesterday's date
         return parseToEpochMillisUseCase(yesterday, fallback, zoneId)
     }
 }
