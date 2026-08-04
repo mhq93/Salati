@@ -41,7 +41,7 @@ fun DateBanner(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .clip(RoundedCornerShape(50))
-            .background(InkText)//Color.White
+            .background(InkText)
             .padding(
                 horizontal = 16.dp,
                 vertical = 8.dp

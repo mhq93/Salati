@@ -5,7 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.mhq.PrayerAlarmNames
+import com.mhq.salati.shared.domain.PrayerAlarmNames
 import com.mhq.salati.adhan.domain.model.PrayerAlarm
 import com.mhq.salati.adhan.domain.repo.AlarmScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext

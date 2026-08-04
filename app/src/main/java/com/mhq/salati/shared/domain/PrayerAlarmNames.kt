@@ -1,4 +1,4 @@
-package com.mhq
+package com.mhq.salati.shared.domain
 
 object PrayerAlarmNames {
     val MAJOR = listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")

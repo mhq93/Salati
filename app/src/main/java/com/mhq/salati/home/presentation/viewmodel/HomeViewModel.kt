@@ -104,15 +104,23 @@ class HomeViewModel @Inject constructor(
 
     fun onIntent(intent: HomeContract.Intent) {
         when (intent) {
-            is HomeContract.Intent.LoadPrayerTimes -> checkPermissionAndLoad()
-            is HomeContract.Intent.Retry -> checkPermissionAndLoad()
+            is HomeContract.Intent.LoadPrayerTimes -> {
+                checkPermissionAndLoad()
+            }
+
+            is HomeContract.Intent.Retry -> {
+                checkPermissionAndLoad()
+            }
+
             is HomeContract.Intent.PreviousDay -> {
-                _state.update { state ->
-                    state.currentDate.apply { add(Calendar.DAY_OF_YEAR, -1) }
-                    state.copy(currentDate = state.currentDate)
+                if (!isBrowsingToday()) {
+                    _state.update { state ->
+                        state.currentDate.apply { add(Calendar.DAY_OF_YEAR, -1) }
+                        state.copy(currentDate = state.currentDate)
+                    }
+                    observeMutedPrayersForCurrentDate()
+                    loadPrayerTimes()
                 }
-                observeMutedPrayersForCurrentDate()
-                loadPrayerTimes()
             }
 
             is HomeContract.Intent.NextDay -> {
@@ -160,7 +168,8 @@ class HomeViewModel @Inject constructor(
 
             is HomeContract.Intent.ToggleMute -> {
                 viewModelScope.launch {
-                    val dateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
+                    val dateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                        .format(_state.value.currentDate.time)
                     val currentlyMuted = intent.prayerName in _state.value.mutedPrayers
                     toggleMutePrayerUseCase(dateKey, intent.prayerName, !currentlyMuted)
                 }
@@ -184,14 +193,20 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeContract.Intent.ExactAlarmBannerClicked -> {
-                viewModelScope.launch { _effect.emit(HomeContract.Effect.RequestExactAlarmPermission) }
+                viewModelScope.launch {
+                    _effect.emit(HomeContract.Effect.RequestExactAlarmPermission)
+                }
             }
 
             is HomeContract.Intent.NotificationBannerClicked -> {
-                viewModelScope.launch { _effect.emit(HomeContract.Effect.RequestNotificationPermission) }
+                viewModelScope.launch {
+                    _effect.emit(HomeContract.Effect.RequestNotificationPermission)
+                }
             }
 
-            is HomeContract.Intent.StopAdhanClicked -> stopAdhanPlaybackUseCase()
+            is HomeContract.Intent.StopAdhanClicked -> {
+                stopAdhanPlaybackUseCase()
+            }
         }
     }
 
@@ -216,8 +231,11 @@ class HomeViewModel @Inject constructor(
                 hasNotificationPermission = hasNotification
             )
         }
-        if (!hasExactAlarm) _effect.emit(HomeContract.Effect.RequestExactAlarmPermission)
-        if (!hasNotification) _effect.emit(HomeContract.Effect.RequestNotificationPermission)
+        if (!hasExactAlarm)
+            _effect.emit(HomeContract.Effect.RequestExactAlarmPermission)
+
+        if (!hasNotification)
+            _effect.emit(HomeContract.Effect.RequestNotificationPermission)
     }
 
     private fun loadPrayerTimes() {
@@ -261,14 +279,24 @@ class HomeViewModel @Inject constructor(
                 val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
 
                 if (cached != null) {
-                    val info = calculateNextPrayerInfoUseCase(cached.timings, today, latitude, longitude)
+                    val info = calculateNextPrayerInfoUseCase(
+                        cached.timings,
+                        today,
+                        latitude,
+                        longitude
+                    )
+
                     _state.update {
                         it.copy(
                             isLoading = false,
                             timings = cached.timings,
                             date = cached.date,
                             nextPrayerInfo = info,
-                            currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(cached.timings) else null
+                            currentPrayerName =
+                                if (isBrowsingToday())
+                                    calculateCurrentPrayerName(cached.timings)
+                                else
+                                    null
                         )
                     }
                     startCountdownTicker(info.spanEndMillis)
@@ -297,7 +325,11 @@ class HomeViewModel @Inject constructor(
                                 timings = prayerTimesResult.timings,
                                 date = prayerTimesResult.date,
                                 nextPrayerInfo = info,
-                                currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(prayerTimesResult.timings) else null
+                                currentPrayerName =
+                                    if (isBrowsingToday())
+                                        calculateCurrentPrayerName(prayerTimesResult.timings)
+                                    else
+                                        null
                             )
                         }
                         startCountdownTicker(info.spanEndMillis)
@@ -350,7 +382,8 @@ class HomeViewModel @Inject constructor(
 
     private fun observeMutedPrayersForCurrentDate() {
         mutedPrayersJob?.cancel()
-        val dateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
+        val dateKey =
+            SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
         mutedPrayersJob = viewModelScope.launch {
             mutedPrayersRepository.observeMutedPrayers(dateKey).collect { mutedPrayers ->
                 _state.update { it.copy(mutedPrayers = mutedPrayers) }
@@ -360,7 +393,8 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun isBrowsingToday(): Boolean {
-        val browsedDateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
+        val browsedDateKey =
+            SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
         val todayKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Calendar.getInstance().time)
         return browsedDateKey == todayKey
     }
@@ -415,7 +449,8 @@ class HomeViewModel @Inject constructor(
         val timings = _state.value.timings ?: return
         val date = _state.value.date ?: return
 
-        val browsedDateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
+        val browsedDateKey =
+            SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
         val todayKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Calendar.getInstance().time)
 
         if (browsedDateKey != todayKey) return
