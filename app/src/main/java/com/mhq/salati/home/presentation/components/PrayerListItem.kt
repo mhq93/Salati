@@ -39,6 +39,7 @@ fun PrayerListItem(
     prayerTime: String,
     isPrayerHighlighted: Boolean,
     isPrayerAdhanMuted: Boolean,
+    isPrayerPassed: Boolean,
     onMutePrayerToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -80,9 +81,7 @@ fun PrayerListItem(
                     fontSize = 18.sp,
                     color = if (isPrayerHighlighted) AccentGreen else InkText
                 )
-                Spacer(
-                    modifier = Modifier.height(4.dp)
-                )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = prayerTime,
                     fontSize = 14.sp,
@@ -93,6 +92,7 @@ fun PrayerListItem(
 
             IconButton(
                 onClick = onMutePrayerToggle,
+                enabled = !isPrayerPassed,
                 modifier = Modifier
                     .size(32.dp)
                     .background(
@@ -110,7 +110,8 @@ fun PrayerListItem(
                     } else {
                         Icons.Filled.NotificationsActive
                     },
-                    tint = if (isPrayerAdhanMuted) MutedSage else AccentGreen,
+                    tint = (if (isPrayerAdhanMuted) MutedSage else AccentGreen)
+                        .copy(alpha = if (isPrayerPassed) 0.4f else 1f),
                     contentDescription = if (isPrayerAdhanMuted) "Muted" else "Enabled",
                     modifier = Modifier.size(18.dp)
                 )
@@ -128,7 +129,8 @@ private fun PrayerListItemPreview() {
             prayerTime = "04:00",
             isPrayerHighlighted = true,
             isPrayerAdhanMuted = true,
-            onMutePrayerToggle = {},
+            isPrayerPassed = true,
+                    onMutePrayerToggle = {}
         )
     }
 }

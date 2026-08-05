@@ -21,12 +21,11 @@ fun PrayersList(
     minorTimings: List<Triple<String, String, String>>,
     currentTimingName: String?,
     mutedTimings: Set<String>,
+    pastTimings: Set<String>,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier.padding(top = 16.dp)
-    ) {
+    Column(modifier = modifier.padding(top = 16.dp)) {
         prayers.forEachIndexed { index, (_, name, time) ->
             val (_, minorName, minorTime) = minorTimings[index]
 
@@ -41,6 +40,7 @@ fun PrayersList(
                         prayerTime = time,
                         isPrayerHighlighted = name == currentTimingName,
                         isPrayerAdhanMuted = name in mutedTimings,
+                        isPrayerPassed = name in pastTimings,
                         onMutePrayerToggle = {
                             onIntent(HomeContract.Intent.ToggleMute(name))
                         }
@@ -57,6 +57,7 @@ fun PrayersList(
                         prayerTime = minorTime,
                         isPrayerHighlighted = minorName == currentTimingName,
                         isPrayerAdhanMuted = minorName in mutedTimings,
+                        isPrayerPassed = minorName in pastTimings,
                         onMutePrayerToggle = {
                             onIntent(HomeContract.Intent.ToggleMute(minorName))
                         }
@@ -76,6 +77,7 @@ private fun PrayersListPreview() {
             minorTimings = emptyList(),
             currentTimingName = null,
             mutedTimings = emptySet(),
+            pastTimings = emptySet(),
             onIntent = {}
         )
     }

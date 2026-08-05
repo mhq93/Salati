@@ -46,6 +46,7 @@ fun HomeSuccessContent(
     nextPrayerInfo: NextPrayerInfo?,
     currentPrayerName: String?,
     mutedPrayers: Set<String>,
+    pastPrayers: Set<String>,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -129,6 +130,7 @@ fun HomeSuccessContent(
                     minorTimings = minorTimings,
                     currentTimingName = currentPrayerName,
                     mutedTimings = mutedPrayers,
+                    pastTimings = pastPrayers,
                     onIntent = onIntent,
                     modifier = modifier
                 )

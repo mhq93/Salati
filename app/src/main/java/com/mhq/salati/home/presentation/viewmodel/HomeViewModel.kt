@@ -292,11 +292,10 @@ class HomeViewModel @Inject constructor(
                             timings = cached.timings,
                             date = cached.date,
                             nextPrayerInfo = info,
-                            currentPrayerName =
-                                if (isBrowsingToday())
-                                    calculateCurrentPrayerName(cached.timings)
-                                else
-                                    null
+                            currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(
+                                cached.timings
+                            ) else null,
+                            pastPrayers = if (isBrowsingToday()) calculatePastPrayers(cached.timings) else emptySet()
                         )
                     }
                     startCountdownTicker(info.spanEndMillis)
@@ -325,11 +324,12 @@ class HomeViewModel @Inject constructor(
                                 timings = prayerTimesResult.timings,
                                 date = prayerTimesResult.date,
                                 nextPrayerInfo = info,
-                                currentPrayerName =
-                                    if (isBrowsingToday())
-                                        calculateCurrentPrayerName(prayerTimesResult.timings)
-                                    else
-                                        null
+                                currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(
+                                    prayerTimesResult.timings
+                                ) else null,
+                                pastPrayers = if (isBrowsingToday()) calculatePastPrayers(
+                                    prayerTimesResult.timings
+                                ) else emptySet()
                             )
                         }
                         startCountdownTicker(info.spanEndMillis)
@@ -392,13 +392,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun isBrowsingToday(): Boolean {
-        val browsedDateKey =
-            SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
-        val todayKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Calendar.getInstance().time)
-        return browsedDateKey == todayKey
-    }
-
     private fun onNextPrayerWindowElapsed() {
         if (_state.value.nextPrayerInfo?.crossesIntoNextDay == true) {
             _state.update { state ->
@@ -409,6 +402,42 @@ class HomeViewModel @Inject constructor(
         } else {
             viewModelScope.launch { recomputeNextPrayerInfo() }
         }
+    }
+
+    private fun isBrowsingToday(): Boolean {
+        val browsedDateKey =
+            SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
+        val todayKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Calendar.getInstance().time)
+        return browsedDateKey == todayKey
+    }
+
+    private fun calculatePastPrayers(timings: PrayerTimings): Set<String> {
+        val allTimings = listOf(
+            "Imsak" to timings.imsak,
+            "Fajr" to timings.fajr,
+            "Shorouq" to timings.sunrise,
+            "Dhuhr" to timings.dhuhr,
+            "Asr" to timings.asr,
+            "Maghrib" to timings.maghrib,
+            "Isha" to timings.isha,
+            "First Third" to timings.firstThird,
+            "Midnight" to timings.midnight,
+            "Last Third" to timings.lastThird
+        )
+
+        val imsakMinutes = parseTimeToMinutesUseCase(timings.imsak)
+
+        fun normalize(minutes: Int) = if (minutes < imsakMinutes) minutes + 24 * 60 else minutes
+
+        val rawNowMinutes = parseTimeToMinutesUseCase(
+            SimpleDateFormat("HH:mm", Locale.US).format(Date())
+        )
+        val nowMinutes = normalize(rawNowMinutes)
+
+        return allTimings
+            .filter { (_, time) -> normalize(parseTimeToMinutesUseCase(time)) <= nowMinutes }
+            .map { (name, _) -> name }
+            .toSet()
     }
 
     private fun calculateCurrentPrayerName(timings: PrayerTimings): String? {
@@ -439,7 +468,8 @@ class HomeViewModel @Inject constructor(
         _state.update {
             it.copy(
                 nextPrayerInfo = info,
-                currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(timings) else null
+                currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(timings) else null,
+                pastPrayers = if (isBrowsingToday()) calculatePastPrayers(timings) else emptySet()
             )
         }
         startCountdownTicker(info.spanEndMillis)

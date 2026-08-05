@@ -57,6 +57,7 @@ fun HomeContent(
                     nextPrayerInfo = state.nextPrayerInfo,
                     currentPrayerName = state.currentPrayerName,
                     mutedPrayers = state.mutedPrayers,
+                    pastPrayers = state.pastPrayers,
                     onIntent = onIntent,
                     modifier = Modifier.weight(1f)
                 )

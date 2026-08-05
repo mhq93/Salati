@@ -24,8 +24,8 @@ class HomeContract {
         val locationPermission: LocationPermissionState = LocationPermissionState(),
         val adhanPlayback: AdhanPlaybackState = AdhanPlaybackState.Idle,
         val mutedPrayers: Set<String> = emptySet(),
+        val pastPrayers: Set<String> = emptySet(),
         val errorMessage: UiText? = null,
-
         val hasExactAlarmPermission: Boolean = true,
         val hasNotificationPermission: Boolean = true,
         val currentDate: Calendar = Calendar.getInstance()
@@ -42,7 +42,6 @@ class HomeContract {
         data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
         data object StopAdhanClicked : Intent
         data class ToggleMute(val prayerName: String) : Intent
-
         data object RecheckSystemPermissions : Intent
         data class NotificationPermissionResult(val granted: Boolean) : Intent
         data object ExactAlarmBannerClicked : Intent
