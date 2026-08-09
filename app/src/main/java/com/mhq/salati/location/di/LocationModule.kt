@@ -3,10 +3,10 @@ package com.mhq.salati.location.di
 import android.content.Context
 import com.mhq.salati.location.data.AndroidGeocoderProvider
 import com.mhq.salati.location.data.AndroidLocationProvider
-import com.mhq.salati.location.data.GeocoderProvider
-import com.mhq.salati.location.data.LocationProvider
-import com.mhq.salati.location.data.local.LocationDataStore
+import com.mhq.salati.location.data.datastore.LocationDataStore
 import com.mhq.salati.location.data.repoimpl.LocationRepoImpl
+import com.mhq.salati.location.domain.repo.GeocoderProvider
+import com.mhq.salati.location.domain.repo.LocationProvider
 import com.mhq.salati.location.domain.repo.LocationRepository
 import dagger.Binds
 import dagger.Module

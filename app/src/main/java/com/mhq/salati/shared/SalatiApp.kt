@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.mhq.salati.home.presentation.screens.HomeContainer
+import com.mhq.salati.locationpicker.presentation.screens.LocationPickerContainer
 import com.mhq.salati.onboarding.presentation.screens.OnboardingContainer
 import com.mhq.salati.prayertracker.presentation.screens.PrayerTrackerContainer
 import com.mhq.salati.qibla.presentation.screens.QiblaContainer
@@ -98,7 +99,13 @@ fun SalatiApp(startDestination: Screen) {
                     HomeContainer()
                 }
                 composable(Screen.Qibla.route) {
-                    QiblaContainer()
+                    QiblaContainer(onNavigateToLocationPicker = { navController.navigate(Screen.LocationPicker.route) })
+                }
+                composable(Screen.LocationPicker.route) {
+                    LocationPickerContainer(
+                        onLocationSaved = { navController.popBackStack() },
+                        onBackClicked = { navController.popBackStack() }
+                    )
                 }
                 composable(Screen.PrayerTracker.route) {
                     PrayerTrackerContainer()

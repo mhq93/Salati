@@ -80,6 +80,8 @@ dependencies {
 
     implementation(libs.androidx.compose.material.icons.extended)
 
+    implementation("org.osmdroid:osmdroid-android:6.1.20")
+
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

@@ -10,7 +10,7 @@ import com.mhq.salati.adhan.domain.usecases.StopAdhanPlaybackUseCase
 import com.mhq.salati.adhan.domain.usecases.ToggleMutePrayerUseCase
 import com.mhq.salati.home.domain.usecases.CalculateNextPrayerInfoUseCase
 import com.mhq.salati.home.presentation.contract.HomeContract
-import com.mhq.salati.location.data.LocationProvider
+import com.mhq.salati.location.domain.repo.LocationProvider
 import com.mhq.salati.location.domain.usecases.FetchAndSaveLocationUseCase
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
 import com.mhq.salati.permissions.domain.PermissionChecker

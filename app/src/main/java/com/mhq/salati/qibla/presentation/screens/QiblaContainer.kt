@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun QiblaContainer(
+    onNavigateToLocationPicker: () -> Unit,
     qiblaViewModel: QiblaViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -88,9 +89,7 @@ fun QiblaContainer(
                         snackbarHostState.showSnackbar(effect.message.asString(context))
                     }
                 }
-                is QiblaContract.Effect.LocationPickerNotImplemented -> {
-                    // TODO: navigate to location picker once built
-                }
+                is QiblaContract.Effect.NavigateToLocationPicker -> onNavigateToLocationPicker()
             }
         }
     }
@@ -101,6 +100,16 @@ fun QiblaContainer(
                 (state.locationPermission.permanentlyDenied
                         || state.locationPermission.servicesDisabled)
             ) {
+                qiblaViewModel.onIntent(QiblaContract.Intent.Retry)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
                 qiblaViewModel.onIntent(QiblaContract.Intent.Retry)
             }
         }

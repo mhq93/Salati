@@ -3,8 +3,8 @@ package com.mhq.salati.qibla.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.R
-import com.mhq.salati.location.data.LocationProvider
 import com.mhq.salati.location.domain.model.SavedLocation
+import com.mhq.salati.location.domain.repo.LocationProvider
 import com.mhq.salati.location.domain.usecases.FetchAndSaveLocationUseCase
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
 import com.mhq.salati.permissions.domain.PermissionChecker
@@ -97,9 +97,7 @@ class QiblaViewModel @Inject constructor(
             }
 
             is QiblaContract.Intent.LocationPillClicked -> {
-                viewModelScope.launch {
-                    _effect.emit(QiblaContract.Effect.LocationPickerNotImplemented)
-                }
+                viewModelScope.launch { _effect.emit(QiblaContract.Effect.NavigateToLocationPicker) }
             }
 
             is QiblaContract.Intent.RecalibrateClicked -> {

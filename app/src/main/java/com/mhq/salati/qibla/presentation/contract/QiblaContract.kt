@@ -32,6 +32,6 @@ class QiblaContract {
 
     sealed interface Effect {
         data class ShowError(val message: UiText) : Effect
-        data object LocationPickerNotImplemented : Effect
+        data object NavigateToLocationPicker : Effect
     }
 }
