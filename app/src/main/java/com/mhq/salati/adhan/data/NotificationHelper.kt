@@ -16,7 +16,7 @@ class NotificationHelper @Inject constructor(
         private const val CHANNEL_DESCRIPTION = "Notifications for prayer times"
     }
 
-    init {
+    fun ensureChannelsCreated() {
         createNotificationChannel()
         createAdhanPlaybackChannel()
     }

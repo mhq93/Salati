@@ -3,11 +3,11 @@ package com.mhq.salati.adhan.data
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.mhq.salati.location.data.LocationProvider
-import com.mhq.salati.permissions.domain.PermissionChecker
 import com.mhq.salati.adhan.domain.repo.MutedPrayersRepository
-import com.mhq.salati.home.domain.repo.PrayerTimesRepository
 import com.mhq.salati.adhan.domain.usecases.ScheduleDailyPrayerAlarmsUseCase
+import com.mhq.salati.location.domain.repo.LocationProvider
+import com.mhq.salati.permissions.domain.PermissionChecker
+import com.mhq.salati.prayertimes.domain.repo.PrayerTimesRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +57,7 @@ class BootReceiver : BroadcastReceiver() {
                 val today = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Date())
 
                 val cached = prayerTimesRepository.getCachedTimings(today, latitude, longitude)
-                val mutedPrayers = mutedPrayersRepository.getMutedPrayers()
+                val mutedPrayers = mutedPrayersRepository.getMutedPrayers(today)   // CHANGED — was getMutedPrayers()
 
                 if (cached != null) {
                     scheduleDailyPrayerAlarmsUseCase(cached.timings, today, mutedPrayers)

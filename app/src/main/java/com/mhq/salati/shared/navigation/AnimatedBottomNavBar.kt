@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,9 +45,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.shared.presentation.theme.AccentEmerald
 import com.mhq.salati.shared.presentation.theme.AccentOrange
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
+import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
+import com.mhq.salati.shared.presentation.theme.SheetBackground
 
 @Composable
 fun AnimatedBottomNavBar(
@@ -54,7 +59,7 @@ fun AnimatedBottomNavBar(
     onItemSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val unselectedContentColor = Color(0xFF1E352F)
+    val unselectedContentColor = AccentEmerald
     val selectedContentColor = AccentOrange
 
     val itemCount = items.size
@@ -70,15 +75,13 @@ fun AnimatedBottomNavBar(
     val bubbleSize = 60.dp
     val cornerRadius = 28.dp
 
-    // Safety thresholds to clear the rounded outer background tracks cleanly
     val horizontalEdgePadding = 16.dp
     val horizontalEdgePaddingPx = with(density) { horizontalEdgePadding.toPx() }
 
-    // Math calculation adjustments calibrated to account for custom safety paddings
     val usableWidthPx = (barWidthPx - (horizontalEdgePaddingPx * 2f)).coerceAtLeast(0f)
     val itemWidthPx = if (itemCount > 0) usableWidthPx / itemCount else 0f
 
-    // Anchor target tracks from padded start layout offset margins
+    // Calculate exact center matching the distributed weights of the Row
     val targetCenterPx =
         horizontalEdgePaddingPx + (itemWidthPx * selectedIndex) + (itemWidthPx / 2f)
 
@@ -107,6 +110,7 @@ fun AnimatedBottomNavBar(
         modifier = modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.navigationBars)
+            .background(SheetBackground)
     ) {
         Canvas(
             modifier = Modifier
@@ -120,14 +124,22 @@ fun AnimatedBottomNavBar(
             val path = Path().apply {
                 val w = size.width
                 val h = size.height
-                val minCx = notchRadiusPx * 1.6f + cornerRadiusPx
-                val maxCx = w - notchRadiusPx * 1.6f - cornerRadiusPx
-                val cx = animatedCenterPx.coerceIn(minCx, maxCx)
+                val cx = animatedCenterPx
 
-                moveTo(0f, cornerRadiusPx)
-                quadraticTo(0f, 0f, cornerRadiusPx, 0f)
+                val notchStart = cx - notchRadiusPx * 1.6f
+                val notchEnd = cx + notchRadiusPx * 1.6f
 
-                lineTo(cx - notchRadiusPx * 1.6f, 0f)
+                // --- LEFT EDGE PROTECTION ---
+                if (notchStart > cornerRadiusPx) {
+                    moveTo(0f, cornerRadiusPx)
+                    quadraticTo(0f, 0f, cornerRadiusPx, 0f)
+                    lineTo(notchStart, 0f)
+                } else {
+                    moveTo(0f, cornerRadiusPx)
+                    quadraticTo(0f, 0f, notchStart.coerceAtLeast(0f), 0f)
+                }
+
+                // --- THE NOTCH CURVE ---
                 cubicTo(
                     cx - notchRadiusPx * 0.9f, 0f,
                     cx - notchRadiusPx * 0.85f, notchRadiusPx * 1.15f,
@@ -136,47 +148,31 @@ fun AnimatedBottomNavBar(
                 cubicTo(
                     cx + notchRadiusPx * 0.85f, notchRadiusPx * 1.15f,
                     cx + notchRadiusPx * 0.9f, 0f,
-                    cx + notchRadiusPx * 1.6f, 0f
+                    notchEnd, 0f
                 )
 
-                lineTo(w - cornerRadiusPx, 0f)
-                quadraticTo(w, 0f, w, cornerRadiusPx)
+                // --- RIGHT EDGE PROTECTION ---
+                if (notchEnd < w - cornerRadiusPx) {
+                    lineTo(w - cornerRadiusPx, 0f)
+                    quadraticTo(w, 0f, w, cornerRadiusPx)
+                } else {
+                    quadraticTo(w, 0f, w, cornerRadiusPx)
+                }
+
                 lineTo(w, h)
                 lineTo(0f, h)
                 close()
             }
-
-//            drawContext.canvas.nativeCanvas.apply {
-//                val shadowPaint = android.graphics.Paint().apply {
-//                    color = android.graphics.Color.BLACK
-//                    alpha = 12//35
-//                    setShadowLayer(
-//                        6.dp.toPx(), 0f, 4.dp.toPx(),//12
-//                        android.graphics.Color.BLACK
-//                    )
-//                }
-//                drawPath(path.asAndroidPath(), shadowPaint)
-//            }
-
             drawPath(
                 path = path,
                 color = DarkGreenLight
             )
         }
 
-        val clampedCenterPx = if (barWidthPx > 0) {
-            val notchRadiusPx = with(density) { (notchRadius * 1.6f).toPx() }
-            val cornerRadiusPx = with(density) { cornerRadius.toPx() }
-            animatedCenterPx.coerceIn(
-                notchRadiusPx + cornerRadiusPx,
-                barWidthPx - notchRadiusPx - cornerRadiusPx
-            )
-        } else {
-            0f
-        }
 
+        // FIXED: Sync bubble position directly to animated center to avoid offsets
         val bubbleOffsetX = with(density) {
-            (clampedCenterPx.toInt() - (bubbleSize / 2).roundToPx())
+            (animatedCenterPx.toInt() - (bubbleSize / 2).roundToPx())
         }
 
         Box(
@@ -198,14 +194,13 @@ fun AnimatedBottomNavBar(
             Icon(
                 imageVector = items[selectedIndex].icon,
                 contentDescription = items[selectedIndex].label,
-                tint = Color.White,
+                tint = InkText,
                 modifier = Modifier.size(28.dp)
             )
         }
 
         // --- ALIGNED CONTENT ROW ---
         Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Bottom,
             modifier = Modifier
                 .fillMaxWidth()
@@ -230,7 +225,7 @@ fun AnimatedBottomNavBar(
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Bottom),
+                    verticalArrangement = Arrangement.Bottom,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
@@ -256,17 +251,16 @@ fun AnimatedBottomNavBar(
                                     )
                             )
                         }
+                        Spacer(modifier = Modifier.height(4.dp))
                     } else {
-                        Spacer(Modifier.height(8.dp))
+                        Spacer(Modifier.height(32.dp))
                     }
 
                     Text(
                         text = item.label,
-                        color =
-                            if (isSelected)
-                                selectedContentColor
-                            else
-                                unselectedContentColor.copy(alpha = 0.8f),
+                        color = if (isSelected) selectedContentColor else unselectedContentColor.copy(
+                            alpha = 0.8f
+                        ),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -278,11 +272,16 @@ fun AnimatedBottomNavBar(
 
 @Preview
 @Composable
-private fun AnimatedBottomNavBarPreview() {
-    SalatiTheme() {
+fun AnimatedBottomNavBarPreview() {
+    val mockItems = listOf(
+        BottomNavItem(label = "Home", route = "home", icon = Icons.Filled.CheckCircle),
+        BottomNavItem(label = "Settings", route = "settings", icon = Icons.Filled.CheckCircle)
+    )
+
+    SalatiTheme {
         AnimatedBottomNavBar(
-            items = emptyList(),
-            selectedRoute = "",
+            items = mockItems,
+            selectedRoute = "home",
             onItemSelected = {}
         )
     }

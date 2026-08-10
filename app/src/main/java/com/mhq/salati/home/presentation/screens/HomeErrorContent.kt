@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.permissions.location.LocationPermissionState
 import com.mhq.salati.home.presentation.contract.HomeContract
+import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable
@@ -25,16 +29,18 @@ fun HomeErrorContent(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier
-            .fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
-        Text(text = "Error: $errorMessage")
+        Text(
+            text = "Error: $errorMessage",
+            color = DarkGreen
+        )
 
         when {
             locationPermissionState.permanentlyDenied -> {
                 Button(
                     onClick = { onIntent(HomeContract.Intent.AccessAppSettings) },
-                    modifier = modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp)
                 ) {
                     Text("Open Settings")
                 }
@@ -43,7 +49,7 @@ fun HomeErrorContent(
             locationPermissionState.servicesDisabled -> {
                 Button(
                     onClick = { onIntent(HomeContract.Intent.AccessDeviceLocationSettings) },
-                    modifier = modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp)
                 ) {
                     Text("Enable Location")
                 }
@@ -52,7 +58,7 @@ fun HomeErrorContent(
             else -> {
                 Button(
                     onClick = { onIntent(HomeContract.Intent.Retry) },
-                    modifier = modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp)
                 ) {
                     Text("Retry")
                 }

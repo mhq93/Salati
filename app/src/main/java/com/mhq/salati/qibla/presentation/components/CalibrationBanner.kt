@@ -2,6 +2,7 @@ package com.mhq.salati.qibla.presentation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,48 +35,58 @@ import com.mhq.salati.shared.presentation.theme.SheetBackground
 @Composable
 fun CalibrationBanner(
     compassAccuracy: CompassAccuracy,
-    onRecalibrateClick: () -> Unit
+    onRecalibrateClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val (label, dotColor) = when (compassAccuracy) {
         CompassAccuracy.HIGH ->
-            "Your phone's sensor accuracy is excellent." to MaterialGreen
+            "Sensor accuracy is excellent." to MaterialGreen
         CompassAccuracy.MEDIUM ->
-            "Your phone's sensor accuracy is moderate." to MaterialAmber
+            "Sensor accuracy is moderate." to MaterialAmber
         else ->
-            "Your phone's sensor accuracy is poor." to MaterialRed
+            "Sensor accuracy is poor." to MaterialRed
     }
 
     Surface(
         shape = RoundedCornerShape(18.dp),
         color = SheetBackground,
-        border = BorderStroke(1.dp, DarkGreen.copy(alpha = 0.08f)),
-        modifier = Modifier.fillMaxWidth()
+        border = BorderStroke(
+            1.dp,
+            DarkGreen.copy(alpha = 0.08f)
+        ),
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 14.dp)
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 14.dp
+                )
         ) {
             Box(
                 modifier = Modifier
                     .size(8.dp)
                     .background(dotColor, CircleShape)
             )
-
-            Spacer(Modifier.width(10.dp))
-
+            Spacer(
+                Modifier.width(10.dp)
+            )
             Text(
                 text = label,
                 color = InkText,
                 fontSize = 13.sp,
                 modifier = Modifier.weight(1f)
             )
-
-            Spacer(Modifier.width(8.dp))
-
+            Spacer(
+                Modifier.width(8.dp)
+            )
             TextButton(
                 onClick = onRecalibrateClick,
-                colors = ButtonDefaults.textButtonColors(contentColor = DarkGreen)
+                border = BorderStroke(1.dp, DarkGreen.copy(alpha = 0.08f)),
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = DarkGreen
+                )
             ) {
                 Text(
                     text = "Recalibrate",

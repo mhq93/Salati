@@ -52,6 +52,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
+    implementation("androidx.core:core-splashscreen:1.2.0")
+    implementation(libs.androidx.ui)
+
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.content.negotiation)
@@ -76,6 +79,8 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.compose.material.icons.extended)
+
+    implementation("org.osmdroid:osmdroid-android:6.1.20")
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

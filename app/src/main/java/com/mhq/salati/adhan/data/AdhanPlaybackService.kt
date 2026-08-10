@@ -1,6 +1,5 @@
 package com.mhq.salati.adhan.data
 
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
@@ -14,10 +13,14 @@ import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import com.mhq.salati.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import javax.inject.Inject
-import androidx.core.net.toUri
 
 @AndroidEntryPoint
 class AdhanPlaybackService : Service() {
@@ -28,31 +31,33 @@ class AdhanPlaybackService : Service() {
     private var mediaPlayer: MediaPlayer? = null
     private var audioManager: AudioManager? = null
     private var focusRequest: AudioFocusRequest? = null
+    private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            ACTION_START -> startPlayback(intent.getStringExtra(EXTRA_PRAYER_NAME) ?: "Prayer")
+            ACTION_START -> startPlayback(
+                prayerName = intent.getStringExtra(EXTRA_PRAYER_NAME) ?: "Prayer",
+                isMinorTiming = intent.getBooleanExtra(EXTRA_IS_MINOR_TIMING, false),
+                isMuted = intent.getBooleanExtra(EXTRA_IS_MUTED, false)
+            )
             ACTION_STOP -> stopPlayback()
         }
         return START_NOT_STICKY
     }
 
-        @SuppressLint("ForegroundServiceType")
-        private fun startPlayback(prayerName: String) {
-            val notification = buildNotification(prayerName)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(
-                    NOTIFICATION_ID,
-                    notification,
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
-                )
-            } else {
-                startForeground(NOTIFICATION_ID, notification)
-            }
+    private fun startPlayback(prayerName: String, isMinorTiming: Boolean, isMuted: Boolean) {
+        val notification = buildNotification(prayerName, isMinorTiming)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+        } else {
+            startForeground(NOTIFICATION_ID, notification)
+        }
 
-            val attrs = AudioAttributes.Builder()
+        if (isMuted) return
+
+        val attrs = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_ALARM)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .build()
@@ -61,16 +66,27 @@ class AdhanPlaybackService : Service() {
         focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE)
             .setAudioAttributes(attrs)
             .build()
-        audioManager?.requestAudioFocus(focusRequest!!)
+
+        val focusResult = audioManager?.requestAudioFocus(focusRequest!!)
+        if (focusResult != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            stopPlayback()
+            return
+        }
 
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(attrs)
-            setDataSource(this@AdhanPlaybackService, adhanUri())
-            setOnCompletionListener { stopPlayback() }
+            setDataSource(this@AdhanPlaybackService, soundUri(isMinorTiming))
+            setOnPreparedListener { it.start() }
+            setOnCompletionListener { onPlaybackCompleted() }
             setOnErrorListener { _, _, _ -> stopPlayback(); true }
-            prepare()
-            start()
+            prepareAsync()
         }
+    }
+
+    private fun onPlaybackCompleted() {
+        mediaPlayer?.apply { if (isPlaying) stop(); release() }
+        mediaPlayer = null
+        focusRequest?.let { audioManager?.abandonAudioFocusRequest(it) }
     }
 
     private fun stopPlayback() {
@@ -82,22 +98,35 @@ class AdhanPlaybackService : Service() {
         stopSelf()
     }
 
-    private fun adhanUri(): Uri = "android.resource://$packageName/${R.raw.adhan}".toUri()
+    private fun soundUri(isMinorTiming: Boolean): Uri {
+        val resId = if (isMinorTiming) R.raw.alert else R.raw.adhan
+        return "android.resource://$packageName/$resId".toUri()
+    }
 
-    private fun buildNotification(prayerName: String): Notification {
-        val stopIntent =
-            Intent(this, AdhanPlaybackService::class.java).apply { action = ACTION_STOP }
+    private fun buildNotification(prayerName: String, isMinorTiming: Boolean): Notification {
+        val stopIntent = Intent(this, AdhanPlaybackService::class.java).apply { action = ACTION_STOP }
         val stopPendingIntent = PendingIntent.getService(
             this, 0, stopIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+
+        val title = if (isMinorTiming) {
+            getString(R.string.minor_timing_playing_title, prayerName)
+        } else {
+            getString(R.string.adhan_playing_title)
+        }
+        val body = if (isMinorTiming) {
+            getString(R.string.minor_timing_playing_body, prayerName)
+        } else {
+            getString(R.string.adhan_playing_body, prayerName)
+        }
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(getString(R.string.adhan_playing_title))
-            .setContentText(getString(R.string.adhan_playing_body, prayerName))
+            .setContentTitle(title)
+            .setContentText(body)
             .setSmallIcon(R.drawable.ic_notification)
             .setSilent(true)
             .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .addAction(R.drawable.ic_stop, getString(R.string.stop), stopPendingIntent)
             .build()
     }
@@ -106,6 +135,7 @@ class AdhanPlaybackService : Service() {
         mediaPlayer?.release()
         mediaPlayer = null
         focusRequest?.let { audioManager?.abandonAudioFocusRequest(it) }
+        serviceScope.cancel()
         super.onDestroy()
     }
 
@@ -113,6 +143,8 @@ class AdhanPlaybackService : Service() {
         const val ACTION_START = "com.mhq.salati.action.START_ADHAN"
         const val ACTION_STOP = "com.mhq.salati.action.STOP_ADHAN"
         const val EXTRA_PRAYER_NAME = "extra_prayer_name"
+        const val EXTRA_IS_MINOR_TIMING = "extra_is_minor_timing"
+        const val EXTRA_IS_MUTED = "extra_is_muted"
         private const val NOTIFICATION_ID = 501
         const val CHANNEL_ID = "adhan_playback_channel"
     }

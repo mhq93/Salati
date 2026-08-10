@@ -24,7 +24,10 @@ import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mhq.salati.R
 import com.mhq.salati.settings.presentation.components.SelectorType
 import com.mhq.salati.settings.presentation.components.SettingsActionRow
 import com.mhq.salati.settings.presentation.components.SettingsCard
@@ -37,6 +40,7 @@ import com.mhq.salati.settings.presentation.components.SettingsStepperRow
 import com.mhq.salati.settings.presentation.components.SettingsSwitchRow
 import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
 import com.mhq.salati.settings.presentation.contract.SettingsContract.State
+import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import com.mhq.salati.shared.presentation.theme.SheetBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +55,7 @@ fun SettingsContent(
             .background(SheetBackground)
     ) {
         LazyColumn(
-            contentPadding = PaddingValues(bottom = 140.dp + 32.dp),
+            contentPadding = PaddingValues(bottom = 40.dp),
             modifier = Modifier.fillMaxSize()
         ) {
             item { SettingsHeader() }
@@ -71,8 +75,8 @@ fun SettingsContent(
                     SettingsCard {
                         SettingsSwitchRow(
                             icon = Icons.Default.NotificationsActive,
-                            title = "Prayer Notifications",
-                            subtitle = "Get alerted at each prayer time",
+                            title = stringResource(R.string.prayer_notifications),
+                            subtitle = stringResource(R.string.get_alerted_at_each_prayer_time),
                             isChecked = state.notificationsEnabled,
                             onCheckedChange = { onIntent(Intent.ToggleNotifications(it)) }
                         )
@@ -81,7 +85,7 @@ fun SettingsContent(
 
                         SettingsSelectorRow(
                             icon = Icons.Default.MusicNote,
-                            title = "Adhan Sound",
+                            title = stringResource(R.string.adhan_sound),
                             valueLabel = state.adhanSound.displayName,
                             isEnabled = state.notificationsEnabled,
                             onClick = { onIntent(Intent.OpenSelector(SelectorType.AdhanSound)) }
@@ -93,13 +97,13 @@ fun SettingsContent(
                     )
 
                     SettingsSectionHeader(
-                        "Prayer Calculation"
+                        stringResource(R.string.prayer_calculation)
                     )
 
                     SettingsCard {
                         SettingsSelectorRow(
                             icon = Icons.Default.Explore,
-                            title = "Calculation Method",
+                            title = stringResource(R.string.calculation_method),
                             valueLabel = state.calculationMethod.displayName,
                             onClick = { onIntent(Intent.OpenSelector(SelectorType.CalculationMethod)) }
                         )
@@ -108,7 +112,7 @@ fun SettingsContent(
 
                         SettingsSelectorRow(
                             icon = Icons.Default.School,
-                            title = "Asr Madhab",
+                            title = stringResource(R.string.asr_madhab),
                             valueLabel = state.madhab.displayName,
                             onClick = { onIntent(Intent.OpenSelector(SelectorType.Madhab)) }
                         )
@@ -119,7 +123,7 @@ fun SettingsContent(
                     )
 
                     SettingsSectionHeader(
-                        "Appearance"
+                        stringResource(R.string.appearance)
                     )
 
                     SettingsCard {
@@ -145,14 +149,14 @@ fun SettingsContent(
                     )
 
                     SettingsSectionHeader(
-                        "Hijri Calendar"
+                        stringResource(R.string.hijri_calendar)
                     )
 
                     SettingsCard {
                         SettingsStepperRow(
                             icon = Icons.Default.CalendarMonth,
-                            title = "Date Adjustment",
-                            subtitle = "Correct for local moon sighting",
+                            title = stringResource(R.string.date_adjustment),
+                            subtitle = stringResource(R.string.correct_for_local_moon_sighting),
                             value = state.hijriDateOffset,
                             onIncrement = { onIntent(Intent.IncrementHijriOffset) },
                             onDecrement = { onIntent(Intent.DecrementHijriOffset) }
@@ -164,13 +168,13 @@ fun SettingsContent(
                     )
 
                     SettingsSectionHeader(
-                        "About"
+                        stringResource(R.string.about)
                     )
 
                     SettingsCard {
                         SettingsActionRow(
                             icon = Icons.Default.StarRate,
-                            title = "Rate Salati",
+                            title = stringResource(R.string.rate_salati),
                             onClick = { onIntent(Intent.RateApp) }
                         )
 
@@ -178,7 +182,7 @@ fun SettingsContent(
 
                         SettingsActionRow(
                             icon = Icons.Default.Share,
-                            title = "Share with Friends",
+                            title = stringResource(R.string.share_with_friends),
                             onClick = { onIntent(Intent.ShareApp) }
                         )
 
@@ -186,7 +190,7 @@ fun SettingsContent(
 
                         SettingsActionRow(
                             icon = Icons.Default.Email,
-                            title = "Contact Support",
+                            title = stringResource(R.string.contact_support),
                             onClick = { onIntent(Intent.ContactSupport) }
                         )
 
@@ -194,7 +198,7 @@ fun SettingsContent(
 
                         SettingsActionRow(
                             icon = Icons.Default.Info,
-                            title = "Version",
+                            title = stringResource(R.string.version),
                             trailingText = state.appVersion,
                             onClick = null
                         )
@@ -213,6 +217,17 @@ fun SettingsContent(
                 onIntent(Intent.CloseSelector)
             },
             onDismiss = { onIntent(Intent.CloseSelector) }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SettingsContentPreview() {
+    SalatiTheme() {
+        SettingsContent(
+            state = State(),
+            onIntent = {}
         )
     }
 }

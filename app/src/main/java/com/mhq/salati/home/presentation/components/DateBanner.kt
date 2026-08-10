@@ -24,8 +24,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mhq.salati.home.domain.model.PrayerDate
+import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.shared.presentation.theme.AccentGreen
+import com.mhq.salati.shared.presentation.theme.AccentOrange
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
@@ -40,7 +41,7 @@ fun DateBanner(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .clip(RoundedCornerShape(50))
-            .background(Color.White)
+            .background(InkText)
             .padding(
                 horizontal = 16.dp,
                 vertical = 8.dp
@@ -50,12 +51,12 @@ fun DateBanner(
             onClick = onPreviousDay,
             modifier = Modifier
                 .size(24.dp)
-                .background(AccentGreen, CircleShape)
+                .background(AccentOrange, CircleShape)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "Previous day",
-                tint = Color.White
+                tint = InkText
             )
         }
 
@@ -67,7 +68,7 @@ fun DateBanner(
         ) {
             Text(
                 text = "${prayerDate.hijriDay} ${prayerDate.hijriMonth} ${prayerDate.hijriYear}",
-                color = AccentGreen,
+                color = AccentOrange,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 autoSize = TextAutoSize.StepBased(
@@ -78,7 +79,7 @@ fun DateBanner(
             )
             Text(
                 text = prayerDate.readable,
-                color = InkText,
+                color = AccentOrange,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -88,12 +89,12 @@ fun DateBanner(
             onClick = onNextDay,
             modifier = Modifier
                 .size(24.dp)
-                .background(AccentGreen, CircleShape)
+                .background(AccentOrange, CircleShape)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "Next day",
-                tint = Color.White
+                tint = InkText
             )
         }
     }

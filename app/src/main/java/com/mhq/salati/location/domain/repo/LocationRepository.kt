@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface LocationRepository {
     val savedLocation: Flow<SavedLocation?>
     suspend fun fetchAndSaveLocation(): SavedLocation
+    suspend fun saveManualLocation(latitude: Double, longitude: Double, cityName: String?, countryName: String?): SavedLocation // NEW
 }

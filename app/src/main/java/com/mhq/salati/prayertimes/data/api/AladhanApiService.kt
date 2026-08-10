@@ -1,6 +1,6 @@
 package com.mhq.salati.prayertimes.data.api
 
-import com.mhq.salati.home.data.dto.CalendarResponseDto
+import com.mhq.salati.prayertimes.data.dto.CalendarResponseDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
