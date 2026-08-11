@@ -1,5 +1,6 @@
 package com.mhq.salati.home.presentation.viewmodel
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.R
@@ -493,8 +494,7 @@ class HomeViewModel @Inject constructor(
         val timings = _state.value.timings ?: return
         val date = _state.value.date ?: return
 
-        val browsedDateKey =
-            SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
+        val browsedDateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
         val todayKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Calendar.getInstance().time)
 
         if (browsedDateKey != todayKey) return
@@ -503,6 +503,7 @@ class HomeViewModel @Inject constructor(
         scheduleDailyPrayerAlarmsUseCase(timings, todayKey, todaysMutedPrayers)
     }
 
+    @SuppressLint("EmptySuperCall")
     override fun onCleared() {
         tickCounterJob?.cancel()
         super.onCleared()

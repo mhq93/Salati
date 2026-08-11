@@ -29,7 +29,7 @@ fun LocationHeader(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .border(
                 border = BorderStroke(
                     1.dp,

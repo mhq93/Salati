@@ -3,7 +3,9 @@ package com.mhq.salati.home.presentation.screens
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +29,7 @@ import com.mhq.salati.shared.presentation.components.LocalSnackbarHostState
 import com.mhq.salati.shared.presentation.components.asString
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun HomeContainer(
     homeViewModel: HomeViewModel = hiltViewModel()
@@ -135,7 +138,8 @@ fun HomeContainer(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                if (state.locationPermission.permanentlyDenied || state.locationPermission.servicesDisabled) {
+                val permission = state.locationPermission
+                if (!permission.required || permission.permanentlyDenied || permission.servicesDisabled) {
                     homeViewModel.onIntent(HomeContract.Intent.Retry)
                 }
                 homeViewModel.onIntent(HomeContract.Intent.RecheckSystemPermissions)
