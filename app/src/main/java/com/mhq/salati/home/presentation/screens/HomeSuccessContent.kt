@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
 import com.mhq.salati.home.domain.model.NextPrayerInfo
 import com.mhq.salati.home.presentation.components.DateBanner
+import com.mhq.salati.home.presentation.components.LocationHeader
 import com.mhq.salati.home.presentation.components.PrayerCountdownRing
 import com.mhq.salati.home.presentation.components.PrayersList
 import com.mhq.salati.home.presentation.contract.HomeContract
@@ -40,6 +41,7 @@ import com.mhq.salati.shared.presentation.theme.SheetBackground
 
 @Composable
 fun HomeSuccessContent(
+    locationName: String?,
     prayerDate: PrayerDate,
     prayerTimings: PrayerTimings,
     remainingMillis: Long,
@@ -95,6 +97,16 @@ fun HomeSuccessContent(
                         bottom = 40.dp
                     )
             ) {
+                Spacer(
+                    modifier = Modifier.height(
+                        16.dp
+                    )
+                )
+
+                LocationHeader(
+                    locationName = locationName ?: stringResource(R.string.unknown_location),
+                )
+
                 nextPrayerInfo?.let {
                     PrayerCountdownRing(
                         nextPrayerName = it.name,

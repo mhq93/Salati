@@ -10,6 +10,7 @@ import com.mhq.salati.adhan.domain.usecases.StopAdhanPlaybackUseCase
 import com.mhq.salati.adhan.domain.usecases.ToggleMutePrayerUseCase
 import com.mhq.salati.home.domain.usecases.CalculateNextPrayerInfoUseCase
 import com.mhq.salati.home.presentation.contract.HomeContract
+import com.mhq.salati.location.domain.model.SavedLocation
 import com.mhq.salati.location.domain.repo.LocationProvider
 import com.mhq.salati.location.domain.usecases.FetchAndSaveLocationUseCase
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
@@ -275,7 +276,13 @@ class HomeViewModel @Inject constructor(
 
                 val latitude = location.latitude
                 val longitude = location.longitude
-                _state.update { it.copy(latitude = latitude, longitude = longitude) }
+                _state.update {
+                    it.copy(
+                        latitude = latitude,
+                        longitude = longitude,
+                        locationName = location.toDisplayName()
+                    )
+                }
                 val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
 
                 if (cached != null) {
@@ -363,6 +370,13 @@ class HomeViewModel @Inject constructor(
                 _effect.emit(HomeContract.Effect.ShowError(message))
             }
         }
+    }
+
+    private fun SavedLocation.toDisplayName(): String? = when {
+        cityName != null && countryName != null -> "$cityName, $countryName"
+        cityName != null -> cityName
+        countryName != null -> countryName
+        else -> null
     }
 
     private fun startCountdownTicker(spanEndMillis: Long) {

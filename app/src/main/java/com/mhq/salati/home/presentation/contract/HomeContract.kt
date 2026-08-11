@@ -20,6 +20,7 @@ class HomeContract {
         val nextPrayerInfo: NextPrayerInfo? = null,
         val latitude: Double? = null,
         val longitude: Double? = null,
+        val locationName: String? = null,
         val remainingMillis: Long = 0L,
         val locationPermission: LocationPermissionState = LocationPermissionState(),
         val adhanPlayback: AdhanPlaybackState = AdhanPlaybackState.Idle,

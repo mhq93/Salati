@@ -51,6 +51,7 @@ fun HomeContent(
 
             state.timings != null && state.date != null && state.nextPrayerInfo != null -> {
                 HomeSuccessContent(
+                    locationName = state.locationName,
                     prayerDate = state.date,
                     prayerTimings = state.timings,
                     remainingMillis = state.remainingMillis,

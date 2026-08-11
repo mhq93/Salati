@@ -70,4 +70,5 @@
     <string name="notifications_are_disabled_you_won_t_see_prayer_reminders">Notifications are disabled — you won\'t see prayer reminders.</string>
     <string name="minor_timing_playing_title">%1$s</string>
     <string name="minor_timing_playing_body">It\'s time for %1$s</string>
+    <string name="unknown_location">Unknown Location</string>
 </resources>
