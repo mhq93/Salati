@@ -39,7 +39,7 @@ class SettingsDataStore @Inject constructor(
             notificationsEnabled = prefs[Keys.NOTIFICATIONS_ENABLED] ?: true,
             calculationMethod = prefs[Keys.CALCULATION_METHOD]
                 ?.let { runCatching { CalculationMethod.valueOf(it) }.getOrNull() }
-                ?: CalculationMethod.EGYPTIAN,
+                ?: CalculationMethod.EGYPTIAN_GENERAL_AUTHORITY,
             madhab = prefs[Keys.MADHAB]
                 ?.let { runCatching { Madhab.valueOf(it) }.getOrNull() }
                 ?: Madhab.SHAFI,

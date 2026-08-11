@@ -13,7 +13,7 @@ object SettingsContract {
     data class State(
         val isLoading: Boolean = true,
         val notificationsEnabled: Boolean = true,
-        val calculationMethod: CalculationMethod = CalculationMethod.EGYPTIAN,
+        val calculationMethod: CalculationMethod = CalculationMethod.EGYPTIAN_GENERAL_AUTHORITY,
         val madhab: Madhab = Madhab.SHAFI,
         val themeMode: ThemeMode = ThemeMode.SYSTEM,
         val language: AppLanguage = AppLanguage.ENGLISH,

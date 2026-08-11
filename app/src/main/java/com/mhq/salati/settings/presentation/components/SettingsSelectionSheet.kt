@@ -118,7 +118,7 @@ private fun SettingsSelectionSheetPreview() {
             state = State(
                 isLoading = true,
                 notificationsEnabled = true,
-                calculationMethod = CalculationMethod.EGYPTIAN,
+                calculationMethod = CalculationMethod.EGYPTIAN_GENERAL_AUTHORITY,
                 madhab = Madhab.SHAFI,
                 themeMode = ThemeMode.SYSTEM,
                 language = AppLanguage.ENGLISH,
