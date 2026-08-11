@@ -12,6 +12,8 @@ import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContrac
 import com.mhq.salati.shared.presentation.components.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,11 +22,20 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
 class LocationPickerViewModel @Inject constructor(
     private val searchLocationByName: SearchLocationByNameUseCase,
@@ -38,45 +49,88 @@ class LocationPickerViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<Effect>()
     val effect: SharedFlow<Effect> = _effect.asSharedFlow()
 
-    private var searchJob: Job? = null
+    // Debounced stream for as-you-type search
+    private val searchQueryFlow = MutableStateFlow("")
+
+    // Bypasses debounce entirely — used by the explicit search button
+    private val immediateSearchFlow = MutableSharedFlow<String>()
+
     private var reverseGeocodeJob: Job? = null
+
+    init {
+        observeSearchQuery()
+    }
 
     fun onIntent(intent: Intent) {
         when (intent) {
             is Intent.QueryChanged -> onQueryChanged(intent.query)
-            is Intent.SearchClicked -> search(_state.value.query)
+            is Intent.SearchClicked -> executeManualSearch(_state.value.query)
             is Intent.SearchResultClicked -> selectResult(intent.result)
-            is Intent.MapPointSelected -> selectMapPoint(
-                intent.latitude,
-                intent.longitude
-            )
-
+            is Intent.MapPointSelected -> selectMapPoint(intent.latitude, intent.longitude)
             is Intent.ConfirmClicked -> confirmSelection()
         }
     }
 
-    private fun search(query: String) {
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
-            _state.update { it.copy(isSearching = true, errorMessage = null) }
-            try {
-                val results = searchLocationByName(query)
-                _state.update { it.copy(isSearching = false, searchResults = results) }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                _state.update {
-                    it.copy(
-                        isSearching = false,
-                        errorMessage = UiText.Raw("Search failed. Check your connection and try again.")
-                    )
-                }
-                _effect.emit(Effect.ShowError(UiText.Raw("Search failed. Check your connection and try again.")))
-            }
+    private fun onQueryChanged(query: String) {
+        // Clear stale results immediately so an old query's results never
+        // linger next to newly-typed text while the debounce is pending.
+        _state.update {
+            it.copy(
+                query = query,
+                searchResults = emptyList(),
+                isSearching = query.isNotBlank(),
+                errorMessage = null
+            )
         }
+        searchQueryFlow.value = query
+    }
+
+    private fun observeSearchQuery() {
+        merge(
+            searchQueryFlow
+                .debounce(350.milliseconds)
+                .distinctUntilChanged(),
+            immediateSearchFlow
+        )
+            .flatMapLatest { query ->
+                flow {
+                    if (query.isNotBlank()) {
+                        emit(Result.success(searchLocationByName(query)))
+                    } else {
+                        emit(Result.success(emptyList()))
+                    }
+                }.catch { e ->
+                    if (e is CancellationException) throw e
+                    emit(Result.failure(e))
+                }
+            }
+            .onEach { result ->
+                result.fold(
+                    onSuccess = { results ->
+                        _state.update { it.copy(isSearching = false, searchResults = results) }
+                    },
+                    onFailure = {
+                        _state.update {
+                            it.copy(
+                                isSearching = false,
+                                errorMessage = UiText.Raw("Search failed. Check your connection.")
+                            )
+                        }
+                        _effect.emit(Effect.ShowError(UiText.Raw("Search failed. Check your connection.")))
+                    }
+                )
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun executeManualSearch(query: String) {
+        if (query.isBlank()) return
+        viewModelScope.launch { immediateSearchFlow.emit(query) }
     }
 
     private fun selectResult(result: LocationPickerContract.LocationSearchResult) {
+        // Reset processing stream to prevent dangling emissions
+        searchQueryFlow.value = ""
         _state.update {
             it.copy(
                 selectedLocation = LocationPickerContract.SelectedLocation(
@@ -118,24 +172,8 @@ class LocationPickerViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                // Reverse geocode failing shouldn't block using raw coordinates.
                 _state.update { it.copy(isResolvingSelection = false) }
             }
-        }
-    }
-
-    private fun onQueryChanged(query: String) {
-        _state.update { it.copy(query = query) }
-        searchJob?.cancel()
-
-        if (query.isBlank()) {
-            _state.update { it.copy(searchResults = emptyList(), isSearching = false) }
-            return
-        }
-
-        searchJob = viewModelScope.launch {
-            delay(350L.milliseconds) // debounce — avoids a network call per keystroke
-            search(query)
         }
     }
 
@@ -158,3 +196,137 @@ class LocationPickerViewModel @Inject constructor(
         }
     }
 }
+
+//@HiltViewModel
+//class LocationPickerViewModel @Inject constructor(
+//    private val searchLocationByName: SearchLocationByNameUseCase,
+//    private val reverseGeocodeLocation: ReverseGeocodeLocationUseCase,
+//    private val saveManualLocation: SaveManualLocationUseCase
+//) : ViewModel() {
+//
+//    private val _state = MutableStateFlow(State())
+//    val state: StateFlow<State> = _state.asStateFlow()
+//
+//    private val _effect = MutableSharedFlow<Effect>()
+//    val effect: SharedFlow<Effect> = _effect.asSharedFlow()
+//
+//    private var searchJob: Job? = null
+//    private var reverseGeocodeJob: Job? = null
+//
+//    fun onIntent(intent: Intent) {
+//        when (intent) {
+//            is Intent.QueryChanged -> onQueryChanged(intent.query)
+//            is Intent.SearchClicked -> search(_state.value.query)
+//            is Intent.SearchResultClicked -> selectResult(intent.result)
+//            is Intent.MapPointSelected -> selectMapPoint(
+//                intent.latitude,
+//                intent.longitude
+//            )
+//
+//            is Intent.ConfirmClicked -> confirmSelection()
+//        }
+//    }
+//
+//    private fun search(query: String) {
+//        searchJob?.cancel()
+//        searchJob = viewModelScope.launch {
+//            _state.update { it.copy(isSearching = true, errorMessage = null) }
+//            try {
+//                val results = searchLocationByName(query)
+//                _state.update { it.copy(isSearching = false, searchResults = results) }
+//            } catch (e: CancellationException) {
+//                throw e
+//            } catch (e: Exception) {
+//                _state.update {
+//                    it.copy(
+//                        isSearching = false,
+//                        errorMessage = UiText.Raw("Search failed. Check your connection and try again.")
+//                    )
+//                }
+//                _effect.emit(Effect.ShowError(UiText.Raw("Search failed. Check your connection and try again.")))
+//            }
+//        }
+//    }
+//
+//    private fun selectResult(result: LocationPickerContract.LocationSearchResult) {
+//        _state.update {
+//            it.copy(
+//                selectedLocation = LocationPickerContract.SelectedLocation(
+//                    result.displayName,
+//                    result.latitude,
+//                    result.longitude
+//                ),
+//                searchResults = emptyList(),
+//                query = result.displayName
+//            )
+//        }
+//    }
+//
+//    private fun selectMapPoint(latitude: Double, longitude: Double) {
+//        reverseGeocodeJob?.cancel()
+//        reverseGeocodeJob = viewModelScope.launch {
+//            _state.update {
+//                it.copy(
+//                    isResolvingSelection = true,
+//                    selectedLocation = LocationPickerContract.SelectedLocation(
+//                        null,
+//                        latitude,
+//                        longitude
+//                    )
+//                )
+//            }
+//            try {
+//                val name = reverseGeocodeLocation(latitude, longitude)
+//                _state.update {
+//                    it.copy(
+//                        isResolvingSelection = false,
+//                        selectedLocation = LocationPickerContract.SelectedLocation(
+//                            name,
+//                            latitude,
+//                            longitude
+//                        )
+//                    )
+//                }
+//            } catch (e: CancellationException) {
+//                throw e
+//            } catch (e: Exception) {
+//                // Reverse geocode failing shouldn't block using raw coordinates.
+//                _state.update { it.copy(isResolvingSelection = false) }
+//            }
+//        }
+//    }
+//
+//    private fun onQueryChanged(query: String) {
+//        _state.update { it.copy(query = query) }
+//        searchJob?.cancel()
+//
+//        if (query.isBlank()) {
+//            _state.update { it.copy(searchResults = emptyList(), isSearching = false) }
+//            return
+//        }
+//
+//        searchJob = viewModelScope.launch {
+//            delay(350L.milliseconds) // debounce — avoids a network call per keystroke
+//            search(query)
+//        }
+//    }
+//
+//    private fun confirmSelection() {
+//        val selected = _state.value.selectedLocation ?: return
+//        viewModelScope.launch {
+//            try {
+//                saveManualLocation(
+//                    latitude = selected.latitude,
+//                    longitude = selected.longitude,
+//                    cityName = selected.displayName,
+//                    countryName = null
+//                )
+//                _effect.emit(Effect.LocationSaved)
+//            } catch (e: CancellationException) {
+//                throw e
+//            } catch (e: Exception) {
+//                _effect.emit(Effect.ShowError(UiText.Raw("Couldn't save location. Try again.")))
+//            }
+//        }
+//    }
+//}
