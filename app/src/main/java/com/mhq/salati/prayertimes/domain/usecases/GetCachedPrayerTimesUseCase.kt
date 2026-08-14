@@ -15,7 +15,13 @@ class GetCachedPrayerTimesUseCase @Inject constructor(
         latitude: Double,
         longitude: Double
     ): PrayerTimesResult? {
-        val method = settingsRepository.observeSettings().first().calculationMethod.apiMethodId
-        return prayerTimesRepository.getCachedTimings(date, latitude, longitude, method)
+        val settings = settingsRepository.observeSettings().first()
+        return prayerTimesRepository.getCachedTimings(
+            date,
+            latitude,
+            longitude,
+            method = settings.calculationMethod.apiMethodId,
+            madhab = settings.madhab
+        )
     }
 }

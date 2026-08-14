@@ -16,13 +16,15 @@ class AladhanApiService(private val client: HttpClient) {
         year: Int,
         latitude: Double,
         longitude: Double,
-        method: Int = 5
+        method: Int = 5,
+        school: Int = 0
     ): CalendarResponseDto {
         return client.get("$BASE_URL/calendar") {
             parameter("latitude", latitude)
             parameter("longitude", longitude)
             parameter("year", year)
             parameter("method", method)
+            parameter("school", school)
             parameter("annual", true)
         }.body()
     }

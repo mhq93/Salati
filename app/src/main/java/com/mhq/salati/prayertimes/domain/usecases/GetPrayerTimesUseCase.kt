@@ -15,12 +15,13 @@ class GetPrayerTimesUseCase @Inject constructor(
         latitude: Double,
         longitude: Double
     ): Result<PrayerTimesResult> {
-        val method = settingsRepository.observeSettings().first().calculationMethod.apiMethodId
+        val settings = settingsRepository.observeSettings().first()
         return prayerTimesRepository.getPrayerTimings(
             date,
             latitude,
             longitude,
-            method
+            method = settings.calculationMethod.apiMethodId,
+            madhab = settings.madhab
         )
     }
 }

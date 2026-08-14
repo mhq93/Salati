@@ -26,5 +26,6 @@ data class PrayerTimesEntity(
     val hijriYear: String,
     val latitude: Double,
     val longitude: Double,
-    val method: Int
+    val method: Int,
+    val schoolId: Int
 )

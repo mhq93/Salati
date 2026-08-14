@@ -7,7 +7,8 @@ import com.mhq.salati.prayertimes.data.local.PrayerTimesEntity
 fun CalendarResponseDto.toEntityList(
     latitude: Double,
     longitude: Double,
-    method: Int
+    method: Int,
+    schoolId: Int
 ): List<PrayerTimesEntity> {
     return data.values.flatten().map { dayData: TimingsDataDto ->
         val domainResult = dayData.toDomainResult()
@@ -15,7 +16,8 @@ fun CalendarResponseDto.toEntityList(
             dateKey = dayData.date.gregorian.date,
             latitude = latitude,
             longitude = longitude,
-            method = method
+            method = method,
+            schoolId = schoolId
         )
     }
 }

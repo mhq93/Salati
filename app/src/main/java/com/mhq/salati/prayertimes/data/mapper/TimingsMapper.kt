@@ -38,7 +38,8 @@ fun PrayerTimesResult.toEntity(
     dateKey: String,
     latitude: Double,
     longitude: Double,
-    method: Int
+    method: Int,
+    schoolId: Int
 ): PrayerTimesEntity {
     return PrayerTimesEntity(
         date = dateKey,
@@ -61,7 +62,8 @@ fun PrayerTimesResult.toEntity(
         hijriYear = date.hijriYear,
         latitude = latitude,
         longitude = longitude,
-        method = method
+        method = method,
+        schoolId = schoolId
     )
 }
 

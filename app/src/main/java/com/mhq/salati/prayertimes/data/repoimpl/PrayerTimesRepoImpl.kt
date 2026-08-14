@@ -6,6 +6,7 @@ import com.mhq.salati.prayertimes.data.mapper.toDomain
 import com.mhq.salati.prayertimes.data.mapper.toEntityList
 import com.mhq.salati.prayertimes.domain.model.PrayerTimesResult
 import com.mhq.salati.prayertimes.domain.repo.PrayerTimesRepository
+import com.mhq.salati.settings.domain.model.Madhab
 import kotlin.math.abs
 
 class PrayerTimesRepoImpl(
@@ -21,11 +22,13 @@ class PrayerTimesRepoImpl(
         date: String,
         latitude: Double,
         longitude: Double,
-        method: Int
+        method: Int,
+        madhab: Madhab
     ): PrayerTimesResult? {
         val cached = prayerTimesDao.getByDate(date)
         val isCacheValid = cached != null &&
                 cached.method == method &&
+                cached.schoolId == madhab.schoolId &&
                 abs(cached.latitude - latitude) < COORDINATE_TOLERANCE &&
                 abs(cached.longitude - longitude) < COORDINATE_TOLERANCE
 
@@ -36,9 +39,10 @@ class PrayerTimesRepoImpl(
         date: String,
         latitude: Double,
         longitude: Double,
-        method: Int
+        method: Int,
+        madhab: Madhab
     ): Result<PrayerTimesResult> {
-        getCachedTimings(date, latitude, longitude, method)?.let {
+        getCachedTimings(date, latitude, longitude, method, madhab)?.let {
             return Result.success(it)
         }
 
@@ -49,10 +53,11 @@ class PrayerTimesRepoImpl(
                 year = year,
                 latitude = latitude,
                 longitude = longitude,
-                method = method
+                method = method,
+                school = madhab.schoolId
             )
 
-            val entities = calendarResponse.toEntityList(latitude, longitude, method)
+            val entities = calendarResponse.toEntityList(latitude, longitude, method, madhab.schoolId)
             prayerTimesDao.insertAll(entities)
 
             val todayEntity = prayerTimesDao.getByDate(date)
