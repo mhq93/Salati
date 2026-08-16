@@ -43,6 +43,10 @@
             android:exported="false" />
 
         <receiver
+            android:name=".alarms.data.scheduler.CustomAlarmReceiver"
+            android:exported="false" />
+
+        <receiver
             android:name="com.mhq.salati.adhan.data.BootReceiver"
             android:exported="true">
             <intent-filter>

@@ -4,6 +4,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.mhq.salati.adhan.data.local.MutedPrayerDao
 import com.mhq.salati.adhan.data.local.MutedPrayerEntity
+import com.mhq.salati.alarms.data.local.CustomAlarmDao
+import com.mhq.salati.alarms.data.local.CustomAlarmEntity
 import com.mhq.salati.prayertimes.data.local.PrayerTimesDao
 import com.mhq.salati.prayertimes.data.local.PrayerTimesEntity
 import com.mhq.salati.prayertracker.data.local.PrayerRecordDao
@@ -13,7 +15,8 @@ import com.mhq.salati.prayertracker.data.local.PrayerRecordEntity
     entities = [
         PrayerTimesEntity::class,
         MutedPrayerEntity::class,
-        PrayerRecordEntity::class
+        PrayerRecordEntity::class,
+        CustomAlarmEntity::class
     ],
     version = 1,
     exportSchema = false
@@ -22,4 +25,5 @@ abstract class SalatiDatabase : RoomDatabase() {
     abstract fun prayerTimesDao(): PrayerTimesDao
     abstract fun mutedPrayerDao(): MutedPrayerDao
     abstract fun prayerRecordDao(): PrayerRecordDao
+    abstract fun customAlarmDao(): CustomAlarmDao
 }

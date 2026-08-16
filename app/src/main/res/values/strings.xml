@@ -75,4 +75,38 @@
     <string name="qibla">Qibla</string>
     <string name="tracker">Tracker</string>
     <string name="notifications">Notifications</string>
+
+    <!-- Alarm Editor sheet -->
+    <string name="no_custom_alarms_title" translatable="false">There are no set custom alarms</string>
+    <string name="no_custom_alarms_body" translatable="false">Click the button below to add a new custom alarm.</string>
+    <string name="new_custom_alarm" translatable="false">Customize an alarm</string>
+    <string name="alarm_label_optional" translatable="false">Label (Optional)</string>
+    <string name="edit_custom_alarm" translatable="false">Edit custom alarm</string>
+    <string name="custom_alarm_default_title" translatable="false">Custom alarm default title</string>
+    <string name="add_custom_alarm" translatable="false">Add custom alarm</string>
+    <string name="custom_alarm_body" translatable="false">Custom alarm body</string>
+    <string name="custom_alarms_channel_name" translatable="false">Custom alarms channel name</string>
+    <string name="alarms" translatable="false">Alarms</string>
+    <string name="prayer" translatable="false">Prayer</string>
+    <string name="timing" translatable="false">Timing</string>
+    <string name="before" translatable="false">Before prayer time</string>
+    <string name="after" translatable="false">After prayer time</string>
+    <string name="minutes_value" translatable="false">%1$d min</string>
+    <string name="repeat_every_day" translatable="false">Repeat everyday</string>
+    <string name="repeats_every_day" translatable="false">Every day</string>
+    <string name="repeats_once" translatable="false">Once</string>
+    <string name="at_prayer_time" translatable="false">At %1$s time</string>
+    <string name="save" translatable="false">Save</string>
+    <string name="edit" translatable="false">Edit</string>
+    <string name="delete" translatable="false">Delete</string>
+
+    <plurals name="minutes_before_prayer" translatable="false">
+        <item quantity="one">%1$d minute before %2$s</item>
+        <item quantity="other">%1$d minutes before %2$s</item>
+    </plurals>
+
+    <plurals name="minutes_after_prayer" translatable="false">
+        <item quantity="one">%1$d minute after %2$s</item>
+        <item quantity="other">%1$d minutes after %2$s</item>
+    </plurals>
 </resources>

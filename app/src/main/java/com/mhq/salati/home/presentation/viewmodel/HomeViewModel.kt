@@ -9,6 +9,7 @@ import com.mhq.salati.adhan.domain.usecases.ObserveAdhanPlaybackStateUseCase
 import com.mhq.salati.adhan.domain.usecases.ScheduleDailyPrayerAlarmsUseCase
 import com.mhq.salati.adhan.domain.usecases.StopAdhanPlaybackUseCase
 import com.mhq.salati.adhan.domain.usecases.ToggleMutePrayerUseCase
+import com.mhq.salati.alarms.domain.usecases.ScheduleCustomAlarmsUseCase
 import com.mhq.salati.home.domain.usecases.CalculateNextPrayerInfoUseCase
 import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.location.domain.model.SavedLocation
@@ -61,7 +62,8 @@ class HomeViewModel @Inject constructor(
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
     private val calculateNextPrayerInfoUseCase: CalculateNextPrayerInfoUseCase,
     private val observeAdhanPlaybackStateUseCase: ObserveAdhanPlaybackStateUseCase,
-    private val scheduleDailyPrayerAlarmsUseCase: ScheduleDailyPrayerAlarmsUseCase
+    private val scheduleDailyPrayerAlarmsUseCase: ScheduleDailyPrayerAlarmsUseCase,
+    private val scheduleCustomAlarmsUseCase: ScheduleCustomAlarmsUseCase
 ) : ViewModel() {
 
     private val permissionDelegate = LocationPermissionDelegate()
@@ -490,6 +492,19 @@ class HomeViewModel @Inject constructor(
         startCountdownTicker(info.spanEndMillis)
     }
 
+//    private suspend fun rescheduleAlarmsIfLoaded() {
+//        val timings = _state.value.timings ?: return
+//        val date = _state.value.date ?: return
+//
+//        val browsedDateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
+//        val todayKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Calendar.getInstance().time)
+//
+//        if (browsedDateKey != todayKey) return
+//
+//        val todaysMutedPrayers = mutedPrayersRepository.getMutedPrayers(todayKey)
+//        scheduleDailyPrayerAlarmsUseCase(timings, todayKey, todaysMutedPrayers)
+//    }
+
     private suspend fun rescheduleAlarmsIfLoaded() {
         val timings = _state.value.timings ?: return
         val date = _state.value.date ?: return
@@ -501,7 +516,21 @@ class HomeViewModel @Inject constructor(
 
         val todaysMutedPrayers = mutedPrayersRepository.getMutedPrayers(todayKey)
         scheduleDailyPrayerAlarmsUseCase(timings, todayKey, todaysMutedPrayers)
+        scheduleCustomAlarmsUseCase(timings.toNameMap())
     }
+
+    private fun PrayerTimings.toNameMap(): Map<String, String> = mapOf(
+        "Imsak" to imsak,
+        "Fajr" to fajr,
+        "Shorouq" to sunrise,
+        "Dhuhr" to dhuhr,
+        "Asr" to asr,
+        "Maghrib" to maghrib,
+        "Isha" to isha,
+        "First Third" to firstThird,
+        "Midnight" to midnight,
+        "Last Third" to lastThird
+    )
 
     @SuppressLint("EmptySuperCall")
     override fun onCleared() {

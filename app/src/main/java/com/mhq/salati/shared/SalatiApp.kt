@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Home
@@ -25,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.mhq.salati.R
+import com.mhq.salati.alarms.presentation.screens.CustomAlarmsContainer
 import com.mhq.salati.home.presentation.screens.HomeContainer
 import com.mhq.salati.locationpicker.presentation.screens.LocationPickerContainer
 import com.mhq.salati.onboarding.presentation.screens.OnboardingContainer
@@ -48,6 +50,7 @@ fun SalatiApp(startDestination: Screen) {
         BottomNavItem(Screen.Home.route, stringResource(R.string.home), Icons.Default.Home),
         BottomNavItem(Screen.Qibla.route, stringResource(R.string.qibla), Icons.Default.Explore),
         BottomNavItem(Screen.PrayerTracker.route, stringResource(R.string.tracker), Icons.Filled.CheckCircle),
+        BottomNavItem(Screen.Alarms.route, stringResource(R.string.alarms), Icons.Default.Alarm),
         BottomNavItem(Screen.Settings.route, stringResource(R.string.settings), Icons.Default.Settings)
     )
 
@@ -114,6 +117,9 @@ fun SalatiApp(startDestination: Screen) {
                 }
                 composable(Screen.PrayerTracker.route) {
                     PrayerTrackerContainer()
+                }
+                composable(Screen.Alarms.route) {
+                    CustomAlarmsContainer()
                 }
                 composable(Screen.Settings.route) {
                     SettingsContainer()
