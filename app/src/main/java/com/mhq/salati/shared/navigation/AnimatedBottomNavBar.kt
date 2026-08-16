@@ -40,9 +40,11 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.presentation.theme.AccentEmerald
@@ -70,6 +72,13 @@ fun AnimatedBottomNavBar(
         it.route == selectedRoute
     }.coerceAtLeast(0)
 
+    // --- RTL DETECTION ---
+    val layoutDirection = LocalLayoutDirection.current
+    val isRtl = layoutDirection == LayoutDirection.Rtl
+
+    // Inverts the internal index calculation when the device layout is Right-to-Left
+    val visualIndex = if (isRtl) itemCount - 1 - selectedIndex else selectedIndex
+
     val barHeight = 84.dp
     val notchRadius = 32.dp
     val bubbleSize = 60.dp
@@ -81,9 +90,9 @@ fun AnimatedBottomNavBar(
     val usableWidthPx = (barWidthPx - (horizontalEdgePaddingPx * 2f)).coerceAtLeast(0f)
     val itemWidthPx = if (itemCount > 0) usableWidthPx / itemCount else 0f
 
-    // Calculate exact center matching the distributed weights of the Row
+    // Calculate center using visualIndex so the canvas cuts out the right spot
     val targetCenterPx =
-        horizontalEdgePaddingPx + (itemWidthPx * selectedIndex) + (itemWidthPx / 2f)
+        horizontalEdgePaddingPx + (itemWidthPx * visualIndex) + (itemWidthPx / 2f)
 
     val animatedCenterPx by animateFloatAsState(
         targetValue = targetCenterPx,
@@ -112,6 +121,7 @@ fun AnimatedBottomNavBar(
             .windowInsetsPadding(WindowInsets.navigationBars)
             .background(SheetBackground)
     ) {
+        // --- BACKGROUND NOTCH CANVAS ---
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -169,19 +179,21 @@ fun AnimatedBottomNavBar(
             )
         }
 
-
-        // FIXED: Sync bubble position directly to animated center to avoid offsets
-        val bubbleOffsetX = with(density) {
-            (animatedCenterPx.toInt() - (bubbleSize / 2).roundToPx())
-        }
+        // --- FLOATING SELECTION BUBBLE ---
+        val bubbleSizePx = with(density) { bubbleSize.roundToPx() }
+        val bubbleOffsetYPx = -(with(density) { (bubbleSize / 2.2f).roundToPx() })
 
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .offset {
+                    // Compute center distance matching Compose's native start boundary rules
+                    val centerFromStartPx = if (isRtl) barWidthPx - animatedCenterPx.toInt() else animatedCenterPx.toInt()
+                    val leftEdgeFromStartPx = centerFromStartPx - (bubbleSizePx / 2)
+
                     IntOffset(
-                        x = bubbleOffsetX,
-                        y = -(with(density) { (bubbleSize / 2.2f).roundToPx() })
+                        x = leftEdgeFromStartPx,
+                        y = bubbleOffsetYPx
                     )
                 }
                 .size(bubbleSize)
@@ -274,8 +286,16 @@ fun AnimatedBottomNavBar(
 @Composable
 fun AnimatedBottomNavBarPreview() {
     val mockItems = listOf(
-        BottomNavItem(label = "Home", route = "home", icon = Icons.Filled.CheckCircle),
-        BottomNavItem(label = "Settings", route = "settings", icon = Icons.Filled.CheckCircle)
+        BottomNavItem(
+            label = "Home",
+            route = "home",
+            icon = Icons.Filled.CheckCircle
+        ),
+        BottomNavItem(
+            label = "Settings",
+            route = "settings",
+            icon = Icons.Filled.CheckCircle
+        )
     )
 
     SalatiTheme {

@@ -1,5 +1,7 @@
 package com.mhq.salati.settings.presentation.screens
 
+import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,6 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
+import androidx.core.os.LocaleListCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mhq.salati.settings.presentation.contract.SettingsContract.Effect
@@ -64,8 +67,7 @@ fun SettingsContainer(
                         )
                     }
                         .onFailure {
-                            val webUri =
-                                "https://play.google.com/store/apps/details?id=${context.packageName}".toUri()
+                            val webUri = "https://play.google.com/store/apps/details?id=${context.packageName}".toUri()
                             context.startActivity(
                                 AndroidIntent(AndroidIntent.ACTION_VIEW, webUri)
                             )
@@ -90,7 +92,8 @@ fun SettingsContainer(
                 }
 
                 Effect.LanguageChangedRestartRequired -> {
-                    // TODO: apply via AppCompatDelegate.setApplicationLocales() once language switching is wired app-wide
+                    val localeList = LocaleListCompat.forLanguageTags(state.language.code)
+                    AppCompatDelegate.setApplicationLocales(localeList)
                 }
             }
         }

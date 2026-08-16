@@ -69,7 +69,7 @@ fun SettingsContent(
                     )
 
                     SettingsSectionHeader(
-                        "Notifications"
+                        stringResource(R.string.notifications)
                     )
 
                     SettingsCard {
@@ -80,9 +80,7 @@ fun SettingsContent(
                             isChecked = state.notificationsEnabled,
                             onCheckedChange = { onIntent(Intent.ToggleNotifications(it)) }
                         )
-
                         SettingsDivider()
-
                         SettingsSelectorRow(
                             icon = Icons.Default.MusicNote,
                             title = stringResource(R.string.adhan_sound),

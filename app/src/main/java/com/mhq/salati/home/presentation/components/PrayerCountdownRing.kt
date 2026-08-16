@@ -50,7 +50,7 @@ fun PrayerCountdownRing(
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier.size(180.dp)
+        modifier = modifier.size(220.dp)
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val strokeWidth = 16.dp.toPx()

@@ -37,7 +37,7 @@ fun LocationHeader(
                 ),
                 shape = CircleShape
             )
-            .padding(horizontal = 4.dp)
+            .padding(4.dp)
     ) {
         Icon(
             imageVector = Icons.Default.LocationOn,

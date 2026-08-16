@@ -71,4 +71,8 @@
     <string name="minor_timing_playing_title">%1$s</string>
     <string name="minor_timing_playing_body">It\'s time for %1$s</string>
     <string name="unknown_location">Unknown Location</string>
+    <string name="home">Home</string>
+    <string name="qibla">Qibla</string>
+    <string name="tracker">Tracker</string>
+    <string name="notifications">Notifications</string>
 </resources>

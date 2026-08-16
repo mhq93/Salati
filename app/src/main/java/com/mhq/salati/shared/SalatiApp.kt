@@ -1,5 +1,7 @@
 package com.mhq.salati.shared
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -15,12 +17,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.mhq.salati.R
 import com.mhq.salati.home.presentation.screens.HomeContainer
 import com.mhq.salati.locationpicker.presentation.screens.LocationPickerContainer
 import com.mhq.salati.onboarding.presentation.screens.OnboardingContainer
@@ -33,6 +37,7 @@ import com.mhq.salati.shared.navigation.Screen
 import com.mhq.salati.shared.presentation.components.LocalSnackbarHostState
 import com.mhq.salati.shared.presentation.screens.AwaitingLocationPermissions
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SalatiApp(startDestination: Screen) {
 
@@ -40,10 +45,10 @@ fun SalatiApp(startDestination: Screen) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     val items = listOf(
-        BottomNavItem(Screen.Home.route, "Home", Icons.Default.Home),
-        BottomNavItem(Screen.Qibla.route, "Qibla", Icons.Default.Explore),
-        BottomNavItem(Screen.PrayerTracker.route,"Tracker", Icons.Filled.CheckCircle),
-        BottomNavItem(Screen.Settings.route, "Settings", Icons.Default.Settings)
+        BottomNavItem(Screen.Home.route, stringResource(R.string.home), Icons.Default.Home),
+        BottomNavItem(Screen.Qibla.route, stringResource(R.string.qibla), Icons.Default.Explore),
+        BottomNavItem(Screen.PrayerTracker.route, stringResource(R.string.tracker), Icons.Filled.CheckCircle),
+        BottomNavItem(Screen.Settings.route, stringResource(R.string.settings), Icons.Default.Settings)
     )
 
     val bottomBarRoutes = items.map { it.route }

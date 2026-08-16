@@ -6,14 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObserveSettingsUseCase @Inject constructor(
-    private val repository: SettingsRepository
+    private val settingsRepository: SettingsRepository
 ) {
-    operator fun invoke(): Flow<AppSettings> = repository.observeSettings()
+    operator fun invoke(): Flow<AppSettings> = settingsRepository.observeSettings()
 }
-
-
-
-
-
-
-

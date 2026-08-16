@@ -1,6 +1,9 @@
 package com.mhq.salati.home.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,19 +16,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
-import com.mhq.salati.shared.presentation.theme.AccentGreen
 import com.mhq.salati.shared.presentation.theme.AccentOrange
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
@@ -45,18 +46,24 @@ fun DateBanner(
             .padding(
                 horizontal = 16.dp,
                 vertical = 8.dp
-            ).fillMaxWidth(0.6f)
+            )
+            .fillMaxWidth(0.6f)
     ) {
-        IconButton(
-            onClick = onPreviousDay,
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(24.dp)
                 .background(AccentOrange, CircleShape)
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { onPreviousDay() },
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "Previous day",
-                tint = InkText
+                tint = InkText,
+                modifier = Modifier.size(16.dp)
             )
         }
 
@@ -85,16 +92,21 @@ fun DateBanner(
             )
         }
 
-        IconButton(
-            onClick = onNextDay,
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(24.dp)
                 .background(AccentOrange, CircleShape)
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { onNextDay() },
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "Next day",
-                tint = InkText
+                tint = InkText,
+                modifier = Modifier.size(16.dp)
             )
         }
     }
