@@ -31,6 +31,21 @@
     <string name="first_third">ثلث الليل الأول</string>
     <string name="midnight">منتصف الليل</string>
     <string name="last_third">ثلث الليل الأخير</string>
+    <string name="previous_day">اليوم الماضي</string>
+    <string name="next_day">اليوم التالي</string>
+
+    <string name="hijri_muharram">المحرم</string>
+    <string name="hijri_safar">صفر</string>
+    <string name="hijri_rabi_al_awwal">ربيع الأول</string>
+    <string name="hijri_rabi_al_akhar">ربيع الآخر</string>
+    <string name="hijri_jumada_al_oula">جمادى الأولى</string>
+    <string name="hijri_jumada_al_akhera">جمادى الآخرة</string>
+    <string name="hijri_rajab">رجب</string>
+    <string name="hijri_shaban">شعبان</string>
+    <string name="hijri_ramadan">رمضان</string>
+    <string name="hijri_shawwal">شوال</string>
+    <string name="hijri_dhu_al_qidah">ذو القعدة</string>
+    <string name="hijri_dhu_al_hijjah">ذو الحجة</string>
 
     <!-- Notifications -->
     <string name="adhan_playing_title">حان موعد الصلاة</string>
@@ -75,6 +90,8 @@
     <string name="did_you_pray_x">هل صليت %1$s؟</string>
     <string name="mark_todays_x_prayer">أضف وسماُ لصلاة %1$s اليوم</string>
     <string name="day_streak">يوم %1$d من السلسلة</string>
+    <string name="previous_month">الشهر الماضي</string>
+    <string name="next_month">الشهر التالي</string>
 
     <!-- Settings -->
     <string name="settings">الإعدادات</string>

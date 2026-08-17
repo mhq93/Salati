@@ -23,11 +23,10 @@ internal fun TimingsDataDto.toDomainResult(): PrayerTimesResult {
             lastThird = sanitizeTimestamp(timings.lastThird)
         ),
         date = PrayerDate(
-            readable = date.readable,
             gregorianDate = date.gregorian.date,
             hijriDate = date.hijri.date,
             hijriDay = date.hijri.day,
-            hijriMonth = date.hijri.month.en,
+            hijriMonthNumber = date.hijri.month.number,
             hijriYear = date.hijri.year
         )
     )
@@ -54,11 +53,10 @@ fun PrayerTimesResult.toEntity(
         midnight = timings.midnight,
         firstThird = timings.firstThird,
         lastThird = timings.lastThird,
-        readableDate = date.readable,
         gregorianDate = date.gregorianDate,
         hijriDate = date.hijriDate,
         hijriDay = date.hijriDay,
-        hijriMonth = date.hijriMonth,
+        hijriMonthNumber = date.hijriMonthNumber,
         hijriYear = date.hijriYear,
         latitude = latitude,
         longitude = longitude,
@@ -84,11 +82,10 @@ fun PrayerTimesEntity.toDomain(): PrayerTimesResult {
             lastThird = lastThird
         ),
         date = PrayerDate(
-            readable = readableDate,
             gregorianDate = gregorianDate,
             hijriDate = hijriDate,
             hijriDay = hijriDay,
-            hijriMonth = hijriMonth,
+            hijriMonthNumber = hijriMonthNumber,
             hijriYear = hijriYear
         )
     )

@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -188,12 +186,11 @@ private fun HomeContentSuccessPreview() {
                     lastThird = "03:08"
                 ),
                 date = PrayerDate(
-                    readable = "18 Jul 2026",
                     gregorianDate = "18-07-2026",
                     hijriDate = "03",
                     hijriDay = "03",
-                    hijriMonth = "Muharram",
-                    hijriYear = "1448"
+                    hijriMonthNumber = 3,
+                    hijriYear = "1447",
                 )
             ),
             onIntent = {}

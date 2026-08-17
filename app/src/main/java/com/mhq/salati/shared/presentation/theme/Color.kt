@@ -37,7 +37,6 @@ val CardBackground = Color.White
 val Prayed = Color(0xFF1D9E75)
 val Missed = Color(0xFFD84C3E)
 
-
 // --- New tokens needed for dark mode (light mode reuses existing tokens above) ---
 val SheetBackgroundDark = Color(0xFF121514)     // dark counterpart to SheetBackground
 val CardBackgroundDark = Color(0xFF1E2422)      // dark counterpart to CardBackground, sits above SheetBackgroundDark]
@@ -47,3 +46,9 @@ val DividerDark = Color(0xFFFFFFFF).copy(alpha = 0.08f)
 val ErrorContainerLight = Color(0xFFFBE9E7)
 val ErrorContainerDark = Color(0xFF3A1F1D)
 val OnAccentGreen = Color.White                 // text/icons placed on AccentGreen chips (both modes)
+
+val SelectedCellBackground = Color(0xFF4A4A4A)
+val CardBackgroundLocal = Color(0xFFFFFFFF)
+val CardBorder = Color(0xFFE7E7E7)
+val WeekendBackground = Color(0xFFF3F3F3)
+val AdjacentMonthText = Color(0xFFBFBFBF)

@@ -30,6 +30,21 @@
     <string name="first_third">First Third</string>
     <string name="midnight">Midnight</string>
     <string name="last_third">Last Third</string>
+    <string name="previous_day">Previous day</string>
+    <string name="next_day">Next day</string>
+
+    <string name="hijri_muharram">Muharram</string>
+    <string name="hijri_safar">Safar</string>
+    <string name="hijri_rabi_al_awwal">Rabi\' al-Awwal</string>
+    <string name="hijri_rabi_al_akhar">Rabi\' al-Akhar</string>
+    <string name="hijri_jumada_al_oula">Jumada al-Awwal</string>
+    <string name="hijri_jumada_al_akhera">Jumada al-Akhera</string>
+    <string name="hijri_rajab">Rajab</string>
+    <string name="hijri_shaban">Sha\'ban</string>
+    <string name="hijri_ramadan">Ramadan</string>
+    <string name="hijri_shawwal">Shawwal</string>
+    <string name="hijri_dhu_al_qidah">Dhu al-Qi\'dah</string>
+    <string name="hijri_dhu_al_hijjah">Dhu al-Hijjah</string>
 
     <!-- Notifications -->
     <string name="adhan_playing_title">Prayer time is due</string>
@@ -73,6 +88,8 @@
     <string name="did_you_pray_x">Did you pray %1$s?</string>
     <string name="mark_todays_x_prayer">Mark today\'s %1$s prayer</string>
     <string name="day_streak">%1$d Day streak</string>
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>

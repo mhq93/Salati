@@ -21,10 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
 import com.mhq.salati.prayertracker.domain.model.DayStatus
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.MutedSlate
@@ -36,12 +38,6 @@ import java.time.chrono.HijrahDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.time.temporal.ChronoField
-
-val SelectedCellBackground = Color(0xFF4A4A4A)
-val CardBackgroundLocal = Color(0xFFFFFFFF)
-val CardBorder = Color(0xFFE7E7E7)
-val WeekendBackground = Color(0xFFF3F3F3)
-val AdjacentMonthText = Color(0xFFBFBFBF)
 
 @Composable
 fun CalendarMonthView(
@@ -70,7 +66,6 @@ fun CalendarMonthView(
     val gregorianRangeFormatter = remember(locale) { DateTimeFormatter.ofPattern("MMM d", locale) }
 
     Column {
-        // Header: Gregorian month/year primary, Hijri month/year secondary
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -79,14 +74,19 @@ fun CalendarMonthView(
             IconButton(onClick = { onMonthChanged(-1) }) {
                 Icon(
                     Icons.Filled.ChevronLeft,
-                    contentDescription = "Previous month",
+                    contentDescription = stringResource(R.string.previous_month),
                     tint = InkText
                 )
             }
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
                     text = "${
-                        selectedMonth.month.getDisplayName(TextStyle.FULL, locale)
+                        selectedMonth.month.getDisplayName(
+                            TextStyle.FULL,
+                            locale
+                        )
                     } ${selectedMonth.year}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
@@ -99,22 +99,28 @@ fun CalendarMonthView(
                 )
             }
             IconButton(onClick = { onMonthChanged(1) }) {
-                Icon(Icons.Filled.ChevronRight, contentDescription = "Next month", tint = InkText)
+                Icon(
+                    Icons.Filled.ChevronRight,
+                    contentDescription = stringResource(R.string.next_month),
+                    tint = InkText
+                )
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Weekday headers, full names, Sun -> Sat
-        // Note: since the grid now always starts Day 1 at col 0, these labels
-        // no longer align to the actual weekday of each cell below them.
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
             listOf(
-                DayOfWeek.SUNDAY, DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
-                DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY
+                DayOfWeek.SUNDAY,
+                DayOfWeek.MONDAY,
+                DayOfWeek.TUESDAY,
+                DayOfWeek.WEDNESDAY,
+                DayOfWeek.THURSDAY,
+                DayOfWeek.FRIDAY,
+                DayOfWeek.SATURDAY
             ).forEach { dow ->
                 Text(
                     text = dow.getDisplayName(TextStyle.SHORT, locale)
@@ -136,11 +142,11 @@ fun CalendarMonthView(
                     val isCurrentMonth = dayNum in 1..totalDays
 
                     Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(0.8f)
-                            .padding(2.dp),
-                        contentAlignment = Alignment.Center
+                            .padding(2.dp)
                     ) {
                         if (isCurrentMonth) {
                             val date = selectedMonth.atDay(dayNum)
@@ -157,7 +163,6 @@ fun CalendarMonthView(
                                 onClick = { onDateSelected(date) }
                             )
                         }
-                        // trailing slots past the last day of the month render nothing
                     }
                 }
             }

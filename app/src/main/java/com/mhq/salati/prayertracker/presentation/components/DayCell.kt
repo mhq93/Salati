@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,10 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.prayertracker.domain.model.DayStatus
 import com.mhq.salati.shared.presentation.theme.AccentEmerald
-import com.mhq.salati.shared.presentation.theme.CardBackground
+import com.mhq.salati.shared.presentation.theme.AdjacentMonthText
+import com.mhq.salati.shared.presentation.theme.CardBackgroundLocal
+import com.mhq.salati.shared.presentation.theme.CardBorder
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.MutedSlate
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
+import com.mhq.salati.shared.presentation.theme.SelectedCellBackground
+import com.mhq.salati.shared.presentation.theme.WeekendBackground
 
 @Composable
 fun DayCell(

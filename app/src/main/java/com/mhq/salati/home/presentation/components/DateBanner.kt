@@ -22,14 +22,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.HijriMonth
+import com.mhq.salati.R
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.shared.presentation.theme.AccentOrange
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun DateBanner(
@@ -38,6 +44,20 @@ fun DateBanner(
     onNextDay: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val hijriMonthLabel = stringResource(
+        HijriMonth.fromNumber(prayerDate.hijriMonthNumber).labelRes
+    )
+
+    val gregorianLine = remember(prayerDate.gregorianDate) {
+        val parsed = LocalDate.parse(
+            prayerDate.gregorianDate,
+            DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        )
+        parsed.format(
+            DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.getDefault())
+        )
+    }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -61,7 +81,7 @@ fun DateBanner(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "Previous day",
+                contentDescription = stringResource(R.string.previous_day),
                 tint = InkText,
                 modifier = Modifier.size(16.dp)
             )
@@ -74,7 +94,7 @@ fun DateBanner(
                 .padding(horizontal = 16.dp)
         ) {
             Text(
-                text = "${prayerDate.hijriDay} ${prayerDate.hijriMonth} ${prayerDate.hijriYear}",
+                text = "${prayerDate.hijriDay} $hijriMonthLabel ${prayerDate.hijriYear}",
                 color = AccentOrange,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
@@ -85,7 +105,7 @@ fun DateBanner(
                 )
             )
             Text(
-                text = prayerDate.readable,
+                text = gregorianLine,
                 color = AccentOrange,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
@@ -104,7 +124,7 @@ fun DateBanner(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "Next day",
+                contentDescription = stringResource(R.string.next_day),
                 tint = InkText,
                 modifier = Modifier.size(16.dp)
             )
@@ -112,21 +132,20 @@ fun DateBanner(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-private fun DateBannerPreview() {
+fun DateBannerPreview() {
     SalatiTheme() {
         DateBanner(
             prayerDate = PrayerDate(
-                readable = "Hi",
-                gregorianDate = "Hi",
-                hijriDate = "Hi",
-                hijriDay = "Hi",
-                hijriMonth = "Hi",
-                hijriYear = "Hi"
+                gregorianDate = "17-08-2026",
+                hijriDate = "04-03-1448",
+                hijriDay = "04",
+                hijriMonthNumber = 3,
+                hijriYear = "1447"
             ),
             onPreviousDay = {},
-            onNextDay = {}
+            onNextDay = {},
         )
     }
 }
