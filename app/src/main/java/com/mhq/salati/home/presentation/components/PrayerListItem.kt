@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.NotificationsOff
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.presentation.theme.AccentGreen
 import com.mhq.salati.shared.presentation.theme.CardBackground
 import com.mhq.salati.shared.presentation.theme.InkText
@@ -125,7 +127,7 @@ fun PrayerListItem(
 private fun PrayerListItemPreview() {
     SalatiTheme() {
         PrayerListItem(
-            prayerName = "Fajr",
+            prayerName = PrayerName.FAJR.name,
             prayerTime = "04:00",
             isPrayerHighlighted = true,
             isPrayerAdhanMuted = true,

@@ -4,6 +4,7 @@ import com.mhq.salati.home.domain.model.NextPrayerInfo
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.prayertimes.domain.usecases.GetCachedPrayerTimesUseCase
 import com.mhq.salati.prayertimes.domain.usecases.GetPrayerTimesUseCase
+import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.domain.usecases.ParseToEpochMillisUseCase
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
@@ -25,12 +26,13 @@ class CalculateNextPrayerInfoUseCase @Inject constructor(
         zoneId: ZoneId = ZoneId.systemDefault()
     ): NextPrayerInfo {
         val prayerMap = listOf(
-            "Fajr" to timings.fajr,
-            "Dhuhr" to timings.dhuhr,
-            "Asr" to timings.asr,
-            "Maghrib" to timings.maghrib,
-            "Isha" to timings.isha
+            PrayerName.FAJR to timings.fajr,
+            PrayerName.DHUHR to timings.dhuhr,
+            PrayerName.ASR to timings.asr,
+            PrayerName.MAGHRIB to timings.maghrib,
+            PrayerName.ISHA to timings.isha
         )
+
         val nowMillis = System.currentTimeMillis()
         val millisList = prayerMap.map { (name, time) ->
             name to parseToEpochMillisUseCase(date, time, zoneId)
@@ -44,7 +46,7 @@ class CalculateNextPrayerInfoUseCase @Inject constructor(
                     .plusDays(1)
                     .format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
                 NextPrayerInfo(
-                    name = "Fajr",
+                    name = PrayerName.FAJR,
                     spanStartMillis = millisList.last().second,
                     spanEndMillis = parseToEpochMillisUseCase(tomorrow, timings.fajr, zoneId),
                     crossesIntoNextDay = true
@@ -65,7 +67,7 @@ class CalculateNextPrayerInfoUseCase @Inject constructor(
                 )
 
                 NextPrayerInfo(
-                    name = "Fajr",
+                    name = PrayerName.FAJR,
                     spanStartMillis = yesterdayIshaMillis,
                     spanEndMillis = millisList[0].second,
                     crossesIntoNextDay = false

@@ -1,7 +1,7 @@
 package com.mhq.salati.shared.domain
 
 object PrayerAlarmNames {
-    val MAJOR = listOf("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
-    val MINOR = listOf("Imsak", "Shorouq", "First Third", "Midnight", "Last Third")
+    val MAJOR = PrayerName.entries.filter { !it.isMinorTiming }.map { it.storageKey }
+    val MINOR = PrayerName.entries.filter { it.isMinorTiming }.map { it.storageKey }
     val ALL = MAJOR + MINOR
 }

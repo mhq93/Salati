@@ -18,10 +18,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
 import com.mhq.salati.shared.presentation.theme.AccentEmerald
 import com.mhq.salati.shared.presentation.theme.AccentGold
 import com.mhq.salati.shared.presentation.theme.GaugeTrackDim
@@ -106,7 +108,7 @@ fun PrayerCountdownRing(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Next Prayer: $nextPrayerName",
+                text = stringResource(R.string.next_prayer, nextPrayerName),
                 color = AccentGold,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold

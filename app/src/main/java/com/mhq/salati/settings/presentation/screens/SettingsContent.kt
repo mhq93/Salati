@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -40,6 +41,7 @@ import com.mhq.salati.settings.presentation.components.SettingsStepperRow
 import com.mhq.salati.settings.presentation.components.SettingsSwitchRow
 import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
 import com.mhq.salati.settings.presentation.contract.SettingsContract.State
+import com.mhq.salati.shared.presentation.components.BottomNavDefaults
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import com.mhq.salati.shared.presentation.theme.SheetBackground
 
@@ -55,8 +57,10 @@ fun SettingsContent(
             .background(SheetBackground)
     ) {
         LazyColumn(
-            contentPadding = PaddingValues(bottom = 40.dp),
-            modifier = Modifier.fillMaxSize()
+            contentPadding = PaddingValues(bottom = BottomNavDefaults.Height + 40.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
         ) {
             item { SettingsHeader() }
 
@@ -84,7 +88,7 @@ fun SettingsContent(
                         SettingsSelectorRow(
                             icon = Icons.Default.MusicNote,
                             title = stringResource(R.string.adhan_sound),
-                            valueLabel = state.adhanSound.displayName,
+                            valueLabel = stringResource(state.adhanSound.displayNameRes),
                             isEnabled = state.notificationsEnabled,
                             onClick = { onIntent(Intent.OpenSelector(SelectorType.AdhanSound)) }
                         )
@@ -102,7 +106,7 @@ fun SettingsContent(
                         SettingsSelectorRow(
                             icon = Icons.Default.Explore,
                             title = stringResource(R.string.calculation_method),
-                            valueLabel = state.calculationMethod.displayName,
+                            valueLabel = stringResource(state.calculationMethod.displayNameRes),
                             onClick = { onIntent(Intent.OpenSelector(SelectorType.CalculationMethod)) }
                         )
 
@@ -111,7 +115,7 @@ fun SettingsContent(
                         SettingsSelectorRow(
                             icon = Icons.Default.School,
                             title = stringResource(R.string.asr_madhab),
-                            valueLabel = state.madhab.displayName,
+                            valueLabel = stringResource(state.madhab.displayNameRes),
                             onClick = { onIntent(Intent.OpenSelector(SelectorType.Madhab)) }
                         )
                     }
@@ -127,8 +131,8 @@ fun SettingsContent(
                     SettingsCard {
                         SettingsSelectorRow(
                             icon = Icons.Default.DarkMode,
-                            title = "Theme",
-                            valueLabel = state.themeMode.displayName,
+                            title = stringResource(R.string.theme),
+                            valueLabel = stringResource(state.themeMode.displayNameRes),
                             onClick = { onIntent(Intent.OpenSelector(SelectorType.Theme)) }
                         )
 
@@ -136,9 +140,9 @@ fun SettingsContent(
 
                         SettingsSelectorRow(
                             icon = Icons.Default.Language,
-                            title = "Language",
-                            valueLabel = state.language.displayName,
-                            onClick = { onIntent(Intent.OpenSelector(SelectorType.Language))}
+                            title = stringResource(R.string.language),
+                            valueLabel = stringResource(state.language.displayNameRes),
+                            onClick = { onIntent(Intent.OpenSelector(SelectorType.Language)) }
                         )
                     }
 

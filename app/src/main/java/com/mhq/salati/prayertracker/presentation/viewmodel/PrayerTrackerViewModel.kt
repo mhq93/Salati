@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.prayertracker.domain.model.DayStatus
 import com.mhq.salati.prayertracker.domain.model.PrayerStatus
-import com.mhq.salati.prayertracker.domain.model.PrayerType
 import com.mhq.salati.prayertracker.domain.usecases.GetCurrentStreakUseCase
 import com.mhq.salati.prayertracker.domain.usecases.ObservePrayerRecordsForDateUseCase
 import com.mhq.salati.prayertracker.domain.usecases.ObservePrayerRecordsForMonthUseCase
@@ -12,6 +11,7 @@ import com.mhq.salati.prayertracker.domain.usecases.SetPrayerStatusUseCase
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.Effect
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.Intent
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.State
+import com.mhq.salati.shared.domain.PrayerName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -114,12 +114,12 @@ class PrayerTrackerViewModel @Inject constructor(
 
     private fun dayStatusFor(
         date: LocalDate,
-        records: Map<PrayerType, PrayerStatus>,
+        records: Map<PrayerName, PrayerStatus>,
         today: LocalDate
     ): DayStatus = when {
         date.isAfter(today) -> DayStatus.FUTURE
         records.values.any { it == PrayerStatus.MISSED } -> DayStatus.HAS_MISSED
-        PrayerType.entries.all { records[it] == PrayerStatus.PRAYED } -> DayStatus.ALL_PRAYED
+        PrayerName.majorEntries.all { records[it] == PrayerStatus.PRAYED } -> DayStatus.ALL_PRAYED
         else -> DayStatus.IN_PROGRESS
     }
 }

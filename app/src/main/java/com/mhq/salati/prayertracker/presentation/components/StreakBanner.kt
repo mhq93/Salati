@@ -15,9 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
 import com.mhq.salati.shared.presentation.theme.AccentGold
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
 
@@ -48,7 +50,7 @@ fun StreakBanner(
             modifier = Modifier.width(6.dp)
         )
         Text(
-            text = "$streak day streak",
+            text = stringResource(R.string.day_streak, streak),
             color = Color.White,
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium

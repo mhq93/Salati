@@ -4,13 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.mhq.salati.qibla.presentation.components.QiblaHeader
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
+import com.mhq.salati.shared.presentation.components.BottomNavDefaults
 import com.mhq.salati.shared.presentation.components.asString
 import com.mhq.salati.shared.presentation.screens.AwaitingLocationPermissions
 import com.mhq.salati.shared.presentation.screens.LoadingContent
@@ -30,7 +32,10 @@ fun QiblaContent(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
+                .padding(bottom = BottomNavDefaults.Height)
         ) {
             QiblaHeader()
 
@@ -40,7 +45,7 @@ fun QiblaContent(
                 }
 
                 state.errorMessage != null -> {
-                    QiblaErrorContent(
+                    QiblaContentError(
                         errorMessage = state.errorMessage.asString(),
                         sensorUnavailable = state.sensorUnavailable,
                         locationPermission = state.locationPermission,
@@ -50,7 +55,7 @@ fun QiblaContent(
                 }
 
                 state.qiblaBearing != null -> {
-                    QiblaSuccessContent(
+                    QiblaContentSuccess(
                         locationName = state.locationName,
                         deviceHeading = state.deviceHeading,
                         qiblaBearing = state.qiblaBearing,

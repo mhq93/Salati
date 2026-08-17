@@ -1,11 +1,14 @@
 package com.mhq.salati.settings.domain.model
 
-enum class CalculationMethod(val apiMethodId: Int, val displayName: String) {
-    EGYPTIAN_GENERAL_AUTHORITY(5, "Egyptian General Authority"),
-    UMM_AL_QURA(4, "Umm Al-Qura, Makkah"),
-    MUSLIM_WORLD_LEAGUE(3, "Muslim World League"),
-    ISLAMIC_SOCIETY_OF_NORTH_AMERICA(2, "Islamic Society of North America"),
-    UNIVERSITY_OF_ISLAMIC_SCIENCES_KARACHI(1, "University of Islamic Sciences, Karachi");
+import androidx.annotation.StringRes
+import com.mhq.salati.R
+
+enum class CalculationMethod(val apiMethodId: Int, @StringRes val displayNameRes: Int) {
+    EGYPTIAN_GENERAL_AUTHORITY(5, R.string.calc_method_egyptian_general_authority),
+    UMM_AL_QURA(4, R.string.calc_method_umm_al_qura),
+    MUSLIM_WORLD_LEAGUE(3, R.string.calc_method_muslim_world_league),
+    ISLAMIC_SOCIETY_OF_NORTH_AMERICA(2, R.string.calc_method_isna),
+    UNIVERSITY_OF_ISLAMIC_SCIENCES_KARACHI(1, R.string.calc_method_karachi);
 
     companion object {
         fun fromApiMethodId(id: Int): CalculationMethod =

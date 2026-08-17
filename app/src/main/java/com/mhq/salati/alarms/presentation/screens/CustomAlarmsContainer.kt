@@ -17,22 +17,27 @@ import kotlinx.coroutines.launch
 fun CustomAlarmsContainer(
     viewModel: AlarmsViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val state by viewModel.state.collectAsState()
     val snackbarHostState = LocalSnackbarHostState.current
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is AlarmsContract.Effect.ShowError ->
-                    scope.launch { snackbarHostState.showSnackbar(effect.message.asString(context)) }
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            effect.message.asString(context)
+                        )
+                    }
+
                 is AlarmsContract.Effect.AlarmSaved -> Unit
             }
         }
     }
 
-    CustomAlarmsScreen(
+    CustomAlarmsContent(
         state = state,
         onIntent = viewModel::onIntent
     )

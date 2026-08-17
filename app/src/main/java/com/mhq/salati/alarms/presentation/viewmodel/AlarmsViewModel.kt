@@ -2,6 +2,7 @@ package com.mhq.salati.alarms.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mhq.salati.R
 import com.mhq.salati.alarms.domain.model.CustomAlarm
 import com.mhq.salati.alarms.domain.usecases.CreateCustomAlarmUseCase
 import com.mhq.salati.alarms.domain.usecases.DeleteCustomAlarmUseCase
@@ -70,6 +71,11 @@ class AlarmsViewModel @Inject constructor(
     private fun saveAlarm(alarm: CustomAlarm) {
         viewModelScope.launch {
             try {
+                val isDuplicate = alarm.id == 0L && _state.value.alarms.any { it.isEquivalentTo(alarm) }
+                if (isDuplicate) {
+                    _effect.send(Effect.ShowError(UiText.Res(R.string.duplicate_alarm_exists)))
+                    return@launch
+                }
                 if (alarm.id == 0L) createCustomAlarmUseCase(alarm) else updateCustomAlarmUseCase(alarm)
                 _state.update { it.copy(isEditorVisible = false, editingAlarm = null) }
                 _effect.send(Effect.AlarmSaved)
@@ -81,6 +87,13 @@ class AlarmsViewModel @Inject constructor(
             }
         }
     }
+
+    private fun CustomAlarm.isEquivalentTo(other: CustomAlarm): Boolean =
+        prayerName == other.prayerName &&
+                offsetMinutes == other.offsetMinutes &&
+                offsetDirection == other.offsetDirection &&
+                everyDay == other.everyDay &&
+                activeDays == other.activeDays
 
     private fun deleteAlarm(id: Long) {
         viewModelScope.launch {

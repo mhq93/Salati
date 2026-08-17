@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
 
 @Composable
-fun BlankCustomAlarmsScreen(
+fun CustomAlarmsContentBlank(
     modifier: Modifier = Modifier
 ) {
     Column(

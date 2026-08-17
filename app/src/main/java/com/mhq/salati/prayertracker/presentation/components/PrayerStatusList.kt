@@ -21,12 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
 import com.mhq.salati.prayertracker.domain.model.PrayerStatus
-import com.mhq.salati.prayertracker.domain.model.PrayerType
+import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.presentation.theme.CardBackground
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.Missed
@@ -38,8 +40,8 @@ import java.time.LocalDate
 @Composable
 fun PrayerStatusList(
     selectedDate: LocalDate,
-    records: Map<PrayerType, PrayerStatus>,
-    onPrayerTapped: (PrayerType) -> Unit
+    records: Map<PrayerName, PrayerStatus>,
+    onPrayerTapped: (PrayerName) -> Unit
 ) {
     val locked = selectedDate.isAfter(LocalDate.now())
 
@@ -47,7 +49,7 @@ fun PrayerStatusList(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Track your prayers",
+            text = stringResource(R.string.track_your_prayers),
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             color = InkText,
@@ -57,7 +59,7 @@ fun PrayerStatusList(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            PrayerType.entries.forEach { prayer ->
+            PrayerName.majorEntries.forEach { prayer ->
                 val status = records[prayer] ?: PrayerStatus.PENDING
 
                 Column(
@@ -75,7 +77,7 @@ fun PrayerStatusList(
 
                     ) {
                     Text(
-                        text = prayer.displayName,
+                        text = stringResource(prayer.labelRes),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         color = if (locked) MutedSlate else InkText,
@@ -111,8 +113,6 @@ fun PrayerStatusList(
             }
         }
     }
-
-
 }
 
 @Preview

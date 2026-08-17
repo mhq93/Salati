@@ -22,6 +22,7 @@ import com.mhq.salati.permissions.location.LocationPermissionEffect
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.prayertimes.domain.usecases.GetCachedPrayerTimesUseCase
 import com.mhq.salati.prayertimes.domain.usecases.GetPrayerTimesUseCase
+import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.domain.usecases.ParseTimeToMinutesUseCase
 import com.mhq.salati.shared.presentation.components.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -428,27 +429,22 @@ class HomeViewModel @Inject constructor(
         return browsedDateKey == todayKey
     }
 
-    private fun calculatePastPrayers(timings: PrayerTimings): Set<String> {
+    private fun calculatePastPrayers(timings: PrayerTimings): Set<PrayerName> {
         val allTimings = listOf(
-            "Imsak" to timings.imsak,
-            "Fajr" to timings.fajr,
-            "Shorouq" to timings.sunrise,
-            "Dhuhr" to timings.dhuhr,
-            "Asr" to timings.asr,
-            "Maghrib" to timings.maghrib,
-            "Isha" to timings.isha,
-            "First Third" to timings.firstThird,
-            "Midnight" to timings.midnight,
-            "Last Third" to timings.lastThird
+            PrayerName.IMSAK to timings.imsak,
+            PrayerName.FAJR to timings.fajr,
+            PrayerName.SHOROUQ to timings.sunrise,
+            PrayerName.DHUHR to timings.dhuhr,
+            PrayerName.ASR to timings.asr,
+            PrayerName.MAGHRIB to timings.maghrib,
+            PrayerName.ISHA to timings.isha,
+            PrayerName.FIRST_THIRD to timings.firstThird,
+            PrayerName.MIDNIGHT to timings.midnight,
+            PrayerName.LAST_THIRD to timings.lastThird
         )
-
         val imsakMinutes = parseTimeToMinutesUseCase(timings.imsak)
-
         fun normalize(minutes: Int) = if (minutes < imsakMinutes) minutes + 24 * 60 else minutes
-
-        val rawNowMinutes = parseTimeToMinutesUseCase(
-            SimpleDateFormat("HH:mm", Locale.US).format(Date())
-        )
+        val rawNowMinutes = parseTimeToMinutesUseCase(SimpleDateFormat("HH:mm", Locale.US).format(Date()))
         val nowMinutes = normalize(rawNowMinutes)
 
         return allTimings
@@ -457,16 +453,16 @@ class HomeViewModel @Inject constructor(
             .toSet()
     }
 
-    private fun calculateCurrentPrayerName(timings: PrayerTimings): String? {
+    private fun calculateCurrentPrayerName(timings: PrayerTimings): PrayerName? {
         val nowMinutes = parseTimeToMinutesUseCase(
             SimpleDateFormat("HH:mm", Locale.US).format(Date())
         )
         val prayers = listOf(
-            "Fajr" to timings.fajr,
-            "Dhuhr" to timings.dhuhr,
-            "Asr" to timings.asr,
-            "Maghrib" to timings.maghrib,
-            "Isha" to timings.isha
+            PrayerName.FAJR to timings.fajr,
+            PrayerName.DHUHR to timings.dhuhr,
+            PrayerName.ASR to timings.asr,
+            PrayerName.MAGHRIB to timings.maghrib,
+            PrayerName.ISHA to timings.isha
         )
         return prayers
             .map { it.first to parseTimeToMinutesUseCase(it.second) }
@@ -492,19 +488,6 @@ class HomeViewModel @Inject constructor(
         startCountdownTicker(info.spanEndMillis)
     }
 
-//    private suspend fun rescheduleAlarmsIfLoaded() {
-//        val timings = _state.value.timings ?: return
-//        val date = _state.value.date ?: return
-//
-//        val browsedDateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
-//        val todayKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Calendar.getInstance().time)
-//
-//        if (browsedDateKey != todayKey) return
-//
-//        val todaysMutedPrayers = mutedPrayersRepository.getMutedPrayers(todayKey)
-//        scheduleDailyPrayerAlarmsUseCase(timings, todayKey, todaysMutedPrayers)
-//    }
-
     private suspend fun rescheduleAlarmsIfLoaded() {
         val timings = _state.value.timings ?: return
         val date = _state.value.date ?: return
@@ -520,16 +503,16 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun PrayerTimings.toNameMap(): Map<String, String> = mapOf(
-        "Imsak" to imsak,
-        "Fajr" to fajr,
-        "Shorouq" to sunrise,
-        "Dhuhr" to dhuhr,
-        "Asr" to asr,
-        "Maghrib" to maghrib,
-        "Isha" to isha,
-        "First Third" to firstThird,
-        "Midnight" to midnight,
-        "Last Third" to lastThird
+        PrayerName.IMSAK.storageKey to imsak,
+        PrayerName.FAJR.storageKey to fajr,
+        PrayerName.SHOROUQ.storageKey to sunrise,
+        PrayerName.DHUHR.storageKey to dhuhr,
+        PrayerName.ASR.storageKey to asr,
+        PrayerName.MAGHRIB.storageKey to maghrib,
+        PrayerName.ISHA.storageKey to isha,
+        PrayerName.FIRST_THIRD.storageKey to firstThird,
+        PrayerName.MIDNIGHT.storageKey to midnight,
+        PrayerName.LAST_THIRD.storageKey to lastThird
     )
 
     @SuppressLint("EmptySuperCall")

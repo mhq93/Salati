@@ -36,10 +36,10 @@ fun HomeContainer(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val state by homeViewModel.state.collectAsStateWithLifecycle()
-    val gpsEnabled by rememberGpsEnabled()
-    val snackbarHostState = LocalSnackbarHostState.current
     val scope = rememberCoroutineScope()
+    val gpsEnabled by rememberGpsEnabled()
+    val state by homeViewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = LocalSnackbarHostState.current
 
     val locationPermissionLauncher = rememberLocationPermissionLauncher(
         onGranted = {

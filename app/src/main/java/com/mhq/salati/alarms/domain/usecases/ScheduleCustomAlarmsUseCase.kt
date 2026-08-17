@@ -8,9 +8,6 @@ import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
 
-/**
- * @param timings map of prayer/minor-timing name (PrayerAlarmNames.ALL) -> "HH:mm" for TODAY
- */
 class ScheduleCustomAlarmsUseCase @Inject constructor(
     private val repository: CustomAlarmRepository,
     private val scheduler: CustomAlarmScheduler

@@ -10,57 +10,46 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.home.presentation.contract.HomeContract
+import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable
 fun PrayersList(
-    prayers: List<Triple<String, String, String>>,
-    minorTimings: List<Triple<String, String, String>>,
-    currentTimingName: String?,
+    prayers: List<Pair<PrayerName, String>>,
+    minorTimings: List<Pair<PrayerName, String>>,
+    currentTimingName: PrayerName?,
     mutedTimings: Set<String>,
-    pastTimings: Set<String>,
+    pastTimings: Set<PrayerName>,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(top = 16.dp)) {
-        prayers.forEachIndexed { index, (_, name, time) ->
-            val (_, minorName, minorTime) = minorTimings[index]
+        prayers.forEachIndexed { index, (name, time) ->
+            val (minorName, minorTime) = minorTimings[index]
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min)
-            ) {
+            Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
                 Box(modifier = Modifier.weight(1f)) {
                     PrayerListItem(
-                        prayerName = name,
+                        prayerName = stringResource(name.labelRes),
                         prayerTime = time,
                         isPrayerHighlighted = name == currentTimingName,
-                        isPrayerAdhanMuted = name in mutedTimings,
+                        isPrayerAdhanMuted = name.storageKey in mutedTimings,
                         isPrayerPassed = name in pastTimings,
-                        onMutePrayerToggle = {
-                            onIntent(HomeContract.Intent.ToggleMute(name))
-                        }
+                        onMutePrayerToggle = { onIntent(HomeContract.Intent.ToggleMute(name.storageKey)) }
                     )
                 }
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                ) {
+                Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
                     PrayerListItem(
-                        prayerName = minorName,
+                        prayerName = stringResource(minorName.labelRes),
                         prayerTime = minorTime,
                         isPrayerHighlighted = minorName == currentTimingName,
-                        isPrayerAdhanMuted = minorName in mutedTimings,
+                        isPrayerAdhanMuted = minorName.storageKey in mutedTimings,
                         isPrayerPassed = minorName in pastTimings,
-                        onMutePrayerToggle = {
-                            onIntent(HomeContract.Intent.ToggleMute(minorName))
-                        }
+                        onMutePrayerToggle = { onIntent(HomeContract.Intent.ToggleMute(minorName.storageKey)) }
                     )
                 }
             }

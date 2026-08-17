@@ -24,7 +24,7 @@ import com.mhq.salati.shared.presentation.theme.CardBackground
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable
-fun QiblaSuccessContent(
+fun QiblaContentSuccess(
     locationName: String?,
     deviceHeading: Float,
     qiblaBearing: Float,
@@ -84,9 +84,9 @@ fun QiblaSuccessContent(
 
 @Preview
 @Composable
-private fun QiblaSuccessContentPreview() {
+private fun QiblaContentSuccessPreview() {
     SalatiTheme() {
-        QiblaSuccessContent(
+        QiblaContentSuccess(
             locationName = "",
             deviceHeading = 1.0f,
             qiblaBearing = 1.0f,

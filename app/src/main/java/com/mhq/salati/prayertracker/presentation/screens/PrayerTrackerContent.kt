@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +19,7 @@ import com.mhq.salati.prayertracker.presentation.components.PrayerStatusList
 import com.mhq.salati.prayertracker.presentation.components.PrayerTrackerHeader
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.Intent
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.State
+import com.mhq.salati.shared.presentation.components.BottomNavDefaults
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import com.mhq.salati.shared.presentation.theme.SheetBackground
 
@@ -32,7 +34,10 @@ fun PrayerTrackerContent(
             .background(color = SheetBackground)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
+                .padding(bottom = BottomNavDefaults.Height)
         ) {
             PrayerTrackerHeader(
                 streak = state.currentStreak

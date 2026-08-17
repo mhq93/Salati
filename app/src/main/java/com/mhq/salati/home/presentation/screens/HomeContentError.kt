@@ -5,9 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,7 +17,7 @@ import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable
-fun HomeErrorContent(
+fun HomeContentError(
     errorMessage: String,
     locationPermissionState: LocationPermissionState,
     onIntent: (HomeContract.Intent) -> Unit,
@@ -29,7 +26,8 @@ fun HomeErrorContent(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
     ) {
         Text(
             text = "Error: $errorMessage",
@@ -69,9 +67,9 @@ fun HomeErrorContent(
 
 @Preview
 @Composable
-private fun HomeErrorContentPreview() {
+private fun HomeContentErrorPreview() {
     SalatiTheme() {
-        HomeErrorContent(
+        HomeContentError(
             errorMessage = "errorMessage",
             locationPermissionState = LocationPermissionState(),
             onIntent = {}

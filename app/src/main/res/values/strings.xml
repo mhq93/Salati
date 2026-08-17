@@ -1,64 +1,123 @@
 <resources>
     <string name="app_name">Salati</string>
-    <string name="customize_your_app_experience">Customize your app experience</string>
-    <string name="settings">Settings</string>
-    <string name="qibla_direction">Qibla Direction</string>
-    <string name="face_the_kaaba_wherever_you_are">Face the Kaaba wherever you are</string>
-    <string name="adhan_playing_title">Prayer time is due</string>
-    <string name="adhan_playing_body">It\'s time for Al-%1$s prayer</string>
-    <string name="stop">Stop</string>
+
+    <!-- Onboarding -->
     <string name="get_started">Get Started</string>
-    <string name="next">Next</string>
     <string name="never_miss_a_prayer">Never Miss a Prayer</string>
     <string name="accurate_prayer_times_calculated_for_your_exact_location">Accurate prayer times calculated for your exact location, updated automatically throughout the day.</string>
     <string name="find_your_qibla">Find Your Qibla</string>
     <string name="a_precise_live_compass_points_you_toward_the_kaaba_wherever_you_are">A precise, live compass points you toward the Kaaba wherever you are.</string>
     <string name="gentle_reminders">Gentle Reminders</string>
     <string name="custom_adhan_alerts_for_every_prayer_fully_in_your_control">Custom Adhan alerts for every prayer, fully in your control.</string>
+    <string name="next">Next</string>
     <string name="skip">Skip</string>
-    <string name="track_your_five_daily_prayers">Track your five daily prayers</string>
-    <string name="prayer_tracker">Prayer tracker</string>
+
+    <!-- Bottom Nav Bar -->
+    <string name="home">Home</string>
+    <string name="qibla">Qibla</string>
+    <string name="tracker">Tracker</string>
+    <string name="alarms">Alarms</string>
+
+    <!-- Home -->
+    <string name="next_prayer">Next Prayer: %1$s</string>
+    <string name="imsak">Imsak</string>
     <string name="fajr">Fajr</string>
+    <string name="shorouq">Shorouq</string>
     <string name="dhuhr">Dhuhr</string>
     <string name="asr">Asr</string>
     <string name="maghrib">Maghrib</string>
     <string name="isha">Isha</string>
-    <string name="imsak">Imsak</string>
-    <string name="shorouq">Shorouq</string>
     <string name="first_third">First Third</string>
     <string name="midnight">Midnight</string>
     <string name="last_third">Last Third</string>
+
+    <!-- Notifications -->
+    <string name="adhan_playing_title">Prayer time is due</string>
+    <string name="adhan_playing_body">It\'s time for Al-%1$s prayer</string>
+    <string name="stop">Stop</string>
+    <string name="minor_timing_playing_title">%1$s</string>
+    <string name="minor_timing_playing_body">It\'s time for %1$s</string>
+
+    <!-- Qibla -->
+    <string name="qibla_direction">Qibla Direction</string>
+    <string name="face_the_kaaba_wherever_you_are">Face the Kaaba wherever you are</string>
+    <string name="location_not_found">Location Not Found</string>
+    <string name="unknown_location">Unknown Location</string>
+    <string name="recalibrate">Recalibrate</string>
+    <string name="sensor_accuracy_is_excellent">Sensor accuracy is excellent.</string>
+    <string name="sensor_accuracy_is_moderate">Sensor accuracy is moderate.</string>
+    <string name="sensor_accuracy_is_poor">Sensor accuracy is poor.</string>
+
+    <!-- Home & Qibla Errors-->
+    <string name="error">Error: %1$s</string>
+    <string name="something_went_wrong">Something went wrong.</string>
+    <string name="enable_location">Enable Location</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="retry">Retry</string>
+    <string name="location_services_disabled">Location services are turned off. Please, enable them.</string>
+    <string name="location_permission_required">Location permission is required to show Qibla direction.</string>
+    <string name="location_permission_is_required_to_show_prayer_times">Location permission is required to show prayer times.</string>
+    <string name="location_permission_permanently_denied">Location permission permanently denied. Please enable it in Settings.</string>
+    <string name="location_permission_permanently_denied_please_enable_it_via_settings">Location permission permanently denied. Please, enable it via Settings.</string>
+    <string name="failed_to_get_location">Failed to get location</string>
+    <string name="failed_to_load_qibla_direction">Failed to load Qibla direction</string>
+    <string name="qibla_direction_can_t_be_shown_here">Qibla direction can\'t be shown here.</string>
+    <string name="this_device_doesn_t_have_the_sensors_needed_for_a_compass">This device doesn\'t have the sensors needed for a compass.</string>
+    <string name="notifications_are_disabled_you_won_t_see_prayer_reminders">Notifications are disabled — you won\'t see prayer reminders.</string>
+    <string name="exact_alarms_are_disabled_prayer_alerts_may_not_ring_on_time">Exact alarms are disabled — prayer alerts may not ring on time.</string>
+
+    <!-- Tracker -->
+    <string name="prayer_tracker">Prayer tracker</string>
+    <string name="track_your_prayers">Track your prayers</string>
+    <string name="track_your_five_daily_prayers">Track your five daily prayers</string>
+    <string name="did_you_pray_x">Did you pray %1$s?</string>
+    <string name="mark_todays_x_prayer">Mark today\'s %1$s prayer</string>
+    <string name="day_streak">%1$d Day streak</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="customize_your_app_experience">Customize your app experience</string>
+    <string name="notifications">Notifications</string>
     <string name="prayer_notifications">Prayer Notifications</string>
     <string name="get_alerted_at_each_prayer_time">Get alerted at each prayer time</string>
+
     <string name="adhan_sound">Adhan Sound</string>
+    <string name="adhan_sound_default">Default Beep</string>
+    <string name="adhan_sound_makkah">Makkah Adhan</string>
+    <string name="adhan_sound_madinah">Madinah Adhan</string>
+    <string name="adhan_sound_silent">Silent (Notification Only)</string>
+
     <string name="prayer_calculation">Prayer Calculation</string>
     <string name="calculation_method">Calculation Method</string>
+    <string name="calc_method_egyptian_general_authority">Egyptian General Authority</string>
+    <string name="calc_method_umm_al_qura">Umm Al-Qura, Makkah</string>
+    <string name="calc_method_muslim_world_league">Muslim World League</string>
+    <string name="calc_method_isna">Islamic Society of North America</string>
+    <string name="calc_method_karachi">University of Islamic Sciences, Karachi</string>
     <string name="asr_madhab">Asr Madhab</string>
+    <string name="madhab_shafi">Shafi\'i (Standard)</string>
+    <string name="madhab_hanafi">Hanafi</string>
+
     <string name="appearance">Appearance</string>
+    <string name="theme">Theme</string>
+    <string name="theme_system_default">System Default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="language">Language</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="selected">Selected</string>
+
     <string name="hijri_calendar">Hijri Calendar</string>
     <string name="date_adjustment">Date Adjustment</string>
     <string name="correct_for_local_moon_sighting">Correct for local moon sighting</string>
+
     <string name="about">About</string>
     <string name="rate_salati">Rate Salati</string>
     <string name="share_with_friends">Share with Friends</string>
     <string name="contact_support">Contact Support</string>
     <string name="version">Version</string>
-    <string name="location_not_found">Location Not Found</string>
 
-    <string name="location_permission_permanently_denied">Location permission permanently denied. Please enable it in Settings.</string>
-    <string name="location_permission_required">Location permission is required to show Qibla direction.</string>
-    <string name="location_services_disabled">Location services are turned off. Please, enable them.</string>
-    <string name="failed_to_get_location">Failed to get location</string>
-    <string name="failed_to_load_qibla_direction">Failed to load Qibla direction</string>
-    <string name="this_device_doesn_t_have_the_sensors_needed_for_a_compass">This device doesn\'t have the sensors needed for a compass.</string>
-    <string name="qibla_direction_can_t_be_shown_here">Qibla direction can\'t be shown here.</string>
-    <string name="retry">Retry</string>
-    <string name="enable_location">Enable Location</string>
-    <string name="open_settings">Open Settings</string>
-    <string name="error">Error: %1$s</string>
-    <string name="location_permission_permanently_denied_please_enable_it_via_settings">Location permission permanently denied. Please, enable it via Settings.</string>
-    <string name="location_permission_is_required_to_show_prayer_times">Location permission is required to show prayer times.</string>
-    <string name="something_went_wrong">Something went wrong.</string>
     <string name="couldn_t_update_notification_settings">Couldn\'t update notification settings</string>
     <string name="couldn_t_update_calculation_method">Couldn\'t update calculation method</string>
     <string name="couldn_t_update_madhab">Couldn\'t update madhab</string>
@@ -66,39 +125,30 @@
     <string name="couldn_t_update_language">Couldn\'t update language</string>
     <string name="couldn_t_update_adhan_sound">Couldn\'t update adhan sound</string>
     <string name="couldn_t_update_hijri_offset">Couldn\'t update Hijri offset</string>
-    <string name="exact_alarms_are_disabled_prayer_alerts_may_not_ring_on_time">Exact alarms are disabled — prayer alerts may not ring on time.</string>
-    <string name="notifications_are_disabled_you_won_t_see_prayer_reminders">Notifications are disabled — you won\'t see prayer reminders.</string>
-    <string name="minor_timing_playing_title">%1$s</string>
-    <string name="minor_timing_playing_body">It\'s time for %1$s</string>
-    <string name="unknown_location">Unknown Location</string>
-    <string name="home">Home</string>
-    <string name="qibla">Qibla</string>
-    <string name="tracker">Tracker</string>
-    <string name="notifications">Notifications</string>
 
     <!-- Alarm Editor sheet -->
-    <string name="no_custom_alarms_title" translatable="false">There are no set custom alarms</string>
-    <string name="no_custom_alarms_body" translatable="false">Click the button below to add a new custom alarm.</string>
-    <string name="new_custom_alarm" translatable="false">Customize an alarm</string>
-    <string name="alarm_label_optional" translatable="false">Label (Optional)</string>
-    <string name="edit_custom_alarm" translatable="false">Edit custom alarm</string>
-    <string name="custom_alarm_default_title" translatable="false">Custom alarm default title</string>
-    <string name="add_custom_alarm" translatable="false">Add custom alarm</string>
-    <string name="custom_alarm_body" translatable="false">Custom alarm body</string>
-    <string name="custom_alarms_channel_name" translatable="false">Custom alarms channel name</string>
-    <string name="alarms" translatable="false">Alarms</string>
-    <string name="prayer" translatable="false">Prayer</string>
-    <string name="timing" translatable="false">Timing</string>
-    <string name="before" translatable="false">Before prayer time</string>
-    <string name="after" translatable="false">After prayer time</string>
-    <string name="minutes_value" translatable="false">%1$d min</string>
-    <string name="repeat_every_day" translatable="false">Repeat everyday</string>
-    <string name="repeats_every_day" translatable="false">Every day</string>
-    <string name="repeats_once" translatable="false">Once</string>
-    <string name="at_prayer_time" translatable="false">At %1$s time</string>
-    <string name="save" translatable="false">Save</string>
-    <string name="edit" translatable="false">Edit</string>
-    <string name="delete" translatable="false">Delete</string>
+    <string name="no_custom_alarms_title">There are no set custom alarms</string>
+    <string name="no_custom_alarms_body">Click the button below to add a new custom alarm.</string>
+    <string name="new_custom_alarm">Customize an alarm</string>
+    <string name="alarm_label_optional">Label (Optional)</string>
+    <string name="edit_custom_alarm">Edit custom alarm</string>
+    <string name="custom_alarm_default_title">Custom alarm default title</string>
+    <string name="add_custom_alarm">Add custom alarm</string>
+    <string name="custom_alarm_body">Custom alarm body</string>
+    <string name="custom_alarms_channel_name">Custom alarms channel name</string>
+    <string name="prayer">Prayer</string>
+    <string name="timing">Timing</string>
+    <string name="before">Before prayer time</string>
+    <string name="after">After prayer time</string>
+    <string name="minutes_value">%1$d min</string>
+    <string name="repeat_every_day">Repeat everyday</string>
+    <string name="repeats_every_day">Every day</string>
+    <string name="repeats_once">Once</string>
+    <string name="at_prayer_time">At %1$s time</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="duplicate_alarm_exists">Same alarm exists</string>
 
     <plurals name="minutes_before_prayer" translatable="false">
         <item quantity="one">%1$d minute before %2$s</item>

@@ -16,10 +16,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
 import com.mhq.salati.settings.domain.model.AdhanSound
 import com.mhq.salati.settings.domain.model.AppLanguage
 import com.mhq.salati.settings.domain.model.CalculationMethod
@@ -41,34 +43,30 @@ fun SettingsSelectionSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss
     ) {
-        val (title, options) = when (selector) {
-            SelectorType.CalculationMethod -> "Calculation Method" to CalculationMethod.entries
+        val (titleRes, options) = when (selector) {
+            SelectorType.CalculationMethod -> R.string.calculation_method to CalculationMethod.entries
                 .map {
-                    it.displayName to (it == state.calculationMethod) to {
-                        Intent.SelectCalculationMethod(
-                            it
-                        )
-                    }
+                    Triple(it.displayNameRes, it == state.calculationMethod) { Intent.SelectCalculationMethod(it) }
                 }
 
-            SelectorType.Madhab -> "Asr Madhab" to Madhab.entries
-                .map { it.displayName to (it == state.madhab) to { Intent.SelectMadhab(it) } }
+            SelectorType.Madhab -> R.string.asr_madhab to Madhab.entries
+                .map { Triple(it.displayNameRes, it == state.madhab) { Intent.SelectMadhab(it) } }
 
-            SelectorType.Theme -> "Theme" to ThemeMode.entries
-                .map { it.displayName to (it == state.themeMode) to { Intent.SelectTheme(it) } }
+            SelectorType.Theme -> R.string.theme to ThemeMode.entries
+                .map { Triple(it.displayNameRes, it == state.themeMode) { Intent.SelectTheme(it) } }
 
-            SelectorType.Language -> "Language" to AppLanguage.entries
-                .map { it.displayName to (it == state.language) to { Intent.SelectLanguage(it) } }
+            SelectorType.Language -> R.string.language to AppLanguage.entries
+                .map { Triple(it.displayNameRes, it == state.language) { Intent.SelectLanguage(it) } }
 
-            SelectorType.AdhanSound -> "Adhan Sound" to AdhanSound.entries
-                .map { it.displayName to (it == state.adhanSound) to { Intent.SelectAdhanSound(it) } }
+            SelectorType.AdhanSound -> R.string.adhan_sound to AdhanSound.entries
+                .map { Triple(it.displayNameRes, it == state.adhanSound) { Intent.SelectAdhanSound(it) } }
         }
 
         Column(
             modifier.padding(bottom = 24.dp)
         ) {
             Text(
-                title,
+                stringResource(titleRes),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(
@@ -78,9 +76,7 @@ fun SettingsSelectionSheet(
             )
 
             LazyColumn {
-                items(options) { (labelSelected, buildIntent) ->
-                    val (label, isSelected) = labelSelected
-
+                items(options) { (labelRes, isSelected, buildIntent) ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
@@ -92,7 +88,7 @@ fun SettingsSelectionSheet(
                             )
                     ) {
                         Text(
-                            text = label,
+                            text = stringResource(labelRes),
                             fontSize = 15.sp,
                             modifier = Modifier.weight(1f)
                         )
@@ -100,7 +96,7 @@ fun SettingsSelectionSheet(
                         if (isSelected) {
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = "Selected"
+                                contentDescription = stringResource(R.string.selected)
                             )
                         }
                     }

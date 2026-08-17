@@ -1,14 +1,10 @@
 package com.mhq.salati.prayertracker.domain.usecases
 
 import com.mhq.salati.prayertracker.domain.model.PrayerStatus
-import com.mhq.salati.prayertracker.domain.model.PrayerType
 import com.mhq.salati.prayertracker.domain.repo.PrayerTrackerRepository
+import com.mhq.salati.shared.domain.PrayerName
 import java.time.LocalDate
 import javax.inject.Inject
-
-/** Consecutive fully-prayed days ending today;
- * today doesn't break the streak while still "in progress"
- * (no missed prayers logged yet). */
 
 class GetCurrentStreakUseCase @Inject constructor(
     private val repository: PrayerTrackerRepository
@@ -19,7 +15,7 @@ class GetCurrentStreakUseCase @Inject constructor(
         var isToday = true
         while (true) {
             val records = repository.getRecordsForDate(day)
-            val allPrayed = PrayerType.entries.all { records[it] == PrayerStatus.PRAYED }
+            val allPrayed = PrayerName.majorEntries.all { records[it] == PrayerStatus.PRAYED }
             val hasMissed = records.values.any { it == PrayerStatus.MISSED }
             when {
                 allPrayed -> { streak++; day = day.minusDays(1) }

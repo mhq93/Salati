@@ -19,10 +19,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
 import com.mhq.salati.qibla.domain.model.CompassAccuracy
 import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.InkText
@@ -40,11 +42,11 @@ fun CalibrationBanner(
 ) {
     val (label, dotColor) = when (compassAccuracy) {
         CompassAccuracy.HIGH ->
-            "Sensor accuracy is excellent." to MaterialGreen
+            stringResource(R.string.sensor_accuracy_is_excellent) to MaterialGreen
         CompassAccuracy.MEDIUM ->
-            "Sensor accuracy is moderate." to MaterialAmber
+            stringResource(R.string.sensor_accuracy_is_moderate) to MaterialAmber
         else ->
-            "Sensor accuracy is poor." to MaterialRed
+            stringResource(R.string.sensor_accuracy_is_poor) to MaterialRed
     }
 
     Surface(
@@ -89,7 +91,7 @@ fun CalibrationBanner(
                 )
             ) {
                 Text(
-                    text = "Recalibrate",
+                    text = stringResource(R.string.recalibrate),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 13.sp
                 )

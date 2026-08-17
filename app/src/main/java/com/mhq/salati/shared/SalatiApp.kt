@@ -2,7 +2,9 @@ package com.mhq.salati.shared
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
@@ -17,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -56,75 +59,78 @@ fun SalatiApp(startDestination: Screen) {
 
     val bottomBarRoutes = items.map { it.route }
 
-    Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-
-            val currentRoute = items.firstOrNull { item ->
-                currentDestination?.hierarchy?.any { it.route == item.route } == true
-            }?.route
-
-            // Only show bottom bar on main tab screens
-            if (currentRoute != null && currentDestination?.route in bottomBarRoutes) {
-                AnimatedBottomNavBar(
-                    items = items,
-                    selectedRoute = currentRoute,
-                    onItemSelected = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            snackbarHost = { SnackbarHost(snackbarHostState) }
+            // bottomBar slot removed — bar now floats in the outer Box below
+        ) { paddingValues ->
+            CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
+                NavHost(
+                    navController = navController,
+                    startDestination = startDestination.route,
+                    modifier = Modifier.padding(paddingValues)
+                ) {
+                    composable(Screen.Onboarding.route) {
+                        OnboardingContainer(
+                            onFinished = {
+                                navController.navigate(Screen.Home.route) {
+                                    popUpTo(Screen.Onboarding.route) { inclusive = true }
+                                }
                             }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        )
                     }
-                )
+                    composable(Screen.AwaitingLocationPermissions.route) {
+                        AwaitingLocationPermissions()
+                    }
+                    composable(Screen.Home.route) {
+                        HomeContainer()
+                    }
+                    composable(Screen.Qibla.route) {
+                        QiblaContainer(onNavigateToLocationPicker = { navController.navigate(Screen.LocationPicker.route) })
+                    }
+                    composable(Screen.LocationPicker.route) {
+                        LocationPickerContainer(
+                            onLocationSaved = { navController.popBackStack() },
+                            onBackClicked = { navController.popBackStack() }
+                        )
+                    }
+                    composable(Screen.PrayerTracker.route) {
+                        PrayerTrackerContainer()
+                    }
+                    composable(Screen.Alarms.route) {
+                        CustomAlarmsContainer()
+                    }
+                    composable(Screen.Settings.route) {
+                        SettingsContainer()
+                    }
+                }
             }
         }
-    ) { paddingValues ->
-        CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
-            NavHost(
-                navController = navController,
-                startDestination = startDestination.route,
-                modifier = Modifier.padding(paddingValues)
-            ) {
-                composable(Screen.Onboarding.route) {
-                    OnboardingContainer(
-                        onFinished = {
-                            navController.navigate(Screen.Home.route) {
-                                popUpTo(Screen.Onboarding.route) { inclusive = true }
-                            }
+
+        // --- FLOATING BOTTOM NAV, drawn on top so its notch shows real content behind it ---
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+
+        val currentRoute = items.firstOrNull { item ->
+            currentDestination?.hierarchy?.any { it.route == item.route } == true
+        }?.route
+
+        if (currentRoute != null && currentDestination?.route in bottomBarRoutes) {
+            AnimatedBottomNavBar(
+                items = items,
+                selectedRoute = currentRoute,
+                onItemSelected = { route ->
+                    navController.navigate(route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
                         }
-                    )
-                }
-                composable(Screen.AwaitingLocationPermissions.route) {
-                    AwaitingLocationPermissions()
-                }
-                composable(Screen.Home.route) {
-                    HomeContainer()
-                }
-                composable(Screen.Qibla.route) {
-                    QiblaContainer(onNavigateToLocationPicker = { navController.navigate(Screen.LocationPicker.route) })
-                }
-                composable(Screen.LocationPicker.route) {
-                    LocationPickerContainer(
-                        onLocationSaved = { navController.popBackStack() },
-                        onBackClicked = { navController.popBackStack() }
-                    )
-                }
-                composable(Screen.PrayerTracker.route) {
-                    PrayerTrackerContainer()
-                }
-                composable(Screen.Alarms.route) {
-                    CustomAlarmsContainer()
-                }
-                composable(Screen.Settings.route) {
-                    SettingsContainer()
-                }
-            }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
         }
     }
 }

@@ -7,6 +7,7 @@ import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.settings.presentation.contract.SettingsContract
+import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.presentation.components.UiText
 import java.util.Calendar
 
@@ -16,7 +17,7 @@ class HomeContract {
         val isLoading: Boolean = false,
         val timings: PrayerTimings? = null,
         val date: PrayerDate? = null,
-        val currentPrayerName: String? = null,
+        val currentPrayerName: PrayerName? = null,
         val nextPrayerInfo: NextPrayerInfo? = null,
         val latitude: Double? = null,
         val longitude: Double? = null,
@@ -25,7 +26,7 @@ class HomeContract {
         val locationPermission: LocationPermissionState = LocationPermissionState(),
         val adhanPlayback: AdhanPlaybackState = AdhanPlaybackState.Idle,
         val mutedPrayers: Set<String> = emptySet(),
-        val pastPrayers: Set<String> = emptySet(),
+        val pastPrayers: Set<PrayerName> = emptySet(),
         val errorMessage: UiText? = null,
         val hasExactAlarmPermission: Boolean = true,
         val hasNotificationPermission: Boolean = true,

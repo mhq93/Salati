@@ -43,7 +43,7 @@ import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContrac
 import org.osmdroid.views.MapView
 
 @Composable
-fun LocationPickerScreen(
+fun LocationPickerContent(
     state: State,
     onIntent: (Intent) -> Unit,
     onBackClicked: () -> Unit

@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -34,39 +36,40 @@ import com.mhq.salati.home.presentation.components.PrayersList
 import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
+import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import com.mhq.salati.shared.presentation.theme.SheetBackground
 
 @Composable
-fun HomeSuccessContent(
+fun HomeContentSuccess(
     locationName: String?,
     prayerDate: PrayerDate,
     prayerTimings: PrayerTimings,
     remainingMillis: Long,
     nextPrayerInfo: NextPrayerInfo?,
-    currentPrayerName: String?,
+    currentPrayerName: PrayerName?,
     mutedPrayers: Set<String>,
-    pastPrayers: Set<String>,
+    pastPrayers: Set<PrayerName>,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     val prayers = listOf(
-        Triple("🌄", stringResource(R.string.fajr), prayerTimings.fajr),
-        Triple("☀️", stringResource(R.string.dhuhr), prayerTimings.dhuhr),
-        Triple("🌤️", stringResource(R.string.asr), prayerTimings.asr),
-        Triple("🌇", stringResource(R.string.maghrib), prayerTimings.maghrib),
-        Triple("🌙", stringResource(R.string.isha), prayerTimings.isha)
+        PrayerName.FAJR to prayerTimings.fajr,
+        PrayerName.DHUHR to prayerTimings.dhuhr,
+        PrayerName.ASR to prayerTimings.asr,
+        PrayerName.MAGHRIB to prayerTimings.maghrib,
+        PrayerName.ISHA to prayerTimings.isha
     )
 
     val minorTimings = listOf(
-        Triple("🌄", stringResource(R.string.imsak), prayerTimings.imsak),
-        Triple("☀️", stringResource(R.string.shorouq), prayerTimings.sunrise),
-        Triple("🌙️", stringResource(R.string.first_third), prayerTimings.firstThird),
-        Triple("🌙", stringResource(R.string.midnight), prayerTimings.midnight),
-        Triple("🌙", stringResource(R.string.last_third), prayerTimings.lastThird)
+        PrayerName.IMSAK to prayerTimings.imsak,
+        PrayerName.SHOROUQ to prayerTimings.sunrise,
+        PrayerName.FIRST_THIRD to prayerTimings.firstThird,
+        PrayerName.MIDNIGHT to prayerTimings.midnight,
+        PrayerName.LAST_THIRD to prayerTimings.lastThird
     )
 
     var headerHeightPx by remember { mutableIntStateOf(0) }
@@ -75,7 +78,6 @@ fun HomeSuccessContent(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(SheetBackground)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -109,7 +111,7 @@ fun HomeSuccessContent(
 
                 nextPrayerInfo?.let {
                     PrayerCountdownRing(
-                        nextPrayerName = it.name,
+                        nextPrayerName = stringResource(it.name.labelRes),
                         spanStartMillis = nextPrayerInfo.spanStartMillis,
                         spanEndMillis = nextPrayerInfo.spanEndMillis,
                         remainingMillis = remainingMillis,

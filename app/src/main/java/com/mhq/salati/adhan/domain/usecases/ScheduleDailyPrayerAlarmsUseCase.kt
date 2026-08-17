@@ -1,9 +1,9 @@
 package com.mhq.salati.adhan.domain.usecases
 
-import com.mhq.salati.shared.domain.PrayerAlarmNames
 import com.mhq.salati.adhan.domain.model.PrayerAlarm
 import com.mhq.salati.adhan.domain.repo.AlarmScheduler
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
+import com.mhq.salati.shared.domain.PrayerName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -18,16 +18,16 @@ class ScheduleDailyPrayerAlarmsUseCase @Inject constructor(
         withContext(Dispatchers.IO) {
             val zoneId = ZoneId.systemDefault()
             val prayerMap = mapOf(
-                "Fajr" to timings.fajr,
-                "Dhuhr" to timings.dhuhr,
-                "Asr" to timings.asr,
-                "Maghrib" to timings.maghrib,
-                "Isha" to timings.isha,
-                "Imsak" to timings.imsak,
-                "Shorouq" to timings.sunrise,
-                "First Third" to timings.firstThird,
-                "Midnight" to timings.midnight,
-                "Last Third" to timings.lastThird
+                PrayerName.FAJR to timings.fajr,
+                PrayerName.DHUHR to timings.dhuhr,
+                PrayerName.ASR to timings.asr,
+                PrayerName.MAGHRIB to timings.maghrib,
+                PrayerName.ISHA to timings.isha,
+                PrayerName.IMSAK to timings.imsak,
+                PrayerName.SHOROUQ to timings.sunrise,
+                PrayerName.FIRST_THIRD to timings.firstThird,
+                PrayerName.MIDNIGHT to timings.midnight,
+                PrayerName.LAST_THIRD to timings.lastThird
             )
 
             prayerMap.forEach { (name, time) ->
@@ -35,10 +35,10 @@ class ScheduleDailyPrayerAlarmsUseCase @Inject constructor(
                 if (triggerMillis > System.currentTimeMillis()) {
                     alarmScheduler.schedule(
                         PrayerAlarm(
-                            prayerName = name,
+                            prayerName = name.storageKey,
                             triggerAtMillis = triggerMillis,
-                            isMinorTiming = name in PrayerAlarmNames.MINOR,
-                            isMuted = name in mutedPrayers
+                            isMinorTiming = name.isMinorTiming,
+                            isMuted = name.storageKey in mutedPrayers
                         )
                     )
                 }

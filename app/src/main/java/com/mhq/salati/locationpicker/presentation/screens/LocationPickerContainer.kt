@@ -39,7 +39,7 @@ fun LocationPickerContainer(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        LocationPickerScreen(
+        LocationPickerContent(
             state = state,
             onIntent = viewModel::onIntent,
             onBackClicked = onBackClicked

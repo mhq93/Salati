@@ -19,10 +19,9 @@ import com.mhq.salati.permissions.location.LocationPermissionState
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
-import io.ktor.websocket.Frame
 
 @Composable
-fun QiblaErrorContent(
+fun QiblaContentError(
     errorMessage: String,
     sensorUnavailable: Boolean,
     locationPermission: LocationPermissionState,
@@ -93,9 +92,9 @@ fun QiblaErrorContent(
 
 @Preview
 @Composable
-private fun QiblaErrorContentPreview() {
+private fun QiblaContentErrorPreview() {
     SalatiTheme() {
-        QiblaErrorContent(
+        QiblaContentError(
             errorMessage = "errorMessage",
             sensorUnavailable = true,
             locationPermission = LocationPermissionState(),

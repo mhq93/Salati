@@ -35,7 +35,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -52,7 +51,6 @@ import com.mhq.salati.shared.presentation.theme.AccentOrange
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
-import com.mhq.salati.shared.presentation.theme.SheetBackground
 
 @Composable
 fun AnimatedBottomNavBar(
@@ -63,6 +61,8 @@ fun AnimatedBottomNavBar(
 ) {
     val unselectedContentColor = AccentEmerald
     val selectedContentColor = AccentOrange
+
+    //val LocalBottomNavBarHeight = compositionLocalOf { 0.dp }
 
     val itemCount = items.size
     val density = LocalDensity.current
@@ -119,7 +119,7 @@ fun AnimatedBottomNavBar(
         modifier = modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.navigationBars)
-            .background(SheetBackground)
+            //.background(SheetBackground)
     ) {
         // --- BACKGROUND NOTCH CANVAS ---
         Canvas(
