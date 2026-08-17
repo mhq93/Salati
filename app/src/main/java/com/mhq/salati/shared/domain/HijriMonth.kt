@@ -1,6 +1,7 @@
-package com.mhq.salati
+package com.mhq.salati.shared.domain
 
 import androidx.annotation.StringRes
+import com.mhq.salati.R
 
 enum class HijriMonth(val number: Int, @StringRes val labelRes: Int) {
     MUHARRAM(1, R.string.hijri_muharram),
