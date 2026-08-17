@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
@@ -38,6 +40,7 @@ import java.time.chrono.HijrahDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.time.temporal.ChronoField
+import java.util.Locale
 
 @Composable
 fun CalendarMonthView(
@@ -88,13 +91,13 @@ fun CalendarMonthView(
                             locale
                         )
                     } ${selectedMonth.year}",
-                    fontSize = 16.sp,
+                    fontSize = 20.sp,//16
                     fontWeight = FontWeight.Medium,
                     color = InkText
                 )
                 Text(
                     text = hijriHeaderFormatter.format(hijriOf(firstOfMonth)),
-                    fontSize = 12.sp,
+                    fontSize = 16.sp,//12
                     color = MutedSlate
                 )
             }
@@ -121,12 +124,12 @@ fun CalendarMonthView(
                 DayOfWeek.THURSDAY,
                 DayOfWeek.FRIDAY,
                 DayOfWeek.SATURDAY
-            ).forEach { dow ->
+            ).forEach { dayOfWeek ->
                 Text(
-                    text = dow.getDisplayName(TextStyle.SHORT, locale)
+                    text = dayOfWeek.getDisplayName(TextStyle.SHORT, locale)
                         .replaceFirstChar { it.uppercase() },
                     textAlign = TextAlign.Center,
-                    fontSize = 12.sp,
+                    fontSize = 16.sp,//12
                     color = MutedSlate,
                     modifier = Modifier.weight(1f)
                 )
@@ -168,4 +171,27 @@ fun CalendarMonthView(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CalendarMonthViewPreview() {
+    val currentMonth = YearMonth.now()
+    val today = LocalDate.now()
+
+    val mockDayStatus = mapOf(
+        today.minusDays(2) to DayStatus.ALL_PRAYED,
+        today.minusDays(1) to DayStatus.ALL_PRAYED,
+        today to DayStatus.FUTURE,
+        today.plusDays(1) to DayStatus.FUTURE
+    )
+
+    CalendarMonthView(
+        selectedMonth = currentMonth,
+        selectedDate = today,
+        dayStatus = mockDayStatus,
+        onDateSelected = {},
+        onMonthChanged = {},
+        hijriOffsetDays = 0
+    )
 }

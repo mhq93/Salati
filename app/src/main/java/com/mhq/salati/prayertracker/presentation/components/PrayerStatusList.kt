@@ -31,9 +31,9 @@ import com.mhq.salati.prayertracker.domain.model.PrayerStatus
 import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.presentation.theme.CardBackground
 import com.mhq.salati.shared.presentation.theme.InkText
-import com.mhq.salati.shared.presentation.theme.Missed
+import com.mhq.salati.shared.presentation.theme.TomatoRed
 import com.mhq.salati.shared.presentation.theme.MutedSlate
-import com.mhq.salati.shared.presentation.theme.Prayed
+import com.mhq.salati.shared.presentation.theme.Emerald
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import java.time.LocalDate
 
@@ -86,12 +86,12 @@ fun PrayerStatusList(
                     when (status) {
                         PrayerStatus.PRAYED -> StatusBadge(
                             icon = Icons.Filled.Check,
-                            color = Prayed
+                            color = Emerald
                         )
 
                         PrayerStatus.MISSED -> StatusBadge(
                             icon = Icons.Filled.Close,
-                            color = Missed
+                            color = TomatoRed
                         )
 
                         PrayerStatus.PENDING -> Box(

@@ -25,37 +25,39 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.prayertracker.domain.model.DayStatus
 import com.mhq.salati.shared.presentation.theme.AccentEmerald
-import com.mhq.salati.shared.presentation.theme.AdjacentMonthText
-import com.mhq.salati.shared.presentation.theme.CardBackgroundLocal
-import com.mhq.salati.shared.presentation.theme.CardBorder
+import com.mhq.salati.shared.presentation.theme.White
+import com.mhq.salati.shared.presentation.theme.LightGrayCardBorder
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.MutedSlate
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
-import com.mhq.salati.shared.presentation.theme.SelectedCellBackground
-import com.mhq.salati.shared.presentation.theme.WeekendBackground
+import com.mhq.salati.shared.presentation.theme.Charcoal
+import com.mhq.salati.shared.presentation.theme.SultanGold
+import com.mhq.salati.shared.presentation.theme.Timberwolf
+import com.mhq.salati.shared.presentation.theme.TomatoRed
+import com.mhq.salati.shared.presentation.theme.UltraLightGray
 
 @Composable
 fun DayCell(
     gregorianDay: Int,
     hijriDay: Int,
-    isSelected: Boolean,
     isCurrentMonth: Boolean,
     isWeekend: Boolean,
+    isSelected: Boolean,
     status: DayStatus?,
     onClick: () -> Unit
 ) {
 
     val dotColor = when (status) {
         DayStatus.ALL_PRAYED -> AccentEmerald
-        DayStatus.HAS_MISSED -> Color(0xFFD84C3E)
-        DayStatus.IN_PROGRESS -> Color(0xFFE0A62E)
+        DayStatus.HAS_MISSED -> TomatoRed
+        DayStatus.IN_PROGRESS -> SultanGold
         else -> null
     }
 
     val cellBackground = when {
-        isSelected -> SelectedCellBackground
-        isWeekend -> WeekendBackground
-        else -> CardBackgroundLocal
+        isSelected -> Charcoal
+        isWeekend -> UltraLightGray
+        else -> White
     }
 
     Column(
@@ -63,39 +65,41 @@ fun DayCell(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .clip(RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(8.dp))//10
             .background(cellBackground)
             .border(
                 1.dp,
-                CardBorder,
-                RoundedCornerShape(10.dp)
+                LightGrayCardBorder,
+                RoundedCornerShape(8.dp)//10
             )
             .clickable(
                 enabled = isCurrentMonth,
                 onClick = onClick
             )
-            .padding(vertical = 6.dp)
+            .padding(vertical = 4.dp)//6
     ) {
         Text(
             text = gregorianDay.toString(),
-            fontSize = 15.sp,
+            fontSize = 20.sp,//15
             fontWeight = FontWeight.Medium,
             color = when {
                 isSelected -> Color.White
-                !isCurrentMonth -> AdjacentMonthText
+                !isCurrentMonth -> Timberwolf
                 else -> InkText
             }
         )
+        Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = hijriDay.toString(),
-            fontSize = 11.sp,
+            fontSize = 16.sp,//11
+            fontWeight = FontWeight.Light,
             color = when {
                 isSelected -> Color.White.copy(alpha = 0.7f)
-                !isCurrentMonth -> AdjacentMonthText
+                !isCurrentMonth -> Timberwolf
                 else -> MutedSlate
             }
         )
-        Spacer(modifier = Modifier.height(3.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Box(
             modifier = Modifier
                 .size(4.dp)

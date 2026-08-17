@@ -60,14 +60,14 @@ fun PrayerConfirmDialog(
             Spacer(modifier = Modifier.height(20.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 DialogChoiceButton(
-                    label = "Prayed",
+                    label = stringResource(R.string.prayed),
                     icon = Icons.Filled.Check,
                     color = Color(0xFF1D9E75),
                     onClick = onConfirmPrayed,
                     modifier = Modifier.weight(1f)
                 )
                 DialogChoiceButton(
-                    label = "Missed",
+                    label = stringResource(R.string.missed),
                     icon = Icons.Filled.Close,
                     color = Color(0xFFD84C3E),
                     onClick = onConfirmMissed,

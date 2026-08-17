@@ -87,11 +87,13 @@
     <string name="prayer_tracker">متتبع الصلوات</string>
     <string name="track_your_prayers">تتبع صلواتك الخمس</string>
     <string name="track_your_five_daily_prayers">تتبع صلواتك الخمس كل يوم</string>
-    <string name="did_you_pray_x">هل صليت %1$s؟</string>
+    <string name="did_you_pray_x">هل صليت %1$s اليوم؟</string>
     <string name="mark_todays_x_prayer">أضف وسماُ لصلاة %1$s اليوم</string>
     <string name="day_streak">يوم %1$d من السلسلة</string>
     <string name="previous_month">الشهر الماضي</string>
     <string name="next_month">الشهر التالي</string>
+    <string name="prayed">مقضية</string>
+    <string name="missed">منسية</string>
 
     <!-- Settings -->
     <string name="settings">الإعدادات</string>
@@ -107,7 +109,7 @@
     <string name="adhan_sound_silent">صامت (إشعارات فقط)</string>
 
     <string name="prayer_calculation">حساب مواقيت الصلاة</string>
-    <string name="calculation_method">طريقة حساب مواقيت الصلاة</string>
+    <string name="calculation_method">مرجعية الحساب</string>
     <string name="calc_method_egyptian_general_authority">الهيئة العامة المصرية</string>
     <string name="calc_method_umm_al_qura">أم القرى، مكة</string>
     <string name="calc_method_muslim_world_league">رابطة العالم الإسلامي</string>

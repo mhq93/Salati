@@ -85,11 +85,13 @@
     <string name="prayer_tracker">Prayer tracker</string>
     <string name="track_your_prayers">Track your prayers</string>
     <string name="track_your_five_daily_prayers">Track your five daily prayers</string>
-    <string name="did_you_pray_x">Did you pray %1$s?</string>
+    <string name="did_you_pray_x">Did you pray %1$s today?</string>
     <string name="mark_todays_x_prayer">Mark today\'s %1$s prayer</string>
     <string name="day_streak">%1$d Day streak</string>
     <string name="previous_month">Previous month</string>
     <string name="next_month">Next month</string>
+    <string name="prayed">Prayed</string>
+    <string name="missed">Missed</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
@@ -105,7 +107,7 @@
     <string name="adhan_sound_silent">Silent (Notification Only)</string>
 
     <string name="prayer_calculation">Prayer Calculation</string>
-    <string name="calculation_method">Calculation Method</string>
+    <string name="calculation_method">Method</string>
     <string name="calc_method_egyptian_general_authority">Egyptian General Authority</string>
     <string name="calc_method_umm_al_qura">Umm Al-Qura, Makkah</string>
     <string name="calc_method_muslim_world_league">Muslim World League</string>
