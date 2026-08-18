@@ -1,4 +1,4 @@
-package com.mhq.salati.prayertracker.presentation.components
+package com.mhq.salati.shared.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,20 +22,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mhq.salati.R
 import com.mhq.salati.shared.presentation.theme.AccentGold
 import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable
-fun PrayerTrackerHeader(
-    streak: Int,
+fun TabHeader(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    trailingContent: @Composable () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -55,8 +57,8 @@ fun PrayerTrackerHeader(
             )
     ) {
         Row(
-            verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top,
             modifier = Modifier.fillMaxWidth()
         ) {
             Row(
@@ -71,7 +73,7 @@ fun PrayerTrackerHeader(
                         .background(Color.White.copy(alpha = 0.12f)),
                 ) {
                     Icon(
-                        imageVector = Icons.Default.CheckCircle,
+                        imageVector = icon,
                         tint = AccentGold,
                         contentDescription = null,
                         modifier = Modifier.size(28.dp)
@@ -81,35 +83,34 @@ fun PrayerTrackerHeader(
                     modifier = Modifier.padding(start = 16.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.prayer_tracker),
+                        text = title,
                         color = Color.White,
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(
-                        modifier = Modifier.height(4.dp)
+                        Modifier.height(4.dp)
                     )
                     Text(
-                        text = stringResource(R.string.track_your_five_daily_prayers),
+                        text = subtitle,
                         color = Color.White.copy(alpha = 0.7f),
                         fontSize = 14.sp
                     )
                 }
             }
-
-            if (streak > 0) {
-                StreakBanner(streak)
-            }
+            trailingContent()
         }
     }
 }
 
 @Preview
 @Composable
-private fun PrayerTrackerHeaderPreview() {
+private fun TabHeaderPreview() {
     SalatiTheme() {
-        PrayerTrackerHeader(
-            streak = 0
+        TabHeader(
+            icon = Icons.Default.Explore,
+            title = "Title",
+            subtitle = "Subtitle"
         )
     }
 }

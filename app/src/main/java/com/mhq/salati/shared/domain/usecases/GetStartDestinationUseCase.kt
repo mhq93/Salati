@@ -7,11 +7,11 @@ import javax.inject.Inject
 
 class GetStartDestinationUseCase @Inject constructor(
     private val getOnboardingCompletedUseCase: GetOnboardingCompletedUseCase,
-    private val permissionChecker: PermissionChecker
+    //private val permissionChecker: PermissionChecker
 ) {
     suspend operator fun invoke(): Screen {
         if (!getOnboardingCompletedUseCase()) return Screen.Onboarding
-        if (!permissionChecker.hasLocationPermission()) return Screen.AwaitingLocationPermissions
+        //if (!permissionChecker.hasLocationPermission()) return Screen.AwaitingLocationPermissions
         return Screen.Home
     }
 }

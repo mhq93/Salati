@@ -5,11 +5,11 @@ import com.mhq.salati.alarms.domain.repo.CustomAlarmRepository
 import javax.inject.Inject
 
 class DeleteCustomAlarmUseCase @Inject constructor(
-    private val repository: CustomAlarmRepository,
-    private val scheduler: CustomAlarmScheduler
+    private val customAlarmRepository: CustomAlarmRepository,
+    private val customAlarmScheduler: CustomAlarmScheduler
 ) {
     suspend operator fun invoke(id: Long) {
-        scheduler.cancel(id)
-        repository.deleteAlarm(id)
+        customAlarmScheduler.cancel(id)
+        customAlarmRepository.deleteAlarm(id)
     }
 }

@@ -66,12 +66,15 @@
     <!-- Home & Qibla Errors-->
     <string name="error">Error: %1$s</string>
     <string name="something_went_wrong">Something went wrong.</string>
-    <string name="enable_location">Enable Location</string>
     <string name="open_settings">Open Settings</string>
+    <string name="enable_location">Enable Location</string>
     <string name="retry">Retry</string>
+
+    <string name="no_internet_connection">No internet connection</string>
     <string name="location_services_disabled">Location services are turned off. Please, enable them.</string>
     <string name="location_permission_required">Location permission is required to show Qibla direction.</string>
     <string name="location_permission_is_required_to_show_prayer_times">Location permission is required to show prayer times.</string>
+    <string name="waiting_for_location_permission">Waiting for location permission…</string>
     <string name="location_permission_permanently_denied">Location permission permanently denied. Please enable it in Settings.</string>
     <string name="location_permission_permanently_denied_please_enable_it_via_settings">Location permission permanently denied. Please, enable it via Settings.</string>
     <string name="failed_to_get_location">Failed to get location</string>
@@ -92,6 +95,34 @@
     <string name="next_month">Next month</string>
     <string name="prayed">Prayed</string>
     <string name="missed">Missed</string>
+
+    <!-- Alarms -->
+    <string name="custom_alarms">Custom Alarms</string>
+    <string name="create_custom_alarms_before_or_after_prayers">Create custom alarms before or after prayers</string>
+    <string name="no_custom_alarms_title">There are no set custom alarms</string>
+    <string name="no_custom_alarms_body">Click the button \u002B below to add a new custom alarm.</string>
+
+    <!-- Alarm Editor sheet -->
+    <string name="new_custom_alarm">Customize an alarm</string>
+    <string name="alarm_label_optional">Label (Optional)</string>
+    <string name="edit_custom_alarm">Edit custom alarm</string>
+    <string name="custom_alarm_default_title">Custom alarm default title</string>
+    <string name="add_custom_alarm">Add custom alarm</string>
+    <string name="custom_alarm_body">Custom alarm body</string>
+    <string name="custom_alarms_channel_name" translatable="false">Custom alarms channel name</string>
+    <string name="prayer">Prayer</string>
+    <string name="timing">Timing</string>
+    <string name="before">Before prayer time</string>
+    <string name="after">After prayer time</string>
+    <string name="minutes_value">%1$d min</string>
+    <string name="repeat_every_day">Repeat everyday</string>
+    <string name="repeats_every_day">Every day</string>
+    <string name="repeats_once">Once</string>
+    <string name="at_prayer_time">At %1$s time</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="duplicate_alarm_exists">Same alarm exists</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
@@ -144,30 +175,6 @@
     <string name="couldn_t_update_language">Couldn\'t update language</string>
     <string name="couldn_t_update_adhan_sound">Couldn\'t update adhan sound</string>
     <string name="couldn_t_update_hijri_offset">Couldn\'t update Hijri offset</string>
-
-    <!-- Alarm Editor sheet -->
-    <string name="no_custom_alarms_title">There are no set custom alarms</string>
-    <string name="no_custom_alarms_body">Click the button below to add a new custom alarm.</string>
-    <string name="new_custom_alarm">Customize an alarm</string>
-    <string name="alarm_label_optional">Label (Optional)</string>
-    <string name="edit_custom_alarm">Edit custom alarm</string>
-    <string name="custom_alarm_default_title">Custom alarm default title</string>
-    <string name="add_custom_alarm">Add custom alarm</string>
-    <string name="custom_alarm_body">Custom alarm body</string>
-    <string name="custom_alarms_channel_name">Custom alarms channel name</string>
-    <string name="prayer">Prayer</string>
-    <string name="timing">Timing</string>
-    <string name="before">Before prayer time</string>
-    <string name="after">After prayer time</string>
-    <string name="minutes_value">%1$d min</string>
-    <string name="repeat_every_day">Repeat everyday</string>
-    <string name="repeats_every_day">Every day</string>
-    <string name="repeats_once">Once</string>
-    <string name="at_prayer_time">At %1$s time</string>
-    <string name="save">Save</string>
-    <string name="edit">Edit</string>
-    <string name="delete">Delete</string>
-    <string name="duplicate_alarm_exists">Same alarm exists</string>
 
     <plurals name="minutes_before_prayer" translatable="false">
         <item quantity="one">%1$d minute before %2$s</item>

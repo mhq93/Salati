@@ -5,11 +5,11 @@ import com.mhq.salati.alarms.domain.repo.CustomAlarmRepository
 import javax.inject.Inject
 
 class ToggleCustomAlarmUseCase @Inject constructor(
-    private val repository: CustomAlarmRepository,
-    private val scheduler: CustomAlarmScheduler
+    private val customAlarmRepository: CustomAlarmRepository,
+    private val customAlarmScheduler: CustomAlarmScheduler
 ) {
     suspend operator fun invoke(id: Long, enabled: Boolean) {
-        repository.setEnabled(id, enabled)
-        if (!enabled) scheduler.cancel(id)
+        customAlarmRepository.setAlarmEnabled(id, enabled)
+        if (!enabled) customAlarmScheduler.cancel(id)
     }
 }

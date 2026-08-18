@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Salati</string>
+    <string name="app_name">صلاتي</string>
 
     <!-- Onboarding -->
     <string name="get_started">بدء</string>
-    <string name="never_miss_a_prayer">لا تفوت صلاة أبدا</string>
+    <string name="never_miss_a_prayer">لا تفوت صلاة أبداً</string>
     <string name="accurate_prayer_times_calculated_for_your_exact_location">مواقيت الصلاة محسوبة بدقة وفقا لموقعك الجغرافي، ويتم تحديثها تاقائيا على مدار اليوم</string>
     <string name="find_your_qibla">حدد اتجاه القبلة</string>
     <string name="a_precise_live_compass_points_you_toward_the_kaaba_wherever_you_are">بوصلة حية ودقيقة، تتيح لك العثور على اتجاه القبلة أينما كنت</string>
@@ -64,16 +64,18 @@
     <string name="sensor_accuracy_is_moderate">حساسية المستشعر متوسطة</string>
     <string name="sensor_accuracy_is_poor">حساسية المستشعر ضعيفة</string>
 
-
     <!-- Home & Qibla Errors-->
     <string name="error">خطأ: %1$s</string>
-    <string name="something_went_wrong">ثمة خطأ</string>
-    <string name="enable_location">تفعيل موقع الهاتف</string>
-    <string name="open_settings">فتح الإعدادات</string>
-    <string name="retry">أعد المحاولة</string>
+    <string name="something_went_wrong">يوجد ثمة خطأ</string>
+    <string name="open_settings">تفقد إعدادات هاتفك</string>
+    <string name="enable_location">يرجي تفعيل موقع هاتفك</string>
+    <string name="retry">حاول مرةً أخرى</string>
+
+    <string name="no_internet_connection">لا يوجد اتصال بالإنترنت</string>
     <string name="location_services_disabled">خدمات تحديد الموقع معطلة - من فضلك، قم بتفعيلها</string>
     <string name="location_permission_required">يلزم تحديد الموقع لإظهار اتجاه القبلة</string>
     <string name="location_permission_is_required_to_show_prayer_times">يلزم تحديث موقع هاتفك لإظهار مواقيت الصلاة</string>
+    <string name="waiting_for_location_permission">في انتظار الإذن بدخول الموقع</string>
     <string name="location_permission_permanently_denied">تم رفض الإذن بتحديد موقعك بشكل دائم - من فضلك قم بالتفعيل من إعدادات الهاتف</string>
     <string name="location_permission_permanently_denied_please_enable_it_via_settings">لا يمكننا تحديد موقع هاتفك بدقة. من فضلك, فعل موقع هاتفك.</string>
     <string name="failed_to_get_location">فشل العثور على موقع الهاتف</string>
@@ -94,6 +96,33 @@
     <string name="next_month">الشهر التالي</string>
     <string name="prayed">مقضية</string>
     <string name="missed">منسية</string>
+
+    <!-- Alarms -->
+    <string name="custom_alarms">المنبهات</string>
+    <string name="create_custom_alarms_before_or_after_prayers">أنشئ منبهاً خاصاً قبل أو بعد الصلوات المفروضة</string>
+    <string name="no_custom_alarms_title">لا توجد تنبيهات خاصة بك</string>
+    <string name="no_custom_alarms_body">اضغط الزر \u002B أدناه لإنشاء منبه جديد</string>
+
+    <!-- Alarm Editor sheet -->
+    <string name="new_custom_alarm">منبه خاص جديد</string>
+    <string name="alarm_label_optional">اسم المنبه (اختياري)</string>
+    <string name="edit_custom_alarm">تعديل المنبه</string>
+    <string name="custom_alarm_default_title">منبه خاص</string>
+    <string name="custom_alarm_body">اضغط هنا لإيقاف المنبه</string>
+    <string name="add_custom_alarm">أنشئ منبهاً</string>
+    <string name="prayer">الصلاة</string>
+    <string name="timing">التوقيت</string>
+    <string name="before">قبل الآذان</string>
+    <string name="after">بعد الآذان</string>
+    <string name="minutes_value">%1$d دقيقة</string>
+    <string name="repeat_every_day">تكرار يومي</string>
+    <string name="repeats_every_day">يومي</string>
+    <string name="repeats_once">مرة واحدة</string>
+    <string name="at_prayer_time">%1$s في وقت</string>
+    <string name="save">حفظ</string>
+    <string name="edit">تعديل</string>
+    <string name="delete">حذف</string>
+    <string name="duplicate_alarm_exists">لديك منبه مماثل</string>
 
     <!-- Settings -->
     <string name="settings">الإعدادات</string>
@@ -146,28 +175,4 @@
     <string name="couldn_t_update_language">لم نتمكن من تحديث لغة التطبيق</string>
     <string name="couldn_t_update_adhan_sound">لم نتمكن من تحديث نغمة الآذان</string>
     <string name="couldn_t_update_hijri_offset">لم نتمكن من ضبط التاريخ الهجري</string>
-
-    <!-- Alarm Editor sheet -->
-    <string name="no_custom_alarms_title">لا توجد تنبيهات خاصة بك</string>
-    <string name="no_custom_alarms_body">اضغط الزر أدناه لإنشاء منبه جديد</string>
-    <string name="new_custom_alarm">منبه خاص جديد</string>
-    <string name="alarm_label_optional">اسم المنبه (اختياري)</string>
-    <string name="edit_custom_alarm">تعديل المنبه</string>
-    <string name="custom_alarm_default_title">منبه</string>
-    <string name="add_custom_alarm">أنشئ منبهاً</string>
-    <string name="custom_alarm_body">Custom alarm body</string>
-    <string name="custom_alarms_channel_name">Custom alarms channel name</string>
-    <string name="prayer">الصلاة</string>
-    <string name="timing">التوقيت</string>
-    <string name="before">قبل الآذان</string>
-    <string name="after">بعد الآذان</string>
-    <string name="minutes_value">%1$d min</string>
-    <string name="repeat_every_day">تكرار يومي</string>
-    <string name="repeats_every_day">يومي</string>
-    <string name="repeats_once">مرة واحدة</string>
-    <string name="at_prayer_time">At %1$s time</string>
-    <string name="save">حفظ</string>
-    <string name="edit">تعديل</string>
-    <string name="delete">حذف</string>
-    <string name="duplicate_alarm_exists">لديك منبه مماثل</string>
 </resources>

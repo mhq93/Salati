@@ -16,11 +16,11 @@ class AndroidCustomAlarmScheduler @Inject constructor(
 
     private val alarmManager: AlarmManager? = context.getSystemService()
 
-    override fun schedule(alarm: CustomAlarm, triggerAtMillis: Long) {
+    override fun schedule(customAlarm: CustomAlarm, triggerAtMillis: Long) {
         alarmManager?.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             triggerAtMillis,
-            pendingIntentFor(alarm.id, alarm.label, alarm.prayerName)
+            pendingIntentFor(customAlarm.id, customAlarm.label, customAlarm.prayerName)
         )
     }
 

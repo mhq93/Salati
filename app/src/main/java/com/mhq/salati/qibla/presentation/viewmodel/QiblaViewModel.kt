@@ -3,6 +3,7 @@ package com.mhq.salati.qibla.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.R
+import com.mhq.salati.connectivity.domain.ConnectivityChecker
 import com.mhq.salati.location.domain.model.SavedLocation
 import com.mhq.salati.location.domain.repo.LocationProvider
 import com.mhq.salati.location.domain.usecases.FetchAndSaveLocationUseCase
@@ -31,12 +32,13 @@ import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class QiblaViewModel @Inject constructor(
+    private val compassProvider: CompassProvider,
+    private val locationProvider: LocationProvider,
+    private val permissionChecker: PermissionChecker,
+    private val connectivityChecker: ConnectivityChecker,
     private val getQiblaBearingUseCase: GetQiblaBearingUseCase,
     private val getSavedLocationUseCase: GetSavedLocationUseCase,
     private val fetchAndSaveLocationUseCase: FetchAndSaveLocationUseCase,
-    private val permissionChecker: PermissionChecker,
-    private val locationProvider: LocationProvider,
-    private val compassProvider: CompassProvider,
 ) : ViewModel() {
 
     private val permissionDelegate = LocationPermissionDelegate()
@@ -48,6 +50,7 @@ class QiblaViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<QiblaContract.Effect>()
     val effect: SharedFlow<QiblaContract.Effect> = _effect.asSharedFlow()
 
+    private var locationPermissionAutoPromptShown = false   
     private var loadQiblaJob: Job? = null
 
     init {
@@ -61,7 +64,14 @@ class QiblaViewModel @Inject constructor(
     fun onIntent(intent: QiblaContract.Intent) {
         when (intent) {
             is QiblaContract.Intent.LoadQibla -> checkPermissionAndLoad()
+
             is QiblaContract.Intent.Retry -> checkPermissionAndLoad()
+
+            is QiblaContract.Intent.RetryClicked -> {   
+                locationPermissionAutoPromptShown = false   
+                checkPermissionAndLoad()   
+            }   
+
             is QiblaContract.Intent.LocationPermissionGranted -> {
                 viewModelScope.launch {
                     permissionDelegate.onPermissionGranted()
@@ -116,14 +126,7 @@ class QiblaViewModel @Inject constructor(
 
     private fun checkPermissionAndLoad() {
         _state.update { it.copy(errorMessage = null) }
-        viewModelScope.launch {
-            if (permissionChecker.hasLocationPermission()) {
-                permissionDelegate.onPermissionGranted()
-                loadQibla()
-            } else {
-                permissionDelegate.requirePermission()
-            }
-        }
+        loadQibla()
     }
 
     private fun loadQibla() {
@@ -142,6 +145,16 @@ class QiblaViewModel @Inject constructor(
                 val location = if (savedLocation != null) {
                     savedLocation
                 } else {
+                    if (!connectivityChecker.isConnected()) {   
+                        _state.update {   
+                            it.copy(   
+                                isLoading = false,   
+                                errorMessage = UiText.Res(R.string.no_internet_connection)   
+                            )   
+                        }   
+                        return@launch   
+                    }   
+
                     if (!locationProvider.isLocationEnabled()) {
                         permissionDelegate.markServicesDisabled()
                         _state.update {
@@ -154,8 +167,18 @@ class QiblaViewModel @Inject constructor(
                     }
 
                     if (!permissionChecker.hasLocationPermission()) {
-                        permissionDelegate.requirePermission()
-                        _state.update { it.copy(isLoading = false) }
+                        if (locationPermissionAutoPromptShown) {   
+                            _state.update {   
+                                it.copy(   
+                                    isLoading = false,   
+                                    errorMessage = UiText.Res(R.string.location_permission_required)   
+                                )   
+                            }   
+                        } else {   
+                            locationPermissionAutoPromptShown = true   
+                            permissionDelegate.requirePermission()
+                            _state.update { it.copy(isLoading = false) }
+                        }   
                         return@launch
                     }
 

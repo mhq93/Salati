@@ -10,5 +10,5 @@ interface CustomAlarmRepository {
     suspend fun createAlarm(alarm: CustomAlarm): Long
     suspend fun updateAlarm(alarm: CustomAlarm)
     suspend fun deleteAlarm(id: Long)
-    suspend fun setEnabled(id: Long, enabled: Boolean)
+    suspend fun setAlarmEnabled(id: Long, enabled: Boolean)
 }

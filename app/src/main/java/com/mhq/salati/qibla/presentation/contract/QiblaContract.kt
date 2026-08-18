@@ -21,6 +21,7 @@ class QiblaContract {
     sealed interface Intent {
         data object LoadQibla : Intent
         data object Retry : Intent
+        data object RetryClicked : Intent //New
         data object LocationPermissionGranted : Intent
         data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
         data object AccessAppSettings : Intent

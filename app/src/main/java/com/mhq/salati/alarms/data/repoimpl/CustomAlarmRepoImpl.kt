@@ -14,17 +14,17 @@ class CustomAlarmRepoImpl @Inject constructor(
 ) : CustomAlarmRepository {
 
     override fun observeAlarms(): Flow<List<CustomAlarm>> =
-        dao.observeAll().map { list -> list.map { it.toDomain() } }
+        dao.observeAllAlarms().map { list -> list.map { it.toDomain() } }
 
-    override suspend fun getAlarms(): List<CustomAlarm> = dao.getAll().map { it.toDomain() }
+    override suspend fun getAlarms(): List<CustomAlarm> = dao.getAllAlarms().map { it.toDomain() }
 
-    override suspend fun getAlarmById(id: Long): CustomAlarm? = dao.getById(id)?.toDomain()
+    override suspend fun getAlarmById(id: Long): CustomAlarm? = dao.getAlarmById(id)?.toDomain()
 
-    override suspend fun createAlarm(alarm: CustomAlarm): Long = dao.insert(alarm.toEntity())
+    override suspend fun createAlarm(alarm: CustomAlarm): Long = dao.insertAlarm(alarm.toEntity())
 
-    override suspend fun updateAlarm(alarm: CustomAlarm) = dao.update(alarm.toEntity())
+    override suspend fun updateAlarm(alarm: CustomAlarm) = dao.updateAlarm(alarm.toEntity())
 
-    override suspend fun deleteAlarm(id: Long) = dao.deleteById(id)
+    override suspend fun deleteAlarm(id: Long) = dao.deleteAlarmById(id)
 
-    override suspend fun setEnabled(id: Long, enabled: Boolean) = dao.setEnabled(id, enabled)
+    override suspend fun setAlarmEnabled(id: Long, enabled: Boolean) = dao.setAlarmEnabled(id, enabled)
 }

@@ -1,19 +1,15 @@
 package com.mhq.salati.home.presentation.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.mhq.salati.permissions.location.LocationPermissionState
+import com.mhq.salati.R
 import com.mhq.salati.home.presentation.contract.HomeContract
-import com.mhq.salati.shared.presentation.theme.DarkGreen
+import com.mhq.salati.permissions.location.LocationPermissionState
+import com.mhq.salati.shared.presentation.errors.LocationPermissionPermanentlyDeniedError
+import com.mhq.salati.shared.presentation.errors.LocationPermissionRequiredError
+import com.mhq.salati.shared.presentation.errors.LocationServicesDisabledError
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable
@@ -23,44 +19,26 @@ fun HomeContentError(
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier
-            .fillMaxSize()
-    ) {
-        Text(
-            text = "Error: $errorMessage",
-            color = DarkGreen
-        )
+    when {
+        locationPermissionState.permanentlyDenied -> {
+            LocationPermissionPermanentlyDeniedError(
+                errorMessage = errorMessage,
+                onOpenSettingsClicked = { onIntent(HomeContract.Intent.AccessAppSettings) }
+            )
+        }
 
-        when {
-            locationPermissionState.permanentlyDenied -> {
-                Button(
-                    onClick = { onIntent(HomeContract.Intent.AccessAppSettings) },
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text("Open Settings")
-                }
-            }
+        locationPermissionState.servicesDisabled -> {
+            LocationServicesDisabledError(
+                errorMessage = errorMessage,
+                onEnableLocationClicked = { onIntent(HomeContract.Intent.AccessDeviceLocationSettings) }
+            )
+        }
 
-            locationPermissionState.servicesDisabled -> {
-                Button(
-                    onClick = { onIntent(HomeContract.Intent.AccessDeviceLocationSettings) },
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text("Enable Location")
-                }
-            }
-
-            else -> {
-                Button(
-                    onClick = { onIntent(HomeContract.Intent.Retry) },
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text("Retry")
-                }
-            }
+        else -> {
+            LocationPermissionRequiredError(
+                errorMessage = errorMessage,
+                onRetryClicked = { onIntent(HomeContract.Intent.RetryClicked) }
+            )
         }
     }
 }
@@ -70,8 +48,12 @@ fun HomeContentError(
 private fun HomeContentErrorPreview() {
     SalatiTheme() {
         HomeContentError(
-            errorMessage = "errorMessage",
-            locationPermissionState = LocationPermissionState(),
+            errorMessage = stringResource(R.string.error),
+            locationPermissionState = LocationPermissionState(
+                required = true,
+                permanentlyDenied = true,
+                servicesDisabled = true
+            ),
             onIntent = {}
         )
     }

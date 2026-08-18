@@ -5,7 +5,7 @@ import com.mhq.salati.alarms.domain.repo.CustomAlarmRepository
 import javax.inject.Inject
 
 class UpdateCustomAlarmUseCase @Inject constructor(
-    private val repository: CustomAlarmRepository
+    private val customAlarmRepository: CustomAlarmRepository
 ) {
-    suspend operator fun invoke(alarm: CustomAlarm) = repository.updateAlarm(alarm)
+    suspend operator fun invoke(alarm: CustomAlarm) = customAlarmRepository.updateAlarm(alarm)
 }

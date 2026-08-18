@@ -40,7 +40,6 @@ import com.mhq.salati.shared.navigation.AnimatedBottomNavBar
 import com.mhq.salati.shared.navigation.BottomNavItem
 import com.mhq.salati.shared.navigation.Screen
 import com.mhq.salati.shared.presentation.components.LocalSnackbarHostState
-import com.mhq.salati.shared.presentation.screens.AwaitingLocationPermissions
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -80,9 +79,9 @@ fun SalatiApp(startDestination: Screen) {
                             }
                         )
                     }
-                    composable(Screen.AwaitingLocationPermissions.route) {
-                        AwaitingLocationPermissions()
-                    }
+                    //composable(Screen.AwaitingLocationPermissions.route) {
+                        //AwaitingLocationPermissions()
+                    //}
                     composable(Screen.Home.route) {
                         HomeContainer()
                     }

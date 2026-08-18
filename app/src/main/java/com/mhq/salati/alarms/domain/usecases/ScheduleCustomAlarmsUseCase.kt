@@ -9,22 +9,22 @@ import java.util.Locale
 import javax.inject.Inject
 
 class ScheduleCustomAlarmsUseCase @Inject constructor(
-    private val repository: CustomAlarmRepository,
-    private val scheduler: CustomAlarmScheduler
+    private val customAlarmRepository: CustomAlarmRepository,
+    private val customAlarmScheduler: CustomAlarmScheduler
 ) {
     suspend operator fun invoke(timings: Map<String, String>) {
         val now = Calendar.getInstance()
         val todayDow = now.get(Calendar.DAY_OF_WEEK)
         val format = SimpleDateFormat("HH:mm", Locale.US)
 
-        repository.getAlarms().forEach { alarm ->
+        customAlarmRepository.getAlarms().forEach { alarm ->
             if (!alarm.isEnabled) {
-                scheduler.cancel(alarm.id)
+                customAlarmScheduler.cancel(alarm.id)
                 return@forEach
             }
             val runsToday = alarm.everyDay || alarm.activeDays.contains(todayDow)
             if (!runsToday) {
-                scheduler.cancel(alarm.id)
+                customAlarmScheduler.cancel(alarm.id)
                 return@forEach
             }
 
@@ -43,10 +43,10 @@ class ScheduleCustomAlarmsUseCase @Inject constructor(
             }
 
             if (triggerCal.timeInMillis <= now.timeInMillis) {
-                scheduler.cancel(alarm.id)
+                customAlarmScheduler.cancel(alarm.id)
                 return@forEach
             }
-            scheduler.schedule(alarm, triggerCal.timeInMillis)
+            customAlarmScheduler.schedule(alarm, triggerCal.timeInMillis)
         }
     }
 }

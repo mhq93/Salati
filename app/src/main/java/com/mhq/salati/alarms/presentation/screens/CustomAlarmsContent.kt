@@ -12,13 +12,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
@@ -26,12 +33,16 @@ import com.mhq.salati.alarms.presentation.components.AddEditAlarmSheet
 import com.mhq.salati.alarms.presentation.components.CustomAlarmCard
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract
 import com.mhq.salati.shared.presentation.components.BottomNavDefaults
+import com.mhq.salati.shared.presentation.components.TabHeader
 
 @Composable
 fun CustomAlarmsContent(
     state: AlarmsContract.State,
     onIntent: (AlarmsContract.Intent) -> Unit
 ) {
+    val density = LocalDensity.current
+    var headerHeightPx by remember { mutableIntStateOf(0) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -50,18 +61,25 @@ fun CustomAlarmsContent(
             )
 
             else -> LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 48.dp)
+                contentPadding = PaddingValues(
+                    horizontal = 16.dp,
+                    vertical = 48.dp
+                ).let {
+                    PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = with(density) { headerHeightPx.toDp() },
+                        bottom = 48.dp
+                    )
+                },
+                modifier = Modifier.fillMaxSize()
             ) {
                 items(state.alarms, key = { it.id }) { alarm ->
                     CustomAlarmCard(
-                        alarm = alarm,
+                        customAlarm = alarm,
                         onToggle = { enabled ->
                             onIntent(
-                                AlarmsContract.Intent.ToggleAlarm(
-                                    alarm.id,
-                                    enabled
-                                )
+                                AlarmsContract.Intent.ToggleAlarm(alarm.id, enabled)
                             )
                         },
                         onEdit = { onIntent(AlarmsContract.Intent.EditAlarmClicked(alarm)) },
@@ -78,6 +96,15 @@ fun CustomAlarmsContent(
                 }
             }
         }
+
+        TabHeader(
+            icon = Icons.Default.Alarm,
+            title = stringResource(R.string.custom_alarms),
+            subtitle = stringResource(R.string.create_custom_alarms_before_or_after_prayers),
+            modifier = Modifier.onGloballyPositioned {
+                headerHeightPx = it.size.height
+            }
+        )
 
         FloatingActionButton(
             onClick = { onIntent(AlarmsContract.Intent.AddAlarmClicked) },

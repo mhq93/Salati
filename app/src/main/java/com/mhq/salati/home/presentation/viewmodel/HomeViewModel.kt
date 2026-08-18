@@ -10,6 +10,7 @@ import com.mhq.salati.adhan.domain.usecases.ScheduleDailyPrayerAlarmsUseCase
 import com.mhq.salati.adhan.domain.usecases.StopAdhanPlaybackUseCase
 import com.mhq.salati.adhan.domain.usecases.ToggleMutePrayerUseCase
 import com.mhq.salati.alarms.domain.usecases.ScheduleCustomAlarmsUseCase
+import com.mhq.salati.connectivity.domain.ConnectivityChecker
 import com.mhq.salati.home.domain.usecases.CalculateNextPrayerInfoUseCase
 import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.location.domain.model.SavedLocation
@@ -53,6 +54,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class HomeViewModel @Inject constructor(
     private val locationProvider: LocationProvider,
     private val permissionChecker: PermissionChecker,
+    private val connectivityChecker: ConnectivityChecker,  
     private val mutedPrayersRepository: MutedPrayersRepository,
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
     private val getSavedLocationUseCase: GetSavedLocationUseCase,
@@ -77,6 +79,7 @@ class HomeViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<HomeContract.Effect>()
     val effect: SharedFlow<HomeContract.Effect> = _effect.asSharedFlow()
 
+    private var locationPermissionAutoPromptShown = false  
     private var loadPrayerTimesJob: Job? = null
     private var tickCounterJob: Job? = null
     private var mutedPrayersJob: Job? = null
@@ -91,17 +94,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch { mutedPrayersRepository.purgePastDates() }
         observeMutedPrayersForCurrentDate()
 
-        viewModelScope.launch {
-            permissionDelegate.effect.collect { effect ->
-                if (effect is LocationPermissionEffect.PermissionResolved &&
-                    !alarmAndNotificationPermissionsChecked
-                ) {
-                    alarmAndNotificationPermissionsChecked = true
-                    checkExactAlarmAndNotificationPermissions()
-                }
-            }
-        }
-
         observeAdhanPlaybackStateUseCase()
             .onEach { playback -> _state.update { it.copy(adhanPlayback = playback) } }
             .launchIn(viewModelScope)
@@ -114,6 +106,11 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeContract.Intent.Retry -> {
+                checkPermissionAndLoad()
+            }
+
+            is HomeContract.Intent.RetryClicked -> { 
+                locationPermissionAutoPromptShown = false 
                 checkPermissionAndLoad()
             }
 
@@ -182,14 +179,8 @@ class HomeViewModel @Inject constructor(
 
             is HomeContract.Intent.RecheckSystemPermissions -> {
                 viewModelScope.launch {
-                    val hasExactAlarm = permissionChecker.canScheduleExactAlarms()
-                    _state.update {
-                        it.copy(
-                            hasExactAlarmPermission = hasExactAlarm,
-                            hasNotificationPermission = permissionChecker.hasNotificationPermission()
-                        )
-                    }
-                    if (hasExactAlarm) rescheduleAlarmsIfLoaded()
+                    checkExactAlarmAndNotificationPermissions(promptIfMissing = false)
+                    if (_state.value.hasExactAlarmPermission) rescheduleAlarmsIfLoaded()
                 }
             }
 
@@ -217,17 +208,10 @@ class HomeViewModel @Inject constructor(
 
     private fun checkPermissionAndLoad() {
         _state.update { it.copy(errorMessage = null) }
-        viewModelScope.launch {
-            if (permissionChecker.hasLocationPermission()) {
-                permissionDelegate.onPermissionGranted()
-                loadPrayerTimes()
-            } else {
-                permissionDelegate.requirePermission()
-            }
-        }
+        loadPrayerTimes()
     }
 
-    private suspend fun checkExactAlarmAndNotificationPermissions() {
+    private suspend fun checkExactAlarmAndNotificationPermissions(promptIfMissing: Boolean) {
         val hasExactAlarm = permissionChecker.canScheduleExactAlarms()
         val hasNotification = permissionChecker.hasNotificationPermission()
         _state.update {
@@ -236,11 +220,10 @@ class HomeViewModel @Inject constructor(
                 hasNotificationPermission = hasNotification
             )
         }
-        if (!hasExactAlarm)
-            _effect.emit(HomeContract.Effect.RequestExactAlarmPermission)
+        if (!promptIfMissing) return
 
-        if (!hasNotification)
-            _effect.emit(HomeContract.Effect.RequestNotificationPermission)
+        if (!hasExactAlarm) _effect.emit(HomeContract.Effect.RequestExactAlarmPermission)
+        if (!hasNotification) _effect.emit(HomeContract.Effect.RequestNotificationPermission)
     }
 
     private fun loadPrayerTimes() {
@@ -259,6 +242,16 @@ class HomeViewModel @Inject constructor(
                 } else {
                     _state.update { it.copy(isLoading = true) }
 
+                    if (!connectivityChecker.isConnected()) {  
+                        _state.update {  
+                            it.copy(  
+                                isLoading = false,  
+                                errorMessage = UiText.Res(R.string.no_internet_connection)  
+                            )  
+                        }  
+                        return@launch  
+                    }  
+
                     if (!locationProvider.isLocationEnabled()) {
                         permissionDelegate.markServicesDisabled()
                         _state.update {
@@ -271,8 +264,18 @@ class HomeViewModel @Inject constructor(
                     }
 
                     if (!permissionChecker.hasLocationPermission()) {
-                        permissionDelegate.requirePermission()
-                        _state.update { it.copy(isLoading = false) }
+                        if (locationPermissionAutoPromptShown) {  
+                            _state.update {  
+                                it.copy(  
+                                    isLoading = false,  
+                                    errorMessage = UiText.Res(R.string.location_permission_is_required_to_show_prayer_times)  
+                                )  
+                            }  
+                        } else {  
+                            locationPermissionAutoPromptShown = true  
+                            permissionDelegate.requirePermission()
+                            _state.update { it.copy(isLoading = false) }
+                        }  
                         return@launch
                     }
                     fetchAndSaveLocationUseCase()
@@ -311,6 +314,12 @@ class HomeViewModel @Inject constructor(
                     }
                     startCountdownTicker(info.spanEndMillis)
                     rescheduleAlarmsIfLoaded()
+
+                    if (!alarmAndNotificationPermissionsChecked) {  
+                        alarmAndNotificationPermissionsChecked = true  
+                        checkExactAlarmAndNotificationPermissions(promptIfMissing = true)  
+                    }  
+
                     return@launch
                 }
 
@@ -345,6 +354,11 @@ class HomeViewModel @Inject constructor(
                         }
                         startCountdownTicker(info.spanEndMillis)
                         rescheduleAlarmsIfLoaded()
+
+                        if (!alarmAndNotificationPermissionsChecked) {  
+                            alarmAndNotificationPermissionsChecked = true  
+                            checkExactAlarmAndNotificationPermissions(promptIfMissing = true)  
+                        }  
                     },
                     onFailure = { throwable ->
                         val message = throwable.message?.let { UiText.Raw(it) }

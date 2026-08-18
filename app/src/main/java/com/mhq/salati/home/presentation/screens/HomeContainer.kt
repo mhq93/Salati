@@ -22,8 +22,8 @@ import com.mhq.salati.home.presentation.contract.HomeContract.Effect
 import com.mhq.salati.home.presentation.viewmodel.HomeViewModel
 import com.mhq.salati.permissions.exactalarm.rememberExactAlarmPermissionLauncher
 import com.mhq.salati.permissions.location.LocationPermissionEffect
-import com.mhq.salati.permissions.location.rememberGpsEnabled
 import com.mhq.salati.permissions.location.rememberLocationPermissionLauncher
+import com.mhq.salati.permissions.location.rememberLocationServicesEnabled
 import com.mhq.salati.permissions.notifications.rememberNotificationPermissionLauncher
 import com.mhq.salati.shared.presentation.components.LocalSnackbarHostState
 import com.mhq.salati.shared.presentation.components.asString
@@ -37,7 +37,7 @@ fun HomeContainer(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
-    val gpsEnabled by rememberGpsEnabled()
+    val locationServicesEnabled by rememberLocationServicesEnabled()
     val state by homeViewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = LocalSnackbarHostState.current
 
@@ -149,8 +149,8 @@ fun HomeContainer(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    LaunchedEffect(gpsEnabled) {
-        if (gpsEnabled && state.locationPermission.servicesDisabled) {
+    LaunchedEffect(locationServicesEnabled) {
+        if (locationServicesEnabled && state.locationPermission.servicesDisabled) {
             homeViewModel.onIntent(HomeContract.Intent.Retry)
         }
     }

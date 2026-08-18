@@ -7,19 +7,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mhq.salati.R
 import com.mhq.salati.prayertracker.presentation.components.CalendarMonthView
 import com.mhq.salati.prayertracker.presentation.components.PrayerStatusList
-import com.mhq.salati.prayertracker.presentation.components.PrayerTrackerHeader
+import com.mhq.salati.prayertracker.presentation.components.StreakBanner
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.Intent
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.State
 import com.mhq.salati.shared.presentation.components.BottomNavDefaults
+import com.mhq.salati.shared.presentation.components.TabHeader
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import com.mhq.salati.shared.presentation.theme.SheetBackground
 
@@ -39,8 +42,15 @@ fun PrayerTrackerContent(
                 .navigationBarsPadding()
                 .padding(bottom = BottomNavDefaults.Height)
         ) {
-            PrayerTrackerHeader(
-                streak = state.currentStreak
+            TabHeader(
+                icon = Icons.Default.CheckCircle,
+                title = stringResource(R.string.prayer_tracker),
+                subtitle = stringResource(R.string.track_your_five_daily_prayers),
+                trailingContent = {
+                    if (state.currentStreak > 0) {
+                        StreakBanner(state.currentStreak)
+                    }
+                }
             )
 
             Column(

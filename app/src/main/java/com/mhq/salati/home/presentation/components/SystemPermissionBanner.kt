@@ -78,7 +78,7 @@ import com.mhq.salati.shared.presentation.theme.SheetBackground
 //        }
 //    }
 //}
-//
+
 //@Preview
 //@Composable
 //private fun SystemPermissionBannerPreview() {

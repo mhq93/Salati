@@ -20,8 +20,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mhq.salati.permissions.location.LocationPermissionEffect
-import com.mhq.salati.permissions.location.rememberGpsEnabled
 import com.mhq.salati.permissions.location.rememberLocationPermissionLauncher
+import com.mhq.salati.permissions.location.rememberLocationServicesEnabled
 import com.mhq.salati.qibla.presentation.components.CompassCalibrationOverlay
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.qibla.presentation.viewmodel.QiblaViewModel
@@ -37,7 +37,7 @@ fun QiblaContainer(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val state by qiblaViewModel.state.collectAsStateWithLifecycle()
-    val gpsEnabled by rememberGpsEnabled()
+    val locationServicesEnabled by rememberLocationServicesEnabled()
     val snackbarHostState = LocalSnackbarHostState.current
     val scope = rememberCoroutineScope()
 
@@ -121,8 +121,8 @@ fun QiblaContainer(
         qiblaViewModel.onIntent(QiblaContract.Intent.LoadQibla)
     }
 
-    LaunchedEffect(gpsEnabled) {
-        if (gpsEnabled && state.locationPermission.servicesDisabled) {
+    LaunchedEffect(locationServicesEnabled) {
+        if (locationServicesEnabled && state.locationPermission.servicesDisabled) {
             qiblaViewModel.onIntent(QiblaContract.Intent.Retry)
         }
     }

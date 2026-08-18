@@ -36,6 +36,7 @@ class HomeContract {
     sealed interface Intent {
         data object LoadPrayerTimes : Intent
         data object Retry : Intent
+        data object RetryClicked : Intent //New — user-initiated retry, resets the permission auto-prompt guard
         data object PreviousDay : Intent
         data object NextDay : Intent
         data object LocationPermissionGranted : Intent

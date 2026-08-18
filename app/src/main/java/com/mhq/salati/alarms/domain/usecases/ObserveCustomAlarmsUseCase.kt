@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObserveCustomAlarmsUseCase @Inject constructor(
-    private val repository: CustomAlarmRepository
+    private val customAlarmRepository: CustomAlarmRepository
 ) {
-    operator fun invoke(): Flow<List<CustomAlarm>> = repository.observeAlarms()
+    operator fun invoke(): Flow<List<CustomAlarm>> = customAlarmRepository.observeAlarms()
 }
