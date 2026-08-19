@@ -5,7 +5,7 @@ import com.mhq.salati.settings.domain.repo.SettingsRepository
 import javax.inject.Inject
 
 class UpdateMadhabUseCase @Inject constructor(
-    private val repository: SettingsRepository
+    private val settingsRepository: SettingsRepository
 ) {
-    suspend operator fun invoke(madhab: Madhab) = repository.setMadhab(madhab)
+    suspend operator fun invoke(madhab: Madhab) = settingsRepository.setMadhab(madhab)
 }

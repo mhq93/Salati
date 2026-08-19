@@ -12,29 +12,29 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SettingsRepoImpl @Inject constructor(
-    private val dataStore: SettingsDataStore
+    private val settingsDataStore: SettingsDataStore
 ) : SettingsRepository {
 
-    override fun observeSettings(): Flow<AppSettings> = dataStore.settingsFlow
+    override fun observeSettings(): Flow<AppSettings> = settingsDataStore.settingsFlow
 
     override suspend fun setNotificationsEnabled(enabled: Boolean) =
-        dataStore.setNotificationsEnabled(enabled)
+        settingsDataStore.setNotificationsEnabled(enabled)
 
     override suspend fun setCalculationMethod(method: CalculationMethod) =
-        dataStore.setCalculationMethod(method)
+        settingsDataStore.setCalculationMethod(method)
 
     override suspend fun setMadhab(madhab: Madhab) =
-        dataStore.setMadhab(madhab)
+        settingsDataStore.setMadhab(madhab)
 
     override suspend fun setThemeMode(mode: ThemeMode) =
-        dataStore.setThemeMode(mode)
+        settingsDataStore.setThemeMode(mode)
 
     override suspend fun setLanguage(language: AppLanguage) =
-        dataStore.setLanguage(language)
+        settingsDataStore.setLanguage(language)
 
     override suspend fun setAdhanSound(sound: AdhanSound) =
-        dataStore.setAdhanSound(sound)
+        settingsDataStore.setAdhanSound(sound)
 
     override suspend fun setHijriDateOffset(offset: Int) =
-        dataStore.setHijriDateOffset(offset)
+        settingsDataStore.setHijriDateOffset(offset)
 }

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class ObserveAdhanPlaybackStateUseCase @Inject constructor(
-    private val controller: AdhanPlaybackController
+    private val adhanPlaybackController: AdhanPlaybackController
 ) {
-    operator fun invoke(): StateFlow<AdhanPlaybackState> = controller.playbackState
+    operator fun invoke(): StateFlow<AdhanPlaybackState> = adhanPlaybackController.playbackState
 }

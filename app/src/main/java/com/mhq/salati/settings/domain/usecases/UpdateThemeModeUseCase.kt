@@ -5,7 +5,7 @@ import com.mhq.salati.settings.domain.repo.SettingsRepository
 import javax.inject.Inject
 
 class UpdateThemeModeUseCase @Inject constructor(
-    private val repository: SettingsRepository
+    private val settingsRepository: SettingsRepository
 ) {
-    suspend operator fun invoke(mode: ThemeMode) = repository.setThemeMode(mode)
+    suspend operator fun invoke(mode: ThemeMode) = settingsRepository.setThemeMode(mode)
 }

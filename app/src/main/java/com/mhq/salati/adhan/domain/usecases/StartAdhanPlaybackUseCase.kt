@@ -4,8 +4,8 @@ import com.mhq.salati.adhan.domain.repo.AdhanPlaybackController
 import javax.inject.Inject
 
 class StartAdhanPlaybackUseCase @Inject constructor(
-    private val controller: AdhanPlaybackController
+    private val adhanPlaybackController: AdhanPlaybackController
 ) {
     operator fun invoke(prayerName: String, isMinorTiming: Boolean, isMuted: Boolean) =
-        controller.start(prayerName, isMinorTiming, isMuted)
+        adhanPlaybackController.start(prayerName, isMinorTiming, isMuted)
 }

@@ -89,7 +89,7 @@ fun SettingsContent(
                         SettingsSwitchRow(
                             icon = Icons.Default.NotificationsActive,
                             title = stringResource(R.string.prayer_notifications),
-                            subtitle = stringResource(R.string.get_alerted_at_each_prayer_time),
+                            subtitle = stringResource(R.string.get_alerted_and_notified_at_each_prayer_time),
                             isChecked = state.notificationsEnabled,
                             onCheckedChange = { onIntent(Intent.ToggleNotifications(it)) }
                         )

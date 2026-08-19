@@ -4,7 +4,7 @@ import com.mhq.salati.adhan.domain.repo.AdhanPlaybackController
 import javax.inject.Inject
 
 class StopAdhanPlaybackUseCase @Inject constructor(
-    private val controller: AdhanPlaybackController
+    private val adhanPlaybackController: AdhanPlaybackController
 ) {
-    operator fun invoke() = controller.stop()
+    operator fun invoke() = adhanPlaybackController.stop()
 }

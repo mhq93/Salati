@@ -5,7 +5,7 @@ import com.mhq.salati.settings.domain.repo.SettingsRepository
 import javax.inject.Inject
 
 class UpdateCalculationMethodUseCase @Inject constructor(
-    private val repository: SettingsRepository
+    private val settingsRepository: SettingsRepository
 ) {
-    suspend operator fun invoke(method: CalculationMethod) = repository.setCalculationMethod(method)
+    suspend operator fun invoke(method: CalculationMethod) = settingsRepository.setCalculationMethod(method)
 }

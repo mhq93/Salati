@@ -4,7 +4,7 @@ import com.mhq.salati.settings.domain.repo.SettingsRepository
 import javax.inject.Inject
 
 class UpdateHijriDateOffsetUseCase @Inject constructor(
-    private val repository: SettingsRepository
+    private val settingsRepository: SettingsRepository
 ) {
-    suspend operator fun invoke(offset: Int) = repository.setHijriDateOffset(offset)
+    suspend operator fun invoke(offset: Int) = settingsRepository.setHijriDateOffset(offset)
 }

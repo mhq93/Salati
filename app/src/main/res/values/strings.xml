@@ -129,7 +129,7 @@
     <string name="customize_your_app_experience">Customize your app experience</string>
     <string name="notifications">Notifications</string>
     <string name="prayer_notifications">Prayer Notifications</string>
-    <string name="get_alerted_at_each_prayer_time">Get alerted at each prayer time</string>
+    <string name="get_alerted_and_notified_at_each_prayer_time">Get alerted and notified at each prayer time</string>
 
     <string name="adhan_sound">Adhan Sound</string>
     <string name="adhan_sound_default">Default Beep</string>

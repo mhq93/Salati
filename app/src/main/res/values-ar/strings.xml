@@ -129,7 +129,7 @@
     <string name="customize_your_app_experience">تحكم بمظهر التطبيق حسب رغبتك</string>
     <string name="notifications">الإشعارات</string>
     <string name="prayer_notifications">إشعارات الصلاة</string>
-    <string name="get_alerted_at_each_prayer_time">احصل على تنبيهات لكل صلاة</string>
+    <string name="get_alerted_and_notified_at_each_prayer_time">احصل على تنبيهات لكل صلاة</string>
 
     <string name="adhan_sound">نغمة الآذان</string>
     <string name="adhan_sound_default">النغمة الافتراضية</string>
