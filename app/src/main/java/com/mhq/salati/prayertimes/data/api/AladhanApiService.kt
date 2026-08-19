@@ -17,7 +17,8 @@ class AladhanApiService(private val client: HttpClient) {
         latitude: Double,
         longitude: Double,
         method: Int = 5,
-        school: Int = 0
+        school: Int = 0,
+        adjustment: Int = 0  
     ): CalendarResponseDto {
         return client.get("$BASE_URL/calendar") {
             parameter("latitude", latitude)
@@ -25,6 +26,7 @@ class AladhanApiService(private val client: HttpClient) {
             parameter("year", year)
             parameter("method", method)
             parameter("school", school)
+            parameter("adjustment", adjustment)  
             parameter("annual", true)
         }.body()
     }

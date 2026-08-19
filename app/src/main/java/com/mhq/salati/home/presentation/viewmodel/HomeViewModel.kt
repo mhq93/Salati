@@ -242,15 +242,15 @@ class HomeViewModel @Inject constructor(
                 } else {
                     _state.update { it.copy(isLoading = true) }
 
-                    if (!connectivityChecker.isConnected()) {  
-                        _state.update {  
-                            it.copy(  
-                                isLoading = false,  
-                                errorMessage = UiText.Res(R.string.no_internet_connection)  
-                            )  
-                        }  
-                        return@launch  
-                    }  
+                    if (!connectivityChecker.isConnected()) {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = UiText.Res(R.string.no_internet_connection)
+                            )
+                        }
+                        return@launch
+                    }
 
                     if (!locationProvider.isLocationEnabled()) {
                         permissionDelegate.markServicesDisabled()
@@ -264,18 +264,18 @@ class HomeViewModel @Inject constructor(
                     }
 
                     if (!permissionChecker.hasLocationPermission()) {
-                        if (locationPermissionAutoPromptShown) {  
-                            _state.update {  
-                                it.copy(  
-                                    isLoading = false,  
-                                    errorMessage = UiText.Res(R.string.location_permission_is_required_to_show_prayer_times)  
-                                )  
-                            }  
-                        } else {  
-                            locationPermissionAutoPromptShown = true  
+                        if (locationPermissionAutoPromptShown) {
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    errorMessage = UiText.Res(R.string.location_permission_is_required_to_show_prayer_times)
+                                )
+                            }
+                        } else {
+                            locationPermissionAutoPromptShown = true
                             permissionDelegate.requirePermission()
                             _state.update { it.copy(isLoading = false) }
-                        }  
+                        }
                         return@launch
                     }
                     fetchAndSaveLocationUseCase()
@@ -315,10 +315,10 @@ class HomeViewModel @Inject constructor(
                     startCountdownTicker(info.spanEndMillis)
                     rescheduleAlarmsIfLoaded()
 
-                    if (!alarmAndNotificationPermissionsChecked) {  
-                        alarmAndNotificationPermissionsChecked = true  
-                        checkExactAlarmAndNotificationPermissions(promptIfMissing = true)  
-                    }  
+                    if (!alarmAndNotificationPermissionsChecked) {
+                        alarmAndNotificationPermissionsChecked = true
+                        checkExactAlarmAndNotificationPermissions(promptIfMissing = true)
+                    }
 
                     return@launch
                 }
@@ -355,14 +355,18 @@ class HomeViewModel @Inject constructor(
                         startCountdownTicker(info.spanEndMillis)
                         rescheduleAlarmsIfLoaded()
 
-                        if (!alarmAndNotificationPermissionsChecked) {  
-                            alarmAndNotificationPermissionsChecked = true  
-                            checkExactAlarmAndNotificationPermissions(promptIfMissing = true)  
-                        }  
+                        if (!alarmAndNotificationPermissionsChecked) {
+                            alarmAndNotificationPermissionsChecked = true
+                            checkExactAlarmAndNotificationPermissions(promptIfMissing = true)
+                        }
                     },
                     onFailure = { throwable ->
-                        val message = throwable.message?.let { UiText.Raw(it) }
-                            ?: UiText.Res(R.string.something_went_wrong)
+                        val message = if (!connectivityChecker.isConnected()) {
+                            UiText.Res(R.string.no_internet_connection)
+                        } else {
+                            throwable.message?.let { UiText.Raw(it) }
+                                ?: UiText.Res(R.string.something_went_wrong)
+                        }
                         _state.update {
                             it.copy(
                                 isLoading = false,
@@ -370,7 +374,7 @@ class HomeViewModel @Inject constructor(
                             )
                         }
                         _effect.emit(HomeContract.Effect.ShowError(message))
-                    }
+                    },
                 )
             } catch (e: SecurityException) {
                 permissionDelegate.requirePermission()

@@ -23,12 +23,14 @@ class PrayerTimesRepoImpl(
         latitude: Double,
         longitude: Double,
         method: Int,
-        madhab: Madhab
+        madhab: Madhab,
+        adjustment: Int
     ): PrayerTimesResult? {
         val cached = prayerTimesDao.getByDate(date)
         val isCacheValid = cached != null &&
                 cached.method == method &&
                 cached.schoolId == madhab.schoolId &&
+                cached.hijriAdjustment == adjustment && 
                 abs(cached.latitude - latitude) < COORDINATE_TOLERANCE &&
                 abs(cached.longitude - longitude) < COORDINATE_TOLERANCE
 
@@ -40,9 +42,10 @@ class PrayerTimesRepoImpl(
         latitude: Double,
         longitude: Double,
         method: Int,
-        madhab: Madhab
+        madhab: Madhab,
+        adjustment: Int 
     ): Result<PrayerTimesResult> {
-        getCachedTimings(date, latitude, longitude, method, madhab)?.let {
+        getCachedTimings(date, latitude, longitude, method, madhab, adjustment)?.let {
             return Result.success(it)
         }
 
@@ -54,10 +57,11 @@ class PrayerTimesRepoImpl(
                 latitude = latitude,
                 longitude = longitude,
                 method = method,
-                school = madhab.schoolId
+                school = madhab.schoolId,
+                adjustment = adjustment 
             )
 
-            val entities = calendarResponse.toEntityList(latitude, longitude, method, madhab.schoolId)
+            val entities = calendarResponse.toEntityList(latitude, longitude, method, madhab.schoolId, adjustment)
             prayerTimesDao.insertAll(entities)
 
             val todayEntity = prayerTimesDao.getByDate(date)

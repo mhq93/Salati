@@ -79,9 +79,6 @@ fun SalatiApp(startDestination: Screen) {
                             }
                         )
                     }
-                    //composable(Screen.AwaitingLocationPermissions.route) {
-                        //AwaitingLocationPermissions()
-                    //}
                     composable(Screen.Home.route) {
                         HomeContainer()
                     }

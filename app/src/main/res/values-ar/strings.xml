@@ -17,7 +17,7 @@
     <string name="home">الرئيسية</string>
     <string name="qibla">القبلة</string>
     <string name="tracker">المتتبع</string>
-    <string name="alarms">التنبيهات</string>
+    <string name="alarms">المنبهات</string>
 
     <!-- Home -->
     <string name="next_prayer">الصلاة التالية: %1$s</string>

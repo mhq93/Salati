@@ -28,28 +28,10 @@ fun HomeContent(
             .background(SheetBackground)
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .navigationBarsPadding()
                 .padding(bottom = BottomNavDefaults.Height)
         ) {
-            //            val showBanner = state.errorMessage == null
-            //
-            //            if (showBanner && !state.hasExactAlarmPermission) {
-            //                SystemPermissionBanner(
-            //                    message = stringResource(R.string.exact_alarms_are_disabled_prayer_alerts_may_not_ring_on_time),
-            //                    onActionClick = { onIntent(HomeContract.Intent.ExactAlarmBannerClicked) },
-            //                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            //                )
-            //            }
-            //
-            //            if (showBanner && !state.hasNotificationPermission) {
-            //                SystemPermissionBanner(
-            //                    message = stringResource(R.string.notifications_are_disabled_you_won_t_see_prayer_reminders),
-            //                    onActionClick = { onIntent(HomeContract.Intent.NotificationBannerClicked) },
-            //                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            //                )
-            //            }
-
             when {
                 state.isLoading -> {
                     LoadingContent(modifier = Modifier.weight(1f))
@@ -78,16 +60,6 @@ fun HomeContent(
                         modifier = Modifier.weight(1f)
                     )
                 }
-
-//                else -> {
-//                    AwaitingLocationPermissions(modifier = Modifier.weight(1f))
-//                    //                    HomeContentError(
-//                    //                        errorMessage = stringResource(R.string.location_permission_is_required_to_show_prayer_times),
-//                    //                        locationPermissionState = state.locationPermission,
-//                    //                        onIntent = onIntent,
-//                    //                        modifier = Modifier.weight(1f)
-//                    //                    )
-//                }
             }
         }
     }

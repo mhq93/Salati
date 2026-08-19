@@ -68,7 +68,7 @@ fun CustomAlarmsContent(
                     PaddingValues(
                         start = 16.dp,
                         end = 16.dp,
-                        top = with(density) { headerHeightPx.toDp() },
+                        top = with(density) { headerHeightPx.toDp() } + 16.dp,
                         bottom = 48.dp
                     )
                 },

@@ -35,10 +35,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
 import com.mhq.salati.alarms.domain.model.CustomAlarm
 import com.mhq.salati.alarms.domain.model.OffsetDirection
+import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import java.util.Calendar
 
 @Composable
@@ -67,7 +69,7 @@ fun CustomAlarmCard(
     val contentAlpha = if (customAlarm.isEnabled) 1f else 0.45f
 
     Card(
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, borderColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(containerColor = containerColor),
@@ -79,8 +81,8 @@ fun CustomAlarmCard(
                 .padding(
                     start = 16.dp,
                     end = 16.dp,
-                    top = 12.dp,
-                    bottom = 12.dp
+                    top = 8.dp,
+                    bottom = 16.dp
                 )
         ) {
             Row(
@@ -165,7 +167,7 @@ fun CustomAlarmCard(
                         .clip(RoundedCornerShape(6.dp))
                         .background(Color(0xFFF4F4F4))
                         .clickable(onClick = onEdit)
-                        .padding(vertical = 10.dp),
+                        .padding(vertical = 8.dp),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -192,7 +194,7 @@ fun CustomAlarmCard(
                         .clip(RoundedCornerShape(6.dp))
                         .background(Color(0xFFFFEBEB))
                         .clickable(onClick = onDelete)
-                        .padding(vertical = 10.dp),
+                        .padding(vertical = 8.dp),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -213,6 +215,27 @@ fun CustomAlarmCard(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun CustomAlarmCardPreview() {
+    SalatiTheme() {
+        CustomAlarmCard(
+            customAlarm = CustomAlarm(
+                prayerName = "Fajr",
+                label = "label",
+                offsetMinutes = 10,
+                offsetDirection = OffsetDirection.BEFORE,
+                everyDay = true,
+                activeDays = emptySet(),
+                isEnabled = true
+            ),
+            onToggle = {},
+            onEdit = {},
+            onDelete = {}
+        )
     }
 }
 

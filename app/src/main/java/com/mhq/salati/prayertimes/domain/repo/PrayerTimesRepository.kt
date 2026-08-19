@@ -9,7 +9,8 @@ interface PrayerTimesRepository {
         latitude: Double,
         longitude: Double,
         method: Int = 5,
-        madhab: Madhab = Madhab.SHAFI
+        madhab: Madhab = Madhab.SHAFI,
+        adjustment: Int = 0
     ): Result<PrayerTimesResult>
 
     suspend fun getCachedTimings(
@@ -17,6 +18,7 @@ interface PrayerTimesRepository {
         latitude: Double,
         longitude: Double,
         method: Int = 5,
-        madhab: Madhab = Madhab.SHAFI
+        madhab: Madhab = Madhab.SHAFI,
+        adjustment: Int = 0
     ): PrayerTimesResult?
 }

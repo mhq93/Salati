@@ -8,7 +8,8 @@ fun CalendarResponseDto.toEntityList(
     latitude: Double,
     longitude: Double,
     method: Int,
-    schoolId: Int
+    schoolId: Int,
+    hijriAdjustment: Int
 ): List<PrayerTimesEntity> {
     return data.values.flatten().map { dayData: TimingsDataDto ->
         val domainResult = dayData.toDomainResult()
@@ -17,7 +18,8 @@ fun CalendarResponseDto.toEntityList(
             latitude = latitude,
             longitude = longitude,
             method = method,
-            schoolId = schoolId
+            schoolId = schoolId,
+            hijriAdjustment = hijriAdjustment
         )
     }
 }
