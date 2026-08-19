@@ -43,7 +43,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.text.SimpleDateFormat
-import java.util.Calendar
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -68,6 +69,8 @@ class HomeViewModel @Inject constructor(
     private val scheduleDailyPrayerAlarmsUseCase: ScheduleDailyPrayerAlarmsUseCase,
     private val scheduleCustomAlarmsUseCase: ScheduleCustomAlarmsUseCase
 ) : ViewModel() {
+
+    private val dateKeyFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.US)
 
     private val permissionDelegate = LocationPermissionDelegate()
     val permissionEffect: SharedFlow<LocationPermissionEffect> = permissionDelegate.effect
@@ -116,20 +119,14 @@ class HomeViewModel @Inject constructor(
 
             is HomeContract.Intent.PreviousDay -> {
                 if (!isBrowsingToday()) {
-                    _state.update { state ->
-                        state.currentDate.apply { add(Calendar.DAY_OF_YEAR, -1) }
-                        state.copy(currentDate = state.currentDate)
-                    }
+                    _state.update { it.copy(currentDate = it.currentDate.minusDays(1)) }
                     observeMutedPrayersForCurrentDate()
                     loadPrayerTimes()
                 }
             }
 
             is HomeContract.Intent.NextDay -> {
-                _state.update { state ->
-                    state.currentDate.apply { add(Calendar.DAY_OF_YEAR, 1) }
-                    state.copy(currentDate = state.currentDate)
-                }
+                _state.update { it.copy(currentDate = it.currentDate.plusDays(1)) }
                 observeMutedPrayersForCurrentDate()
                 loadPrayerTimes()
             }
@@ -170,8 +167,7 @@ class HomeViewModel @Inject constructor(
 
             is HomeContract.Intent.ToggleMute -> {
                 viewModelScope.launch {
-                    val dateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US)
-                        .format(_state.value.currentDate.time)
+                    val dateKey = _state.value.currentDate.format(dateKeyFormatter)
                     val currentlyMuted = intent.prayerName in _state.value.mutedPrayers
                     toggleMutePrayerUseCase(dateKey, intent.prayerName, !currentlyMuted)
                 }
@@ -232,8 +228,7 @@ class HomeViewModel @Inject constructor(
             permissionDelegate.reset()
             _state.update { it.copy(errorMessage = null) }
 
-            val today = SimpleDateFormat("dd-MM-yyyy", Locale.US)
-                .format(_state.value.currentDate.time)
+            val today = _state.value.currentDate.format(dateKeyFormatter)
 
             try {
                 val savedLocation = getSavedLocationUseCase().first()
@@ -418,8 +413,7 @@ class HomeViewModel @Inject constructor(
 
     private fun observeMutedPrayersForCurrentDate() {
         mutedPrayersJob?.cancel()
-        val dateKey =
-            SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
+        val dateKey = _state.value.currentDate.format(dateKeyFormatter)
         mutedPrayersJob = viewModelScope.launch {
             mutedPrayersRepository.observeMutedPrayers(dateKey).collect { mutedPrayers ->
                 _state.update { it.copy(mutedPrayers = mutedPrayers) }
@@ -430,22 +424,14 @@ class HomeViewModel @Inject constructor(
 
     private fun onNextPrayerWindowElapsed() {
         if (_state.value.nextPrayerInfo?.crossesIntoNextDay == true) {
-            _state.update { state ->
-                state.currentDate.apply { add(Calendar.DAY_OF_YEAR, 1) }
-                state.copy(currentDate = state.currentDate)
-            }
+            _state.update { it.copy(currentDate = it.currentDate.plusDays(1)) }
             loadPrayerTimes()
         } else {
             viewModelScope.launch { recomputeNextPrayerInfo() }
         }
     }
 
-    private fun isBrowsingToday(): Boolean {
-        val browsedDateKey =
-            SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
-        val todayKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Calendar.getInstance().time)
-        return browsedDateKey == todayKey
-    }
+    private fun isBrowsingToday(): Boolean = _state.value.currentDate == LocalDate.now()
 
     private fun calculatePastPrayers(timings: PrayerTimings): Set<PrayerName> {
         val allTimings = listOf(
@@ -493,8 +479,8 @@ class HomeViewModel @Inject constructor(
         val timings = _state.value.timings ?: return
         val latitude = _state.value.latitude ?: return
         val longitude = _state.value.longitude ?: return
-        val date = SimpleDateFormat("dd-MM-yyyy", Locale.US)
-            .format(_state.value.currentDate.time)
+        val date = _state.value.currentDate.format(dateKeyFormatter)
+
         val info = calculateNextPrayerInfoUseCase(timings, date, latitude, longitude)
         _state.update {
             it.copy(
@@ -508,10 +494,8 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun rescheduleAlarmsIfLoaded() {
         val timings = _state.value.timings ?: return
-        val date = _state.value.date ?: return
-
-        val browsedDateKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(_state.value.currentDate.time)
-        val todayKey = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Calendar.getInstance().time)
+        val browsedDateKey = _state.value.currentDate.format(dateKeyFormatter)
+        val todayKey = LocalDate.now().format(dateKeyFormatter)
 
         if (browsedDateKey != todayKey) return
 

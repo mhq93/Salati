@@ -9,6 +9,7 @@ import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.settings.presentation.contract.SettingsContract
 import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.presentation.components.UiText
+import java.time.LocalDate
 import java.util.Calendar
 
 class HomeContract {
@@ -30,7 +31,7 @@ class HomeContract {
         val errorMessage: UiText? = null,
         val hasExactAlarmPermission: Boolean = true,
         val hasNotificationPermission: Boolean = true,
-        val currentDate: Calendar = Calendar.getInstance()
+        val currentDate: LocalDate = LocalDate.now()
     )
 
     sealed interface Intent {
