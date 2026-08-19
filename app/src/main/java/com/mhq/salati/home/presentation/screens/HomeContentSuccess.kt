@@ -50,6 +50,7 @@ fun HomeContentSuccess(
     currentPrayerName: PrayerName?,
     mutedPrayers: Set<String>,
     pastPrayers: Set<PrayerName>,
+    isToday: Boolean,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -113,6 +114,7 @@ fun HomeContentSuccess(
                         spanStartMillis = nextPrayerInfo.spanStartMillis,
                         spanEndMillis = nextPrayerInfo.spanEndMillis,
                         remainingMillis = remainingMillis,
+                        isToday = isToday,
                         modifier = Modifier.padding(top = 12.dp)
                     )
                 }

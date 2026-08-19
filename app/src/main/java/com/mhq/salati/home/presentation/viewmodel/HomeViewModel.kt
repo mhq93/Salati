@@ -11,6 +11,7 @@ import com.mhq.salati.adhan.domain.usecases.StopAdhanPlaybackUseCase
 import com.mhq.salati.adhan.domain.usecases.ToggleMutePrayerUseCase
 import com.mhq.salati.alarms.domain.usecases.ScheduleCustomAlarmsUseCase
 import com.mhq.salati.connectivity.domain.ConnectivityChecker
+import com.mhq.salati.home.domain.model.NextPrayerInfo
 import com.mhq.salati.home.domain.usecases.CalculateNextPrayerInfoUseCase
 import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.location.domain.model.SavedLocation
@@ -45,6 +46,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -55,7 +57,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class HomeViewModel @Inject constructor(
     private val locationProvider: LocationProvider,
     private val permissionChecker: PermissionChecker,
-    private val connectivityChecker: ConnectivityChecker,  
+    private val connectivityChecker: ConnectivityChecker,
     private val mutedPrayersRepository: MutedPrayersRepository,
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
     private val getSavedLocationUseCase: GetSavedLocationUseCase,
@@ -82,7 +84,7 @@ class HomeViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<HomeContract.Effect>()
     val effect: SharedFlow<HomeContract.Effect> = _effect.asSharedFlow()
 
-    private var locationPermissionAutoPromptShown = false  
+    private var locationPermissionAutoPromptShown = false
     private var loadPrayerTimesJob: Job? = null
     private var tickCounterJob: Job? = null
     private var mutedPrayersJob: Job? = null
@@ -112,8 +114,8 @@ class HomeViewModel @Inject constructor(
                 checkPermissionAndLoad()
             }
 
-            is HomeContract.Intent.RetryClicked -> { 
-                locationPermissionAutoPromptShown = false 
+            is HomeContract.Intent.RetryClicked -> {
+                locationPermissionAutoPromptShown = false
                 checkPermissionAndLoad()
             }
 
@@ -288,7 +290,7 @@ class HomeViewModel @Inject constructor(
                 val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
 
                 if (cached != null) {
-                    val info = calculateNextPrayerInfoUseCase(
+                    val info = resolveNextPrayerInfoForDisplay(
                         cached.timings,
                         today,
                         latitude,
@@ -330,8 +332,11 @@ class HomeViewModel @Inject constructor(
 
                 result.fold(
                     onSuccess = { prayerTimesResult ->
-                        val info = calculateNextPrayerInfoUseCase(
-                            prayerTimesResult.timings, today, latitude, longitude
+                        val info = resolveNextPrayerInfoForDisplay(
+                            prayerTimesResult.timings,
+                            today,
+                            latitude,
+                            longitude
                         )
                         _state.update {
                             it.copy(
@@ -448,7 +453,8 @@ class HomeViewModel @Inject constructor(
         )
         val imsakMinutes = parseTimeToMinutesUseCase(timings.imsak)
         fun normalize(minutes: Int) = if (minutes < imsakMinutes) minutes + 24 * 60 else minutes
-        val rawNowMinutes = parseTimeToMinutesUseCase(SimpleDateFormat("HH:mm", Locale.US).format(Date()))
+        val rawNowMinutes =
+            parseTimeToMinutesUseCase(SimpleDateFormat("HH:mm", Locale.US).format(Date()))
         val nowMinutes = normalize(rawNowMinutes)
 
         return allTimings
@@ -481,7 +487,13 @@ class HomeViewModel @Inject constructor(
         val longitude = _state.value.longitude ?: return
         val date = _state.value.currentDate.format(dateKeyFormatter)
 
-        val info = calculateNextPrayerInfoUseCase(timings, date, latitude, longitude)
+        val info = resolveNextPrayerInfoForDisplay(
+            timings,
+            date,
+            latitude,
+            longitude
+        )
+
         _state.update {
             it.copy(
                 nextPrayerInfo = info,
@@ -490,6 +502,36 @@ class HomeViewModel @Inject constructor(
             )
         }
         startCountdownTicker(info.spanEndMillis)
+    }
+
+    private suspend fun resolveNextPrayerInfoForDisplay(
+        browsedTimings: PrayerTimings,
+        browsedDateKey: String,
+        latitude: Double,
+        longitude: Double
+    ): NextPrayerInfo {
+        if (isBrowsingToday()) {
+            return calculateNextPrayerInfoUseCase(
+                browsedTimings,
+                browsedDateKey,
+                latitude,
+                longitude
+            )
+        }
+
+        val todayKey = LocalDate.now().format(dateKeyFormatter)
+        val todayTimings = getCachedPrayerTimesUseCase(todayKey, latitude, longitude)?.timings
+            ?: getPrayerTimesUseCase(todayKey, latitude, longitude).getOrNull()?.timings
+            ?: browsedTimings
+
+        val todayInfo = calculateNextPrayerInfoUseCase(todayTimings, todayKey, latitude, longitude)
+        val daysOffset = ChronoUnit.DAYS.between(LocalDate.now(), _state.value.currentDate)
+        val addedMillis = daysOffset * 24L * 60L * 60L * 1000L
+
+        return todayInfo.copy(
+            spanStartMillis = todayInfo.spanStartMillis + addedMillis,
+            spanEndMillis = todayInfo.spanEndMillis + addedMillis
+        )
     }
 
     private suspend fun rescheduleAlarmsIfLoaded() {

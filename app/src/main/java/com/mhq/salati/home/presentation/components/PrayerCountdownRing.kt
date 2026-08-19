@@ -37,13 +37,14 @@ fun PrayerCountdownRing(
     spanStartMillis: Long,
     spanEndMillis: Long,
     remainingMillis: Long,
+    isToday: Boolean,
     modifier: Modifier = Modifier
 ) {
 
     val countdownLabel = remainingMillis.toCountdownLabel()
     val nowMillis = spanEndMillis - remainingMillis
 
-    val progressFraction = if (spanEndMillis > spanStartMillis) {
+    val progressFraction = if (isToday && spanEndMillis > spanStartMillis) {
         ((nowMillis - spanStartMillis).toFloat() / (spanEndMillis - spanStartMillis).toFloat())
             .coerceIn(0f, 1f)
     } else {
@@ -141,7 +142,8 @@ private fun PrayerCountdownRingPreview() {
             nextPrayerName = "Fajr",
             spanStartMillis = 1L,
             spanEndMillis = 1L,
-            remainingMillis = 1L
+            remainingMillis = 1L,
+            isToday = true
         )
     }
 }

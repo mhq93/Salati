@@ -15,6 +15,7 @@ import com.mhq.salati.shared.presentation.components.asString
 import com.mhq.salati.shared.presentation.screens.LoadingContent
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import com.mhq.salati.shared.presentation.theme.SheetBackground
+import java.time.LocalDate
 
 @Composable
 fun HomeContent(
@@ -56,6 +57,7 @@ fun HomeContent(
                         currentPrayerName = state.currentPrayerName,
                         mutedPrayers = state.mutedPrayers,
                         pastPrayers = state.pastPrayers,
+                        isToday = state.currentDate == LocalDate.now(),
                         onIntent = onIntent,
                         modifier = Modifier.weight(1f)
                     )

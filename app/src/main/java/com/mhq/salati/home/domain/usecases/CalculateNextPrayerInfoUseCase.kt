@@ -14,9 +14,9 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 class CalculateNextPrayerInfoUseCase @Inject constructor(
-    private val parseToEpochMillisUseCase: ParseToEpochMillisUseCase,
+    private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
-    private val getPrayerTimesUseCase: GetPrayerTimesUseCase
+    private val parseToEpochMillisUseCase: ParseToEpochMillisUseCase
 ) {
     suspend operator fun invoke(
         timings: PrayerTimings,
