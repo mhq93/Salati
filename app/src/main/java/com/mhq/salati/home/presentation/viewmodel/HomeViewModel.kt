@@ -464,9 +464,6 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun calculateCurrentPrayerName(timings: PrayerTimings): PrayerName? {
-        val nowMinutes = parseTimeToMinutesUseCase(
-            SimpleDateFormat("HH:mm", Locale.US).format(Date())
-        )
         val prayers = listOf(
             PrayerName.FAJR to timings.fajr,
             PrayerName.DHUHR to timings.dhuhr,
@@ -474,8 +471,17 @@ class HomeViewModel @Inject constructor(
             PrayerName.MAGHRIB to timings.maghrib,
             PrayerName.ISHA to timings.isha
         )
+
+        val fajrMinutes = parseTimeToMinutesUseCase(timings.fajr)
+        fun normalize(minutes: Int) = if (minutes < fajrMinutes) minutes + 24 * 60 else minutes
+
+        val rawNowMinutes = parseTimeToMinutesUseCase(
+            SimpleDateFormat("HH:mm", Locale.US).format(Date())
+        )
+        val nowMinutes = normalize(rawNowMinutes)
+
         return prayers
-            .map { it.first to parseTimeToMinutesUseCase(it.second) }
+            .map { it.first to normalize(parseTimeToMinutesUseCase(it.second)) }
             .filter { it.second <= nowMinutes }
             .maxByOrNull { it.second }
             ?.first
