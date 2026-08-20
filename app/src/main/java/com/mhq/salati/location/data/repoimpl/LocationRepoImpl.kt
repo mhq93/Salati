@@ -18,16 +18,6 @@ class LocationRepoImpl @Inject constructor(
 
     override val savedLocation: Flow<SavedLocation?> = locationDataStore.savedLocation
 
-    override suspend fun fetchAndSaveLocation(): SavedLocation {
-        val location = withTimeout(5_000L.milliseconds) {
-            locationProvider.getCurrentLocation()
-        }
-        val (cityName, countryName) = geocoderProvider.reverseGeocode(location.latitude, location.longitude)
-
-        locationDataStore.save(location.latitude, location.longitude, cityName, countryName)
-        return SavedLocation(cityName, countryName, location.latitude, location.longitude)
-    }
-
     override suspend fun saveManualLocation(
         latitude: Double,
         longitude: Double,

@@ -1,7 +1,7 @@
 package com.mhq.salati.connectivity.di
 
-import com.mhq.salati.connectivity.data.ConnectivityCheckerImpl
-import com.mhq.salati.connectivity.domain.ConnectivityChecker
+import com.mhq.salati.connectivity.data.repoimpl.ConnectivityCheckerImpl
+import com.mhq.salati.connectivity.domain.repo.ConnectivityChecker
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

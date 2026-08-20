@@ -174,6 +174,7 @@
     <string name="couldn_t_update_language">Couldn\'t update language</string>
     <string name="couldn_t_update_adhan_sound">Couldn\'t update adhan sound</string>
     <string name="couldn_t_update_hijri_offset">Couldn\'t update Hijri offset</string>
+    <string name="failed_to_get_location_name">Failed to get Location name</string>
 
     <plurals name="day_streak">
         <item quantity="one">%1$d Day streak</item>

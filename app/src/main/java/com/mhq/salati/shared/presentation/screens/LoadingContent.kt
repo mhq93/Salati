@@ -14,18 +14,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable
-fun LoadingContent(modifier: Modifier = Modifier) {
+fun LoadingContent(
+    modifier: Modifier = Modifier
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize()
     ) {
-        CircularProgressIndicator()
-        Spacer(Modifier.height(16.dp))
-        Text(text = "Please, wait...")
+        CircularProgressIndicator(
+            color = DarkGreen
+        )
+        Spacer(
+            Modifier.height(16.dp)
+        )
+        Text(
+            text = "Please, wait...",
+            color = DarkGreen
+        )
     }
 }
 

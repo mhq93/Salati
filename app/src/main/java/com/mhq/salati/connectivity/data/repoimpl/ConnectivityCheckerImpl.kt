@@ -1,11 +1,9 @@
-package com.mhq.salati.connectivity.data
+package com.mhq.salati.connectivity.data.repoimpl
 
-import android.Manifest
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import androidx.annotation.RequiresPermission
-import com.mhq.salati.connectivity.domain.ConnectivityChecker
+import com.mhq.salati.connectivity.domain.repo.ConnectivityChecker
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

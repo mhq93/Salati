@@ -4,6 +4,7 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
+import com.mhq.salati.location.domain.GeocodeResult
 import com.mhq.salati.location.domain.repo.GeocoderProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -23,18 +24,25 @@ class AndroidGeocoderProvider @Inject constructor(
 
     private val geocoder by lazy { Geocoder(context, Locale.getDefault()) }
 
-    override suspend fun reverseGeocode(latitude: Double, longitude: Double): Pair<String?, String?> {
-        if (!Geocoder.isPresent()) return null to null
+    override suspend fun reverseGeocode(latitude: Double, longitude: Double): GeocodeResult {
+        if (!Geocoder.isPresent()) return GeocodeResult.NotFound
 
         return try {
             withTimeout(5_000L.milliseconds) {
                 val address = fetchAddress(latitude, longitude)
-                (address?.locality ?: address?.subAdminArea) to address?.countryName
+                if (address == null) {
+                    GeocodeResult.NotFound
+                } else {
+                    GeocodeResult.Found(
+                        cityName = address.locality ?: address.subAdminArea,
+                        countryName = address.countryName
+                    )
+                }
             }
         } catch (e: TimeoutCancellationException) {
-            null to null
+            GeocodeResult.Failed(e)
         } catch (e: IOException) {
-            null to null
+            GeocodeResult.Failed(e)
         }
     }
 

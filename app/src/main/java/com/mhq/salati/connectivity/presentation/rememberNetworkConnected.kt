@@ -1,4 +1,4 @@
-package com.mhq.salati.connectivity
+package com.mhq.salati.connectivity.presentation
 
 import android.content.Context
 import android.net.ConnectivityManager

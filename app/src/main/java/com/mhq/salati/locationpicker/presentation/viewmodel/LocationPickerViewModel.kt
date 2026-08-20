@@ -2,6 +2,7 @@ package com.mhq.salati.locationpicker.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mhq.salati.location.domain.GeocodeResult
 import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract.State
 import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract.Intent
 import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract.Effect
@@ -15,7 +16,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -148,29 +148,33 @@ class LocationPickerViewModel @Inject constructor(
             _state.update {
                 it.copy(
                     isResolvingSelection = true,
-                    selectedLocation = LocationPickerContract.SelectedLocation(
-                        null,
-                        latitude,
-                        longitude
-                    )
+                    selectedLocation = LocationPickerContract.SelectedLocation(null, latitude, longitude)
                 )
             }
-            try {
-                val name = reverseGeocodeLocation(latitude, longitude)
-                _state.update {
-                    it.copy(
-                        isResolvingSelection = false,
-                        selectedLocation = LocationPickerContract.SelectedLocation(
-                            name,
-                            latitude,
-                            longitude
+            when (val result = reverseGeocodeLocation(latitude, longitude)) {
+                is GeocodeResult.Found -> {
+                    val name = listOfNotNull(result.cityName, result.countryName)
+                        .joinToString(", ")
+                        .ifBlank { null }
+                    _state.update {
+                        it.copy(
+                            isResolvingSelection = false,
+                            selectedLocation = LocationPickerContract.SelectedLocation(name, latitude, longitude)
                         )
-                    )
+                    }
                 }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                _state.update { it.copy(isResolvingSelection = false) }
+                is GeocodeResult.NotFound -> {
+                    _state.update {
+                        it.copy(
+                            isResolvingSelection = false,
+                            selectedLocation = LocationPickerContract.SelectedLocation(null, latitude, longitude)
+                        )
+                    }
+                }
+                is GeocodeResult.Failed -> {
+                    _state.update { it.copy(isResolvingSelection = false) }
+                    _effect.emit(Effect.ShowError(UiText.Raw("Couldn't determine location name. Check your connection.")))
+                }
             }
         }
     }

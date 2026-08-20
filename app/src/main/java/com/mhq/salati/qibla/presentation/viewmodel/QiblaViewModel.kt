@@ -2,12 +2,14 @@ package com.mhq.salati.qibla.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mhq.salati.location.domain.GeocodeResult
 import com.mhq.salati.R
-import com.mhq.salati.connectivity.domain.ConnectivityChecker
+import com.mhq.salati.connectivity.domain.repo.ConnectivityChecker
 import com.mhq.salati.location.domain.model.SavedLocation
 import com.mhq.salati.location.domain.repo.LocationProvider
-import com.mhq.salati.location.domain.usecases.FetchAndSaveLocationUseCase
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
+import com.mhq.salati.location.domain.usecases.ReverseGeocodeLocationUseCase
+import com.mhq.salati.location.domain.usecases.SaveManualLocationUseCase
 import com.mhq.salati.permissions.domain.PermissionChecker
 import com.mhq.salati.permissions.location.LocationPermissionDelegate
 import com.mhq.salati.permissions.location.LocationPermissionEffect
@@ -27,8 +29,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class QiblaViewModel @Inject constructor(
@@ -38,7 +42,8 @@ class QiblaViewModel @Inject constructor(
     private val connectivityChecker: ConnectivityChecker,
     private val getQiblaBearingUseCase: GetQiblaBearingUseCase,
     private val getSavedLocationUseCase: GetSavedLocationUseCase,
-    private val fetchAndSaveLocationUseCase: FetchAndSaveLocationUseCase,
+    private val reverseGeocodeLocationUseCase: ReverseGeocodeLocationUseCase,
+    private val saveManualLocationUseCase: SaveManualLocationUseCase,
 ) : ViewModel() {
 
     private val permissionDelegate = LocationPermissionDelegate()
@@ -145,44 +150,48 @@ class QiblaViewModel @Inject constructor(
                 val location = if (savedLocation != null) {
                     savedLocation
                 } else {
-                    if (!connectivityChecker.isConnected()) {   
-                        _state.update {   
-                            it.copy(   
-                                isLoading = false,   
-                                errorMessage = UiText.Res(R.string.no_internet_connection)   
-                            )   
-                        }   
-                        return@launch   
-                    }   
+                    if (!connectivityChecker.isConnected()) {
+                        _state.update { it.copy(isLoading = false, errorMessage = UiText.Res(R.string.no_internet_connection)) }
+                        return@launch
+                    }
 
                     if (!locationProvider.isLocationEnabled()) {
                         permissionDelegate.markServicesDisabled()
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                errorMessage = UiText.Res(R.string.location_services_disabled)
-                            )
-                        }
+                        _state.update { it.copy(isLoading = false, errorMessage = UiText.Res(R.string.location_services_disabled)) }
                         return@launch
                     }
 
                     if (!permissionChecker.hasLocationPermission()) {
-                        if (locationPermissionAutoPromptShown) {   
-                            _state.update {   
-                                it.copy(   
-                                    isLoading = false,   
-                                    errorMessage = UiText.Res(R.string.location_permission_required)   
-                                )   
-                            }   
-                        } else {   
-                            locationPermissionAutoPromptShown = true   
+                        if (locationPermissionAutoPromptShown) {
+                            _state.update { it.copy(isLoading = false, errorMessage = UiText.Res(R.string.location_permission_required)) }
+                        } else {
+                            locationPermissionAutoPromptShown = true
                             permissionDelegate.requirePermission()
                             _state.update { it.copy(isLoading = false) }
-                        }   
+                        }
                         return@launch
                     }
 
-                    fetchAndSaveLocationUseCase()
+                    val gpsLocation = withTimeout(5_000L.milliseconds) { locationProvider.getCurrentLocation() }
+                    val lat = gpsLocation.latitude
+                    val lng = gpsLocation.longitude
+
+                    when (val geocode = reverseGeocodeLocationUseCase(lat, lng)) {
+                        is GeocodeResult.Found -> {
+                            saveManualLocationUseCase(lat, lng, geocode.cityName, geocode.countryName)
+                            SavedLocation(geocode.cityName, geocode.countryName, lat, lng)
+                        }
+                        is GeocodeResult.NotFound -> {
+                            saveManualLocationUseCase(lat, lng, null, null)
+                            SavedLocation(null, null, lat, lng)
+                        }
+                        is GeocodeResult.Failed -> {
+                            val message = UiText.Res(R.string.failed_to_get_location_name)
+                            _state.update { it.copy(isLoading = false, errorMessage = message) }
+                            _effect.emit(QiblaContract.Effect.ShowError(message))
+                            return@launch
+                        }
+                    }
                 }
 
                 val latitude = location.latitude
