@@ -180,7 +180,7 @@ fun CustomAlarmCard(
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = "Edit",
+                            text = stringResource(R.string.edit),
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                             color = Color(0xFF757575)
                         )
@@ -207,7 +207,7 @@ fun CustomAlarmCard(
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = "Delete",
+                            text = stringResource(R.string.delete),
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                             color = Color(0xFFD32F2F)
                         )

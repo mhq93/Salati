@@ -8,7 +8,8 @@ val DeepGunmetal = Color(0xFF16191B)
 val InkText = Color(0xFF1C2B22)
 val DarkGreen = Color(0xFF0B3D2E)
 val PrimaryGreen = Color(0xFF103A31)
-val DarkGreenLight = Color(0xFF1D5C46) //0xFF14523E
+val DarkGreenLight = Color(0xFF1D5C46)
+//val DarkGreenLight = Color(0xFF14523E)
 val GaugeTrackDim = Color(0xFF2A5E48)
 val AccentGreen = Color(0xFF2FA774)
 val AccentEmerald = Color(0xFF00E6A6)
@@ -19,7 +20,8 @@ val MutedSage = Color(0xFF8A9A90)
 val QuickSilver = Color(0xFFB5B5B5)
 val Timberwolf = Color(0xFFC5C5C5)
 val MetallicSilver = Color(0xFFE2E8F0)
-val SheetBackground = Color(0xFFFAF7F0) //0xFFFAF8F3
+val SheetBackground = Color(0xFFFAF7F0)
+//val SheetBackground = Color(0xFFFAF8F3)
 val MaterialAmber = Color(0xFFFFC107)
 val GaugeTrackBright = Color(0xFFF5B942)
 val SultanGold = Color(0xFFE0A62E)
@@ -33,7 +35,7 @@ val CardBackground = Color.White
 
 // --- New tokens needed for dark mode (light mode reuses existing tokens above) ---
 val SheetBackgroundDark = Color(0xFF121514)     // dark counterpart to SheetBackground
-val CardBackgroundDark = Color(0xFF1E2422)      // dark counterpart to CardBackground, sits above SheetBackgroundDark]
+val CardBackgroundDark = Color(0xFF1E2422)      // dark counterpart to CardBackground, sits above SheetBackgroundDark
 val InkTextDark = Color(0xFFE9ECEA)             // dark counterpart to InkText (near-white, slightly warm)
 
 val ErrorContainerLight = Color(0xFFFBE9E7)

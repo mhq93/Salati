@@ -96,7 +96,7 @@ fun SettingsSelectionSheet(
                         if (isSelected) {
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = stringResource(R.string.selected)
+                                contentDescription = stringResource(R.string.is_selected)
                             )
                         }
                     }

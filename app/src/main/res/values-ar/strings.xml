@@ -91,7 +91,6 @@
     <string name="track_your_five_daily_prayers">تتبع صلواتك الخمس كل يوم</string>
     <string name="did_you_pray_x">هل صليت %1$s اليوم؟</string>
     <string name="mark_todays_x_prayer">أضف وسماُ لصلاة %1$s اليوم</string>
-    <string name="day_streak">يوم %1$d من السلسلة</string>
     <string name="previous_month">الشهر الماضي</string>
     <string name="next_month">الشهر التالي</string>
     <string name="prayed">مقضية</string>
@@ -156,7 +155,7 @@
     <string name="language">اللغة</string>
     <string name="language_english">English</string>
     <string name="language_arabic">العربية</string>
-    <string name="selected">مختارة</string>
+    <string name="is_selected">مختارة</string>
 
     <string name="hijri_calendar">التقويم الهجري</string>
     <string name="date_adjustment">ضبط التاريخ</string>
@@ -175,4 +174,13 @@
     <string name="couldn_t_update_language">لم نتمكن من تحديث لغة التطبيق</string>
     <string name="couldn_t_update_adhan_sound">لم نتمكن من تحديث نغمة الآذان</string>
     <string name="couldn_t_update_hijri_offset">لم نتمكن من ضبط التاريخ الهجري</string>
+
+    <plurals name="day_streak">
+        <item quantity="zero">%1$d يوم متتالي</item>
+        <item quantity="one">يوم واحد متتالي</item>
+        <item quantity="two">يومان متتاليان</item>
+        <item quantity="few">%1$d أيام متتالية</item>
+        <item quantity="many">%1$d يومًا متتاليًا</item>
+        <item quantity="other">%1$d يوم متتالي</item>
+    </plurals>
 </resources>

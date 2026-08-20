@@ -80,7 +80,7 @@
     <string name="failed_to_get_location">Failed to get location</string>
     <string name="failed_to_load_qibla_direction">Failed to load Qibla direction</string>
     <string name="qibla_direction_can_t_be_shown_here">Qibla direction can\'t be shown here.</string>
-    <string name="this_device_doesn_t_have_the_sensors_needed_for_a_compass">This device doesn\'t have the sensors needed for a compass.</string>
+    <string name="this_device_doesn_t_have_the_sensors_needed_for_a_compass">This device does not have the sensors needed for a compass.</string>
     <string name="notifications_are_disabled_you_won_t_see_prayer_reminders">Notifications are disabled — you won\'t see prayer reminders.</string>
     <string name="exact_alarms_are_disabled_prayer_alerts_may_not_ring_on_time">Exact alarms are disabled — prayer alerts may not ring on time.</string>
 
@@ -90,7 +90,6 @@
     <string name="track_your_five_daily_prayers">Track your five daily prayers</string>
     <string name="did_you_pray_x">Did you pray %1$s today?</string>
     <string name="mark_todays_x_prayer">Mark today\'s %1$s prayer</string>
-    <string name="day_streak">%1$d Day streak</string>
     <string name="previous_month">Previous month</string>
     <string name="next_month">Next month</string>
     <string name="prayed">Prayed</string>
@@ -156,7 +155,7 @@
     <string name="language">Language</string>
     <string name="language_english">English</string>
     <string name="language_arabic">العربية</string>
-    <string name="selected">Selected</string>
+    <string name="is_selected">Selected</string>
 
     <string name="hijri_calendar">Hijri Calendar</string>
     <string name="date_adjustment">Date Adjustment</string>
@@ -175,6 +174,11 @@
     <string name="couldn_t_update_language">Couldn\'t update language</string>
     <string name="couldn_t_update_adhan_sound">Couldn\'t update adhan sound</string>
     <string name="couldn_t_update_hijri_offset">Couldn\'t update Hijri offset</string>
+
+    <plurals name="day_streak">
+        <item quantity="one">%1$d Day streak</item>
+        <item quantity="other">%1$d Days streak</item>
+    </plurals>
 
     <plurals name="minutes_before_prayer" translatable="false">
         <item quantity="one">%1$d minute before %2$s</item>
