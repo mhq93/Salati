@@ -1,5 +1,6 @@
 package com.mhq.salati.alarms.presentation.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -12,6 +13,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
+import com.mhq.salati.shared.presentation.theme.DarkGreen
+import com.mhq.salati.shared.presentation.theme.SheetBackground
+
+//@Composable
+//fun CustomAlarmsContentBlank(
+//    modifier: Modifier = Modifier
+//) {
+//    Column(
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        modifier = modifier.padding(32.dp)
+//    ) {
+//        Text(
+//            text = stringResource(R.string.no_custom_alarms_title),
+//            style = MaterialTheme.typography.titleLarge,
+//            color = MaterialTheme.colorScheme.onBackground
+//        )
+//        Spacer(
+//            modifier = Modifier.height(8.dp)
+//        )
+//        Text(
+//            text = stringResource(R.string.no_custom_alarms_body),
+//            style = MaterialTheme.typography.bodyMedium,
+//            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+//        )
+//    }
+//}
 
 @Composable
 fun CustomAlarmsContentBlank(
@@ -24,7 +51,7 @@ fun CustomAlarmsContentBlank(
         Text(
             text = stringResource(R.string.no_custom_alarms_title),
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground
+            color = DarkGreen
         )
         Spacer(
             modifier = Modifier.height(8.dp)
@@ -32,7 +59,7 @@ fun CustomAlarmsContentBlank(
         Text(
             text = stringResource(R.string.no_custom_alarms_body),
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+            color = DarkGreen.copy(alpha = 0.7f)
         )
     }
 }

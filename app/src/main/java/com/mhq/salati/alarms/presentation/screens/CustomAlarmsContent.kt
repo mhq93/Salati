@@ -34,6 +34,105 @@ import com.mhq.salati.alarms.presentation.components.CustomAlarmCard
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract
 import com.mhq.salati.shared.presentation.components.BottomNavDefaults
 import com.mhq.salati.shared.presentation.components.TabHeader
+import com.mhq.salati.shared.presentation.theme.AccentOrange
+import com.mhq.salati.shared.presentation.theme.DarkGreen
+import com.mhq.salati.shared.presentation.theme.SheetBackground
+
+//@Composable
+//fun CustomAlarmsContent(
+//    state: AlarmsContract.State,
+//    onIntent: (AlarmsContract.Intent) -> Unit
+//) {
+//    val density = LocalDensity.current
+//    var headerHeightPx by remember { mutableIntStateOf(0) }
+//
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(
+//                MaterialTheme.colorScheme.background
+//            )
+//    ) {
+//        when {
+//            state.isLoading -> CircularProgressIndicator(
+//                modifier = Modifier.align(Alignment.Center),
+//                color = MaterialTheme.colorScheme.primary
+//            )
+//
+//            state.alarms.isEmpty() -> CustomAlarmsContentBlank(
+//                modifier = Modifier.align(Alignment.Center)
+//            )
+//
+//            else -> LazyColumn(
+//                contentPadding = PaddingValues(
+//                    horizontal = 16.dp,
+//                    vertical = 48.dp
+//                ).let {
+//                    PaddingValues(
+//                        start = 16.dp,
+//                        end = 16.dp,
+//                        top = with(density) { headerHeightPx.toDp() } + 16.dp,
+//                        bottom = 48.dp
+//                    )
+//                },
+//                modifier = Modifier.fillMaxSize()
+//            ) {
+//                items(state.alarms, key = { it.id }) { alarm ->
+//                    CustomAlarmCard(
+//                        customAlarm = alarm,
+//                        onToggle = { enabled ->
+//                            onIntent(
+//                                AlarmsContract.Intent.ToggleAlarm(alarm.id, enabled)
+//                            )
+//                        },
+//                        onEdit = { onIntent(AlarmsContract.Intent.EditAlarmClicked(alarm)) },
+//                        onDelete = { onIntent(AlarmsContract.Intent.DeleteAlarm(alarm.id)) }
+//                    )
+//                    Spacer(
+//                        modifier = Modifier.height(12.dp)
+//                    )
+//                }
+//                item {
+//                    Spacer(
+//                        modifier = Modifier.height(BottomNavDefaults.Height + 16.dp)
+//                    )
+//                }
+//            }
+//        }
+//
+//        TabHeader(
+//            icon = Icons.Default.Alarm,
+//            title = stringResource(R.string.custom_alarms),
+//            subtitle = stringResource(R.string.create_custom_alarms_before_or_after_prayers),
+//            modifier = Modifier.onGloballyPositioned {
+//                headerHeightPx = it.size.height
+//            }
+//        )
+//
+//        FloatingActionButton(
+//            onClick = { onIntent(AlarmsContract.Intent.AddAlarmClicked) },
+//            containerColor = MaterialTheme.colorScheme.primary,
+//            contentColor = MaterialTheme.colorScheme.onPrimary,
+//            modifier = Modifier
+//                .align(Alignment.BottomEnd)
+//                .navigationBarsPadding()
+//                .padding(bottom = BottomNavDefaults.Height + 20.dp, end = 20.dp)
+//        ) {
+//            Icon(
+//                imageVector = Icons.Default.Add,
+//                contentDescription = stringResource(R.string.add_custom_alarm)
+//            )
+//        }
+//    }
+//
+//    if (state.isEditorVisible) {
+//        AddEditAlarmSheet(
+//            existingAlarm = state.editingAlarm,
+//            onDismiss = { onIntent(AlarmsContract.Intent.DismissEditor) },
+//            onSave = { alarm -> onIntent(AlarmsContract.Intent.SaveAlarm(alarm)) }
+//        )
+//    }
+//}
 
 @Composable
 fun CustomAlarmsContent(
@@ -46,9 +145,7 @@ fun CustomAlarmsContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                MaterialTheme.colorScheme.background
-            )
+            .background(SheetBackground)
     ) {
         when {
             state.isLoading -> CircularProgressIndicator(
@@ -108,8 +205,8 @@ fun CustomAlarmsContent(
 
         FloatingActionButton(
             onClick = { onIntent(AlarmsContract.Intent.AddAlarmClicked) },
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
+            containerColor = AccentOrange,
+            contentColor = DarkGreen,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()
