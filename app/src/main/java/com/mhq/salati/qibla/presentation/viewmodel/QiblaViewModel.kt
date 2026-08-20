@@ -138,109 +138,102 @@ class QiblaViewModel @Inject constructor(
         loadQiblaJob?.cancel()
         loadQiblaJob = viewModelScope.launch {
             permissionDelegate.reset()
-            _state.update {
-                it.copy(
-                    isLoading = true,
-                    errorMessage = null,
-                    sensorUnavailable = false
-                )
-            }
+            _state.update { it.copy(isLoading = true, errorMessage = null, sensorUnavailable = false) }
+
             try {
                 val savedLocation = getSavedLocationUseCase().first()
-                val location = if (savedLocation != null) {
-                    savedLocation
-                } else {
-                    if (!connectivityChecker.isConnected()) {
-                        _state.update { it.copy(isLoading = false, errorMessage = UiText.Res(R.string.no_internet_connection)) }
-                        return@launch
-                    }
-
-                    if (!locationProvider.isLocationEnabled()) {
-                        permissionDelegate.markServicesDisabled()
-                        _state.update { it.copy(isLoading = false, errorMessage = UiText.Res(R.string.location_services_disabled)) }
-                        return@launch
-                    }
-
-                    if (!permissionChecker.hasLocationPermission()) {
-                        if (locationPermissionAutoPromptShown) {
-                            _state.update { it.copy(isLoading = false, errorMessage = UiText.Res(R.string.location_permission_required)) }
-                        } else {
-                            locationPermissionAutoPromptShown = true
-                            permissionDelegate.requirePermission()
-                            _state.update { it.copy(isLoading = false) }
-                        }
-                        return@launch
-                    }
-
-                    val gpsLocation = withTimeout(5_000L.milliseconds) { locationProvider.getCurrentLocation() }
-                    val lat = gpsLocation.latitude
-                    val lng = gpsLocation.longitude
-
-                    when (val geocode = reverseGeocodeLocationUseCase(lat, lng)) {
-                        is GeocodeResult.Found -> {
-                            saveManualLocationUseCase(lat, lng, geocode.cityName, geocode.countryName)
-                            SavedLocation(geocode.cityName, geocode.countryName, lat, lng)
-                        }
-                        is GeocodeResult.NotFound -> {
-                            saveManualLocationUseCase(lat, lng, null, null)
-                            SavedLocation(null, null, lat, lng)
-                        }
-                        is GeocodeResult.Failed -> {
-                            val message = UiText.Res(R.string.failed_to_get_location_name)
-                            _state.update { it.copy(isLoading = false, errorMessage = message) }
-                            _effect.emit(QiblaContract.Effect.ShowError(message))
-                            return@launch
-                        }
-                    }
-                }
+                val location = savedLocation ?: resolveFreshLocation() ?: return@launch
 
                 val latitude = location.latitude
                 val longitude = location.longitude
                 val bearing = getQiblaBearingUseCase(latitude, longitude)
 
                 _state.update {
-                    it.copy(
-                        isLoading = false,
-                        qiblaBearing = bearing.toFloat(),
-                        locationName = location.toDisplayName()
-                    )
+                    it.copy(isLoading = false, qiblaBearing = bearing.toFloat(), locationName = location.toDisplayName())
                 }
 
                 compassProvider.getHeadingFlow(latitude, longitude).collect { reading ->
                     _state.update {
-                        it.copy(
-                            deviceHeading = reading.headingDegrees,
-                            compassAccuracy = reading.accuracy
-                        )
+                        it.copy(deviceHeading = reading.headingDegrees, compassAccuracy = reading.accuracy)
                     }
                 }
             } catch (e: TimeoutCancellationException) {
                 val message = UiText.Res(R.string.failed_to_get_location)
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = message
-                    )
-                }
-                _effect.emit(
-                    QiblaContract.Effect.ShowError(message)
-                )
+                _state.update { it.copy(isLoading = false, errorMessage = message) }
+                _effect.emit(QiblaContract.Effect.ShowError(message))
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 val isSensorMissing = e.message?.contains("not available") == true
-                val message = e.message?.let { UiText.Raw(it) }
-                    ?: UiText.Res(R.string.failed_to_load_qibla_direction)
+                val message = e.message?.let { UiText.Raw(it) } ?: UiText.Res(R.string.failed_to_load_qibla_direction)
+                _state.update { it.copy(isLoading = false, errorMessage = message, sensorUnavailable = isSensorMissing) }
+                _effect.emit(QiblaContract.Effect.ShowError(message))
+            }
+        }
+    }
+
+    /** Returns the resolved location,
+     * or null if a gate blocked/aborted the flow
+     * (already updated state/effects itself).
+     * */
+    private suspend fun resolveFreshLocation(): SavedLocation? {
+        if (!connectivityChecker.isConnected()) {
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = UiText.Res(R.string.no_internet_connection)
+                )
+            }
+            return null
+        }
+        if (!locationProvider.isLocationEnabled()) {
+            permissionDelegate.markServicesDisabled()
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = UiText.Res(R.string.location_services_disabled)
+                )
+            }
+            return null
+        }
+        if (!permissionChecker.hasLocationPermission()) {
+            if (locationPermissionAutoPromptShown) {
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = message,
-                        sensorUnavailable = isSensorMissing
+                        errorMessage = UiText.Res(R.string.location_permission_required)
                     )
                 }
-                _effect.emit(
-                    QiblaContract.Effect.ShowError(message)
-                )
+            } else {
+                locationPermissionAutoPromptShown = true
+                permissionDelegate.requirePermission()
+                _state.update { it.copy(isLoading = false) }
+            }
+            return null
+        }
+
+        val gpsLocation = withTimeout(5_000L.milliseconds) {
+            locationProvider.getCurrentLocation()
+        }
+        val lat = gpsLocation.latitude
+        val lng = gpsLocation.longitude
+
+        return when (val geocode = reverseGeocodeLocationUseCase(lat, lng)) {
+            is GeocodeResult.Found -> {
+                saveManualLocationUseCase(lat, lng, geocode.cityName, geocode.countryName)
+                SavedLocation(geocode.cityName, geocode.countryName, lat, lng)
+            }
+
+            is GeocodeResult.NotFound -> {
+                saveManualLocationUseCase(lat, lng, null, null)
+                SavedLocation(null, null, lat, lng)
+            }
+
+            is GeocodeResult.Failed -> {
+                val message = UiText.Res(R.string.failed_to_get_location_name)
+                _state.update { it.copy(isLoading = false, errorMessage = message) }
+                _effect.emit(QiblaContract.Effect.ShowError(message))
+                null
             }
         }
     }

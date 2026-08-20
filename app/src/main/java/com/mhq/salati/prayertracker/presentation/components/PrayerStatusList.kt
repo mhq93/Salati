@@ -1,7 +1,17 @@
 package com.mhq.salati.prayertracker.presentation.components
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,11 +26,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,9 +67,10 @@ fun PrayerStatusList(
         Text(
             text = stringResource(R.string.track_your_prayers),
             fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.SemiBold,
             color = InkText,
-            modifier = Modifier.padding(bottom = 8.dp)
+            letterSpacing = 0.2.sp,
+            modifier = Modifier.padding(bottom = 12.dp)
         )
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -61,55 +78,13 @@ fun PrayerStatusList(
         ) {
             PrayerName.majorEntries.forEach { prayer ->
                 val status = records[prayer] ?: PrayerStatus.PENDING
-
-                Column(
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(CardBackground)
-                        .clickable(enabled = !locked) { onPrayerTapped(prayer) }
-                        .padding(
-                            horizontal = 4.dp,
-                            vertical = 8.dp
-                        ),
-
-                    ) {
-                    Text(
-                        text = stringResource(prayer.labelRes),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = if (locked) MutedSlate else InkText,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    when (status) {
-                        PrayerStatus.PRAYED -> StatusBadge(
-                            icon = Icons.Filled.Check,
-                            color = Emerald
-                        )
-
-                        PrayerStatus.MISSED -> StatusBadge(
-                            icon = Icons.Filled.Close,
-                            color = TomatoRed
-                        )
-
-                        PrayerStatus.PENDING -> Box(
-                            modifier = Modifier
-                                .size(28.dp)
-                                .clip(CircleShape)
-                                .background(Color.Transparent)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(2.dp)
-                                    .clip(CircleShape)
-                                    .background(MutedSlate.copy(alpha = 0.15f))
-                            )
-                        }
-                    }
-                }
+                PrayerStatusCard(
+                    prayer = prayer,
+                    status = status,
+                    locked = locked,
+                    onClick = { onPrayerTapped(prayer) },
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
     }

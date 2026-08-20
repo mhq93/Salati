@@ -3,7 +3,6 @@ package com.mhq.salati.home.presentation.viewmodel
 import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.location.domain.GeocodeResult
 import com.mhq.salati.R
 import com.mhq.salati.adhan.domain.repo.MutedPrayersRepository
 import com.mhq.salati.adhan.domain.usecases.ObserveAdhanPlaybackStateUseCase
@@ -15,6 +14,7 @@ import com.mhq.salati.connectivity.domain.repo.ConnectivityChecker
 import com.mhq.salati.home.domain.model.NextPrayerInfo
 import com.mhq.salati.home.domain.usecases.CalculateNextPrayerInfoUseCase
 import com.mhq.salati.home.presentation.contract.HomeContract
+import com.mhq.salati.location.domain.GeocodeResult
 import com.mhq.salati.location.domain.model.SavedLocation
 import com.mhq.salati.location.domain.repo.LocationProvider
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
@@ -32,6 +32,7 @@ import com.mhq.salati.shared.presentation.components.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -235,197 +236,13 @@ class HomeViewModel @Inject constructor(
             permissionDelegate.reset()
             _state.update { it.copy(errorMessage = null) }
 
-            val today = _state.value.currentDate.format(dateKeyFormatter)
-
             try {
                 val savedLocation = getSavedLocationUseCase().first()
-
                 if (savedLocation != null) {
-                    val latitude = savedLocation.latitude
-                    val longitude = savedLocation.longitude
-                    _state.update {
-                        it.copy(latitude = latitude, longitude = longitude, locationName = savedLocation.toDisplayName())
-                    }
-
-                    val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
-                    if (cached != null) {
-                        val info = calculateNextPrayerInfoUseCase(cached.timings, today, latitude, longitude)
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                timings = cached.timings,
-                                date = cached.date,
-                                nextPrayerInfo = info,
-                                currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(cached.timings) else null,
-                                pastPrayers = if (isBrowsingToday()) calculatePastPrayers(cached.timings) else emptySet()
-                            )
-                        }
-                        startCountdownTicker(info.spanEndMillis)
-                        rescheduleAlarmsIfLoaded()
-                        if (!alarmAndNotificationPermissionsChecked) {
-                            alarmAndNotificationPermissionsChecked = true
-                            checkExactAlarmAndNotificationPermissions(promptIfMissing = true)
-                        }
-                        return@launch
-                    }
-
-                    _state.update { it.copy(isLoading = true) }
-                    val result = withTimeoutOrNull(5_000L.milliseconds) {
-                        getPrayerTimesUseCase(date = today, latitude = latitude, longitude = longitude)
-                    } ?: Result.failure(Exception("Request timed out. Check your connection."))
-
-                    result.fold(
-                        onSuccess = { prayerTimesResult ->
-                            val info = calculateNextPrayerInfoUseCase(prayerTimesResult.timings, today, latitude, longitude)
-                            _state.update {
-                                it.copy(
-                                    isLoading = false,
-                                    timings = prayerTimesResult.timings,
-                                    date = prayerTimesResult.date,
-                                    nextPrayerInfo = info,
-                                    currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(prayerTimesResult.timings) else null,
-                                    pastPrayers = if (isBrowsingToday()) calculatePastPrayers(prayerTimesResult.timings) else emptySet()
-                                )
-                            }
-                            startCountdownTicker(info.spanEndMillis)
-                            rescheduleAlarmsIfLoaded()
-                            if (!alarmAndNotificationPermissionsChecked) {
-                                alarmAndNotificationPermissionsChecked = true
-                                checkExactAlarmAndNotificationPermissions(promptIfMissing = true)
-                            }
-                        },
-                        onFailure = { throwable ->
-                            val message = if (!connectivityChecker.isConnected()) {
-                                UiText.Res(R.string.no_internet_connection)
-                            } else {
-                                throwable.message?.let { UiText.Raw(it) } ?: UiText.Res(R.string.something_went_wrong)
-                            }
-                            _state.update { it.copy(isLoading = false, errorMessage = message) }
-                            _effect.emit(HomeContract.Effect.ShowError(message))
-                        }
-                    )
-                    return@launch
+                    loadForSavedLocation(savedLocation)
+                } else {
+                    loadForFreshLocation()
                 }
-
-                // No saved location — fresh resolution required.
-                _state.update { it.copy(isLoading = true) }
-
-                if (!connectivityChecker.isConnected()) {
-                    _state.update { it.copy(isLoading = false, errorMessage = UiText.Res(R.string.no_internet_connection)) }
-                    return@launch
-                }
-
-                if (!locationProvider.isLocationEnabled()) {
-                    permissionDelegate.markServicesDisabled()
-                    _state.update { it.copy(isLoading = false, errorMessage = UiText.Res(R.string.location_services_disabled)) }
-                    return@launch
-                }
-
-                if (!permissionChecker.hasLocationPermission()) {
-                    if (locationPermissionAutoPromptShown) {
-                        _state.update {
-                            it.copy(isLoading = false, errorMessage = UiText.Res(R.string.location_permission_is_required_to_show_prayer_times))
-                        }
-                    } else {
-                        locationPermissionAutoPromptShown = true
-                        permissionDelegate.requirePermission()
-                        _state.update { it.copy(isLoading = false) }
-                    }
-                    return@launch
-                }
-
-                // No local try/catch here — let SecurityException/timeout bubble to the
-                // shared catch blocks below, same as the original structure.
-                val gpsLocation = withTimeout(5_000L.milliseconds) { locationProvider.getCurrentLocation() }
-
-                val latitude = gpsLocation.latitude
-                val longitude = gpsLocation.longitude
-                _state.update { it.copy(latitude = latitude, longitude = longitude) }
-
-                // Geocoding (display name) and the prayer-times fetch only need lat/lng —
-                // run them concurrently instead of geocoding fully blocking the Aladhan call.
-                val geocodeDeferred = async { reverseGeocodeLocationUseCase(latitude, longitude) }
-                val prayerTimesDeferred = async {
-                    val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
-                    if (cached != null) {
-                        val info = calculateNextPrayerInfoUseCase(cached.timings, today, latitude, longitude)
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                timings = cached.timings,
-                                date = cached.date,
-                                nextPrayerInfo = info,
-                                currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(cached.timings) else null,
-                                pastPrayers = if (isBrowsingToday()) calculatePastPrayers(cached.timings) else emptySet()
-                            )
-                        }
-                        startCountdownTicker(info.spanEndMillis)
-                        rescheduleAlarmsIfLoaded()
-                        if (!alarmAndNotificationPermissionsChecked) {
-                            alarmAndNotificationPermissionsChecked = true
-                            checkExactAlarmAndNotificationPermissions(promptIfMissing = true)
-                        }
-                        return@async
-                    }
-
-                    _state.update { it.copy(isLoading = true) }
-                    val result = withTimeoutOrNull(5_000L.milliseconds) {
-                        getPrayerTimesUseCase(date = today, latitude = latitude, longitude = longitude)
-                    } ?: Result.failure(Exception("Request timed out. Check your connection."))
-
-                    result.fold(
-                        onSuccess = { prayerTimesResult ->
-                            val info = calculateNextPrayerInfoUseCase(prayerTimesResult.timings, today, latitude, longitude)
-                            _state.update {
-                                it.copy(
-                                    isLoading = false,
-                                    timings = prayerTimesResult.timings,
-                                    date = prayerTimesResult.date,
-                                    nextPrayerInfo = info,
-                                    currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(prayerTimesResult.timings) else null,
-                                    pastPrayers = if (isBrowsingToday()) calculatePastPrayers(prayerTimesResult.timings) else emptySet()
-                                )
-                            }
-                            startCountdownTicker(info.spanEndMillis)
-                            rescheduleAlarmsIfLoaded()
-                            if (!alarmAndNotificationPermissionsChecked) {
-                                alarmAndNotificationPermissionsChecked = true
-                                checkExactAlarmAndNotificationPermissions(promptIfMissing = true)
-                            }
-                        },
-                        onFailure = { throwable ->
-                            val message = if (!connectivityChecker.isConnected()) {
-                                UiText.Res(R.string.no_internet_connection)
-                            } else {
-                                throwable.message?.let { UiText.Raw(it) } ?: UiText.Res(R.string.something_went_wrong)
-                            }
-                            _state.update { it.copy(isLoading = false, errorMessage = message) }
-                            _effect.emit(HomeContract.Effect.ShowError(message))
-                        }
-                    )
-                }
-
-                when (val geocode = geocodeDeferred.await()) {
-                    is GeocodeResult.Found -> {
-                        val name = listOfNotNull(geocode.cityName, geocode.countryName).joinToString(", ").ifBlank { null }
-                        _state.update { it.copy(locationName = name) }
-                        saveManualLocationUseCase(latitude, longitude, geocode.cityName, geocode.countryName)
-                    }
-                    is GeocodeResult.NotFound -> {
-                        _state.update { it.copy(locationName = null) }
-                        saveManualLocationUseCase(latitude, longitude, null, null)
-                    }
-                    is GeocodeResult.Failed -> {
-                        prayerTimesDeferred.cancel()
-                        val message = UiText.Res(R.string.failed_to_get_location_name)
-                        _state.update { it.copy(isLoading = false, errorMessage = message) }
-                        _effect.emit(HomeContract.Effect.ShowError(message))
-                        return@launch
-                    }
-                }
-
-                prayerTimesDeferred.await()
-
             } catch (e: SecurityException) {
                 permissionDelegate.requirePermission()
                 _state.update { it.copy(isLoading = false, errorMessage = null) }
@@ -436,6 +253,161 @@ class HomeViewModel @Inject constructor(
                 _state.update { it.copy(isLoading = false, errorMessage = message) }
                 _effect.emit(HomeContract.Effect.ShowError(message))
             }
+        }
+    }
+
+    private suspend fun loadForSavedLocation(savedLocation: SavedLocation) {
+        val latitude = savedLocation.latitude
+        val longitude = savedLocation.longitude
+        _state.update {
+            it.copy(
+                latitude = latitude,
+                longitude = longitude,
+                locationName = savedLocation.toDisplayName()
+            )
+        }
+        fetchAndApplyPrayerTimes(latitude, longitude)
+    }
+
+    private suspend fun loadForFreshLocation() {
+        _state.update { it.copy(isLoading = true) }
+
+        if (!connectivityChecker.isConnected()) {
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = UiText.Res(R.string.no_internet_connection)
+                )
+            }
+            return
+        }
+        if (!locationProvider.isLocationEnabled()) {
+            permissionDelegate.markServicesDisabled()
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = UiText.Res(R.string.location_services_disabled)
+                )
+            }
+            return
+        }
+        if (!permissionChecker.hasLocationPermission()) {
+            if (locationPermissionAutoPromptShown) {
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = UiText.Res(R.string.location_permission_is_required_to_show_prayer_times)
+                    )
+                }
+            } else {
+                locationPermissionAutoPromptShown = true
+                permissionDelegate.requirePermission()
+                _state.update { it.copy(isLoading = false) }
+            }
+            return
+        }
+
+        val gpsLocation = withTimeout(5_000L.milliseconds) { locationProvider.getCurrentLocation() }
+        val latitude = gpsLocation.latitude
+        val longitude = gpsLocation.longitude
+        _state.update { it.copy(latitude = latitude, longitude = longitude) }
+
+        coroutineScope {
+            val geocodeDeferred = async { reverseGeocodeLocationUseCase(latitude, longitude) }
+            val prayerTimesDeferred = async { fetchAndApplyPrayerTimes(latitude, longitude) }
+
+            when (val geocode = geocodeDeferred.await()) {
+                is GeocodeResult.Found -> {
+                    val name =
+                        listOfNotNull(geocode.cityName, geocode.countryName).joinToString(", ")
+                            .ifBlank { null }
+                    _state.update { it.copy(locationName = name) }
+                    saveManualLocationUseCase(
+                        latitude,
+                        longitude,
+                        geocode.cityName,
+                        geocode.countryName
+                    )
+                }
+
+                is GeocodeResult.NotFound -> {
+                    _state.update { it.copy(locationName = null) }
+                    saveManualLocationUseCase(latitude, longitude, null, null)
+                }
+
+                is GeocodeResult.Failed -> {
+                    prayerTimesDeferred.cancel()
+                    val message = UiText.Res(R.string.failed_to_get_location_name)
+                    _state.update { it.copy(isLoading = false, errorMessage = message) }
+                    _effect.emit(HomeContract.Effect.ShowError(message))
+                    return@coroutineScope
+                }
+            }
+
+            prayerTimesDeferred.await()
+        }
+    }
+
+    private suspend fun fetchAndApplyPrayerTimes(latitude: Double, longitude: Double) {
+        val today = _state.value.currentDate.format(dateKeyFormatter)
+
+        val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
+        if (cached != null) {
+            applyLoadedPrayerTimes(cached.timings, cached.date, today, latitude, longitude)
+            return
+        }
+
+        _state.update { it.copy(isLoading = true) }
+        val result = withTimeoutOrNull(5_000L.milliseconds) {
+            getPrayerTimesUseCase(date = today, latitude = latitude, longitude = longitude)
+        } ?: Result.failure(Exception("Request timed out. Check your connection."))
+
+        result.fold(
+            onSuccess = { prayerTimesResult ->
+                applyLoadedPrayerTimes(
+                    prayerTimesResult.timings,
+                    prayerTimesResult.date,
+                    today,
+                    latitude,
+                    longitude
+                )
+            },
+            onFailure = { throwable ->
+                val message = if (!connectivityChecker.isConnected()) {
+                    UiText.Res(R.string.no_internet_connection)
+                } else {
+                    throwable.message?.let { UiText.Raw(it) }
+                        ?: UiText.Res(R.string.something_went_wrong)
+                }
+                _state.update { it.copy(isLoading = false, errorMessage = message) }
+                _effect.emit(HomeContract.Effect.ShowError(message))
+            }
+        )
+    }
+
+    private suspend fun applyLoadedPrayerTimes(
+        timings: PrayerTimings,
+        date: com.mhq.salati.prayertimes.domain.model.PrayerDate,
+        today: String,
+        latitude: Double,
+        longitude: Double
+    ) {
+        val info = calculateNextPrayerInfoUseCase(timings, today, latitude, longitude)
+        _state.update {
+            it.copy(
+                isLoading = false,
+                timings = timings,
+                date = date,
+                nextPrayerInfo = info,
+                currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(timings) else null,
+                pastPrayers = if (isBrowsingToday()) calculatePastPrayers(timings) else emptySet()
+            )
+        }
+        startCountdownTicker(info.spanEndMillis)
+        rescheduleAlarmsIfLoaded()
+        if (!alarmAndNotificationPermissionsChecked) {
+            alarmAndNotificationPermissionsChecked = true
+            checkExactAlarmAndNotificationPermissions(promptIfMissing = true)
         }
     }
 
