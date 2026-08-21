@@ -172,29 +172,7 @@ fun HomeContentSuccess(
 private fun HomeContentSuccessPreview() {
     SalatiTheme {
         HomeContent(
-            state = HomeContract.State(
-                isLoading = false,
-                timings = PrayerTimings(
-                    fajr = "04:24",
-                    sunrise = "06:08",
-                    dhuhr = "13:06",
-                    asr = "16:46",
-                    sunset = "20:04",
-                    maghrib = "20:04",
-                    isha = "21:36",
-                    imsak = "05:11",
-                    midnight = "00:12",
-                    firstThird = "21:16",
-                    lastThird = "03:08"
-                ),
-                date = PrayerDate(
-                    gregorianDate = "18-07-2026",
-                    hijriDate = "03",
-                    hijriDay = "03",
-                    hijriMonthNumber = 3,
-                    hijriYear = "1447",
-                )
-            ),
+            state = HomeContract.State(isLoading = false,),
             onIntent = {}
         )
     }

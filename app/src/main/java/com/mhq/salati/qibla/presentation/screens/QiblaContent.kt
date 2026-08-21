@@ -55,7 +55,9 @@ fun QiblaContent(
                     QiblaContentError(
                         errorMessage = state.errorMessage.asString(),
                         sensorUnavailable = state.sensorUnavailable,
-                        locationPermissionState = state.locationPermission,
+                        isLocationPermissionPermanentlyDenied = state.isLocationPermissionPermanentlyDenied,
+                        areLocationServicesDisabled = state.areLocationServicesDisabled,
+                        isLocationPermissionRequired = state.isLocationPermissionRequired, // NEW
                         onIntent = onIntent,
                         modifier = Modifier.weight(1f)
                     )

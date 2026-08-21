@@ -3,9 +3,6 @@ package com.mhq.salati.locationpicker.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.location.domain.GeocodeResult
-import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract.State
-import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract.Intent
-import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract.Effect
 import com.mhq.salati.location.domain.usecases.ReverseGeocodeLocationUseCase
 import com.mhq.salati.location.domain.usecases.SaveManualLocationUseCase
 import com.mhq.salati.location.domain.usecases.SearchLocationByNameUseCase
@@ -16,11 +13,9 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
@@ -30,6 +25,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,17 +39,15 @@ class LocationPickerViewModel @Inject constructor(
     private val saveManualLocation: SaveManualLocationUseCase
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(State())
-    val state: StateFlow<State> = _state.asStateFlow()
+    private val _state = MutableStateFlow(LocationPickerContract.State())
+    val state: StateFlow<LocationPickerContract.State> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<Effect>()
-    val effect: SharedFlow<Effect> = _effect.asSharedFlow()
+    // FIX: Channel instead of SharedFlow
+    private val _effect = Channel<LocationPickerContract.Effect>(Channel.BUFFERED)
+    val effect = _effect.receiveAsFlow()
 
-    // Debounced stream for as-you-type search
     private val searchQueryFlow = MutableStateFlow("")
-
-    // Bypasses debounce entirely — used by the explicit search button
-    private val immediateSearchFlow = MutableSharedFlow<String>()
+    private val immediateSearchFlow = kotlinx.coroutines.flow.MutableSharedFlow<String>()
 
     private var reverseGeocodeJob: Job? = null
 
@@ -61,13 +55,13 @@ class LocationPickerViewModel @Inject constructor(
         observeSearchQuery()
     }
 
-    fun onIntent(intent: Intent) {
+    fun onIntent(intent: LocationPickerContract.Intent) {
         when (intent) {
-            is Intent.QueryChanged -> onQueryChanged(intent.query)
-            is Intent.SearchClicked -> executeManualSearch(_state.value.query)
-            is Intent.SearchResultClicked -> selectResult(intent.result)
-            is Intent.MapPointSelected -> selectMapPoint(intent.latitude, intent.longitude)
-            is Intent.ConfirmClicked -> confirmSelection()
+            is LocationPickerContract.Intent.QueryChanged -> onQueryChanged(intent.query)
+            is LocationPickerContract.Intent.SearchClicked -> executeManualSearch(_state.value.query)
+            is LocationPickerContract.Intent.SearchResultClicked -> selectResult(intent.result)
+            is LocationPickerContract.Intent.MapPointSelected -> selectMapPoint(intent.latitude, intent.longitude)
+            is LocationPickerContract.Intent.ConfirmClicked -> confirmSelection()
         }
     }
 
@@ -114,7 +108,11 @@ class LocationPickerViewModel @Inject constructor(
                                 errorMessage = UiText.Raw("Search failed. Check your connection.")
                             )
                         }
-                        _effect.emit(Effect.ShowError(UiText.Raw("Search failed. Check your connection.")))
+                        _effect.send(
+                            LocationPickerContract.Effect.ShowError(
+                                UiText.Raw("Search failed. Check your connection.")
+                            )
+                        )
                     }
                 )
             }
@@ -127,7 +125,6 @@ class LocationPickerViewModel @Inject constructor(
     }
 
     private fun selectResult(result: LocationPickerContract.LocationSearchResult) {
-        // Reset processing stream to prevent dangling emissions
         searchQueryFlow.value = ""
         _state.update {
             it.copy(
@@ -173,7 +170,11 @@ class LocationPickerViewModel @Inject constructor(
                 }
                 is GeocodeResult.Failed -> {
                     _state.update { it.copy(isResolvingSelection = false) }
-                    _effect.emit(Effect.ShowError(UiText.Raw("Couldn't determine location name. Check your connection.")))
+                    _effect.send(
+                        LocationPickerContract.Effect.ShowError(
+                            UiText.Raw("Couldn't determine location name. Check your connection.")
+                        )
+                    )
                 }
             }
         }
@@ -189,11 +190,15 @@ class LocationPickerViewModel @Inject constructor(
                     cityName = selected.displayName,
                     countryName = null
                 )
-                _effect.emit(Effect.LocationSaved)
+                _effect.send(LocationPickerContract.Effect.LocationSaved)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _effect.emit(Effect.ShowError(UiText.Raw("Couldn't save location. Try again.")))
+                _effect.send(
+                    LocationPickerContract.Effect.ShowError(
+                        UiText.Raw("Couldn't save location. Try again.")
+                    )
+                )
             }
         }
     }

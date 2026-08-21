@@ -1,5 +1,6 @@
 package com.mhq.salati.alarms.presentation.viewmodel
 
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.R
@@ -44,8 +45,8 @@ class AlarmsViewModel @Inject constructor(
     fun onIntent(intent: Intent) {
         when (intent) {
             is Intent.LoadAlarms -> observeAlarms()
-            is Intent.AddAlarmClicked -> _state.update { it.copy(isEditorVisible = true, editingAlarm = null) }
-            is Intent.EditAlarmClicked -> _state.update { it.copy(isEditorVisible = true, editingAlarm = intent.alarm) }
+            is Intent.AddAlarm -> _state.update { it.copy(isEditorVisible = true, editingAlarm = null) }
+            is Intent.EditAlarm -> _state.update { it.copy(isEditorVisible = true, editingAlarm = intent.alarm) }
             is Intent.DismissEditor -> _state.update { it.copy(isEditorVisible = false, editingAlarm = null) }
             is Intent.SaveAlarm -> saveAlarm(intent.alarm)
             is Intent.DeleteAlarm -> deleteAlarm(intent.id)
@@ -78,7 +79,7 @@ class AlarmsViewModel @Inject constructor(
                 }
                 if (alarm.id == 0L) createCustomAlarmUseCase(alarm) else updateCustomAlarmUseCase(alarm)
                 _state.update { it.copy(isEditorVisible = false, editingAlarm = null) }
-                _effect.send(Effect.AlarmSaved)
+                _effect.send(Effect.AlarmSaved())
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {

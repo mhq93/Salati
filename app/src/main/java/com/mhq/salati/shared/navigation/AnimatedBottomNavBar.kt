@@ -62,8 +62,6 @@ fun AnimatedBottomNavBar(
     val unselectedContentColor = AccentEmerald
     val selectedContentColor = AccentOrange
 
-    //val LocalBottomNavBarHeight = compositionLocalOf { 0.dp }
-
     val itemCount = items.size
     val density = LocalDensity.current
     var barWidthPx by remember { mutableIntStateOf(0) }
@@ -119,7 +117,6 @@ fun AnimatedBottomNavBar(
         modifier = modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.navigationBars)
-            //.background(SheetBackground)
     ) {
         // --- BACKGROUND NOTCH CANVAS ---
         Canvas(

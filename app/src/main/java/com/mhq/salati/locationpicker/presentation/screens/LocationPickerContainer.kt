@@ -20,15 +20,15 @@ import kotlinx.coroutines.launch
 fun LocationPickerContainer(
     onLocationSaved: () -> Unit,
     onBackClicked: () -> Unit,
-    viewModel: LocationPickerViewModel = hiltViewModel()
+    locationPickerViewModel: LocationPickerViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by locationPickerViewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = LocalSnackbarHostState.current
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
+        locationPickerViewModel.effect.collect { effect ->
             when (effect) {
                 is LocationPickerContract.Effect.ShowError -> {
                     scope.launch { snackbarHostState.showSnackbar(effect.message.asString(context)) }
@@ -41,7 +41,7 @@ fun LocationPickerContainer(
     Box(modifier = Modifier.fillMaxSize()) {
         LocationPickerContent(
             state = state,
-            onIntent = viewModel::onIntent,
+            onIntent = locationPickerViewModel::onIntent,
             onBackClicked = onBackClicked
         )
     }

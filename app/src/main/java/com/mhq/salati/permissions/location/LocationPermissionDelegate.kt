@@ -6,8 +6,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-class LocationPermissionDelegate {
+class LocationPermissionDelegate @Inject constructor() {
 
     private val _state = MutableStateFlow(LocationPermissionState())
     val state: StateFlow<LocationPermissionState> = _state.asStateFlow()
@@ -36,7 +37,13 @@ class LocationPermissionDelegate {
     }
 
     fun reset() {
-        _state.value = LocationPermissionState()
+        val current = _state.value
+        _state.value = LocationPermissionState(
+            granted = false,
+            required = false,
+            permanentlyDenied = current.permanentlyDenied,
+            servicesDisabled = current.servicesDisabled
+        )
     }
 
     suspend fun requestAppSettings() {

@@ -65,9 +65,11 @@
 
     <!-- Home & Qibla Errors-->
     <string name="error">Error: %1$s</string>
+    <string name="please_wait">Please, wait</string>
     <string name="something_went_wrong">Something went wrong.</string>
     <string name="open_settings">Open Settings</string>
     <string name="enable_location">Enable Location</string>
+    <string name="failed_to_get_location_name">Failed to get Location name</string>
     <string name="retry">Retry</string>
 
     <string name="no_internet_connection">No internet connection</string>
@@ -94,12 +96,14 @@
     <string name="next_month">Next month</string>
     <string name="prayed">Prayed</string>
     <string name="missed">Missed</string>
+    <string name="failed_to_update_prayer_status">Failed to update prayer status</string>
 
     <!-- Alarms -->
     <string name="custom_alarms">Custom Alarms</string>
     <string name="create_custom_alarms_before_or_after_prayers">Create custom alarms before or after prayers</string>
     <string name="no_custom_alarms_title">There are no set custom alarms</string>
     <string name="no_custom_alarms_body">Click the button \u002B below to add a new custom alarm.</string>
+    <string name="alarm_saved">Alarm saved</string>
 
     <!-- Alarm Editor sheet -->
     <string name="new_custom_alarm">Customize an alarm</string>
@@ -174,7 +178,6 @@
     <string name="couldn_t_update_language">Couldn\'t update language</string>
     <string name="couldn_t_update_adhan_sound">Couldn\'t update adhan sound</string>
     <string name="couldn_t_update_hijri_offset">Couldn\'t update Hijri offset</string>
-    <string name="failed_to_get_location_name">Failed to get Location name</string>
 
     <plurals name="day_streak">
         <item quantity="one">%1$d Day streak</item>

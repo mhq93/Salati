@@ -11,8 +11,10 @@ import com.mhq.salati.adhan.domain.usecases.StopAdhanPlaybackUseCase
 import com.mhq.salati.adhan.domain.usecases.ToggleMutePrayerUseCase
 import com.mhq.salati.alarms.domain.usecases.ScheduleCustomAlarmsUseCase
 import com.mhq.salati.connectivity.domain.repo.ConnectivityChecker
-import com.mhq.salati.home.domain.model.NextPrayerInfo
+import com.mhq.salati.home.domain.usecases.CalculateCurrentPrayerNameUseCase
 import com.mhq.salati.home.domain.usecases.CalculateNextPrayerInfoUseCase
+import com.mhq.salati.home.domain.usecases.CalculatePastPrayersUseCase
+import com.mhq.salati.home.domain.usecases.ResolveNextPrayerInfoForDisplayUseCase
 import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.location.domain.GeocodeResult
 import com.mhq.salati.location.domain.model.SavedLocation
@@ -26,40 +28,36 @@ import com.mhq.salati.permissions.location.LocationPermissionEffect
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.prayertimes.domain.usecases.GetCachedPrayerTimesUseCase
 import com.mhq.salati.prayertimes.domain.usecases.GetPrayerTimesUseCase
+import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.PrayerName
-import com.mhq.salati.shared.domain.usecases.ParseTimeToMinutesUseCase
 import com.mhq.salati.shared.presentation.components.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
-import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val clock: Clock,
     private val locationProvider: LocationProvider,
     private val permissionChecker: PermissionChecker,
     private val connectivityChecker: ConnectivityChecker,
@@ -70,25 +68,25 @@ class HomeViewModel @Inject constructor(
     private val reverseGeocodeLocationUseCase: ReverseGeocodeLocationUseCase,
     private val toggleMutePrayerUseCase: ToggleMutePrayerUseCase,
     private val stopAdhanPlaybackUseCase: StopAdhanPlaybackUseCase,
-    private val parseTimeToMinutesUseCase: ParseTimeToMinutesUseCase,
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
     private val calculateNextPrayerInfoUseCase: CalculateNextPrayerInfoUseCase,
     private val observeAdhanPlaybackStateUseCase: ObserveAdhanPlaybackStateUseCase,
     private val scheduleDailyPrayerAlarmsUseCase: ScheduleDailyPrayerAlarmsUseCase,
-    private val scheduleCustomAlarmsUseCase: ScheduleCustomAlarmsUseCase
+    private val scheduleCustomAlarmsUseCase: ScheduleCustomAlarmsUseCase,
+    private val locationPermissionDelegate: LocationPermissionDelegate,
+    private val calculateCurrentPrayerNameUseCase: CalculateCurrentPrayerNameUseCase,
+    private val calculatePastPrayersUseCase: CalculatePastPrayersUseCase,
+    private val resolveNextPrayerInfoForDisplayUseCase: ResolveNextPrayerInfoForDisplayUseCase
 ) : ViewModel() {
 
     private val dateKeyFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.US)
-
-    private val permissionDelegate = LocationPermissionDelegate()
-    val permissionEffect: SharedFlow<LocationPermissionEffect> = permissionDelegate.effect
     private var alarmAndNotificationPermissionsChecked = false
 
     private val _state = MutableStateFlow(HomeContract.State())
     val state: StateFlow<HomeContract.State> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<HomeContract.Effect>()
-    val effect: SharedFlow<HomeContract.Effect> = _effect.asSharedFlow()
+    private val _effect = Channel<HomeContract.Effect>(Channel.BUFFERED)
+    val effect = _effect.receiveAsFlow()
 
     private var locationPermissionAutoPromptShown = false
     private var loadPrayerTimesJob: Job? = null
@@ -97,8 +95,32 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            permissionDelegate.state.collect { permissionState ->
-                _state.update { it.copy(locationPermission = permissionState) }
+            locationPermissionDelegate.effect.collect { delegateEffect ->
+                val mapped = when (delegateEffect) {
+                    is LocationPermissionEffect.RequestPermission ->
+                        HomeContract.Effect.RequestLocationPermission
+                    is LocationPermissionEffect.NavigateToAppSettings ->
+                        HomeContract.Effect.NavigateToAppSettings
+                    is LocationPermissionEffect.NavigateToLocationSettings ->
+                        HomeContract.Effect.NavigateToLocationSettings
+                    is LocationPermissionEffect.PermissionResolved -> null
+                }
+                mapped?.let { _effect.send(it) }
+            }
+        }
+
+        viewModelScope.launch {
+            locationPermissionDelegate.state.collect { ps ->
+                _state.update {
+                    it.copy(
+                        location = it.location.copy(
+                            isPermissionGranted = ps.granted,
+                            isPermanentlyDenied = ps.permanentlyDenied,
+                            areServicesDisabled = ps.servicesDisabled,
+                            isPermissionRequired = ps.required
+                        )
+                    )
+                }
             }
         }
 
@@ -106,49 +128,55 @@ class HomeViewModel @Inject constructor(
         observeMutedPrayersForCurrentDate()
 
         observeAdhanPlaybackStateUseCase()
-            .onEach { playback -> _state.update { it.copy(adhanPlayback = playback) } }
+            .onEach { playback ->
+                _state.update { it.copy(adhan = it.adhan.copy(playback = playback)) }
+            }
             .launchIn(viewModelScope)
     }
 
     fun onIntent(intent: HomeContract.Intent) {
         when (intent) {
-            is HomeContract.Intent.LoadPrayerTimes -> {
-                checkPermissionAndLoad()
-            }
-
-            is HomeContract.Intent.Retry -> {
-                checkPermissionAndLoad()
-            }
-
+            is HomeContract.Intent.LoadPrayerTimes -> checkPermissionAndLoad()
+            is HomeContract.Intent.Retry -> checkPermissionAndLoad()
             is HomeContract.Intent.RetryClicked -> {
                 locationPermissionAutoPromptShown = false
                 checkPermissionAndLoad()
             }
-
             is HomeContract.Intent.PreviousDay -> {
                 if (!isBrowsingToday()) {
-                    _state.update { it.copy(currentDate = it.currentDate.minusDays(1)) }
+                    val newDate = _state.value.dateBrowser.currentDate.minusDays(1)
+                    _state.update {
+                        it.copy(
+                            dateBrowser = it.dateBrowser.copy(
+                                currentDate = newDate,
+                                isBrowsingToday = newDate == clock.today()
+                            )
+                        )
+                    }
                     observeMutedPrayersForCurrentDate()
                     loadPrayerTimes()
                 }
             }
-
             is HomeContract.Intent.NextDay -> {
-                _state.update { it.copy(currentDate = it.currentDate.plusDays(1)) }
+                val newDate = _state.value.dateBrowser.currentDate.plusDays(1)
+                _state.update {
+                    it.copy(
+                        dateBrowser = it.dateBrowser.copy(
+                            currentDate = newDate,
+                            isBrowsingToday = newDate == clock.today()
+                        )
+                    )
+                }
                 observeMutedPrayersForCurrentDate()
                 loadPrayerTimes()
             }
-
             is HomeContract.Intent.LocationPermissionGranted -> {
-                viewModelScope.launch {
-                    permissionDelegate.onPermissionGranted()
-                }
+                viewModelScope.launch { locationPermissionDelegate.onPermissionGranted() }
                 loadPrayerTimes()
             }
-
             is HomeContract.Intent.LocationPermissionDenied -> {
                 viewModelScope.launch {
-                    permissionDelegate.onPermissionDenied(intent.permanentlyDenied)
+                    locationPermissionDelegate.onPermissionDenied(intent.permanentlyDenied)
                 }
                 _state.update {
                     it.copy(
@@ -160,52 +188,59 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
-
             is HomeContract.Intent.AccessAppSettings -> {
-                viewModelScope.launch {
-                    permissionDelegate.requestAppSettings()
-                }
+                viewModelScope.launch { locationPermissionDelegate.requestAppSettings() }
             }
-
             is HomeContract.Intent.AccessDeviceLocationSettings -> {
-                viewModelScope.launch {
-                    permissionDelegate.requestLocationSettings()
-                }
+                viewModelScope.launch { locationPermissionDelegate.requestLocationSettings() }
             }
-
             is HomeContract.Intent.ToggleMute -> {
                 viewModelScope.launch {
-                    val dateKey = _state.value.currentDate.format(dateKeyFormatter)
-                    val currentlyMuted = intent.prayerName in _state.value.mutedPrayers
+                    val dateKey = _state.value.dateBrowser.currentDate.format(dateKeyFormatter)
+                    val currentlyMuted = intent.prayerName in _state.value.adhan.mutedPrayers
                     toggleMutePrayerUseCase(dateKey, intent.prayerName, !currentlyMuted)
                 }
             }
-
             is HomeContract.Intent.RecheckSystemPermissions -> {
                 viewModelScope.launch {
                     checkExactAlarmAndNotificationPermissions(promptIfMissing = false)
-                    if (_state.value.hasExactAlarmPermission) rescheduleAlarmsIfLoaded()
+                    if (_state.value.systemPermissions.hasExactAlarm) rescheduleAlarmsIfLoaded()
                 }
             }
-
             is HomeContract.Intent.NotificationPermissionResult -> {
-                _state.update { it.copy(hasNotificationPermission = intent.granted) }
+                _state.update {
+                    it.copy(
+                        systemPermissions = it.systemPermissions.copy(
+                            hasNotification = intent.granted
+                        )
+                    )
+                }
             }
-
             is HomeContract.Intent.ExactAlarmBannerClicked -> {
                 viewModelScope.launch {
-                    _effect.emit(HomeContract.Effect.RequestExactAlarmPermission)
+                    _effect.send(HomeContract.Effect.RequestExactAlarmPermission)
                 }
             }
-
             is HomeContract.Intent.NotificationBannerClicked -> {
                 viewModelScope.launch {
-                    _effect.emit(HomeContract.Effect.RequestNotificationPermission)
+                    _effect.send(HomeContract.Effect.RequestNotificationPermission)
                 }
             }
-
-            is HomeContract.Intent.StopAdhanClicked -> {
-                stopAdhanPlaybackUseCase()
+            is HomeContract.Intent.StopAdhanClicked -> stopAdhanPlaybackUseCase()
+            is HomeContract.Intent.ScreenResumed -> {
+                val s = _state.value.location
+                if (!s.isPermissionRequired || s.isPermanentlyDenied || s.areServicesDisabled) {
+                    checkPermissionAndLoad()
+                }
+                viewModelScope.launch {
+                    checkExactAlarmAndNotificationPermissions(promptIfMissing = false)
+                    if (_state.value.systemPermissions.hasExactAlarm) rescheduleAlarmsIfLoaded()
+                }
+            }
+            is HomeContract.Intent.LocationServicesToggled -> {
+                if (intent.enabled && _state.value.location.areServicesDisabled) {
+                    checkPermissionAndLoad()
+                }
             }
         }
     }
@@ -220,20 +255,22 @@ class HomeViewModel @Inject constructor(
         val hasNotification = permissionChecker.hasNotificationPermission()
         _state.update {
             it.copy(
-                hasExactAlarmPermission = hasExactAlarm,
-                hasNotificationPermission = hasNotification
+                systemPermissions = it.systemPermissions.copy(
+                    hasExactAlarm = hasExactAlarm,
+                    hasNotification = hasNotification
+                )
             )
         }
         if (!promptIfMissing) return
 
-        if (!hasExactAlarm) _effect.emit(HomeContract.Effect.RequestExactAlarmPermission)
-        if (!hasNotification) _effect.emit(HomeContract.Effect.RequestNotificationPermission)
+        if (!hasExactAlarm) _effect.send(HomeContract.Effect.RequestExactAlarmPermission)
+        if (!hasNotification) _effect.send(HomeContract.Effect.RequestNotificationPermission)
     }
 
     private fun loadPrayerTimes() {
         loadPrayerTimesJob?.cancel()
         loadPrayerTimesJob = viewModelScope.launch {
-            permissionDelegate.reset()
+            locationPermissionDelegate.reset()
             _state.update { it.copy(errorMessage = null) }
 
             try {
@@ -244,14 +281,14 @@ class HomeViewModel @Inject constructor(
                     loadForFreshLocation()
                 }
             } catch (e: SecurityException) {
-                permissionDelegate.requirePermission()
+                locationPermissionDelegate.requirePermission()
                 _state.update { it.copy(isLoading = false, errorMessage = null) }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 val message = UiText.Res(R.string.failed_to_get_location)
                 _state.update { it.copy(isLoading = false, errorMessage = message) }
-                _effect.emit(HomeContract.Effect.ShowError(message))
+                _effect.send(HomeContract.Effect.ShowError(message))
             }
         }
     }
@@ -261,9 +298,11 @@ class HomeViewModel @Inject constructor(
         val longitude = savedLocation.longitude
         _state.update {
             it.copy(
-                latitude = latitude,
-                longitude = longitude,
-                locationName = savedLocation.toDisplayName()
+                location = it.location.copy(
+                    latitude = latitude,
+                    longitude = longitude,
+                    locationName = savedLocation.toDisplayName()
+                )
             )
         }
         fetchAndApplyPrayerTimes(latitude, longitude)
@@ -282,7 +321,7 @@ class HomeViewModel @Inject constructor(
             return
         }
         if (!locationProvider.isLocationEnabled()) {
-            permissionDelegate.markServicesDisabled()
+            locationPermissionDelegate.markServicesDisabled()
             _state.update {
                 it.copy(
                     isLoading = false,
@@ -292,6 +331,15 @@ class HomeViewModel @Inject constructor(
             return
         }
         if (!permissionChecker.hasLocationPermission()) {
+            if (locationPermissionDelegate.state.value.permanentlyDenied) {
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = UiText.Res(R.string.location_permission_permanently_denied_please_enable_it_via_settings)
+                    )
+                }
+                return
+            }
             if (locationPermissionAutoPromptShown) {
                 _state.update {
                     it.copy(
@@ -301,7 +349,7 @@ class HomeViewModel @Inject constructor(
                 }
             } else {
                 locationPermissionAutoPromptShown = true
-                permissionDelegate.requirePermission()
+                locationPermissionDelegate.requirePermission()
                 _state.update { it.copy(isLoading = false) }
             }
             return
@@ -310,7 +358,11 @@ class HomeViewModel @Inject constructor(
         val gpsLocation = withTimeout(5_000L.milliseconds) { locationProvider.getCurrentLocation() }
         val latitude = gpsLocation.latitude
         val longitude = gpsLocation.longitude
-        _state.update { it.copy(latitude = latitude, longitude = longitude) }
+        _state.update {
+            it.copy(
+                location = it.location.copy(latitude = latitude, longitude = longitude)
+            )
+        }
 
         coroutineScope {
             val geocodeDeferred = async { reverseGeocodeLocationUseCase(latitude, longitude) }
@@ -318,10 +370,14 @@ class HomeViewModel @Inject constructor(
 
             when (val geocode = geocodeDeferred.await()) {
                 is GeocodeResult.Found -> {
-                    val name =
-                        listOfNotNull(geocode.cityName, geocode.countryName).joinToString(", ")
-                            .ifBlank { null }
-                    _state.update { it.copy(locationName = name) }
+                    val name = listOfNotNull(geocode.cityName, geocode.countryName)
+                        .joinToString(", ")
+                        .ifBlank { null }
+                    _state.update {
+                        it.copy(
+                            location = it.location.copy(locationName = name)
+                        )
+                    }
                     saveManualLocationUseCase(
                         latitude,
                         longitude,
@@ -329,17 +385,19 @@ class HomeViewModel @Inject constructor(
                         geocode.countryName
                     )
                 }
-
                 is GeocodeResult.NotFound -> {
-                    _state.update { it.copy(locationName = null) }
+                    _state.update {
+                        it.copy(
+                            location = it.location.copy(locationName = null)
+                        )
+                    }
                     saveManualLocationUseCase(latitude, longitude, null, null)
                 }
-
                 is GeocodeResult.Failed -> {
                     prayerTimesDeferred.cancel()
                     val message = UiText.Res(R.string.failed_to_get_location_name)
                     _state.update { it.copy(isLoading = false, errorMessage = message) }
-                    _effect.emit(HomeContract.Effect.ShowError(message))
+                    _effect.send(HomeContract.Effect.ShowError(message))
                     return@coroutineScope
                 }
             }
@@ -349,7 +407,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun fetchAndApplyPrayerTimes(latitude: Double, longitude: Double) {
-        val today = _state.value.currentDate.format(dateKeyFormatter)
+        val today = _state.value.dateBrowser.currentDate.format(dateKeyFormatter)
 
         val cached = getCachedPrayerTimesUseCase(today, latitude, longitude)
         if (cached != null) {
@@ -380,7 +438,7 @@ class HomeViewModel @Inject constructor(
                         ?: UiText.Res(R.string.something_went_wrong)
                 }
                 _state.update { it.copy(isLoading = false, errorMessage = message) }
-                _effect.emit(HomeContract.Effect.ShowError(message))
+                _effect.send(HomeContract.Effect.ShowError(message))
             }
         )
     }
@@ -393,14 +451,17 @@ class HomeViewModel @Inject constructor(
         longitude: Double
     ) {
         val info = calculateNextPrayerInfoUseCase(timings, today, latitude, longitude)
+        val browsingToday = isBrowsingToday()
         _state.update {
             it.copy(
                 isLoading = false,
-                timings = timings,
-                date = date,
-                nextPrayerInfo = info,
-                currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(timings) else null,
-                pastPrayers = if (isBrowsingToday()) calculatePastPrayers(timings) else emptySet()
+                prayerTimes = it.prayerTimes.copy(
+                    timings = timings,
+                    date = date,
+                    nextPrayerInfo = info,
+                    currentPrayerName = if (browsingToday) calculateCurrentPrayerNameUseCase(timings) else null,
+                    pastPrayers = if (browsingToday) calculatePastPrayersUseCase(timings) else emptySet()
+                )
             )
         }
         startCountdownTicker(info.spanEndMillis)
@@ -423,144 +484,82 @@ class HomeViewModel @Inject constructor(
         tickCounterJob = viewModelScope.launch {
             while (isActive) {
                 val remaining = (spanEndMillis - System.currentTimeMillis()).coerceAtLeast(0)
-                _state.update { it.copy(remainingMillis = remaining) }
+                _state.update {
+                    it.copy(
+                        prayerTimes = it.prayerTimes.copy(remainingMillis = remaining)
+                    )
+                }
                 if (remaining <= 0) {
                     onNextPrayerWindowElapsed()
                     break
                 }
-                delay(1000.milliseconds)
+                delay(1_000.milliseconds)
             }
         }
     }
 
     private fun observeMutedPrayersForCurrentDate() {
         mutedPrayersJob?.cancel()
-        val dateKey = _state.value.currentDate.format(dateKeyFormatter)
+        val dateKey = _state.value.dateBrowser.currentDate.format(dateKeyFormatter)
         mutedPrayersJob = viewModelScope.launch {
             mutedPrayersRepository.observeMutedPrayers(dateKey).collect { mutedPrayers ->
-                _state.update { it.copy(mutedPrayers = mutedPrayers) }
+                _state.update {
+                    it.copy(
+                        adhan = it.adhan.copy(mutedPrayers = mutedPrayers)
+                    )
+                }
                 rescheduleAlarmsIfLoaded()
             }
         }
     }
 
     private fun onNextPrayerWindowElapsed() {
-        if (_state.value.nextPrayerInfo?.crossesIntoNextDay == true) {
-            _state.update { it.copy(currentDate = it.currentDate.plusDays(1)) }
+        if (_state.value.prayerTimes.nextPrayerInfo?.crossesIntoNextDay == true) {
+            val newDate = _state.value.dateBrowser.currentDate.plusDays(1)
+            _state.update {
+                it.copy(
+                    dateBrowser = it.dateBrowser.copy(
+                        currentDate = newDate,
+                        isBrowsingToday = newDate == clock.today()
+                    )
+                )
+            }
             loadPrayerTimes()
         } else {
             viewModelScope.launch { recomputeNextPrayerInfo() }
         }
     }
 
-    private fun isBrowsingToday(): Boolean = _state.value.currentDate == LocalDate.now()
-
-    private fun calculatePastPrayers(timings: PrayerTimings): Set<PrayerName> {
-        val allTimings = listOf(
-            PrayerName.IMSAK to timings.imsak,
-            PrayerName.FAJR to timings.fajr,
-            PrayerName.SHOROUQ to timings.sunrise,
-            PrayerName.DHUHR to timings.dhuhr,
-            PrayerName.ASR to timings.asr,
-            PrayerName.MAGHRIB to timings.maghrib,
-            PrayerName.ISHA to timings.isha,
-            PrayerName.FIRST_THIRD to timings.firstThird,
-            PrayerName.MIDNIGHT to timings.midnight,
-            PrayerName.LAST_THIRD to timings.lastThird
-        )
-        val imsakMinutes = parseTimeToMinutesUseCase(timings.imsak)
-        fun normalize(minutes: Int) = if (minutes < imsakMinutes) minutes + 24 * 60 else minutes
-        val rawNowMinutes =
-            parseTimeToMinutesUseCase(SimpleDateFormat("HH:mm", Locale.US).format(Date()))
-        val nowMinutes = normalize(rawNowMinutes)
-
-        return allTimings
-            .filter { (_, time) -> normalize(parseTimeToMinutesUseCase(time)) <= nowMinutes }
-            .map { (name, _) -> name }
-            .toSet()
-    }
-
-    private fun calculateCurrentPrayerName(timings: PrayerTimings): PrayerName? {
-        val prayers = listOf(
-            PrayerName.FAJR to timings.fajr,
-            PrayerName.DHUHR to timings.dhuhr,
-            PrayerName.ASR to timings.asr,
-            PrayerName.MAGHRIB to timings.maghrib,
-            PrayerName.ISHA to timings.isha
-        )
-
-        val fajrMinutes = parseTimeToMinutesUseCase(timings.fajr)
-        fun normalize(minutes: Int) = if (minutes < fajrMinutes) minutes + 24 * 60 else minutes
-
-        val rawNowMinutes = parseTimeToMinutesUseCase(
-            SimpleDateFormat("HH:mm", Locale.US).format(Date())
-        )
-        val nowMinutes = normalize(rawNowMinutes)
-
-        return prayers
-            .map { it.first to normalize(parseTimeToMinutesUseCase(it.second)) }
-            .filter { it.second <= nowMinutes }
-            .maxByOrNull { it.second }
-            ?.first
-    }
+    private fun isBrowsingToday(): Boolean = _state.value.dateBrowser.currentDate == clock.today()
 
     private suspend fun recomputeNextPrayerInfo() {
-        val timings = _state.value.timings ?: return
-        val latitude = _state.value.latitude ?: return
-        val longitude = _state.value.longitude ?: return
-        val date = _state.value.currentDate.format(dateKeyFormatter)
+        val timings = _state.value.prayerTimes.timings ?: return
+        val latitude = _state.value.location.latitude ?: return
+        val longitude = _state.value.location.longitude ?: return
 
-        val info = resolveNextPrayerInfoForDisplay(
-            timings,
-            date,
-            latitude,
-            longitude
+        val info = resolveNextPrayerInfoForDisplayUseCase(
+            browsedTimings = timings,
+            browsedDate = _state.value.dateBrowser.currentDate,
+            latitude = latitude,
+            longitude = longitude
         )
-
+        val browsingToday = isBrowsingToday()
         _state.update {
             it.copy(
-                nextPrayerInfo = info,
-                currentPrayerName = if (isBrowsingToday()) calculateCurrentPrayerName(timings) else null,
-                pastPrayers = if (isBrowsingToday()) calculatePastPrayers(timings) else emptySet()
+                prayerTimes = it.prayerTimes.copy(
+                    nextPrayerInfo = info,
+                    currentPrayerName = if (browsingToday) calculateCurrentPrayerNameUseCase(timings) else null,
+                    pastPrayers = if (browsingToday) calculatePastPrayersUseCase(timings) else emptySet()
+                )
             )
         }
         startCountdownTicker(info.spanEndMillis)
     }
 
-    private suspend fun resolveNextPrayerInfoForDisplay(
-        browsedTimings: PrayerTimings,
-        browsedDateKey: String,
-        latitude: Double,
-        longitude: Double
-    ): NextPrayerInfo {
-        if (isBrowsingToday()) {
-            return calculateNextPrayerInfoUseCase(
-                browsedTimings,
-                browsedDateKey,
-                latitude,
-                longitude
-            )
-        }
-
-        val todayKey = LocalDate.now().format(dateKeyFormatter)
-        val todayTimings = getCachedPrayerTimesUseCase(todayKey, latitude, longitude)?.timings
-            ?: getPrayerTimesUseCase(todayKey, latitude, longitude).getOrNull()?.timings
-            ?: browsedTimings
-
-        val todayInfo = calculateNextPrayerInfoUseCase(todayTimings, todayKey, latitude, longitude)
-        val daysOffset = ChronoUnit.DAYS.between(LocalDate.now(), _state.value.currentDate)
-        val addedMillis = daysOffset * 24L * 60L * 60L * 1000L
-
-        return todayInfo.copy(
-            spanStartMillis = todayInfo.spanStartMillis + addedMillis,
-            spanEndMillis = todayInfo.spanEndMillis + addedMillis
-        )
-    }
-
     private suspend fun rescheduleAlarmsIfLoaded() {
-        val timings = _state.value.timings ?: return
-        val browsedDateKey = _state.value.currentDate.format(dateKeyFormatter)
-        val todayKey = LocalDate.now().format(dateKeyFormatter)
+        val timings = _state.value.prayerTimes.timings ?: return
+        val browsedDateKey = _state.value.dateBrowser.currentDate.format(dateKeyFormatter)
+        val todayKey = clock.today().format(dateKeyFormatter)
 
         if (browsedDateKey != todayKey) return
 

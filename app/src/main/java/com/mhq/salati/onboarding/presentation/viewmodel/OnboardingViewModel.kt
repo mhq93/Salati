@@ -21,11 +21,13 @@ class OnboardingViewModel @Inject constructor(
     private val _state = MutableStateFlow(OnboardingContract.State())
     val state = _state.asStateFlow()
 
+    // FIX: Explicit buffered Channel
     private val _effect = Channel<OnboardingContract.Effect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
 
     fun onIntent(intent: OnboardingContract.Intent) {
         when (intent) {
+            is OnboardingContract.Intent.Load -> { /* no-op; state initialized */ }
             is OnboardingContract.Intent.NextPage -> handleNextPage()
             is OnboardingContract.Intent.Skip -> completeOnboarding()
             is OnboardingContract.Intent.Finish -> completeOnboarding()

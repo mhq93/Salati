@@ -10,13 +10,13 @@ import com.mhq.salati.onboarding.presentation.viewmodel.OnboardingViewModel
 
 @Composable
 fun OnboardingContainer(
-    viewModel: OnboardingViewModel = hiltViewModel(),
+    onboardingViewModel: OnboardingViewModel = hiltViewModel(),
     onFinished: () -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by onboardingViewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
+        onboardingViewModel.effect.collect { effect ->
             when (effect) {
                 is OnboardingContract.Effect.NavigateToHome -> onFinished()
             }
@@ -25,6 +25,6 @@ fun OnboardingContainer(
 
     OnboardingContent(
         state = state,
-        onIntent = viewModel::onIntent
+        onIntent = onboardingViewModel::onIntent
     )
 }

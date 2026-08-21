@@ -1,4 +1,4 @@
-package com.mhq.salati
+package com.mhq.salati.prayertimes.domain
 
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import java.time.chrono.HijrahDate

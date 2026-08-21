@@ -43,32 +43,3 @@ fun rememberLocationServicesEnabled(): State<Boolean> {
 
     return locationServicesEnabled
 }
-
-//@Composable
-//fun rememberGpsEnabled(): State<Boolean> {
-//
-//    val context = LocalContext.current
-//
-//    val locationManager = remember {
-//        context.getSystemService(LocationManager::class.java)
-//    }
-//
-//    val gpsEnabled = remember {
-//        mutableStateOf(
-//            locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-//        )
-//    }
-//
-//    DisposableEffect(Unit) {
-//        val receiver = object : BroadcastReceiver() {
-//            override fun onReceive(context: Context, intent: Intent) {
-//                gpsEnabled.value = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-//            }
-//        }
-//        val intentFilter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
-//        context.registerReceiver(receiver, intentFilter)
-//        onDispose { context.unregisterReceiver(receiver) }
-//    }
-//
-//    return gpsEnabled
-//}

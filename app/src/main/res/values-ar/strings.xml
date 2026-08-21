@@ -66,9 +66,11 @@
 
     <!-- Home & Qibla Errors-->
     <string name="error">خطأ: %1$s</string>
+    <string name="please_wait">يرجى الانتظار</string>
     <string name="something_went_wrong">يوجد ثمة خطأ</string>
     <string name="open_settings">تفقد إعدادات هاتفك</string>
     <string name="enable_location">يرجي تفعيل موقع هاتفك</string>
+    <string name="failed_to_get_location_name">لم نتمكن من العثور على اسم الموقع</string>
     <string name="retry">حاول مرةً أخرى</string>
 
     <string name="no_internet_connection">لا يوجد اتصال بالإنترنت</string>
@@ -95,12 +97,14 @@
     <string name="next_month">الشهر التالي</string>
     <string name="prayed">مقضية</string>
     <string name="missed">منسية</string>
+    <string name="failed_to_update_prayer_status">خطأ أثناء تحديث الصلاة</string>
 
     <!-- Alarms -->
     <string name="custom_alarms">المنبهات</string>
     <string name="create_custom_alarms_before_or_after_prayers">أنشئ منبهاً خاصاً قبل أو بعد الصلوات المفروضة</string>
     <string name="no_custom_alarms_title">لا توجد تنبيهات خاصة بك</string>
     <string name="no_custom_alarms_body">اضغط الزر \u002B أدناه لإنشاء منبه جديد</string>
+    <string name="alarm_saved">تم حفظ المنبه</string>
 
     <!-- Alarm Editor sheet -->
     <string name="new_custom_alarm">منبه خاص جديد</string>

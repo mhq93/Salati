@@ -31,97 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.presentation.theme.AccentGreen
+import com.mhq.salati.shared.presentation.theme.AccentOrange
 import com.mhq.salati.shared.presentation.theme.CardBackground
+import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.MutedSage
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
-
-//@Composable
-//fun PrayerListItem(
-//    prayerName: String,
-//    prayerTime: String,
-//    isPrayerHighlighted: Boolean,
-//    isPrayerAdhanMuted: Boolean,
-//    isPrayerPassed: Boolean,
-//    onMutePrayerToggle: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    Card(
-//        shape = RoundedCornerShape(16.dp),
-//        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-//        colors = CardDefaults.cardColors(
-//            containerColor = if (isPrayerHighlighted) {
-//                AccentGreen.copy(alpha = 0.08f)
-//            } else {
-//                CardBackground
-//            }
-//        ),
-//        border = if (isPrayerHighlighted) {
-//            BorderStroke(1.dp, AccentGreen.copy(alpha = 0.4f))
-//        } else {
-//            null
-//        },
-//        modifier = modifier
-//            .fillMaxWidth()
-//            .padding(4.dp)
-//    ) {
-//        Row(
-//            verticalAlignment = Alignment.CenterVertically,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(
-//                    vertical = 12.dp,
-//                    horizontal = 16.dp
-//                )
-//        ) {
-//            Column(
-//                verticalArrangement = Arrangement.Center,
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                Text(
-//                    text = prayerName,
-//                    fontWeight = FontWeight.SemiBold,
-//                    fontSize = 18.sp,
-//                    color = if (isPrayerHighlighted) AccentGreen else InkText
-//                )
-//                Spacer(modifier = Modifier.height(4.dp))
-//                Text(
-//                    text = prayerTime,
-//                    fontSize = 14.sp,
-//                    fontWeight = FontWeight.Medium,
-//                    color = MutedSage
-//                )
-//            }
-//
-//            IconButton(
-//                onClick = onMutePrayerToggle,
-//                enabled = !isPrayerPassed,
-//                modifier = Modifier
-//                    .size(32.dp)
-//                    .background(
-//                        color = if (isPrayerAdhanMuted) {
-//                            MutedSage.copy(alpha = 0.12f)
-//                        } else {
-//                            AccentGreen.copy(alpha = 0.12f)
-//                        },
-//                        shape = CircleShape
-//                    )
-//            ) {
-//                Icon(
-//                    imageVector = if (isPrayerAdhanMuted) {
-//                        Icons.Filled.NotificationsOff
-//                    } else {
-//                        Icons.Filled.NotificationsActive
-//                    },
-//                    tint = (if (isPrayerAdhanMuted) MutedSage else AccentGreen)
-//                        .copy(alpha = if (isPrayerPassed) 0.4f else 1f),
-//                    contentDescription = if (isPrayerAdhanMuted) "Muted" else "Enabled",
-//                    modifier = Modifier.size(18.dp)
-//                )
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun PrayerListItem(
@@ -138,15 +53,15 @@ fun PrayerListItem(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isPrayerHighlighted) {
-                AccentGreen.copy(alpha = 0.08f)
+                InkText //AccentGreen.copy(alpha = 0.08f)
             } else {
                 CardBackground
             }
         ),
         border = if (isPrayerHighlighted) {
-            BorderStroke(1.dp, AccentGreen.copy(alpha = 0.4f))
+            BorderStroke(1.dp, DarkGreen.copy(alpha = 0.4f)) //AccentGreen
         } else {
-            null
+            BorderStroke(1.dp, AccentGreen.copy(alpha = 0.4f)) //null
         },
         modifier = modifier
             .fillMaxWidth()
@@ -157,23 +72,23 @@ fun PrayerListItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    vertical = 12.dp,               // ← kept exactly
-                    horizontal = 16.dp              // ← kept exactly
+                    vertical = 12.dp, // ← kept exactly
+                    horizontal = 16.dp // ← kept exactly
                 )
         ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(2.dp), // ← 2 dp breathing room
+                verticalArrangement = Arrangement.spacedBy(2.dp),
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
                     text = prayerName,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
-                    color = if (isPrayerHighlighted) AccentGreen else InkText,
+                    color = if (isPrayerHighlighted) AccentOrange else InkText, //AccentGreen
                     maxLines = 1,
                     overflow = TextOverflow.Clip,
                     style = TextStyle(
-                        lineHeight = 19.sp,         // ← down from 20.sp
+                        lineHeight = 19.sp, // ← down from 20.sp
                         lineHeightStyle = LineHeightStyle(
                             alignment = LineHeightStyle.Alignment.Center,
                             trim = LineHeightStyle.Trim.Both
@@ -185,11 +100,11 @@ fun PrayerListItem(
                     text = prayerTime,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = MutedSage,
+                    color = if (isPrayerHighlighted) AccentOrange else MutedSage,
                     maxLines = 1,
                     overflow = TextOverflow.Clip,
                     style = TextStyle(
-                        lineHeight = 15.sp,         // ← down from 16.sp
+                        lineHeight = 15.sp, // ← down from 16.sp
                         lineHeightStyle = LineHeightStyle(
                             alignment = LineHeightStyle.Alignment.Center,
                             trim = LineHeightStyle.Trim.Both
@@ -205,10 +120,10 @@ fun PrayerListItem(
                 modifier = Modifier
                     .size(28.dp)
                     .background(
-                        color = if (isPrayerAdhanMuted) {
-                            MutedSage.copy(alpha = 0.12f)
-                        } else {
-                            AccentGreen.copy(alpha = 0.12f)
+                        color = when {
+                            isPrayerHighlighted -> AccentOrange
+                            isPrayerAdhanMuted -> MutedSage.copy(alpha = 0.12f)
+                            else -> AccentGreen.copy(alpha = 0.12f)
                         },
                         shape = CircleShape
                     )
@@ -219,8 +134,11 @@ fun PrayerListItem(
                     } else {
                         Icons.Filled.NotificationsActive
                     },
-                    tint = (if (isPrayerAdhanMuted) MutedSage else AccentGreen)
-                        .copy(alpha = if (isPrayerPassed) 0.4f else 1f),
+                    tint = when {
+                        isPrayerHighlighted -> InkText
+                        isPrayerAdhanMuted -> MutedSage.copy(alpha = if (isPrayerPassed) 0.4f else 1f)
+                        else -> AccentGreen.copy(alpha = if (isPrayerPassed) 0.4f else 1f)
+                    },
                     contentDescription = if (isPrayerAdhanMuted) "Muted" else "Enabled",
                     modifier = Modifier.size(16.dp)
                 )

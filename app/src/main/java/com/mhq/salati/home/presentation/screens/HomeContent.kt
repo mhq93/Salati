@@ -15,7 +15,6 @@ import com.mhq.salati.shared.presentation.components.asString
 import com.mhq.salati.shared.presentation.screens.LoadingContent
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import com.mhq.salati.shared.presentation.theme.SheetBackground
-import java.time.LocalDate
 
 @Composable
 fun HomeContent(
@@ -37,27 +36,29 @@ fun HomeContent(
                 state.isLoading -> {
                     LoadingContent(modifier = Modifier.weight(1f))
                 }
-
                 state.errorMessage != null -> {
                     HomeContentError(
                         errorMessage = state.errorMessage.asString(),
-                        locationPermissionState = state.locationPermission,
+                        isLocationPermissionPermanentlyDenied = state.location.isPermanentlyDenied,
+                        areLocationServicesDisabled = state.location.areServicesDisabled,
+                        isLocationPermissionRequired = state.location.isPermissionRequired,
                         onIntent = onIntent,
                         modifier = Modifier.weight(1f)
                     )
                 }
-
-                state.timings != null && state.date != null && state.nextPrayerInfo != null -> {
+                state.prayerTimes.timings != null
+                        && state.prayerTimes.date != null
+                        && state.prayerTimes.nextPrayerInfo != null -> {
                     HomeContentSuccess(
-                        locationName = state.locationName,
-                        prayerDate = state.date,
-                        prayerTimings = state.timings,
-                        remainingMillis = state.remainingMillis,
-                        nextPrayerInfo = state.nextPrayerInfo,
-                        currentPrayerName = state.currentPrayerName,
-                        mutedPrayers = state.mutedPrayers,
-                        pastPrayers = state.pastPrayers,
-                        isToday = state.currentDate == LocalDate.now(),
+                        locationName = state.location.locationName,
+                        prayerDate = state.prayerTimes.date,
+                        prayerTimings = state.prayerTimes.timings,
+                        remainingMillis = state.prayerTimes.remainingMillis,
+                        nextPrayerInfo = state.prayerTimes.nextPrayerInfo,
+                        currentPrayerName = state.prayerTimes.currentPrayerName,
+                        mutedPrayers = state.adhan.mutedPrayers,
+                        pastPrayers = state.prayerTimes.pastPrayers,
+                        isToday = state.dateBrowser.isBrowsingToday,
                         onIntent = onIntent,
                         modifier = Modifier.weight(1f)
                     )

@@ -2,9 +2,9 @@ package com.mhq.salati.qibla.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.location.domain.GeocodeResult
 import com.mhq.salati.R
 import com.mhq.salati.connectivity.domain.repo.ConnectivityChecker
+import com.mhq.salati.location.domain.GeocodeResult
 import com.mhq.salati.location.domain.model.SavedLocation
 import com.mhq.salati.location.domain.repo.LocationProvider
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
@@ -18,20 +18,19 @@ import com.mhq.salati.qibla.domain.usecases.GetQiblaBearingUseCase
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.shared.presentation.components.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
@@ -44,24 +43,47 @@ class QiblaViewModel @Inject constructor(
     private val getSavedLocationUseCase: GetSavedLocationUseCase,
     private val reverseGeocodeLocationUseCase: ReverseGeocodeLocationUseCase,
     private val saveManualLocationUseCase: SaveManualLocationUseCase,
+    private val locationPermissionDelegate: LocationPermissionDelegate
 ) : ViewModel() {
-
-    private val permissionDelegate = LocationPermissionDelegate()
-    val permissionEffect: SharedFlow<LocationPermissionEffect> = permissionDelegate.effect
 
     private val _state = MutableStateFlow(QiblaContract.State())
     val state: StateFlow<QiblaContract.State> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<QiblaContract.Effect>()
-    val effect: SharedFlow<QiblaContract.Effect> = _effect.asSharedFlow()
+    // FIX: Single Channel for exactly-once effect delivery
+    private val _effect = Channel<QiblaContract.Effect>(Channel.BUFFERED)
+    val effect = _effect.receiveAsFlow()
 
-    private var locationPermissionAutoPromptShown = false   
+    private var locationPermissionAutoPromptShown = false
     private var loadQiblaJob: Job? = null
 
     init {
+        // FIX: Map internal delegate effects into contract Effect stream
         viewModelScope.launch {
-            permissionDelegate.state.collect { permissionState ->
-                _state.update { it.copy(locationPermission = permissionState) }
+            locationPermissionDelegate.effect.collect { delegateEffect ->
+                val mapped = when (delegateEffect) {
+                    is LocationPermissionEffect.RequestPermission ->
+                        QiblaContract.Effect.RequestLocationPermission
+                    is LocationPermissionEffect.NavigateToAppSettings ->
+                        QiblaContract.Effect.NavigateToAppSettings
+                    is LocationPermissionEffect.NavigateToLocationSettings ->
+                        QiblaContract.Effect.NavigateToLocationSettings
+                    is LocationPermissionEffect.PermissionResolved -> null
+                }
+                mapped?.let { _effect.send(it) }
+            }
+        }
+
+        // FIX: Flatten delegate state into UI-centric boolean flags
+        viewModelScope.launch {
+            locationPermissionDelegate.state.collect { ps ->
+                _state.update {
+                    it.copy(
+                        isLocationPermissionGranted = ps.granted,
+                        isLocationPermissionPermanentlyDenied = ps.permanentlyDenied,
+                        areLocationServicesDisabled = ps.servicesDisabled,
+                        isLocationPermissionRequired = ps.required
+                    )
+                }
             }
         }
     }
@@ -69,24 +91,18 @@ class QiblaViewModel @Inject constructor(
     fun onIntent(intent: QiblaContract.Intent) {
         when (intent) {
             is QiblaContract.Intent.LoadQibla -> checkPermissionAndLoad()
-
             is QiblaContract.Intent.Retry -> checkPermissionAndLoad()
-
-            is QiblaContract.Intent.RetryClicked -> {   
-                locationPermissionAutoPromptShown = false   
-                checkPermissionAndLoad()   
-            }   
-
+            is QiblaContract.Intent.RetryClicked -> {
+                locationPermissionAutoPromptShown = false
+                checkPermissionAndLoad()
+            }
             is QiblaContract.Intent.LocationPermissionGranted -> {
-                viewModelScope.launch {
-                    permissionDelegate.onPermissionGranted()
-                }
+                viewModelScope.launch { locationPermissionDelegate.onPermissionGranted() }
                 loadQibla()
             }
-
             is QiblaContract.Intent.LocationPermissionDenied -> {
                 viewModelScope.launch {
-                    permissionDelegate.onPermissionDenied(intent.permanentlyDenied)
+                    locationPermissionDelegate.onPermissionDenied(intent.permanentlyDenied)
                 }
                 _state.update {
                     it.copy(
@@ -98,32 +114,31 @@ class QiblaViewModel @Inject constructor(
                     )
                 }
             }
-
             is QiblaContract.Intent.AccessAppSettings -> {
-                viewModelScope.launch {
-                    permissionDelegate.requestAppSettings()
-                }
+                viewModelScope.launch { locationPermissionDelegate.requestAppSettings() }
             }
-
             is QiblaContract.Intent.AccessDeviceLocationSettings -> {
-                viewModelScope.launch {
-                    permissionDelegate.requestLocationSettings()
-                }
+                viewModelScope.launch { locationPermissionDelegate.requestLocationSettings() }
             }
-
             is QiblaContract.Intent.LocationPillClicked -> {
-                viewModelScope.launch { _effect.emit(QiblaContract.Effect.NavigateToLocationPicker) }
+                viewModelScope.launch { _effect.send(QiblaContract.Effect.NavigateToLocationPicker) }
             }
-
             is QiblaContract.Intent.RecalibrateClicked -> {
-                _state.update {
-                    it.copy(isCalibrationGuideVisible = true)
+                _state.update { it.copy(isCalibrationGuideVisible = true) }
+            }
+            is QiblaContract.Intent.DismissCalibrationGuide -> {
+                _state.update { it.copy(isCalibrationGuideVisible = false) }
+            }
+            // FIX: Moved conditional retry logic from Container into ViewModel
+            is QiblaContract.Intent.ScreenResumed -> {
+                val s = _state.value
+                if (s.isLocationPermissionPermanentlyDenied || s.areLocationServicesDisabled) {
+                    checkPermissionAndLoad()
                 }
             }
-
-            is QiblaContract.Intent.DismissCalibrationGuide -> {
-                _state.update {
-                    it.copy(isCalibrationGuideVisible = false)
+            is QiblaContract.Intent.LocationServicesToggled -> {
+                if (intent.enabled && _state.value.areLocationServicesDisabled) {
+                    checkPermissionAndLoad()
                 }
             }
         }
@@ -137,7 +152,7 @@ class QiblaViewModel @Inject constructor(
     private fun loadQibla() {
         loadQiblaJob?.cancel()
         loadQiblaJob = viewModelScope.launch {
-            permissionDelegate.reset()
+            locationPermissionDelegate.reset()
             _state.update { it.copy(isLoading = true, errorMessage = null, sensorUnavailable = false) }
 
             try {
@@ -149,33 +164,48 @@ class QiblaViewModel @Inject constructor(
                 val bearing = getQiblaBearingUseCase(latitude, longitude)
 
                 _state.update {
-                    it.copy(isLoading = false, qiblaBearing = bearing.toFloat(), locationName = location.toDisplayName())
+                    it.copy(
+                        isLoading = false,
+                        qiblaBearing = bearing.toFloat(),
+                        locationName = location.toDisplayName()
+                    )
                 }
 
                 compassProvider.getHeadingFlow(latitude, longitude).collect { reading ->
                     _state.update {
-                        it.copy(deviceHeading = reading.headingDegrees, compassAccuracy = reading.accuracy)
+                        it.copy(
+                            deviceHeading = reading.headingDegrees,
+                            compassAccuracy = reading.accuracy
+                        )
                     }
                 }
             } catch (e: TimeoutCancellationException) {
                 val message = UiText.Res(R.string.failed_to_get_location)
                 _state.update { it.copy(isLoading = false, errorMessage = message) }
-                _effect.emit(QiblaContract.Effect.ShowError(message))
+                _effect.send(QiblaContract.Effect.ShowError(message))
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 val isSensorMissing = e.message?.contains("not available") == true
-                val message = e.message?.let { UiText.Raw(it) } ?: UiText.Res(R.string.failed_to_load_qibla_direction)
-                _state.update { it.copy(isLoading = false, errorMessage = message, sensorUnavailable = isSensorMissing) }
-                _effect.emit(QiblaContract.Effect.ShowError(message))
+                val message = e.message?.let { UiText.Raw(it) }
+                    ?: UiText.Res(R.string.failed_to_load_qibla_direction)
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = message,
+                        sensorUnavailable = isSensorMissing
+                    )
+                }
+                _effect.send(QiblaContract.Effect.ShowError(message))
             }
         }
     }
 
-    /** Returns the resolved location,
+    /**
+     * Returns the resolved location,
      * or null if a gate blocked/aborted the flow
      * (already updated state/effects itself).
-     * */
+     */
     private suspend fun resolveFreshLocation(): SavedLocation? {
         if (!connectivityChecker.isConnected()) {
             _state.update {
@@ -187,7 +217,7 @@ class QiblaViewModel @Inject constructor(
             return null
         }
         if (!locationProvider.isLocationEnabled()) {
-            permissionDelegate.markServicesDisabled()
+            locationPermissionDelegate.markServicesDisabled()
             _state.update {
                 it.copy(
                     isLoading = false,
@@ -197,6 +227,17 @@ class QiblaViewModel @Inject constructor(
             return null
         }
         if (!permissionChecker.hasLocationPermission()) {
+            // FIX
+            if (locationPermissionDelegate.state.value.permanentlyDenied) {
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = UiText.Res(R.string.location_permission_permanently_denied)
+                    )
+                }
+                return null
+            }
+
             if (locationPermissionAutoPromptShown) {
                 _state.update {
                     it.copy(
@@ -206,7 +247,7 @@ class QiblaViewModel @Inject constructor(
                 }
             } else {
                 locationPermissionAutoPromptShown = true
-                permissionDelegate.requirePermission()
+                locationPermissionDelegate.requirePermission()
                 _state.update { it.copy(isLoading = false) }
             }
             return null
@@ -223,16 +264,14 @@ class QiblaViewModel @Inject constructor(
                 saveManualLocationUseCase(lat, lng, geocode.cityName, geocode.countryName)
                 SavedLocation(geocode.cityName, geocode.countryName, lat, lng)
             }
-
             is GeocodeResult.NotFound -> {
                 saveManualLocationUseCase(lat, lng, null, null)
                 SavedLocation(null, null, lat, lng)
             }
-
             is GeocodeResult.Failed -> {
                 val message = UiText.Res(R.string.failed_to_get_location_name)
                 _state.update { it.copy(isLoading = false, errorMessage = message) }
-                _effect.emit(QiblaContract.Effect.ShowError(message))
+                _effect.send(QiblaContract.Effect.ShowError(message))
                 null
             }
         }

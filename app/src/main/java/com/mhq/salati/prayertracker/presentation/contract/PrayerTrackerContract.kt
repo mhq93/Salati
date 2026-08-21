@@ -3,6 +3,7 @@ package com.mhq.salati.prayertracker.presentation.contract
 import com.mhq.salati.prayertracker.domain.model.DayStatus
 import com.mhq.salati.prayertracker.domain.model.PrayerStatus
 import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.shared.presentation.components.UiText
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -27,6 +28,6 @@ object PrayerTrackerContract {
     }
 
     sealed interface Effect {
-        data class ShowError(val message: String) : Effect
+        data class ShowError(val message: UiText) : Effect
     }
 }

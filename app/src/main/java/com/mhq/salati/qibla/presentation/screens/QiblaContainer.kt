@@ -19,7 +19,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mhq.salati.permissions.location.LocationPermissionEffect
 import com.mhq.salati.permissions.location.rememberLocationPermissionLauncher
 import com.mhq.salati.permissions.location.rememberLocationServicesEnabled
 import com.mhq.salati.qibla.presentation.components.CompassCalibrationOverlay
@@ -50,40 +49,22 @@ fun QiblaContainer(
         }
     )
 
-    LaunchedEffect(Unit) {
-        qiblaViewModel.permissionEffect.collect { effect ->
-            when (effect) {
-                is LocationPermissionEffect.RequestPermission -> {
-                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                }
-
-                is LocationPermissionEffect.PermissionResolved -> {
-                    // no-op here — only Home needs this to sequence the notification prompt
-                }
-
-                is LocationPermissionEffect.NavigateToAppSettings -> {
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts(
-                            "package",
-                            context.packageName,
-                            null
-                        )
-                    }
-                    context.startActivity(intent)
-                }
-
-                is LocationPermissionEffect.NavigateToLocationSettings -> {
-                    context.startActivity(
-                        Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                    )
-                }
-            }
-        }
-    }
-
+    // FIX: Single effect stream — no more permissionEffect
     LaunchedEffect(Unit) {
         qiblaViewModel.effect.collect { effect ->
             when (effect) {
+                is QiblaContract.Effect.RequestLocationPermission -> {
+                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                }
+                is QiblaContract.Effect.NavigateToAppSettings -> {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                    }
+                    context.startActivity(intent)
+                }
+                is QiblaContract.Effect.NavigateToLocationSettings -> {
+                    context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
                 is QiblaContract.Effect.ShowError -> {
                     scope.launch {
                         snackbarHostState.showSnackbar(effect.message.asString(context))
@@ -94,37 +75,26 @@ fun QiblaContainer(
         }
     }
 
+    // FIX: Dumb Container — just reports events, no conditional logic
+    // Also: consolidated two redundant DisposableEffect blocks into one
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME &&
-                (state.locationPermission.permanentlyDenied
-                        || state.locationPermission.servicesDisabled)
-            ) {
-                qiblaViewModel.onIntent(QiblaContract.Intent.Retry)
+            if (event == Lifecycle.Event.ON_RESUME) {
+                qiblaViewModel.onIntent(QiblaContract.Intent.ScreenResumed)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                qiblaViewModel.onIntent(QiblaContract.Intent.Retry)
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    LaunchedEffect(locationServicesEnabled) {
+        qiblaViewModel.onIntent(
+            QiblaContract.Intent.LocationServicesToggled(enabled = locationServicesEnabled)
+        )
     }
 
     LaunchedEffect(Unit) {
         qiblaViewModel.onIntent(QiblaContract.Intent.LoadQibla)
-    }
-
-    LaunchedEffect(locationServicesEnabled) {
-        if (locationServicesEnabled && state.locationPermission.servicesDisabled) {
-            qiblaViewModel.onIntent(QiblaContract.Intent.Retry)
-        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
