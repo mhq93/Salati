@@ -47,9 +47,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.presentation.theme.AccentEmerald
-import com.mhq.salati.shared.presentation.theme.AccentOrange
+import com.mhq.salati.shared.presentation.theme.AccentGold
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
-import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable
@@ -60,7 +59,7 @@ fun AnimatedBottomNavBar(
     modifier: Modifier = Modifier
 ) {
     val unselectedContentColor = AccentEmerald
-    val selectedContentColor = AccentOrange
+    val selectedContentColor = AccentGold
 
     val itemCount = items.size
     val density = LocalDensity.current
@@ -203,7 +202,7 @@ fun AnimatedBottomNavBar(
             Icon(
                 imageVector = items[selectedIndex].icon,
                 contentDescription = items[selectedIndex].label,
-                tint = InkText,
+                tint = DarkGreenLight,
                 modifier = Modifier.size(28.dp)
             )
         }

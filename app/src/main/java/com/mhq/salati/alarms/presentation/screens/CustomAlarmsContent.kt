@@ -34,8 +34,8 @@ import com.mhq.salati.alarms.presentation.components.CustomAlarmCard
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract
 import com.mhq.salati.shared.presentation.components.BottomNavDefaults
 import com.mhq.salati.shared.presentation.components.TabHeader
-import com.mhq.salati.shared.presentation.theme.AccentOrange
-import com.mhq.salati.shared.presentation.theme.DarkGreen
+import com.mhq.salati.shared.presentation.theme.AccentGold
+import com.mhq.salati.shared.presentation.theme.DarkGreenLight
 import com.mhq.salati.shared.presentation.theme.SheetBackground
 
 @Composable
@@ -109,8 +109,8 @@ fun CustomAlarmsContent(
 
         FloatingActionButton(
             onClick = { onIntent(AlarmsContract.Intent.AddAlarm) },
-            containerColor = AccentOrange,
-            contentColor = DarkGreen,
+            containerColor = AccentGold,
+            contentColor = DarkGreenLight,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()

@@ -1,6 +1,5 @@
 package com.mhq.salati.home.presentation.components
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -25,11 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +35,10 @@ import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.shared.domain.HijriMonth
+import com.mhq.salati.shared.presentation.theme.AccentGold
 import com.mhq.salati.shared.presentation.theme.AccentOrange
+import com.mhq.salati.shared.presentation.theme.DarkGreen
+import com.mhq.salati.shared.presentation.theme.DarkGreenLight
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import java.time.LocalDate
@@ -73,7 +70,7 @@ fun DateBanner(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .clip(RoundedCornerShape(50))
-            .background(InkText)
+            .background(DarkGreen) //InkText
             .padding(
                 horizontal = 16.dp,
                 vertical = 8.dp
@@ -84,7 +81,7 @@ fun DateBanner(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(24.dp)
-                .background(AccentOrange, CircleShape)
+                .background(AccentGold, CircleShape) //AccentOrange
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
@@ -93,7 +90,7 @@ fun DateBanner(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = stringResource(R.string.previous_day),
-                tint = InkText,
+                tint = DarkGreenLight, //InkText
                 modifier = Modifier.size(16.dp)
             )
         }
@@ -107,7 +104,7 @@ fun DateBanner(
         ) {
             Text(
                 text = "${prayerDate.hijriDay} $hijriMonthLabel ${prayerDate.hijriYear}",
-                color = AccentOrange,
+                color = AccentGold, //AccentOrange
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
@@ -127,7 +124,7 @@ fun DateBanner(
             )
             Text(
                 text = gregorianLine,
-                color = AccentOrange,
+                color = AccentGold, //AccentOrange
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
@@ -147,7 +144,7 @@ fun DateBanner(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(24.dp)
-                .background(AccentOrange, CircleShape)
+                .background(AccentGold, CircleShape) //AccentOrange
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
@@ -156,7 +153,7 @@ fun DateBanner(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = stringResource(R.string.next_day),
-                tint = InkText,
+                tint = DarkGreenLight, //InkText
                 modifier = Modifier.size(16.dp)
             )
         }

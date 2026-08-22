@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
+import com.mhq.salati.shared.presentation.theme.AccentGold
 import com.mhq.salati.shared.presentation.theme.AccentOrange
 import com.mhq.salati.shared.presentation.theme.DarkGreen
 
@@ -42,13 +43,13 @@ fun LocationHeader(
         Icon(
             imageVector = Icons.Default.LocationOn,
             contentDescription = null,
-            tint = AccentOrange.copy(alpha = 0.85f),
+            tint = AccentGold.copy(alpha = 0.85f),
             modifier = Modifier.size(16.dp)
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = locationName ?: stringResource(R.string.unknown_location),
-            color = AccentOrange.copy(alpha = 0.85f),
+            color = AccentGold.copy(alpha = 0.85f),
             style = MaterialTheme.typography.labelLarge
         )
     }

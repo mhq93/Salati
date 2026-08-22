@@ -30,10 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.shared.presentation.theme.AccentGold
 import com.mhq.salati.shared.presentation.theme.AccentGreen
-import com.mhq.salati.shared.presentation.theme.AccentOrange
 import com.mhq.salati.shared.presentation.theme.CardBackground
 import com.mhq.salati.shared.presentation.theme.DarkGreen
+import com.mhq.salati.shared.presentation.theme.DarkGreenLight
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.MutedSage
 import com.mhq.salati.shared.presentation.theme.SalatiTheme
@@ -53,7 +54,7 @@ fun PrayerListItem(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isPrayerHighlighted) {
-                InkText //AccentGreen.copy(alpha = 0.08f)
+                DarkGreenLight //AccentGree.copy(alpha = 0.08f)
             } else {
                 CardBackground
             }
@@ -84,7 +85,7 @@ fun PrayerListItem(
                     text = prayerName,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
-                    color = if (isPrayerHighlighted) AccentOrange else InkText, //AccentGreen
+                    color = if (isPrayerHighlighted) AccentGold else InkText, //AccentGreen
                     maxLines = 1,
                     overflow = TextOverflow.Clip,
                     style = TextStyle(
@@ -100,7 +101,7 @@ fun PrayerListItem(
                     text = prayerTime,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = if (isPrayerHighlighted) AccentOrange else MutedSage,
+                    color = if (isPrayerHighlighted) AccentGold else MutedSage,
                     maxLines = 1,
                     overflow = TextOverflow.Clip,
                     style = TextStyle(
@@ -121,7 +122,7 @@ fun PrayerListItem(
                     .size(28.dp)
                     .background(
                         color = when {
-                            isPrayerHighlighted -> AccentOrange
+                            isPrayerHighlighted -> AccentGold
                             isPrayerAdhanMuted -> MutedSage.copy(alpha = 0.12f)
                             else -> AccentGreen.copy(alpha = 0.12f)
                         },
@@ -135,7 +136,7 @@ fun PrayerListItem(
                         Icons.Filled.NotificationsActive
                     },
                     tint = when {
-                        isPrayerHighlighted -> InkText
+                        isPrayerHighlighted -> DarkGreenLight
                         isPrayerAdhanMuted -> MutedSage.copy(alpha = if (isPrayerPassed) 0.4f else 1f)
                         else -> AccentGreen.copy(alpha = if (isPrayerPassed) 0.4f else 1f)
                     },

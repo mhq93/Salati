@@ -2,7 +2,6 @@ package com.mhq.salati.qibla.presentation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,8 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
 import com.mhq.salati.qibla.domain.model.CompassAccuracy
-import com.mhq.salati.shared.presentation.theme.AccentOrange
+import com.mhq.salati.shared.presentation.theme.AccentGold
 import com.mhq.salati.shared.presentation.theme.DarkGreen
+import com.mhq.salati.shared.presentation.theme.DarkGreenLight
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.MaterialAmber
 import com.mhq.salati.shared.presentation.theme.MaterialGreen
@@ -88,8 +88,8 @@ fun CalibrationBanner(
                 onClick = onRecalibrateClick,
                 border = BorderStroke(1.dp, DarkGreen.copy(alpha = 0.08f)),
                 colors = ButtonDefaults.textButtonColors(
-                    containerColor = AccentOrange,
-                    contentColor = InkText
+                    containerColor = AccentGold,
+                    contentColor = DarkGreenLight
                 )
             ) {
                 Text(

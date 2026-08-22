@@ -37,7 +37,6 @@ import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.DarkGreenLight
-import com.mhq.salati.shared.presentation.theme.SalatiTheme
 import com.mhq.salati.shared.presentation.theme.SheetBackground
 
 @Composable
@@ -169,11 +168,40 @@ fun HomeContentSuccess(
 
 @Preview
 @Composable
-private fun HomeContentSuccessPreview() {
-    SalatiTheme {
-        HomeContent(
-            state = HomeContract.State(isLoading = false,),
-            onIntent = {}
-        )
-    }
+fun HomeContentSuccessPreview() {
+    HomeContentSuccess(
+        locationName = "Cairo, Egypt",
+        prayerDate = PrayerDate(
+            gregorianDate = "",
+            hijriDate = "",
+            hijriDay = "",
+            hijriMonthNumber = 10,
+            hijriYear = ""
+        ),
+        prayerTimings = PrayerTimings(
+            fajr = "04:30 AM",
+            dhuhr = "12:00 PM",
+            asr = "03:30 PM",
+            maghrib = "06:45 PM",
+            isha = "08:15 PM",
+            imsak = "04:15 AM",
+            sunrise = "05:45 AM",
+            firstThird = "10:00 PM",
+            midnight = "11:30 PM",
+            lastThird = "02:00 AM",
+            sunset = "02:00 AM"
+        ),
+        remainingMillis = 3600000L,
+        nextPrayerInfo = NextPrayerInfo(
+            name = PrayerName.FAJR,
+            spanStartMillis = 1L,
+            spanEndMillis = 1L,
+            crossesIntoNextDay = true
+        ),
+        currentPrayerName = PrayerName.DHUHR,
+        mutedPrayers = setOf("FAJR"),
+        pastPrayers = setOf(PrayerName.FAJR),
+        isToday = true,
+        onIntent = {}
+    )
 }
