@@ -57,7 +57,7 @@
 
         <activity
             android:name="com.mhq.salati.shared.MainActivity"
-            android:configChanges="orientation|screenSize|screenLayout"
+            android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection"
             android:exported="true"
             android:theme="@style/Theme.Salati"
             android:windowSoftInputMode="adjustResize">

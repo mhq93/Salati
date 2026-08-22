@@ -1,5 +1,6 @@
 package com.mhq.salati.shared
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +14,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,6 +26,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val splashViewModel: SplashViewModel by viewModels()
+
+    private val configurationVersion = mutableIntStateOf(0)
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +50,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContent {
+            @Suppress("UNUSED_VARIABLE")
+            val version = configurationVersion.intValue
             val splashState by splashViewModel.state.collectAsStateWithLifecycle()
 
             val darkTheme = when (splashState.themeMode) {
@@ -62,27 +68,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
-//        setContent {
-//            var startDestination by remember { mutableStateOf<Screen?>(null) }
-//
-//            LaunchedEffect(Unit) {
-//                splashViewModel.effect.collect { effect ->
-//                    when (effect) {
-//                        is SplashContract.Effect.NavigateTo -> {
-//                            startDestination = effect.screen
-//                        }
-//                    }
-//                }
-//            }
-//
-//            SalatiTheme {
-//                Surface(modifier = Modifier.fillMaxSize()) {
-//                    startDestination?.let {
-//                        SalatiApp(startDestination = it)
-//                    }
-//                }
-//            }
-//        }
+    override fun onConfigurationChanged(newConfiguration: Configuration) {
+        super.onConfigurationChanged(newConfiguration)
+        configurationVersion.intValue++
     }
 }

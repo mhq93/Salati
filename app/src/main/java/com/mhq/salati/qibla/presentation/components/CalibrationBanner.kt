@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
 import com.mhq.salati.qibla.domain.model.CompassAccuracy
+import com.mhq.salati.shared.presentation.theme.AccentOrange
 import com.mhq.salati.shared.presentation.theme.DarkGreen
 import com.mhq.salati.shared.presentation.theme.InkText
 import com.mhq.salati.shared.presentation.theme.MaterialAmber
@@ -87,7 +88,8 @@ fun CalibrationBanner(
                 onClick = onRecalibrateClick,
                 border = BorderStroke(1.dp, DarkGreen.copy(alpha = 0.08f)),
                 colors = ButtonDefaults.textButtonColors(
-                    contentColor = DarkGreen
+                    containerColor = AccentOrange,
+                    contentColor = InkText
                 )
             ) {
                 Text(
