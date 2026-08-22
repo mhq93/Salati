@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
 
-class AlarmScheduler @Inject constructor(
+class PrayerAlarmCoordinator @Inject constructor(
     private val clock: Clock,
     private val mutedPrayersRepository: MutedPrayersRepository,
     private val scheduleDailyPrayerAlarmsUseCase: ScheduleDailyPrayerAlarmsUseCase,
