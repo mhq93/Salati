@@ -15,6 +15,7 @@ import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
+//NOMINATIM…
 class ResolveLocationUseCase @Inject constructor(
     private val connectivityChecker: ConnectivityChecker,
     private val locationProvider: LocationProvider,
@@ -62,10 +63,10 @@ class ResolveLocationUseCase @Inject constructor(
             when (val geocode = reverseGeocodeLocationUseCase(latitude, longitude)) {
                 is GeocodeResult.Found -> {
                     saveManualLocationUseCase(
-                        latitude,
-                        longitude,
-                        geocode.cityName,
-                        geocode.countryName
+                        cityName = geocode.cityName,
+                        countryName = geocode.countryName,
+                        latitude = latitude,
+                        longitude = longitude
                     )
                     Result.Success(
                         SavedLocation(

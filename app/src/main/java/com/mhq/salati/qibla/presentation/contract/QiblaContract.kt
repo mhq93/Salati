@@ -3,6 +3,7 @@ package com.mhq.salati.qibla.presentation.contract
 import com.mhq.salati.qibla.domain.model.CompassAccuracy
 import com.mhq.salati.shared.presentation.components.UiText
 
+//NOMINATIM…
 class QiblaContract {
 
     data class State(

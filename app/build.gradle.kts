@@ -91,6 +91,8 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
 
     implementation("org.osmdroid:osmdroid-android:6.1.20")
+    implementation("io.coil-kt.coil3:coil-compose:3.5.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.5.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
