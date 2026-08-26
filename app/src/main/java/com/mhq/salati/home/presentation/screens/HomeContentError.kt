@@ -2,11 +2,13 @@ package com.mhq.salati.home.presentation.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.shared.presentation.errors.CatchAllError
 import com.mhq.salati.shared.presentation.errors.LocationPermissionPermanentlyDeniedError
 import com.mhq.salati.shared.presentation.errors.LocationPermissionRequiredError
 import com.mhq.salati.shared.presentation.errors.LocationServicesDisabledError
+import com.mhq.salati.shared.presentation.theme.SalatiTheme
 
 @Composable
 fun HomeContentError(
@@ -50,5 +52,19 @@ fun HomeContentError(
                 modifier = modifier
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun HomeContentErrorPreview() {
+    SalatiTheme()  {
+        HomeContentError(
+            errorMessage = "Some message",
+            isLocationPermissionPermanentlyDenied = true,
+            areLocationServicesDisabled = true,
+            isLocationPermissionRequired = true,
+            onIntent = {}
+        )
     }
 }

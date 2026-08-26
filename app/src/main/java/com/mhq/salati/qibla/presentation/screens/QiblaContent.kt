@@ -41,11 +41,6 @@ fun QiblaContent(
                 .navigationBarsPadding()
                 .padding(bottom = BottomNavDefaults.Height)
         ) {
-            TabHeader(
-                icon = Icons.Default.Explore,
-                title = stringResource(R.string.qibla_direction),
-                subtitle = stringResource(R.string.face_the_kaaba_wherever_you_are)
-            )
             when {
                 state.isLoading -> {
                     LoadingContent(modifier = Modifier.weight(1f))
@@ -64,6 +59,11 @@ fun QiblaContent(
                 }
 
                 state.qiblaBearing != null -> {
+                    TabHeader(
+                        icon = Icons.Default.Explore,
+                        title = stringResource(R.string.qibla_direction),
+                        subtitle = stringResource(R.string.face_the_kaaba_wherever_you_are)
+                    )
                     QiblaContentSuccess(
                         locationName = state.locationName,
                         deviceHeading = state.deviceHeading,

@@ -50,12 +50,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    //    detekt {
-    //        buildUponDefaultConfig = true
-    //        allRules = false
-    //        config.setFrom("$projectDir/config/detekt/detekt.yml")
-    //    }
-
     buildFeatures {
         buildConfig = true
         compose = true
