@@ -24,6 +24,9 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        val contactEmail = project.findProperty("SALATI_CONTACT_EMAIL") as? String ?: "support@salati.app"
+        buildConfigField("String", "CONTACT_EMAIL", "\"$contactEmail\"")
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -34,10 +37,25 @@ android {
             }
         }
     }
+
+    //    buildTypes {
+    //        release {
+    //            isMinifyEnabled = false // Standard way to disable optimization/proguard in newer AGP
+    //            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    //        }
+    //    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    //    detekt {
+    //        buildUponDefaultConfig = true
+    //        allRules = false
+    //        config.setFrom("$projectDir/config/detekt/detekt.yml")
+    //    }
+
     buildFeatures {
         buildConfig = true
         compose = true

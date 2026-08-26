@@ -18,39 +18,35 @@ fun HomeContentError(
     modifier: Modifier = Modifier
 ) {
     when {
+
         areLocationServicesDisabled -> {
             LocationServicesDisabledError(
                 errorMessage = errorMessage,
-                onEnableLocationClicked = {
-                    onIntent(HomeContract.Intent.AccessDeviceLocationSettings)
-                },
+                onEnableLocationClicked = { onIntent(HomeContract.Intent.AccessDeviceLocationSettings) },
                 modifier = modifier
             )
         }
-        isLocationPermissionPermanentlyDenied -> {
-            LocationPermissionPermanentlyDeniedError(
-                errorMessage = errorMessage,
-                onOpenSettingsClicked = {
-                    onIntent(HomeContract.Intent.AccessAppSettings)
-                },
-                modifier = modifier
-            )
-        }
+
         isLocationPermissionRequired -> {
             LocationPermissionRequiredError(
                 errorMessage = errorMessage,
-                onRetryClicked = {
-                    onIntent(HomeContract.Intent.RetryClicked)
-                },
+                onRetryClicked = { onIntent(HomeContract.Intent.RetryClicked) },
                 modifier = modifier
             )
         }
+
+        isLocationPermissionPermanentlyDenied -> {
+            LocationPermissionPermanentlyDeniedError(
+                errorMessage = errorMessage,
+                onOpenSettingsClicked = { onIntent(HomeContract.Intent.AccessAppSettings) },
+                modifier = modifier
+            )
+        }
+
         else -> {
             CatchAllError(
                 errorMessage = errorMessage,
-                onRetryClicked = {
-                    onIntent(HomeContract.Intent.RetryClicked)
-                },
+                onRetryClicked = { onIntent(HomeContract.Intent.RetryClicked) },
                 modifier = modifier
             )
         }

@@ -33,25 +33,11 @@ fun QiblaContentError(
     modifier: Modifier = Modifier
 ) {
     when {
-        sensorUnavailable -> {
-            QiblaSensorUnavailableError(
-                errorMessage = errorMessage,
-                modifier = modifier
-            )
-        }
 
         areLocationServicesDisabled -> {
             LocationServicesDisabledError(
                 errorMessage = errorMessage,
                 onEnableLocationClicked = { onIntent(QiblaContract.Intent.AccessDeviceLocationSettings) },
-                modifier = modifier
-            )
-        }
-
-        isLocationPermissionPermanentlyDenied -> {
-            LocationPermissionPermanentlyDeniedError(
-                errorMessage = errorMessage,
-                onOpenSettingsClicked = { onIntent(QiblaContract.Intent.AccessAppSettings) },
                 modifier = modifier
             )
         }
@@ -64,12 +50,25 @@ fun QiblaContentError(
             )
         }
 
+        isLocationPermissionPermanentlyDenied -> {
+            LocationPermissionPermanentlyDeniedError(
+                errorMessage = errorMessage,
+                onOpenSettingsClicked = { onIntent(QiblaContract.Intent.AccessAppSettings) },
+                modifier = modifier
+            )
+        }
+
+        sensorUnavailable -> {
+            QiblaSensorUnavailableError(
+                errorMessage = errorMessage,
+                modifier = modifier
+            )
+        }
+
         else -> {
             CatchAllError(
                 errorMessage = errorMessage,
-                onRetryClicked = {
-                    onIntent(QiblaContract.Intent.RetryClicked)
-                },
+                onRetryClicked = { onIntent(QiblaContract.Intent.RetryClicked) },
                 modifier = modifier
             )
         }

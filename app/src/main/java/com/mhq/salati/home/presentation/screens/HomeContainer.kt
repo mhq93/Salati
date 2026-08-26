@@ -27,6 +27,7 @@ import com.mhq.salati.shared.presentation.components.LocalSnackbarHostState
 import com.mhq.salati.shared.presentation.components.asString
 import kotlinx.coroutines.launch
 
+//Nominatim...
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun HomeContainer(
@@ -37,7 +38,6 @@ fun HomeContainer(
     val scope = rememberCoroutineScope()
     val locationServicesEnabled by rememberLocationServicesEnabled()
 
-    // FIX: Lifecycle-aware collection
     val state by homeViewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = LocalSnackbarHostState.current
 
@@ -71,7 +71,6 @@ fun HomeContainer(
         }
     )
 
-    // FIX: Single effect stream — no more permissionEffect
     LaunchedEffect(Unit) {
         homeViewModel.effect.collect { effect ->
             when (effect) {
@@ -105,7 +104,6 @@ fun HomeContainer(
         }
     }
 
-    // FIX: Dumb Container — just reports events, no conditional logic
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {

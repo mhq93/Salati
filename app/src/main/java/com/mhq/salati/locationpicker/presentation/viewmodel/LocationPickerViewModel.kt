@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -51,8 +52,9 @@ class LocationPickerViewModel @Inject constructor(
     val effect = _effect.receiveAsFlow()
 
     private val searchQueryFlow = MutableStateFlow("")
-    private val immediateSearchFlow = kotlinx.coroutines.flow.MutableSharedFlow<String>()
-
+    private val immediateSearchFlow = MutableSharedFlow<String>()
+    private var lastManualSearchTimeMs = 0L
+    private val SEARCH_COOLDOWN_MS = 1000L
     private var reverseGeocodeJob: Job? = null
 
     init {
@@ -124,9 +126,24 @@ class LocationPickerViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
+    //    private fun executeManualSearch(query: String) {
+    //        if (query.isBlank()) return
+    //        viewModelScope.launch { immediateSearchFlow.emit(query) }
+    //    }
+
     private fun executeManualSearch(query: String) {
         if (query.isBlank()) return
-        viewModelScope.launch { immediateSearchFlow.emit(query) }
+
+        val currentTime = System.currentTimeMillis()
+        // Prevent spamming the search button
+        if (currentTime - lastManualSearchTimeMs < SEARCH_COOLDOWN_MS) {
+            return
+        }
+
+        lastManualSearchTimeMs = currentTime
+        viewModelScope.launch {
+            immediateSearchFlow.emit(query)
+        }
     }
 
     private fun selectResult(result: LocationPickerContract.LocationSearchResult) {

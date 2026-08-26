@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
+//Nominatim...
 class LocationPermissionDelegate @Inject constructor() {
 
     private val _state = MutableStateFlow(LocationPermissionState())
@@ -32,7 +33,7 @@ class LocationPermissionDelegate @Inject constructor() {
     }
 
     suspend fun onPermissionDenied(permanentlyDenied: Boolean) {
-        _state.value = LocationPermissionState(permanentlyDenied = permanentlyDenied)
+        _state.value = _state.value.copy(granted = false, required = false, permanentlyDenied = permanentlyDenied)
         _effect.emit(LocationPermissionEffect.PermissionResolved)
     }
 
@@ -42,7 +43,7 @@ class LocationPermissionDelegate @Inject constructor() {
             granted = false,
             required = false,
             permanentlyDenied = current.permanentlyDenied,
-            servicesDisabled = current.servicesDisabled
+            servicesDisabled = current.servicesDisabled //false
         )
     }
 

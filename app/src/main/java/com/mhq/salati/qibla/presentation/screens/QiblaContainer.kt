@@ -49,7 +49,6 @@ fun QiblaContainer(
         }
     )
 
-    // FIX: Single effect stream — no more permissionEffect
     LaunchedEffect(Unit) {
         qiblaViewModel.effect.collect { effect ->
             when (effect) {
@@ -75,8 +74,6 @@ fun QiblaContainer(
         }
     }
 
-    // FIX: Dumb Container — just reports events, no conditional logic
-    // Also: consolidated two redundant DisposableEffect blocks into one
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
