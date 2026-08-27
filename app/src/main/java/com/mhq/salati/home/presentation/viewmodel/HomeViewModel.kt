@@ -51,7 +51,6 @@ import kotlin.time.Duration.Companion.milliseconds
 
 private val LOCATION_NAME_LOOKUP_TIMEOUT = 3_000L.milliseconds
 
-//Nominatim...
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val clock: Clock,
@@ -187,7 +186,7 @@ class HomeViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         errorMessage = if (intent.permanentlyDenied) {
-                            UiText.Res(R.string.location_permission_permanently_denied_please_enable_it_via_settings)
+                            UiText.Res(R.string.location_permission_permanently_denied)
                         } else {
                             UiText.Res(R.string.location_permission_is_required_to_show_prayer_times)
                         }
@@ -239,11 +238,33 @@ class HomeViewModel @Inject constructor(
             }
             is HomeContract.Intent.StopAdhanClicked -> stopAdhanPlaybackUseCase()
             is HomeContract.Intent.ScreenResumed -> {
-                val s = _state.value.location
-                if (s.isPermanentlyDenied) {
-                    checkPermissionAndLoad()
-                }
                 viewModelScope.launch {
+                    val currentLocationState = _state.value.location
+
+                    // If we were in a terminal error state, re-evaluate from the OS
+                    // in case the user fixed it in Settings.
+                    if (currentLocationState.isPermanentlyDenied || currentLocationState.areServicesDisabled) {
+                        locationPermissionDelegate.reset()
+
+                        // Check the fresh ground truth
+                        val freshState = locationPermissionDelegate.state.value
+                        if (freshState.permanentlyDenied || freshState.servicesDisabled) {
+                            // Still blocked. Update state to ensure consistency, but DO NOT load.
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    location = it.location.copy(
+                                        isPermanentlyDenied = freshState.permanentlyDenied,
+                                        areServicesDisabled = freshState.servicesDisabled,
+                                        isPermissionRequired = freshState.required
+                                    )
+                                )
+                            }
+                            return@launch // Exit early, zero loading flash!
+                        }
+                    }
+
+                    // If we get here, either we weren't blocked, or the user fixed it in Settings.
                     checkExactAlarmAndNotificationPermissions(promptIfMissing = false)
                     if (_state.value.systemPermissions.hasExactAlarm) {
                         prayerAlarmCoordinator.scheduleIfToday(
@@ -251,21 +272,13 @@ class HomeViewModel @Inject constructor(
                             browsedDate = _state.value.dateBrowser.currentDate
                         )
                     }
+
+                    // Only reload prayer times if we don't have them yet
+                    if (_state.value.prayerTimes.timings == null) {
+                        checkPermissionAndLoad()
+                    }
                 }
             }
-
-//            is HomeContract.Intent.LocationServicesToggled -> {
-//                // 1. Immediately trust the system and update the UI flag
-//                _state.update {
-//                    it.copy(location = it.location.copy(areServicesDisabled = !intent.enabled))
-//                }
-//
-//                // 2. Always reload if location is enabled
-//                if (intent.enabled) {
-//                    checkPermissionAndLoad()
-//                }
-//            }
-
             is HomeContract.Intent.LocationServicesToggled -> {
                 if (intent.enabled && _state.value.location.areServicesDisabled) {
                     checkPermissionAndLoad()
@@ -288,6 +301,44 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun checkPermissionAndLoad() {
+        val delegateState = locationPermissionDelegate.state.value
+
+        // Guard 1: Permission permanently denied
+        if (delegateState.permanentlyDenied) {
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = UiText.Res(R.string.location_permission_permanently_denied)
+                )
+            }
+            return
+        }
+
+        // Guard 2: Location services disabled
+        if (delegateState.servicesDisabled) {
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = UiText.Res(R.string.location_services_disabled)
+                )
+            }
+            return
+        }
+
+        // ✅ Guard 3: Offline and no cached data to show.
+        // If we are offline and haven't loaded prayer times yet, loading will just fail.
+        // Prevent the error/spinner flash by keeping the current state.
+        if (!connectivityChecker.isConnected() && _state.value.prayerTimes.timings == null) {
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = UiText.Res(R.string.no_internet_connection)
+                )
+            }
+            return
+        }
+
+        // All gates passed. Safe to clear error and start loading.
         _state.update { it.copy(errorMessage = null) }
         loadPrayerTimes()
     }
@@ -311,8 +362,8 @@ class HomeViewModel @Inject constructor(
     private fun loadPrayerTimes() {
         loadPrayerTimesJob?.cancel()
         loadPrayerTimesJob = viewModelScope.launch {
-            locationPermissionDelegate.reset()
-            _state.update { it.copy(errorMessage = null) }
+            // Removed locationPermissionDelegate.reset() and errorMessage clearing from here.
+            // This prevents wiping the ground-truth state before we even check it.
 
             try {
                 val savedLocation = getSavedLocationUseCase().first()
@@ -337,14 +388,12 @@ class HomeViewModel @Inject constructor(
     private suspend fun handleSavedLocation(savedLocation: SavedLocation) {
         val lang = observeSettings().first().language.code
 
-        // 1. Use cached English name instantly
         val initialName = if (lang == "ar") {
             savedLocation.toDisplayName()
         } else {
             _state.value.location.locationName
         }
 
-        // 2. Update UI IMMEDIATELY
         _state.update {
             it.copy(
                 location = it.location.copy(
@@ -355,10 +404,8 @@ class HomeViewModel @Inject constructor(
             )
         }
 
-        // 3. Fetch prayer times IMMEDIATELY
         fetchAndApplyPrayerTimes(savedLocation.latitude, savedLocation.longitude)
 
-        // 4. Background localization
         if (lang != "ar") {
             val localized = tryLocalizeLocationName(savedLocation, lang)
             if (localized != null && localized != _state.value.location.locationName) {
@@ -367,43 +414,33 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-//    private suspend fun handleSavedLocation(savedLocation: SavedLocation) {
-//        _state.update {
-//            it.copy(
-//                location = it.location.copy(
-//                    latitude = savedLocation.latitude,
-//                    longitude = savedLocation.longitude,
-//                    locationName = savedLocation.toDisplayName()
-//                )
-//            )
-//        }
-//
-//        fetchAndApplyPrayerTimes(savedLocation.latitude, savedLocation.longitude)
-//
-//        val lang = observeSettings().first().language.code
-//        tryLocalizeLocationName(savedLocation, lang)?.let { localized ->
-//            _state.update { it.copy(location = it.location.copy(locationName = localized)) }
-//        }
-//    }
-
     private suspend fun handleFreshLocation() {
-        _state.update { it.copy(isLoading = true) }
+        // Anti-flash guard: If we are already permanently denied, don't reset or load.
+        if (locationPermissionDelegate.state.value.permanentlyDenied) {
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = UiText.Res(R.string.location_permission_permanently_denied)
+                )
+            }
+            return
+        }
+
+        // Only reset if we are actually going to try to get a fresh location
+        locationPermissionDelegate.reset()
+        _state.update { it.copy(isLoading = true, errorMessage = null) }
 
         when (val result = resolveLocationUseCase(locationPermissionAutoPromptShown)) {
             is ResolveLocationUseCase.Result.Success -> {
                 locationPermissionAutoPromptShown = false
 
                 val lang = observeSettings().first().language.code
-
-                // 1. Use cached English name instantly to prevent flicker and lag.
-                // If Arabic, use the raw name instantly.
                 val initialName = if (lang == "ar") {
                     result.savedLocation.toDisplayName()
                 } else {
-                    _state.value.location.locationName // Uses the cached English name!
+                    _state.value.location.locationName
                 }
 
-                // 2. Update UI IMMEDIATELY (Zero lag!)
                 _state.update {
                     it.copy(
                         location = it.location.copy(
@@ -414,16 +451,13 @@ class HomeViewModel @Inject constructor(
                     )
                 }
 
-                // 3. Fetch prayer times IMMEDIATELY
                 fetchAndApplyPrayerTimes(
                     result.savedLocation.latitude,
                     result.savedLocation.longitude
                 )
 
-                // 4. Background localization (Non-blocking)
                 if (lang != "ar") {
                     val localized = tryLocalizeLocationName(result.savedLocation, lang)
-                    // Only update if we got a new name and it's different from what's currently shown
                     if (localized != null && localized != _state.value.location.locationName) {
                         _state.update { it.copy(location = it.location.copy(locationName = localized)) }
                     }
@@ -449,7 +483,7 @@ class HomeViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = UiText.Res(R.string.location_permission_permanently_denied_please_enable_it_via_settings)
+                        errorMessage = UiText.Res(R.string.location_permission_permanently_denied)
                     )
                 }
             }
@@ -494,96 +528,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
-//    private suspend fun handleFreshLocation() {
-//        _state.update { it.copy(isLoading = true) }
-//
-//        when (val result = resolveLocationUseCase(locationPermissionAutoPromptShown)) {
-//            is ResolveLocationUseCase.Result.Success -> {
-//                locationPermissionAutoPromptShown = false
-//                _state.update {
-//                    it.copy(
-//                        location = it.location.copy(
-//                            latitude = result.savedLocation.latitude,
-//                            longitude = result.savedLocation.longitude,
-//                            locationName = result.savedLocation.toDisplayName()
-//                        )
-//                    )
-//                }
-//                fetchAndApplyPrayerTimes(
-//                    result.savedLocation.latitude,
-//                    result.savedLocation.longitude
-//                )
-//
-//                val lang = observeSettings().first().language.code
-//                tryLocalizeLocationName(result.savedLocation, lang)?.let { localized ->
-//                    _state.update { it.copy(location = it.location.copy(locationName = localized)) }
-//                }
-//            }
-//
-//            is ResolveLocationUseCase.Result.PromptPermission -> {
-//                locationPermissionAutoPromptShown = true
-//                locationPermissionDelegate.requirePermission()
-//                _state.update { it.copy(isLoading = false) }
-//            }
-//
-//            is ResolveLocationUseCase.Result.PermissionRequired -> {
-//                _state.update {
-//                    it.copy(
-//                        isLoading = false,
-//                        errorMessage = UiText.Res(R.string.location_permission_is_required_to_show_prayer_times)
-//                    )
-//                }
-//            }
-//
-//            is ResolveLocationUseCase.Result.PermanentlyDenied -> {
-//                _state.update {
-//                    it.copy(
-//                        isLoading = false,
-//                        errorMessage = UiText.Res(R.string.location_permission_permanently_denied_please_enable_it_via_settings)
-//                    )
-//                }
-//            }
-//
-//            is ResolveLocationUseCase.Result.ServicesDisabled -> {
-//                _state.update {
-//                    it.copy(
-//                        isLoading = false,
-//                        errorMessage = UiText.Res(R.string.location_services_disabled),
-//                        location = it.location.copy(areServicesDisabled = true)
-//                    )
-//                }
-//            }
-//
-//            is ResolveLocationUseCase.Result.Error -> {
-//                val isCurrentlyConnected = connectivityChecker.isConnected()
-//                val isLocationServicesError = result.message == UiText.Res(R.string.location_services_disabled)
-//                val shouldClearFlags = isCurrentlyConnected && !isLocationServicesError
-//
-//                _state.update { current ->
-//                    current.copy(
-//                        isLoading = false,
-//                        errorMessage = result.message,
-//                        location = if (shouldClearFlags) {
-//                            current.location.copy(
-//                                isPermissionRequired = false,
-//                                isPermanentlyDenied = false,
-//                                areServicesDisabled = false
-//                            )
-//                        } else {
-//                            current.location.copy(
-//                                areServicesDisabled = current.location.areServicesDisabled || isLocationServicesError
-//                            )
-//                        }
-//                    )
-//                }
-//
-//                if (shouldClearFlags) {
-//                    _effect.send(HomeContract.Effect.ShowError(result.message))
-//                }
-//            }
-//        }
-//    }
 
     private suspend fun fetchAndApplyPrayerTimes(latitude: Double, longitude: Double) {
         val today = _state.value.dateBrowser.currentDate.format(dateKeyFormatter)
@@ -675,11 +619,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Best-effort localized name lookup. Never throws, never blocks longer than
-     * [LOCATION_NAME_LOOKUP_TIMEOUT], and returns null (instead of propagating) on any
-     * failure so callers can keep whatever local/fallback name is already displayed.
-     */
     private suspend fun tryLocalizeLocationName(location: SavedLocation, languageCode: String): String? {
         return try {
             withTimeoutOrNull(LOCATION_NAME_LOOKUP_TIMEOUT) {

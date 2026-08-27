@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
@@ -28,9 +29,13 @@ fun LocationPermissionPermanentlyDeniedError(
         verticalArrangement = Arrangement.Center,
         modifier = modifier.fillMaxSize()
     ) {
+        val formattedErrorMessage =
+            stringResource(R.string.error, errorMessage)
+                .replace(". ", ".\n")
         Text(
-            text = stringResource(R.string.error, errorMessage),
-            color = DarkGreen
+            text = formattedErrorMessage,
+            color = DarkGreen,
+            textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(8.dp))
         Button(onClick = onOpenSettingsClicked) {

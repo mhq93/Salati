@@ -77,9 +77,7 @@
     <string name="location_services_disabled">خدمات تحديد الموقع معطلة - من فضلك، قم بتفعيلها</string>
     <string name="location_permission_required">يلزم تحديد الموقع لإظهار اتجاه القبلة</string>
     <string name="location_permission_is_required_to_show_prayer_times">يلزم تحديث موقع هاتفك لإظهار مواقيت الصلاة</string>
-    <string name="waiting_for_location_permission">في انتظار الإذن بدخول الموقع</string>
-    <string name="location_permission_permanently_denied">تم رفض الإذن بتحديد موقعك بشكل دائم - من فضلك قم بالتفعيل من إعدادات الهاتف</string>
-    <string name="location_permission_permanently_denied_please_enable_it_via_settings">لا يمكننا تحديد موقع هاتفك بدقة. من فضلك, فعل موقع هاتفك.</string>
+    <string name="location_permission_permanently_denied">لا يمكننا تحديد موقع هاتفك بدقة. يرجي التفعيل من إعدادات الهاتف.</string>
     <string name="failed_to_get_location">فشل العثور على موقع الهاتف</string>
     <string name="failed_to_load_qibla_direction">فشل تحديد اتجاه القبلة</string>
     <string name="qibla_direction_can_t_be_shown_here">لا يمكن إظهار اتجاه القبلة هنا</string>
