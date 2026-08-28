@@ -27,7 +27,6 @@ import com.mhq.salati.shared.presentation.components.LocalSnackbarHostState
 import com.mhq.salati.shared.presentation.components.asString
 import kotlinx.coroutines.launch
 
-//Nominatim...
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun HomeContainer(

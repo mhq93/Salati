@@ -16,7 +16,6 @@ import com.mhq.salati.shared.presentation.components.LocalSnackbarHostState
 import com.mhq.salati.shared.presentation.components.asString
 import kotlinx.coroutines.launch
 
-//NOMINATIM…
 @Composable
 fun LocationPickerContainer(
     onLocationSaved: () -> Unit,

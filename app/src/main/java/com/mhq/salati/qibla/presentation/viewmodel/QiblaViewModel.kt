@@ -7,6 +7,7 @@ import com.mhq.salati.connectivity.domain.repo.ConnectivityChecker
 import com.mhq.salati.location.domain.GeocodeResult
 import com.mhq.salati.location.domain.model.SavedLocation
 import com.mhq.salati.location.domain.repo.LocationProvider
+import com.mhq.salati.location.domain.usecases.GetLocalizedLocationNameUseCase
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
 import com.mhq.salati.location.domain.usecases.ReverseGeocodeLocationUseCase
 import com.mhq.salati.location.domain.usecases.SaveManualLocationUseCase
@@ -16,6 +17,7 @@ import com.mhq.salati.permissions.location.LocationPermissionEffect
 import com.mhq.salati.qibla.data.sensor.CompassProvider
 import com.mhq.salati.qibla.domain.usecases.GetQiblaBearingUseCase
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
+import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
 import com.mhq.salati.shared.presentation.components.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
@@ -30,8 +32,11 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
+
+private val LOCATION_NAME_LOOKUP_TIMEOUT = 500L.milliseconds
 
 @HiltViewModel
 class QiblaViewModel @Inject constructor(
@@ -43,7 +48,9 @@ class QiblaViewModel @Inject constructor(
     private val getSavedLocationUseCase: GetSavedLocationUseCase,
     private val reverseGeocodeLocationUseCase: ReverseGeocodeLocationUseCase,
     private val saveManualLocationUseCase: SaveManualLocationUseCase,
-    private val locationPermissionDelegate: LocationPermissionDelegate
+    private val locationPermissionDelegate: LocationPermissionDelegate,
+    private val getLocalizedLocationName: GetLocalizedLocationNameUseCase,
+    private val observeSettings: ObserveSettingsUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(QiblaContract.State())
@@ -139,21 +146,6 @@ class QiblaViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Loads qibla data with zero loading flash for gate errors.
-     *
-     * The key insight: [isLoading] = true is only set when we are about to do
-     * genuine async work (fetching GPS). All gate checks (connectivity,
-     * location services, permissions) run without ever touching [isLoading],
-     * so there is no spinner flash when they fail.
-     *
-     * Order of operations for fresh location:
-     *   1. Check saved location (fast local read)
-     *   2. If no saved location, check connectivity FIRST
-     *   3. Then check location services
-     *   4. Then check permissions
-     *   5. Only then set [isLoading] = true and fetch GPS
-     */
     private fun loadQibla() {
         loadQiblaJob?.cancel()
 
@@ -164,70 +156,14 @@ class QiblaViewModel @Inject constructor(
                 val savedLocation = getSavedLocationUseCase().first()
 
                 if (savedLocation != null) {
-                    // Fast path: cached location needs no network, no GPS, no loading spinner
-                    val bearing = getQiblaBearingUseCase(
-                        savedLocation.latitude,
-                        savedLocation.longitude
-                    )
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = null,
-                            qiblaBearing = bearing.toFloat(),
-                            locationName = savedLocation.toDisplayName(),
-                            sensorUnavailable = false,
-                            isLocationPermissionRequired = false,
-                            areLocationServicesDisabled = false,
-                            isLocationPermissionPermanentlyDenied = false
-                        )
-                    }
-
-                    compassProvider.getHeadingFlow(
-                        savedLocation.latitude,
-                        savedLocation.longitude
-                    ).collect { reading ->
-                        _state.update {
-                            it.copy(
-                                deviceHeading = reading.headingDegrees,
-                                compassAccuracy = reading.accuracy
-                            )
-                        }
-                    }
+                    handleSavedLocation(savedLocation)
                     return@launch
                 }
 
-                // No saved location — need fresh location. Check gates in order.
                 val freshLocation = resolveFreshLocation()
                 if (freshLocation == null) return@launch
 
-                val bearing = getQiblaBearingUseCase(
-                    freshLocation.latitude,
-                    freshLocation.longitude
-                )
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        qiblaBearing = bearing.toFloat(),
-                        locationName = freshLocation.toDisplayName(),
-                        sensorUnavailable = false,
-                        isLocationPermissionRequired = false,
-                        areLocationServicesDisabled = false,
-                        isLocationPermissionPermanentlyDenied = false
-                    )
-                }
-
-                compassProvider.getHeadingFlow(
-                    freshLocation.latitude,
-                    freshLocation.longitude
-                ).collect { reading ->
-                    _state.update {
-                        it.copy(
-                            deviceHeading = reading.headingDegrees,
-                            compassAccuracy = reading.accuracy
-                        )
-                    }
-                }
+                handleFreshLocation(freshLocation)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -246,19 +182,101 @@ class QiblaViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Attempts to resolve a fresh location from GPS + geocoding.
-     *
-     * Gate order (matches original logic):
-     *   1. Connectivity — if offline, show "No Internet Connection"
-     *   2. Location services — if disabled, show "Location services disabled"
-     *   3. Permissions — if denied, show appropriate permission error or auto-prompt
-     *   4. Fetch GPS + reverse geocode
-     *
-     * Returns null if any gate blocks the flow. State is already updated.
-     */
+    private suspend fun handleSavedLocation(savedLocation: SavedLocation) {
+        val lang = observeSettings().first().language.code
+        val isOnline = connectivityChecker.isConnected()
+
+        val finalName = if (lang == "ar") {
+            savedLocation.toDisplayName()
+        } else if (isOnline) {
+            withTimeoutOrNull(LOCATION_NAME_LOOKUP_TIMEOUT) {
+                getLocalizedLocationName(savedLocation, lang)
+            } ?: savedLocation.toDisplayName()
+        } else {
+            savedLocation.toDisplayName()
+        }
+
+        val bearing = getQiblaBearingUseCase(
+            savedLocation.latitude,
+            savedLocation.longitude
+        )
+        _state.update {
+            it.copy(
+                isLoading = false,
+                errorMessage = null,
+                qiblaBearing = bearing.toFloat(),
+                locationName = finalName,
+                sensorUnavailable = false,
+                isLocationPermissionRequired = false,
+                areLocationServicesDisabled = false,
+                isLocationPermissionPermanentlyDenied = false
+            )
+        }
+
+        startCompassUpdates(savedLocation.latitude, savedLocation.longitude)
+    }
+
+    private suspend fun handleFreshLocation(freshLocation: SavedLocation) {
+        val lang = observeSettings().first().language.code
+        val isOnline = connectivityChecker.isConnected()
+
+        // Localize the location name
+        val localizedName = if (lang != "ar" && isOnline) {
+            withTimeoutOrNull(LOCATION_NAME_LOOKUP_TIMEOUT) {
+                getLocalizedLocationName(freshLocation, lang)
+            }
+        } else {
+            null
+        }
+
+        // Use localized name if available, otherwise fall back to saved location name
+        val finalName = localizedName ?: freshLocation.toDisplayName()
+
+        // If we successfully localized and have a different name, save it
+        if (localizedName != null && localizedName != freshLocation.toDisplayName()) {
+            val (city, country) = parseDisplayName(localizedName)
+            saveManualLocationUseCase(
+                freshLocation.latitude,
+                freshLocation.longitude,
+                city,
+                country
+            )
+        }
+
+        val bearing = getQiblaBearingUseCase(
+            freshLocation.latitude,
+            freshLocation.longitude
+        )
+        _state.update {
+            it.copy(
+                isLoading = false,
+                errorMessage = null,
+                qiblaBearing = bearing.toFloat(),
+                locationName = finalName,
+                sensorUnavailable = false,
+                isLocationPermissionRequired = false,
+                areLocationServicesDisabled = false,
+                isLocationPermissionPermanentlyDenied = false
+            )
+        }
+
+        startCompassUpdates(freshLocation.latitude, freshLocation.longitude)
+    }
+
+    private fun startCompassUpdates(latitude: Double, longitude: Double) {
+        viewModelScope.launch {
+            compassProvider.getHeadingFlow(latitude, longitude).collect { reading ->
+                _state.update {
+                    it.copy(
+                        deviceHeading = reading.headingDegrees,
+                        compassAccuracy = reading.accuracy
+                    )
+                }
+            }
+        }
+    }
+
     private suspend fun resolveFreshLocation(): SavedLocation? {
-        // Gate 1: Connectivity (checked FIRST — this was the bug in the rewrite)
         if (!connectivityChecker.isConnected()) {
             _state.update {
                 it.copy(
@@ -273,7 +291,6 @@ class QiblaViewModel @Inject constructor(
             return null
         }
 
-        // Gate 2: Location services
         if (!locationProvider.isLocationEnabled()) {
             locationPermissionDelegate.markServicesDisabled()
             _state.update {
@@ -289,7 +306,6 @@ class QiblaViewModel @Inject constructor(
             return null
         }
 
-        // Gate 3: Permissions
         if (!permissionChecker.hasLocationPermission()) {
             if (locationPermissionDelegate.state.value.permanentlyDenied) {
                 _state.update {
@@ -333,7 +349,6 @@ class QiblaViewModel @Inject constructor(
             return null
         }
 
-        // All gates passed — genuine async work starts here
         _state.update {
             it.copy(
                 isLoading = true,
@@ -354,11 +369,9 @@ class QiblaViewModel @Inject constructor(
 
             when (val geocode = reverseGeocodeLocationUseCase(lat, lng)) {
                 is GeocodeResult.Found -> {
-                    saveManualLocationUseCase(lat, lng, geocode.cityName, geocode.countryName)
                     SavedLocation(geocode.cityName, geocode.countryName, lat, lng)
                 }
                 is GeocodeResult.NotFound -> {
-                    saveManualLocationUseCase(lat, lng, null, null)
                     SavedLocation(null, null, lat, lng)
                 }
                 is GeocodeResult.Failed -> {
@@ -391,6 +404,16 @@ class QiblaViewModel @Inject constructor(
             _state.update { it.copy(isLoading = false, errorMessage = message) }
             _effect.send(QiblaContract.Effect.ShowError(message))
             null
+        }
+    }
+
+    private fun parseDisplayName(displayName: String?): Pair<String?, String?> {
+        if (displayName == null) return null to null
+        val parts = displayName.split(", ", limit = 2)
+        return when (parts.size) {
+            2 -> parts[0] to parts[1]
+            1 -> parts[0] to null
+            else -> null to null
         }
     }
 

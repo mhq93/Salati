@@ -1,8 +1,8 @@
 package com.mhq.salati.location.domain.repo
 
 import com.mhq.salati.location.domain.GeocodeResult
+import com.mhq.salati.location.domain.model.LocationSearchResult
 
-//NOMINATIM…
 interface GeocoderProvider {
     suspend fun reverseGeocode(
         latitude: Double,
@@ -15,18 +15,3 @@ interface GeocoderProvider {
         acceptLanguage: String? = null
     ): List<LocationSearchResult>
 }
-
-data class LocationSearchResult(
-    val displayName: String,
-    val latitude: Double,
-    val longitude: Double
-)
-
-//import com.mhq.salati.location.domain.GeocodeResult
-//
-//interface GeocoderProvider {
-//    suspend fun reverseGeocode(
-//        latitude: Double,
-//        longitude: Double
-//    ): GeocodeResult
-//}

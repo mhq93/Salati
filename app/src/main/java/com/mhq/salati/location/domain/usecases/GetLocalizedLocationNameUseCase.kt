@@ -4,7 +4,6 @@ import com.mhq.salati.location.domain.GeocodeResult
 import com.mhq.salati.location.domain.model.SavedLocation
 import javax.inject.Inject
 
-//NOMINATIM…
 class GetLocalizedLocationNameUseCase @Inject constructor(
     private val reverseGeocodeLocation: ReverseGeocodeLocationUseCase
 ) {

@@ -4,8 +4,8 @@ import com.mhq.salati.location.data.dto.NominatimAddressDto
 import com.mhq.salati.location.data.dto.NominatimReverseDto
 import com.mhq.salati.location.data.dto.NominatimSearchDto
 import com.mhq.salati.location.domain.GeocodeResult
+import com.mhq.salati.location.domain.model.LocationSearchResult
 import com.mhq.salati.location.domain.repo.GeocoderProvider
-import com.mhq.salati.location.domain.repo.LocationSearchResult
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -16,7 +16,6 @@ import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
-//NOMINATIM…
 class NominatimGeocoderProvider @Inject constructor(
     private val httpClient: HttpClient
 ) : GeocoderProvider {

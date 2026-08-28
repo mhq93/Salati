@@ -3,7 +3,6 @@ package com.mhq.salati.location.data.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-//NOMINATIM…
 @Serializable
 data class NominatimSearchDto(
     @SerialName("display_name")
@@ -12,5 +11,5 @@ data class NominatimSearchDto(
     val lat: Double? = null,
     @SerialName("lon")
     val lon: Double? = null,
-    val address: NominatimAddressDto? = null // ✅ CRITICAL
+    val address: NominatimAddressDto? = null
 )

@@ -15,7 +15,6 @@ import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
-//NOMINATIM…
 class ResolveLocationUseCase @Inject constructor(
     private val connectivityChecker: ConnectivityChecker,
     private val locationProvider: LocationProvider,

@@ -3,7 +3,6 @@ package com.mhq.salati.location.data.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-//NOMINATIM…
 @Serializable
 data class NominatimAddressDto(
     val city: String? = null,

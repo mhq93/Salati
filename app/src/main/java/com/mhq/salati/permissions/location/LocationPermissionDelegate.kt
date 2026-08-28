@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-//Nominatim...
 class LocationPermissionDelegate @Inject constructor() {
 
     private val _state = MutableStateFlow(LocationPermissionState())
