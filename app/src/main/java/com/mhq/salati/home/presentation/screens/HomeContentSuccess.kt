@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
@@ -130,6 +131,46 @@ fun HomeContentSuccess(
                 }
         )
     }
+}
+
+@Preview
+@Composable
+fun HomeContentSuccessPreview() {
+    HomeContentSuccess(
+        locationName = "Cairo, Egypt",
+        prayerDate = PrayerDate(
+            gregorianDate = "",
+            hijriDate = "",
+            hijriDay = "",
+            hijriMonthNumber = 10,
+            hijriYear = ""
+        ),
+        prayerTimings = PrayerTimings(
+            fajr = "04:30 AM",
+            dhuhr = "12:00 PM",
+            asr = "03:30 PM",
+            maghrib = "06:45 PM",
+            isha = "08:15 PM",
+            imsak = "04:15 AM",
+            sunrise = "05:45 AM",
+            firstThird = "10:00 PM",
+            midnight = "11:30 PM",
+            lastThird = "02:00 AM",
+            sunset = "02:00 AM"
+        ),
+        remainingMillis = 3600000L,
+        nextPrayerInfo = NextPrayerInfo(
+            name = PrayerName.FAJR,
+            spanStartMillis = 1L,
+            spanEndMillis = 1L,
+            crossesIntoNextDay = true
+        ),
+        currentPrayerName = PrayerName.DHUHR,
+        mutedPrayers = setOf("FAJR"),
+        pastPrayers = setOf(PrayerName.FAJR),
+        isToday = true,
+        onIntent = {}
+    )
 }
 
 //package com.mhq.salati.home.presentation.screens

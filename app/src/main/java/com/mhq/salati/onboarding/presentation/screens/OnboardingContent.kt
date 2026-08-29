@@ -8,8 +8,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,17 +39,27 @@ fun OnboardingContent(
         OnboardingPageData(
             icon = Icons.Default.Schedule,
             title = stringResource(R.string.never_miss_a_prayer),
-            description = stringResource(R.string.accurate_prayer_times_calculated_for_your_exact_location)
+            description = stringResource(R.string.never_miss_a_prayer_subtitle)
+        ),
+        OnboardingPageData(
+            icon = Icons.Default.LocationOn,
+            title = stringResource(R.string.access_your_location),
+            description = stringResource(R.string.access_your_location_subtitle)
         ),
         OnboardingPageData(
             icon = Icons.Default.Explore,
             title = stringResource(R.string.find_your_qibla),
-            description = stringResource(R.string.a_precise_live_compass_points_you_toward_the_kaaba_wherever_you_are)
+            description = stringResource(R.string.find_your_qibla_subtitle)
         ),
         OnboardingPageData(
             icon = Icons.Default.NotificationsActive,
             title = stringResource(R.string.gentle_reminders),
-            description = stringResource(R.string.custom_adhan_alerts_for_every_prayer_fully_in_your_control)
+            description = stringResource(R.string.gentle_reminders_subtitle)
+        ),
+        OnboardingPageData(
+            icon = Icons.Default.Settings,
+            title = stringResource(R.string.customize_your_app),
+            description = stringResource(R.string.customize_your_app_subtitle)
         )
     )
 

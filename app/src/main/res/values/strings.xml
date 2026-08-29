@@ -4,11 +4,15 @@
     <!-- Onboarding -->
     <string name="get_started">Get Started</string>
     <string name="never_miss_a_prayer">Never Miss a Prayer</string>
-    <string name="accurate_prayer_times_calculated_for_your_exact_location">Accurate prayer times calculated for your exact location, updated automatically throughout the day.</string>
-    <string name="find_your_qibla">Find Your Qibla</string>
-    <string name="a_precise_live_compass_points_you_toward_the_kaaba_wherever_you_are">A precise, live compass points you toward the Kaaba wherever you are.</string>
+    <string name="never_miss_a_prayer_subtitle">Accurate prayer times based on your exact location, updated automatically.</string>
+    <string name="find_your_qibla">Find your Qibla</string>
+    <string name="find_your_qibla_subtitle">A precise, live compass points you toward the Kaaba wherever you are.</string>
+    <string name="access_your_location">Access Location</string>
+    <string name="access_your_location_subtitle">Enable your network and GPS once per every new location, then enjoy a seamless offline user experience.</string>
     <string name="gentle_reminders">Gentle Reminders</string>
-    <string name="custom_adhan_alerts_for_every_prayer_fully_in_your_control">Custom Adhan alerts for every prayer, fully in your control.</string>
+    <string name="gentle_reminders_subtitle">Custom Adhan alerts for every prayer, fully in your control.</string>
+    <string name="customize_your_app">Customize your App</string>
+    <string name="customize_your_app_subtitle">Check Settings out to customize your own app experience.</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
 

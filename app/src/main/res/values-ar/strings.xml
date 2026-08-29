@@ -5,11 +5,15 @@
     <!-- Onboarding -->
     <string name="get_started">بدء</string>
     <string name="never_miss_a_prayer">لا تفوت صلاة أبداً</string>
-    <string name="accurate_prayer_times_calculated_for_your_exact_location">مواقيت الصلاة محسوبة بدقة وفقا لموقعك الجغرافي، ويتم تحديثها تاقائيا على مدار اليوم</string>
+    <string name="never_miss_a_prayer_subtitle">مواقيت الصلاة وفقاً لموقعك الجغرافي، ويتم تحديثها تلقائياً.</string>
     <string name="find_your_qibla">حدد اتجاه القبلة</string>
-    <string name="a_precise_live_compass_points_you_toward_the_kaaba_wherever_you_are">بوصلة حية ودقيقة، تتيح لك العثور على اتجاه القبلة أينما كنت</string>
+    <string name="find_your_qibla_subtitle">بوصلة دقيقة تفاعلية تشير إلى اتجاه القبلة أينما كنت.</string>
+    <string name="access_your_location">حدد موقعك</string>
+    <string name="access_your_location_subtitle">اتصل بالإنترنت وفعل نظام التموضع العالمي مرة واحدة لكل موقع جديد، ثم استمتع باستخدام التطبيق بدون إنترنت.</string>
     <string name="gentle_reminders">التنبيهات</string>
-    <string name="custom_adhan_alerts_for_every_prayer_fully_in_your_control">تنبيهات خاصة بالآذان لكل صلاة، تحت تحكمك الكامل</string>
+    <string name="gentle_reminders_subtitle">تنبيهات خاصة بالآذان لكل صلاة، تحت تحكمك الكامل</string>
+    <string name="customize_your_app">تحكم بالتطبيق كيفما تريد</string>
+    <string name="customize_your_app_subtitle">تحقق من إعدادات التطبيق لتجربة استخدام أكثر خصوصية.</string>
     <string name="next">التالي</string>
     <string name="skip">تخطي</string>
 

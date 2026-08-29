@@ -4,7 +4,7 @@ object OnboardingContract {
 
     data class State(
         val currentPage: Int = 0,
-        val totalPages: Int = 3,
+        val totalPages: Int = 5,
         val isLoading: Boolean = false
     )
 
