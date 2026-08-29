@@ -26,7 +26,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val splashViewModel: SplashViewModel by viewModels()
-
     private val configurationVersion = mutableIntStateOf(0)
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -62,9 +61,7 @@ class MainActivity : AppCompatActivity() {
 
             SalatiTheme(darkTheme = darkTheme) {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    splashState.startDestination?.let {
-                        SalatiApp(startDestination = it)
-                    }
+                    SalatiApp()
                 }
             }
         }

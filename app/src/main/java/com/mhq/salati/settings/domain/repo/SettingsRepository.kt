@@ -15,6 +15,7 @@ interface SettingsRepository {
     suspend fun setMadhab(madhab: Madhab)
     suspend fun setThemeMode(mode: ThemeMode)
     suspend fun setLanguage(language: AppLanguage)
+    suspend fun setLanguageSelected(isSelected: Boolean)
     suspend fun setAdhanSound(sound: AdhanSound)
     suspend fun setHijriDateOffset(offset: Int)
 }

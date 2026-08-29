@@ -32,6 +32,9 @@ class SettingsRepoImpl @Inject constructor(
     override suspend fun setLanguage(language: AppLanguage) =
         settingsDataStore.setLanguage(language)
 
+    override suspend fun setLanguageSelected(isSelected: Boolean) =
+        settingsDataStore.setLanguageSelected(isSelected)
+
     override suspend fun setAdhanSound(sound: AdhanSound) =
         settingsDataStore.setAdhanSound(sound)
 

@@ -7,5 +7,6 @@ data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val language: AppLanguage = AppLanguage.ENGLISH,
     val adhanSound: AdhanSound = AdhanSound.DEFAULT,
-    val hijriDateOffset: Int = 0
+    val hijriDateOffset: Int = 0,
+    val isLanguageSelected: Boolean = false
 )

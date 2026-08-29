@@ -30,6 +30,7 @@ class SettingsDataStore @Inject constructor(
         val MADHAB = stringPreferencesKey("madhab")
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val LANGUAGE = stringPreferencesKey("language")
+        val IS_LANGUAGE_SELECTED = booleanPreferencesKey("is_language_selected")
         val ADHAN_SOUND = stringPreferencesKey("adhan_sound")
         val HIJRI_OFFSET = intPreferencesKey("hijri_date_offset")
     }
@@ -49,6 +50,7 @@ class SettingsDataStore @Inject constructor(
             language = prefs[Keys.LANGUAGE]
                 ?.let { runCatching { AppLanguage.valueOf(it) }.getOrNull() }
                 ?: AppLanguage.ENGLISH,
+            isLanguageSelected = prefs[Keys.IS_LANGUAGE_SELECTED] ?: false,
             adhanSound = prefs[Keys.ADHAN_SOUND]
                 ?.let { runCatching { AdhanSound.valueOf(it) }.getOrNull() }
                 ?: AdhanSound.DEFAULT,
@@ -74,6 +76,10 @@ class SettingsDataStore @Inject constructor(
 
     suspend fun setLanguage(language: AppLanguage) {
         context.settingsDataStore.edit { it[Keys.LANGUAGE] = language.name }
+    }
+
+    suspend fun setLanguageSelected(isSelected: Boolean) {
+        context.settingsDataStore.edit { it[Keys.IS_LANGUAGE_SELECTED] = isSelected }
     }
 
     suspend fun setAdhanSound(sound: AdhanSound) {

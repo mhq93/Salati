@@ -45,6 +45,6 @@ object SettingsContract {
         data object LaunchShareSheet : Effect
         data object OpenPlayStoreListing : Effect
         data object OpenEmailClient : Effect
-        data object LanguageChangedRestartRequired : Effect
+        data class LanguageChangedRestartRequired(val languageCode: String) : Effect
     }
 }

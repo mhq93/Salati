@@ -91,8 +91,8 @@ fun SettingsContainer(
                     context.startActivity(emailIntent)
                 }
 
-                Effect.LanguageChangedRestartRequired -> {
-                    val localeList = LocaleListCompat.forLanguageTags(state.language.code)
+                is Effect.LanguageChangedRestartRequired -> {
+                    val localeList = LocaleListCompat.forLanguageTags(effect.languageCode)
                     AppCompatDelegate.setApplicationLocales(localeList)
                 }
             }
