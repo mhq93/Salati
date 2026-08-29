@@ -62,7 +62,7 @@ fun SettingsContent(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background) // <-- Replaced SheetBackground
+            .background(MaterialTheme.colorScheme.background)
     ) {
         LazyColumn(
             contentPadding = PaddingValues(
@@ -83,7 +83,7 @@ fun SettingsContent(
                             icon = Icons.Default.NotificationsActive,
                             title = stringResource(R.string.prayer_notifications),
                             subtitle = stringResource(R.string.get_alerted_and_notified_at_each_prayer_time),
-                            isChecked = state.notificationsEnabled,
+                            isChecked = state.notificationsEnabled && state.hasNotificationPermission,
                             onCheckedChange = { onIntent(Intent.ToggleNotifications(it)) }
                         )
                         SettingsDivider()

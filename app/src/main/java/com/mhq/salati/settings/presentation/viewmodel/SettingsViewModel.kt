@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.BuildConfig
 import com.mhq.salati.R
+import com.mhq.salati.permissions.domain.PermissionChecker
 import com.mhq.salati.settings.domain.model.AdhanSound
 import com.mhq.salati.settings.domain.model.AppLanguage
 import com.mhq.salati.settings.domain.model.AppSettings
@@ -43,7 +44,8 @@ class SettingsViewModel @Inject constructor(
     private val updateThemeModeUseCase: UpdateThemeModeUseCase,
     private val updateLanguageUseCase: UpdateLanguageUseCase,
     private val updateAdhanSoundUseCase: UpdateAdhanSoundUseCase,
-    private val updateHijriDateOffsetUseCase: UpdateHijriDateOffsetUseCase
+    private val updateHijriDateOffsetUseCase: UpdateHijriDateOffsetUseCase,
+    private val permissionChecker: PermissionChecker
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(
@@ -58,11 +60,15 @@ class SettingsViewModel @Inject constructor(
         observeSettingsUseCase()
             .onEach { settings -> applySettingsToState(settings) }
             .launchIn(viewModelScope)
+
+        refreshNotificationPermissionState()
     }
 
     fun onIntent(intent: SettingsContract.Intent) {
         when (intent) {
-            is SettingsContract.Intent.ToggleNotifications -> updateNotifications(intent.enabled)
+            is SettingsContract.Intent.ToggleNotifications -> toggleNotifications(intent.enabled)
+            is SettingsContract.Intent.NotificationPermissionResult -> onNotificationPermissionResult(intent.granted)
+            is SettingsContract.Intent.RecheckNotificationPermission -> refreshNotificationPermissionState()
             is SettingsContract.Intent.SelectCalculationMethod -> updateCalculationMethod(intent.method)
             is SettingsContract.Intent.SelectMadhab -> updateMadhab(intent.madhab)
             is SettingsContract.Intent.SelectTheme -> updateTheme(intent.mode)
@@ -90,6 +96,34 @@ class SettingsViewModel @Inject constructor(
                 adhanSound = settings.adhanSound,
                 hijriDateOffset = settings.hijriDateOffset
             )
+        }
+    }
+
+    private fun refreshNotificationPermissionState() = viewModelScope.launch {
+        val granted = permissionChecker.hasNotificationPermission()
+        _state.update { it.copy(hasNotificationPermission = granted) }
+    }
+
+    // Turning the toggle on when the OS permission isn't granted must NOT persist
+    // notificationsEnabled=true yet — that's what caused the toggle to show "on"
+    // while notifications were actually blocked. Instead we ask for the
+    // permission first and only persist once we know the real outcome.
+    private fun toggleNotifications(enabled: Boolean) {
+        if (enabled && !_state.value.hasNotificationPermission) {
+            emitEffect(SettingsContract.Effect.RequestNotificationPermission)
+            return
+        }
+        updateNotifications(enabled)
+    }
+
+    private fun onNotificationPermissionResult(granted: Boolean) {
+        _state.update { it.copy(hasNotificationPermission = granted) }
+        // Only persist the app-level flag to true once permission is confirmed.
+        // On denial we deliberately leave notificationsEnabled untouched in
+        // DataStore and let the UI derive "off" from hasNotificationPermission,
+        // so the row doesn't silently flip user intent behind their back.
+        if (granted) {
+            updateNotifications(true)
         }
     }
 

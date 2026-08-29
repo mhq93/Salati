@@ -13,6 +13,7 @@ object SettingsContract {
     data class State(
         val isLoading: Boolean = true,
         val notificationsEnabled: Boolean = true,
+        val hasNotificationPermission: Boolean = true, // OS-level truth, from PermissionChecker
         val calculationMethod: CalculationMethod = CalculationMethod.EGYPTIAN_GENERAL_AUTHORITY,
         val madhab: Madhab = Madhab.SHAFI,
         val themeMode: ThemeMode = ThemeMode.SYSTEM,
@@ -26,6 +27,8 @@ object SettingsContract {
 
     sealed interface Intent {
         data class ToggleNotifications(val enabled: Boolean) : Intent
+        data class NotificationPermissionResult(val granted: Boolean) : Intent
+        data object RecheckNotificationPermission : Intent
         data class SelectCalculationMethod(val method: CalculationMethod) : Intent
         data class SelectMadhab(val madhab: Madhab) : Intent
         data class SelectTheme(val mode: ThemeMode) : Intent
@@ -42,9 +45,10 @@ object SettingsContract {
 
     sealed interface Effect {
         data class ShowError(val message: UiText) : Effect
+        data class LanguageChangedRestartRequired(val languageCode: String) : Effect
         data object LaunchShareSheet : Effect
         data object OpenPlayStoreListing : Effect
         data object OpenEmailClient : Effect
-        data class LanguageChangedRestartRequired(val languageCode: String) : Effect
+        data object RequestNotificationPermission : Effect
     }
 }

@@ -25,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
     private val splashViewModel: SplashViewModel by viewModels()
     private val configurationVersion = mutableIntStateOf(0)
 

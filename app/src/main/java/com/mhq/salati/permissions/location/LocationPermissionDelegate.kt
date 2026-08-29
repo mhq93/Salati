@@ -42,7 +42,7 @@ class LocationPermissionDelegate @Inject constructor() {
             granted = false,
             required = false,
             permanentlyDenied = current.permanentlyDenied,
-            servicesDisabled = current.servicesDisabled //false
+            servicesDisabled = current.servicesDisabled
         )
     }
 
