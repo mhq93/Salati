@@ -1,11 +1,12 @@
 package com.mhq.salati.home.presentation.contract
 
-import com.mhq.salati.adhan.domain.model.AdhanPlaybackState
-import com.mhq.salati.home.domain.model.NextPrayerInfo
+import com.mhq.salati.home.domain.model.PrayerWindow
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
+import com.mhq.salati.shared.domain.Coordinates
 import com.mhq.salati.shared.domain.PrayerName
-import com.mhq.salati.shared.presentation.components.UiText
+import com.mhq.salati.shared.ui.UiText
+import java.time.Duration
 import java.time.LocalDate
 
 class HomeContract {
@@ -24,14 +25,14 @@ class HomeContract {
         val date: PrayerDate? = null,
         val timings: PrayerTimings? = null,
         val currentPrayerName: PrayerName? = null,
-        val nextPrayerInfo: NextPrayerInfo? = null,
+        val prayerWindow: PrayerWindow? = null,
         val pastPrayers: Set<PrayerName> = emptySet(),
-        val remainingMillis: Long = 0L
+        val remaining: Duration = Duration.ZERO,
+        val windowProgress: Float = 0f
     )
 
     data class LocationUiState(
-        val latitude: Double? = null,
-        val longitude: Double? = null,
+        val coordinates: Coordinates? = null,
         val locationName: String? = null,
         val isPermissionGranted: Boolean = false,
         val isPermanentlyDenied: Boolean = false,
@@ -40,8 +41,7 @@ class HomeContract {
     )
 
     data class AdhanUiState(
-        val playback: AdhanPlaybackState = AdhanPlaybackState.Idle,
-        val mutedPrayers: Set<String> = emptySet()
+        val mutedPrayers: Set<PrayerName> = emptySet()
     )
 
     data class SystemPermissionsUiState(
@@ -56,7 +56,6 @@ class HomeContract {
 
     sealed interface Intent {
         data object LoadPrayerTimes : Intent
-        data object Retry : Intent
         data object RetryClicked : Intent
         data object PreviousDay : Intent
         data object NextDay : Intent
@@ -64,8 +63,7 @@ class HomeContract {
         data object AccessAppSettings : Intent
         data object AccessDeviceLocationSettings : Intent
         data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
-        data object StopAdhanClicked : Intent
-        data class ToggleMute(val prayerName: String) : Intent
+        data class ToggleMute(val prayerName: PrayerName) : Intent
         data object RecheckSystemPermissions : Intent
         data class NotificationPermissionResult(val granted: Boolean) : Intent
         data object ExactAlarmBannerClicked : Intent

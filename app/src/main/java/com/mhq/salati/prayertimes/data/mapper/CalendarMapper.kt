@@ -1,8 +1,8 @@
 package com.mhq.salati.prayertimes.data.mapper
 
-import com.mhq.salati.prayertimes.data.dto.CalendarResponseDto
-import com.mhq.salati.prayertimes.data.dto.TimingsDataDto
-import com.mhq.salati.prayertimes.data.local.PrayerTimesEntity
+import com.mhq.salati.prayertimes.datasource.network.dto.CalendarResponseDto
+import com.mhq.salati.prayertimes.datasource.network.dto.TimingsDataDto
+import com.mhq.salati.prayertimes.datasource.database.PrayerTimesEntity
 
 fun CalendarResponseDto.toEntityList(
     latitude: Double,

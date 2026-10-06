@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name="com.mhq.salati.shared.SalatiApplication"
+        android:name="com.mhq.salati.shared.app.SalatiApplication"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -25,7 +25,7 @@
         android:theme="@style/Theme.Salati">
 
         <service
-            android:name="com.mhq.salati.adhan.data.AdhanPlaybackService"
+            android:name="com.mhq.salati.adhan.ui.service.AdhanPlaybackService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
@@ -40,24 +40,26 @@
         </service>
 
         <receiver
-            android:name="com.mhq.salati.adhan.data.PrayerAlarmReceiver"
+            android:name="com.mhq.salati.adhan.ui.receiver.PrayerAlarmReceiver"
             android:exported="false" />
 
         <receiver
-            android:name=".alarms.data.scheduler.CustomAlarmReceiver"
+            android:name=".alarms.ui.receiver.CustomAlarmReceiver"
             android:exported="false" />
 
         <receiver
-            android:name="com.mhq.salati.adhan.data.BootReceiver"
+            android:name="com.mhq.salati.adhan.ui.receiver.BootReceiver"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
+
         </receiver>
 
         <activity
-            android:name="com.mhq.salati.shared.MainActivity"
-            android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection"
+            android:name="com.mhq.salati.shared.ui.MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout"
             android:exported="true"
             android:theme="@style/Theme.Salati"
             android:windowSoftInputMode="adjustResize">

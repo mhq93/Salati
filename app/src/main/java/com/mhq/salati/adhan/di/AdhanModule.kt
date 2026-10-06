@@ -1,14 +1,17 @@
 package com.mhq.salati.adhan.di
 
-import com.mhq.salati.adhan.data.AdhanPlaybackControllerImpl
-import com.mhq.salati.adhan.data.local.MutedPrayerDao
+import com.mhq.salati.adhan.data.repoimpl.AdhanPlaybackRepoImpl
+import com.mhq.salati.adhan.datasource.playback.AdhanPlaybackDataSource
+import com.mhq.salati.adhan.datasource.playback.AndroidAdhanPlaybackDataSource
 import com.mhq.salati.adhan.domain.repo.AdhanPlaybackController
-import com.mhq.salati.shared.data.local.SalatiDatabase
+import com.mhq.salati.adhan.ui.service.AdhanPlaybackService
+import com.mhq.salati.shared.datasource.device.ComponentTarget
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -18,6 +21,19 @@ abstract class AdhanModule {
     @Binds
     @Singleton
     abstract fun bindAdhanPlaybackController(
-        impl: AdhanPlaybackControllerImpl
+        impl: AdhanPlaybackRepoImpl
     ): AdhanPlaybackController
+
+    // Singleton: it holds the playback status shared by the service and every observer.
+    @Binds
+    @Singleton
+    abstract fun bindAdhanPlaybackDataSource(
+        impl: AndroidAdhanPlaybackDataSource
+    ): AdhanPlaybackDataSource
+
+    companion object {
+        @Provides
+        @Named("adhan_playback_service")
+        fun provideAdhanPlaybackService(): ComponentTarget = ComponentTarget(AdhanPlaybackService::class.java)
+    }
 }

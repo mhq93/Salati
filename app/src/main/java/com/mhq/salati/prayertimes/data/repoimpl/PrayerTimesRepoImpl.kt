@@ -1,12 +1,13 @@
 package com.mhq.salati.prayertimes.data.repoimpl
 
-import com.mhq.salati.prayertimes.data.api.AladhanApiService
-import com.mhq.salati.prayertimes.data.local.PrayerTimesDao
+import com.mhq.salati.prayertimes.datasource.network.api.AladhanApiService
+import com.mhq.salati.prayertimes.datasource.database.PrayerTimesDao
 import com.mhq.salati.prayertimes.data.mapper.toDomain
 import com.mhq.salati.prayertimes.data.mapper.toEntityList
 import com.mhq.salati.prayertimes.domain.model.PrayerTimesResult
 import com.mhq.salati.prayertimes.domain.repo.PrayerTimesRepository
 import com.mhq.salati.settings.domain.model.Madhab
+import com.mhq.salati.shared.domain.Coordinates
 import kotlin.math.abs
 
 class PrayerTimesRepoImpl(
@@ -20,8 +21,7 @@ class PrayerTimesRepoImpl(
 
     override suspend fun getCachedTimings(
         date: String,
-        latitude: Double,
-        longitude: Double,
+        coordinates: Coordinates,
         method: Int,
         madhab: Madhab,
         adjustment: Int
@@ -30,22 +30,23 @@ class PrayerTimesRepoImpl(
         val isCacheValid = cached != null &&
                 cached.method == method &&
                 cached.schoolId == madhab.schoolId &&
-                cached.hijriAdjustment == adjustment && 
-                abs(cached.latitude - latitude) < COORDINATE_TOLERANCE &&
-                abs(cached.longitude - longitude) < COORDINATE_TOLERANCE
+                cached.hijriAdjustment == adjustment &&
+                abs(cached.latitude - coordinates.latitude) < COORDINATE_TOLERANCE &&
+                abs(cached.longitude - coordinates.longitude) < COORDINATE_TOLERANCE
 
-        return if (isCacheValid) cached!!.toDomain() else null
+        // A stored row that no longer parses is treated as a cache miss, so the caller falls
+        // through to a fresh fetch (which overwrites the bad row) instead of failing.
+        return if (isCacheValid) runCatching { cached!!.toDomain() }.getOrNull() else null
     }
 
     override suspend fun getPrayerTimings(
         date: String,
-        latitude: Double,
-        longitude: Double,
+        coordinates: Coordinates,
         method: Int,
         madhab: Madhab,
-        adjustment: Int 
+        adjustment: Int
     ): Result<PrayerTimesResult> {
-        getCachedTimings(date, latitude, longitude, method, madhab, adjustment)?.let {
+        getCachedTimings(date, coordinates, method, madhab, adjustment)?.let {
             return Result.success(it)
         }
 
@@ -54,17 +55,19 @@ class PrayerTimesRepoImpl(
 
             val calendarResponse = aladhanApiService.getCalendar(
                 year = year,
-                latitude = latitude,
-                longitude = longitude,
+                latitude = coordinates.latitude,
+                longitude = coordinates.longitude,
                 method = method,
                 school = madhab.schoolId,
-                adjustment = adjustment 
+                adjustment = adjustment
             )
 
-            val entities = calendarResponse.toEntityList(latitude, longitude, method, madhab.schoolId, adjustment)
+            val entities = calendarResponse.toEntityList(coordinates.latitude, coordinates.longitude, method, madhab.schoolId, adjustment)
             prayerTimesDao.insertAll(entities)
 
-            val todayEntity = prayerTimesDao.getByDate(date)
+            // Fixed: pull today's entity straight out of the list we just mapped from the
+            // API response instead of round-tripping Room for data we already have in memory.
+            val todayEntity = entities.find { it.date == date }
                 ?: return Result.failure(
                     IllegalStateException("Requested date not found in fetched calendar")
                 )

@@ -1,10 +1,14 @@
 package com.mhq.salati.location.di
 
 import android.content.Context
-import com.mhq.salati.location.data.AndroidLocationProvider
-import com.mhq.salati.location.data.NominatimGeocoderProvider
-import com.mhq.salati.location.data.datastore.LocationDataStore
+import com.mhq.salati.location.data.repoimpl.GeocoderProviderImpl
+import com.mhq.salati.location.data.repoimpl.LocationProviderImpl
 import com.mhq.salati.location.data.repoimpl.LocationRepoImpl
+import com.mhq.salati.location.datasource.device.FusedGpsDataSource
+import com.mhq.salati.location.datasource.device.GpsDataSource
+import com.mhq.salati.location.datasource.network.service.KtorNominatimApi
+import com.mhq.salati.location.datasource.network.service.NominatimApi
+import com.mhq.salati.location.datasource.preferences.LocationDataStore
 import com.mhq.salati.location.domain.repo.GeocoderProvider
 import com.mhq.salati.location.domain.repo.LocationProvider
 import com.mhq.salati.location.domain.repo.LocationRepository
@@ -29,14 +33,26 @@ abstract class LocationModule {
     @Binds
     @Singleton
     abstract fun bindLocationProvider(
-        impl: AndroidLocationProvider
+        impl: LocationProviderImpl
     ): LocationProvider
 
     @Binds
     @Singleton
+    abstract fun bindGpsDataSource(
+        impl: FusedGpsDataSource
+    ): GpsDataSource
+
+    @Binds
+    @Singleton
     abstract fun bindGeocoderProvider(
-        impl: NominatimGeocoderProvider
+        impl: GeocoderProviderImpl
     ): GeocoderProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindNominatimApi(
+        impl: KtorNominatimApi
+    ): NominatimApi
 
     companion object {
         @Provides

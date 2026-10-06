@@ -3,22 +3,24 @@ package com.mhq.salati.settings.presentation.contract
 import com.mhq.salati.settings.domain.model.AdhanSound
 import com.mhq.salati.settings.domain.model.AppLanguage
 import com.mhq.salati.settings.domain.model.CalculationMethod
+import com.mhq.salati.settings.domain.model.CustomAlarmSound
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.settings.domain.model.ThemeMode
-import com.mhq.salati.settings.presentation.components.SelectorType
-import com.mhq.salati.shared.presentation.components.UiText
+import com.mhq.salati.settings.presentation.SelectorType
+import com.mhq.salati.shared.ui.UiText
 
 object SettingsContract {
 
     data class State(
         val isLoading: Boolean = true,
         val notificationsEnabled: Boolean = true,
-        val hasNotificationPermission: Boolean = true, // OS-level truth, from PermissionChecker
+        val hasNotificationPermission: Boolean = true,
         val calculationMethod: CalculationMethod = CalculationMethod.EGYPTIAN_GENERAL_AUTHORITY,
         val madhab: Madhab = Madhab.SHAFI,
         val themeMode: ThemeMode = ThemeMode.SYSTEM,
         val language: AppLanguage = AppLanguage.ENGLISH,
         val adhanSound: AdhanSound = AdhanSound.DEFAULT,
+        val customAlarmSound: CustomAlarmSound = CustomAlarmSound.DEFAULT,
         val activeSelector: SelectorType? = null,
         val hijriDateOffset: Int = 0,
         val appVersion: String = "",
@@ -34,6 +36,7 @@ object SettingsContract {
         data class SelectTheme(val mode: ThemeMode) : Intent
         data class SelectLanguage(val language: AppLanguage) : Intent
         data class SelectAdhanSound(val sound: AdhanSound) : Intent
+        data class SelectCustomAlarmSound(val sound: CustomAlarmSound) : Intent
         data object IncrementHijriOffset : Intent
         data object DecrementHijriOffset : Intent
         data class OpenSelector(val type: SelectorType) : Intent

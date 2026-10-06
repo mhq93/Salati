@@ -6,52 +6,39 @@ import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.shared.domain.PrayerName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 class ScheduleDailyPrayerAlarmsUseCase @Inject constructor(
     private val alarmScheduler: AlarmScheduler
 ) {
-    suspend operator fun invoke(timings: PrayerTimings, date: String, mutedPrayers: Set<String>) {
+    private val dateKeyFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.US)
+
+    suspend operator fun invoke(timings: PrayerTimings, date: String, mutedPrayers: Set<PrayerName>) {
         withContext(Dispatchers.IO) {
             val zoneId = ZoneId.systemDefault()
-            val prayerMap = mapOf(
-                PrayerName.FAJR to timings.fajr,
-                PrayerName.DHUHR to timings.dhuhr,
-                PrayerName.ASR to timings.asr,
-                PrayerName.MAGHRIB to timings.maghrib,
-                PrayerName.ISHA to timings.isha,
-                PrayerName.IMSAK to timings.imsak,
-                PrayerName.SHOROUQ to timings.sunrise,
-                PrayerName.FIRST_THIRD to timings.firstThird,
-                PrayerName.MIDNIGHT to timings.midnight,
-                PrayerName.LAST_THIRD to timings.lastThird
-            )
+            val day = LocalDate.parse(date, dateKeyFormatter)
 
-            prayerMap.forEach { (name, time) ->
-                val triggerMillis = parseToEpochMillis(date, time, zoneId)
+            PrayerName.entries.forEach { name ->
+                val triggerMillis = day
+                    .atTime(timings[name])
+                    .atZone(zoneId)
+                    .toInstant()
+                    .toEpochMilli()
+
                 if (triggerMillis > System.currentTimeMillis()) {
                     alarmScheduler.schedule(
                         PrayerAlarm(
-                            prayerName = name.storageKey,
+                            prayerName = name,
                             triggerAtMillis = triggerMillis,
-                            isMinorTiming = name.isMinorTiming,
-                            isMuted = name.storageKey in mutedPrayers
+                            isMuted = name in mutedPrayers
                         )
                     )
                 }
             }
         }
-    }
-
-    private fun parseToEpochMillis(date: String, time: String, zoneId: ZoneId): Long {
-        val dateTimeStr = "$date $time"
-        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
-        return LocalDateTime.parse(dateTimeStr, formatter)
-            .atZone(zoneId)
-            .toInstant()
-            .toEpochMilli()
     }
 }

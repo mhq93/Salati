@@ -4,23 +4,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.BuildConfig
 import com.mhq.salati.R
-import com.mhq.salati.permissions.domain.PermissionChecker
+import com.mhq.salati.permissions.domain.repo.PermissionChecker
 import com.mhq.salati.settings.domain.model.AdhanSound
 import com.mhq.salati.settings.domain.model.AppLanguage
 import com.mhq.salati.settings.domain.model.AppSettings
 import com.mhq.salati.settings.domain.model.CalculationMethod
+import com.mhq.salati.settings.domain.model.CustomAlarmSound
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.settings.domain.model.ThemeMode
 import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateAdhanSoundUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateCalculationMethodUseCase
+import com.mhq.salati.settings.domain.usecases.UpdateCustomAlarmSoundUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateHijriDateOffsetUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateLanguageUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateMadhabUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateNotificationsEnabledUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateThemeModeUseCase
 import com.mhq.salati.settings.presentation.contract.SettingsContract
-import com.mhq.salati.shared.presentation.components.UiText
+import com.mhq.salati.shared.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +46,7 @@ class SettingsViewModel @Inject constructor(
     private val updateThemeModeUseCase: UpdateThemeModeUseCase,
     private val updateLanguageUseCase: UpdateLanguageUseCase,
     private val updateAdhanSoundUseCase: UpdateAdhanSoundUseCase,
+    private val updateCustomAlarmSoundUseCase: UpdateCustomAlarmSoundUseCase,
     private val updateHijriDateOffsetUseCase: UpdateHijriDateOffsetUseCase,
     private val permissionChecker: PermissionChecker
 ) : ViewModel() {
@@ -74,6 +77,7 @@ class SettingsViewModel @Inject constructor(
             is SettingsContract.Intent.SelectTheme -> updateTheme(intent.mode)
             is SettingsContract.Intent.SelectLanguage -> updateLanguage(intent.language)
             is SettingsContract.Intent.SelectAdhanSound -> updateAdhanSound(intent.sound)
+            is SettingsContract.Intent.SelectCustomAlarmSound -> updateCustomAlarmSound(intent.sound)
             is SettingsContract.Intent.IncrementHijriOffset -> updateHijriOffset(_state.value.hijriDateOffset + 1)
             is SettingsContract.Intent.DecrementHijriOffset -> updateHijriOffset(_state.value.hijriDateOffset - 1)
             is SettingsContract.Intent.OpenSelector -> _state.update { it.copy(activeSelector = intent.type) }
@@ -94,6 +98,7 @@ class SettingsViewModel @Inject constructor(
                 themeMode = settings.themeMode,
                 language = settings.language,
                 adhanSound = settings.adhanSound,
+                customAlarmSound = settings.customAlarmSound,
                 hijriDateOffset = settings.hijriDateOffset
             )
         }
@@ -212,6 +217,20 @@ class SettingsViewModel @Inject constructor(
             }
         }
 
+    private fun updateCustomAlarmSound(sound: CustomAlarmSound) =
+        viewModelScope.launch {
+            try {
+                updateCustomAlarmSoundUseCase(sound)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                val message = e.message?.let { UiText.Raw(it) }
+                    ?: UiText.Res(R.string.couldn_t_update_custom_alarm_sound)
+                _state.update { it.copy(errorMessage = message) }
+                _effect.emit(SettingsContract.Effect.ShowError(message))
+            }
+        }
+
     private fun updateHijriOffset(offset: Int) =
         viewModelScope.launch {
             val clamped = offset.coerceIn(-2, 2)
@@ -255,7 +274,7 @@ import com.mhq.salati.settings.domain.usecases.UpdateMadhabUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateNotificationsEnabledUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateThemeModeUseCase
 import com.mhq.salati.settings.presentation.contract.SettingsContract
-import com.mhq.salati.shared.presentation.components.UiText
+import com.mhq.salati.shared.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,0 +1,72 @@
+package com.mhq.salati.adhan.ui.receiver
+
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import com.mhq.salati.adhan.domain.repo.MutedPrayersRepository
+import com.mhq.salati.adhan.domain.usecases.ScheduleDailyPrayerAlarmsUseCase
+import com.mhq.salati.location.domain.repo.LocationProvider
+import com.mhq.salati.permissions.domain.repo.PermissionChecker
+import com.mhq.salati.prayertimes.domain.repo.PrayerTimesRepository
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
+
+@AndroidEntryPoint
+class BootReceiver : BroadcastReceiver() {
+
+    @Inject
+    lateinit var prayerTimesRepository: PrayerTimesRepository
+
+    @Inject
+    lateinit var mutedPrayersRepository: MutedPrayersRepository
+
+    @Inject
+    lateinit var scheduleDailyPrayerAlarmsUseCase: ScheduleDailyPrayerAlarmsUseCase
+
+    @Inject
+    lateinit var locationProvider: LocationProvider
+
+    @Inject
+    lateinit var permissionChecker: PermissionChecker
+
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
+
+        val pendingResult = goAsync()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (!permissionChecker.hasLocationPermission()) {
+                    return@launch
+                }
+
+                // Wrap location lookup in runCatching to intercept the LOCATION_TIMEOUT_EXCEEDED exception
+                val coordinates = runCatching {
+                    withTimeoutOrNull(5_000L.milliseconds) {
+                        locationProvider.getCurrentLocation()
+                    }
+                }.getOrNull() ?: return@launch
+
+                val today = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(Date())
+
+                val cached = prayerTimesRepository.getCachedTimings(today, coordinates)
+                val mutedPrayers = mutedPrayersRepository.getMutedPrayers(today)
+
+                if (cached != null) {
+                    scheduleDailyPrayerAlarmsUseCase(cached.timings, today, mutedPrayers)
+                }
+            } catch (e: Exception) {
+                // Swallowed defensively to safeguard process stability during cold system boots
+            } finally {
+                pendingResult.finish()
+            }
+        }
+    }
+}

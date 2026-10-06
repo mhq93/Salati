@@ -1,6 +1,5 @@
 package com.mhq.salati.alarms.presentation.viewmodel
 
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.R
@@ -8,12 +7,13 @@ import com.mhq.salati.alarms.domain.model.CustomAlarm
 import com.mhq.salati.alarms.domain.usecases.CreateCustomAlarmUseCase
 import com.mhq.salati.alarms.domain.usecases.DeleteCustomAlarmUseCase
 import com.mhq.salati.alarms.domain.usecases.ObserveCustomAlarmsUseCase
+import com.mhq.salati.alarms.domain.usecases.RescheduleCustomAlarmsUseCase
 import com.mhq.salati.alarms.domain.usecases.ToggleCustomAlarmUseCase
 import com.mhq.salati.alarms.domain.usecases.UpdateCustomAlarmUseCase
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract.Effect
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract.Intent
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract.State
-import com.mhq.salati.shared.presentation.components.UiText
+import com.mhq.salati.shared.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
@@ -31,7 +31,8 @@ class AlarmsViewModel @Inject constructor(
     private val createCustomAlarmUseCase: CreateCustomAlarmUseCase,
     private val updateCustomAlarmUseCase: UpdateCustomAlarmUseCase,
     private val deleteCustomAlarmUseCase: DeleteCustomAlarmUseCase,
-    private val toggleCustomAlarmUseCase: ToggleCustomAlarmUseCase
+    private val toggleCustomAlarmUseCase: ToggleCustomAlarmUseCase,
+    private val rescheduleCustomAlarmsUseCase: RescheduleCustomAlarmsUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(State())
@@ -80,6 +81,8 @@ class AlarmsViewModel @Inject constructor(
                 if (alarm.id == 0L) createCustomAlarmUseCase(alarm) else updateCustomAlarmUseCase(alarm)
                 _state.update { it.copy(isEditorVisible = false, editingAlarm = null) }
                 _effect.send(Effect.AlarmSaved())
+                // NEW — take effect now instead of waiting for Home's next reload
+                rescheduleAlarmsQuietly()
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -117,6 +120,19 @@ class AlarmsViewModel @Inject constructor(
             } catch (e: Exception) {
                 _effect.send(Effect.ShowError(UiText.Raw(e.message.orEmpty())))
             }
+        }
+    }
+
+    // NEW — best-effort: if today's timings aren't cached yet (e.g. app just
+    // opened, nothing loaded), Home's own load will schedule everything anyway.
+    // A failure here shouldn't surface as an error on top of a successful save/toggle.
+    private suspend fun rescheduleAlarmsQuietly() {
+        try {
+            rescheduleCustomAlarmsUseCase()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // swallowed intentionally
         }
     }
 }

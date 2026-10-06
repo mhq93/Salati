@@ -1,9 +1,9 @@
 package com.mhq.salati.adhan.di
 
-import com.mhq.salati.adhan.data.local.MutedPrayerDao
+import com.mhq.salati.adhan.datasource.database.MutedPrayerDao
 import com.mhq.salati.adhan.data.repoimpl.MutedPrayersRepoImpl
 import com.mhq.salati.adhan.domain.repo.MutedPrayersRepository
-import com.mhq.salati.shared.data.local.SalatiDatabase
+import com.mhq.salati.shared.datasource.database.SalatiDatabase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

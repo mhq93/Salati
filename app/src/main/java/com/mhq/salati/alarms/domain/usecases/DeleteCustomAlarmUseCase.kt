@@ -1,6 +1,6 @@
 package com.mhq.salati.alarms.domain.usecases
 
-import com.mhq.salati.alarms.domain.scheduler.CustomAlarmScheduler
+import com.mhq.salati.alarms.domain.repo.CustomAlarmScheduler
 import com.mhq.salati.alarms.domain.repo.CustomAlarmRepository
 import javax.inject.Inject
 

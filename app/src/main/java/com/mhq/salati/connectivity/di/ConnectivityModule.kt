@@ -1,6 +1,8 @@
 package com.mhq.salati.connectivity.di
 
 import com.mhq.salati.connectivity.data.repoimpl.ConnectivityCheckerImpl
+import com.mhq.salati.connectivity.datasource.device.AndroidConnectivityDataSource
+import com.mhq.salati.connectivity.datasource.device.ConnectivityDataSource
 import com.mhq.salati.connectivity.domain.repo.ConnectivityChecker
 import dagger.Binds
 import dagger.Module
@@ -15,4 +17,8 @@ abstract class ConnectivityModule {
     @Binds
     @Singleton
     abstract fun bindConnectivityChecker(impl: ConnectivityCheckerImpl): ConnectivityChecker
+
+    @Binds
+    @Singleton
+    abstract fun bindConnectivityDataSource(impl: AndroidConnectivityDataSource): ConnectivityDataSource
 }

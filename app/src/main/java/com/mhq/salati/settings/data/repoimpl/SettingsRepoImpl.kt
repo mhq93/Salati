@@ -1,10 +1,11 @@
 package com.mhq.salati.settings.data.repoimpl
 
-import com.mhq.salati.settings.data.local.SettingsDataStore
+import com.mhq.salati.settings.datasource.preferences.SettingsDataStore
 import com.mhq.salati.settings.domain.model.AdhanSound
 import com.mhq.salati.settings.domain.model.AppLanguage
 import com.mhq.salati.settings.domain.model.AppSettings
 import com.mhq.salati.settings.domain.model.CalculationMethod
+import com.mhq.salati.settings.domain.model.CustomAlarmSound
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.settings.domain.model.ThemeMode
 import com.mhq.salati.settings.domain.repo.SettingsRepository
@@ -37,6 +38,9 @@ class SettingsRepoImpl @Inject constructor(
 
     override suspend fun setAdhanSound(sound: AdhanSound) =
         settingsDataStore.setAdhanSound(sound)
+
+    override suspend fun setCustomAlarmSound(sound: CustomAlarmSound) =
+        settingsDataStore.setCustomAlarmSound(sound)
 
     override suspend fun setHijriDateOffset(offset: Int) =
         settingsDataStore.setHijriDateOffset(offset)

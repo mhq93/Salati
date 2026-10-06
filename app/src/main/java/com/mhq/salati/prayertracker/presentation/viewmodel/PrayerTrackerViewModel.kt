@@ -12,19 +12,20 @@ import com.mhq.salati.prayertracker.domain.usecases.SetPrayerStatusUseCase
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract
 import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.PrayerName
-import com.mhq.salati.shared.presentation.components.UiText
+import com.mhq.salati.shared.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.YearMonth
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,39 +36,57 @@ class PrayerTrackerViewModel @Inject constructor(
     private val setStatus: SetPrayerStatusUseCase,
     private val getCurrentStreak: GetCurrentStreakUseCase,
 ) : ViewModel() {
-
     private val _state = MutableStateFlow(PrayerTrackerContract.State())
     val state = _state.asStateFlow()
 
-    // FIX: Channel instead of SharedFlow
     private val _effect = Channel<PrayerTrackerContract.Effect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
 
-    private var monthJob: Job? = null
-    private var dateJob: Job? = null
-
     init {
-        loadMonth(_state.value.selectedMonth)
-        loadDate(_state.value.selectedDate)
+        state.map { it.selectedMonth }
+            .distinctUntilChanged()
+            .flatMapLatest { month -> observeMonth(month) }
+            .onEach { recordsByDate ->
+                val today = clock.today()
+                val statusMap = recordsByDate.mapValues { (date, records) ->
+                    dayStatusFor(date, records, today)
+                }
+                _state.update { it.copy(monthDayStatus = statusMap, isLoading = false) }
+            }
+            .launchIn(viewModelScope)
+
+        state.map { it.selectedDate }
+            .distinctUntilChanged()
+            .flatMapLatest { date -> observeDate(date) }
+            .onEach { records ->
+                _state.update { it.copy(selectedDateRecords = records) }
+            }
+            .launchIn(viewModelScope)
+
         refreshStreak()
     }
 
     fun onIntent(intent: PrayerTrackerContract.Intent) {
         when (intent) {
             is PrayerTrackerContract.Intent.DateSelected -> {
-                _state.update { it.copy(selectedDate = intent.date) }
-                loadDate(intent.date)
+                _state.update {
+                    it.copy(
+                        selectedDate = intent.date,
+                        selectedDateRecords = emptyMap()
+                    )
+                }
             }
+
             is PrayerTrackerContract.Intent.MonthChanged -> {
                 val newMonth = _state.value.selectedMonth.plusMonths(intent.delta.toLong())
                 _state.update { it.copy(selectedMonth = newMonth) }
-                loadMonth(newMonth)
             }
+
             is PrayerTrackerContract.Intent.PrayerTileTapped -> {
-                // FIX: Use injected clock instead of LocalDate.now()
                 if (_state.value.selectedDate.isAfter(clock.today())) return
                 _state.update { it.copy(dialogPrayer = intent.prayer) }
             }
+
             PrayerTrackerContract.Intent.ConfirmPrayed -> applyDialogResult(PrayerStatus.PRAYED)
             PrayerTrackerContract.Intent.ConfirmMissed -> applyDialogResult(PrayerStatus.MISSED)
             PrayerTrackerContract.Intent.DismissDialog -> _state.update { it.copy(dialogPrayer = null) }
@@ -91,27 +110,6 @@ class PrayerTrackerViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    private fun loadMonth(month: YearMonth) {
-        monthJob?.cancel()
-        monthJob = observeMonth(month)
-            .onEach { recordsByDate ->
-                // FIX: Use clock.today() instead of LocalDate.now()
-                val today = clock.today()
-                val statusMap = recordsByDate.mapValues { (date, records) ->
-                    dayStatusFor(date, records, today)
-                }
-                _state.update { it.copy(monthDayStatus = statusMap, isLoading = false) }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    private fun loadDate(date: LocalDate) {
-        dateJob?.cancel()
-        dateJob = observeDate(date)
-            .onEach { records -> _state.update { it.copy(selectedDateRecords = records) } }
-            .launchIn(viewModelScope)
     }
 
     private fun refreshStreak() {

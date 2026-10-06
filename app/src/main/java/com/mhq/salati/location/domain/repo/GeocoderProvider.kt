@@ -1,12 +1,12 @@
 package com.mhq.salati.location.domain.repo
 
-import com.mhq.salati.location.domain.GeocodeResult
+import com.mhq.salati.location.domain.model.GeocodeResult
 import com.mhq.salati.location.domain.model.LocationSearchResult
+import com.mhq.salati.shared.domain.Coordinates
 
 interface GeocoderProvider {
     suspend fun reverseGeocode(
-        latitude: Double,
-        longitude: Double,
+        coordinates: Coordinates,
         acceptLanguage: String? = null
     ): GeocodeResult
 

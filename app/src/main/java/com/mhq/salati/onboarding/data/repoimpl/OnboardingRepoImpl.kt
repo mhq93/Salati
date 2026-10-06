@@ -1,6 +1,6 @@
 package com.mhq.salati.onboarding.data.repoimpl
 
-import com.mhq.salati.onboarding.data.local.OnboardingDataStore
+import com.mhq.salati.onboarding.datasource.preferences.OnboardingDataStore
 import com.mhq.salati.onboarding.domain.repo.OnboardingRepository
 import javax.inject.Inject
 

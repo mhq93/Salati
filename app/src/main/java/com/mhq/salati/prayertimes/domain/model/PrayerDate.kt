@@ -1,9 +1,8 @@
 package com.mhq.salati.prayertimes.domain.model
 
+import java.time.LocalDate
+
 data class PrayerDate(
-    val gregorianDate: String,
-    val hijriDate: String,
-    val hijriDay: String,
-    val hijriMonthNumber: Int,
-    val hijriYear: String
+    val gregorianDate: LocalDate,
+    val hijriDate: HijriDate
 )

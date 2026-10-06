@@ -9,6 +9,7 @@ import java.time.YearMonth
 interface PrayerTrackerRepository {
     fun observeRecordsForMonth(yearMonth: YearMonth): Flow<Map<LocalDate, Map<PrayerName, PrayerStatus>>>
     fun observeRecordsForDate(date: LocalDate): Flow<Map<PrayerName, PrayerStatus>>
-    suspend fun getRecordsForDate(date: LocalDate): Map<PrayerName, PrayerStatus>
+    suspend fun getRecordsForDate(date: LocalDate): Map<PrayerName, PrayerStatus> // [FIX: Added range query for streak calc]
+    suspend fun getRecordsForRange(start: LocalDate, end: LocalDate): Map<LocalDate, Map<PrayerName, PrayerStatus>>
     suspend fun setStatus(date: LocalDate, prayer: PrayerName, status: PrayerStatus)
 }

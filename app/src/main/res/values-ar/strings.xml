@@ -56,8 +56,7 @@
     <string name="adhan_playing_body">حان الآن موعد صلاة %1$s</string>
     <string name="stop">إيقاف</string>
     <string name="minor_timing_playing_title">%1$s</string>
-    <string name="minor_timing_playing_body">حان الآن موعد %1$s</string>
-
+    <string name="minor_timing_playing_body">حان الآن وقت %1$s</string>
     <!-- Qibla -->
     <string name="qibla_direction">اتجاه القبلة</string>
     <string name="face_the_kaaba_wherever_you_are">توجه ناحية القبلة أينما كنت</string>
@@ -104,7 +103,7 @@
     <!-- Alarms -->
     <string name="custom_alarms">المنبهات</string>
     <string name="create_custom_alarms_before_or_after_prayers">أنشئ منبهاً خاصاً قبل أو بعد الصلوات المفروضة</string>
-    <string name="no_custom_alarms_title">لا توجد تنبيهات خاصة بك</string>
+    <string name="no_custom_alarms_title">لا توجد منبهات خاصة بك</string>
     <string name="no_custom_alarms_body">اضغط الزر \u002B أدناه لإنشاء منبه جديد</string>
     <string name="alarm_saved">تم حفظ المنبه</string>
 
@@ -123,7 +122,7 @@
     <string name="repeat_every_day">تكرار يومي</string>
     <string name="repeats_every_day">يومي</string>
     <string name="repeats_once">مرة واحدة</string>
-    <string name="at_prayer_time">%1$s في وقت</string>
+    <string name="at_prayer_time">%s في وقت</string>
     <string name="save">حفظ</string>
     <string name="edit">تعديل</string>
     <string name="delete">حذف</string>
@@ -181,6 +180,12 @@
     <string name="couldn_t_update_adhan_sound">لم نتمكن من تحديث نغمة الآذان</string>
     <string name="couldn_t_update_hijri_offset">لم نتمكن من ضبط التاريخ الهجري</string>
 
+    <string name="custom_alarm_sound">صوت المنبه الخاص</string>
+    <string name="custom_alarm_sound_default">نغمة المنبه الخاص الافتراضية</string>
+    <string name="custom_alarm_sound_alert">تنبيه خاص</string>
+    <string name="couldn_t_update_custom_alarm_sound">فشل تحديث صوت المنبه الخاص</string>
+
+    <!-- Streak -->
     <plurals name="day_streak">
         <item quantity="zero">%1$d يوم متتالي</item>
         <item quantity="one">يوم واحد متتالي</item>
@@ -188,5 +193,24 @@
         <item quantity="few">%1$d أيام متتالية</item>
         <item quantity="many">%1$d يومًا متتاليًا</item>
         <item quantity="other">%1$d يوم متتالي</item>
+    </plurals>
+
+    <!-- Alarm offset descriptions -->
+    <plurals name="minutes_before_prayer">
+        <item quantity="zero">%1$d لدى %2$s</item>
+        <item quantity="one">%1$d دقيقة واحدة قبل %2$s</item>
+        <item quantity="two">%1$d دقيقتان قبل %2$s</item>
+        <item quantity="few">%1$d دقائق قبل %2$s</item>
+        <item quantity="many">%1$d دقيقة قبل %2$s</item>
+        <item quantity="other">%1$d دقائق قبل %2$s</item>
+    </plurals>
+
+    <plurals name="minutes_after_prayer">
+        <item quantity="zero">%1$d لدى %2$s</item>
+        <item quantity="one">%1$d دقيقة واحدة بعد %2$s</item>
+        <item quantity="two">%1$d دقيقتان بعد %2$s</item>
+        <item quantity="few">%1$d دقائق بعد %2$s</item>
+        <item quantity="many">%1$d دقيقة بعد %2$s</item>
+        <item quantity="other">%1$d دقائق بعد %2$s</item>
     </plurals>
 </resources>

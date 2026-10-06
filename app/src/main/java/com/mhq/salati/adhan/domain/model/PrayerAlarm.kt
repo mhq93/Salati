@@ -1,8 +1,11 @@
 package com.mhq.salati.adhan.domain.model
 
+import com.mhq.salati.shared.domain.PrayerName
+
 data class PrayerAlarm(
-    val prayerName: String,
+    val prayerName: PrayerName,
     val triggerAtMillis: Long,
-    val isMinorTiming: Boolean,
     val isMuted: Boolean
-)
+) {
+    val isMinorTiming: Boolean get() = prayerName.isMinorTiming
+}

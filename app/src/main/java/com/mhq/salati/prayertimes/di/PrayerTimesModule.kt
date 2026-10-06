@@ -1,10 +1,10 @@
 package com.mhq.salati.prayertimes.di
 
-import com.mhq.salati.prayertimes.data.api.AladhanApiService
-import com.mhq.salati.prayertimes.data.local.PrayerTimesDao
+import com.mhq.salati.prayertimes.datasource.network.api.AladhanApiService
+import com.mhq.salati.prayertimes.datasource.database.PrayerTimesDao
 import com.mhq.salati.prayertimes.data.repoimpl.PrayerTimesRepoImpl
 import com.mhq.salati.prayertimes.domain.repo.PrayerTimesRepository
-import com.mhq.salati.shared.data.local.SalatiDatabase
+import com.mhq.salati.shared.datasource.database.SalatiDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

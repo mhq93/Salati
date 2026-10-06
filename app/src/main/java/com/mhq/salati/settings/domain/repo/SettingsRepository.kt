@@ -4,6 +4,7 @@ import com.mhq.salati.settings.domain.model.AdhanSound
 import com.mhq.salati.settings.domain.model.AppLanguage
 import com.mhq.salati.settings.domain.model.AppSettings
 import com.mhq.salati.settings.domain.model.CalculationMethod
+import com.mhq.salati.settings.domain.model.CustomAlarmSound
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.settings.domain.model.ThemeMode
 import kotlinx.coroutines.flow.Flow
@@ -17,5 +18,6 @@ interface SettingsRepository {
     suspend fun setLanguage(language: AppLanguage)
     suspend fun setLanguageSelected(isSelected: Boolean)
     suspend fun setAdhanSound(sound: AdhanSound)
+    suspend fun setCustomAlarmSound(sound: CustomAlarmSound)
     suspend fun setHijriDateOffset(offset: Int)
 }

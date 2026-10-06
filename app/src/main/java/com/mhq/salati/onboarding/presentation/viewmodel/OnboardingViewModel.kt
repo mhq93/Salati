@@ -2,7 +2,7 @@ package com.mhq.salati.onboarding.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.onboarding.domain.usecase.SetOnboardingCompletedUseCase
+import com.mhq.salati.onboarding.domain.usecases.SetOnboardingCompletedUseCase
 import com.mhq.salati.onboarding.presentation.contract.OnboardingContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

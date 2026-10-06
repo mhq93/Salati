@@ -7,15 +7,7 @@ import javax.inject.Inject
 class SaveManualLocationUseCase @Inject constructor(
     private val locationRepository: LocationRepository
 ) {
-    suspend operator fun invoke(
-        latitude: Double,
-        longitude: Double,
-        cityName: String?,
-        countryName: String?
-    ): SavedLocation = locationRepository.saveManualLocation(
-        latitude = latitude,
-        longitude = longitude,
-        cityName = cityName,
-        countryName = countryName
-    )
+    suspend operator fun invoke(location: SavedLocation) {
+        locationRepository.saveManualLocation(location)
+    }
 }

@@ -36,8 +36,7 @@ class UpdateNotificationsEnabledUseCase @Inject constructor(
 
         val cached = prayerTimesRepository.getCachedTimings(
             today,
-            location.latitude,
-            location.longitude,
+            location.coordinates,
             method = settings.calculationMethod.apiMethodId,
             madhab = settings.madhab
         ) ?: return

@@ -1,7 +1,7 @@
 package com.mhq.salati.qibla.presentation.contract
 
 import com.mhq.salati.qibla.domain.model.CompassAccuracy
-import com.mhq.salati.shared.presentation.components.UiText
+import com.mhq.salati.shared.ui.UiText
 
 class QiblaContract {
 
@@ -14,10 +14,10 @@ class QiblaContract {
         val isCalibrationGuideVisible: Boolean = false,
 
         // FIX: Flattened LocationPermissionState into UI flags
-        val isLocationPermissionGranted: Boolean = false,
-        val isLocationPermissionPermanentlyDenied: Boolean = false,
         val areLocationServicesDisabled: Boolean = false,
         val isLocationPermissionRequired: Boolean = true,
+        val isLocationPermissionGranted: Boolean = false,
+        val isLocationPermissionPermanentlyDenied: Boolean = false,
         val locationName: String? = null,
         val errorMessage: UiText? = null
     )
@@ -36,16 +36,16 @@ class QiblaContract {
 
         // NEW: Lifecycle events reported by UI, logic moved from Container
         data object ScreenResumed : Intent
+        data object ScreenPaused : Intent
+        data object CompassResumed : Intent
         data class LocationServicesToggled(val enabled: Boolean) : Intent
     }
 
     sealed interface Effect {
         data class ShowError(val message: UiText) : Effect
-        data object NavigateToLocationPicker : Effect
-
-        // NEW: Unified permission effects (mapped from internal delegate)
         data object RequestLocationPermission : Effect
-        data object NavigateToAppSettings : Effect
         data object NavigateToLocationSettings : Effect
+        data object NavigateToLocationPicker : Effect
+        data object NavigateToAppSettings : Effect
     }
 }

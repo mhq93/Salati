@@ -2,7 +2,7 @@ package com.mhq.salati.shared.di
 
 import android.content.Context
 import androidx.room.Room
-import com.mhq.salati.shared.data.local.SalatiDatabase
+import com.mhq.salati.shared.datasource.database.SalatiDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

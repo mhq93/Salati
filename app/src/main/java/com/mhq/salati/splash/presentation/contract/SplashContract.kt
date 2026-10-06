@@ -2,13 +2,13 @@ package com.mhq.salati.splash.presentation.contract
 
 import com.mhq.salati.settings.domain.model.AppLanguage
 import com.mhq.salati.settings.domain.model.ThemeMode
-import com.mhq.salati.shared.navigation.Screen
-import com.mhq.salati.shared.presentation.components.UiText
+import com.mhq.salati.shared.ui.navigation.NavigationScreen
+import com.mhq.salati.shared.ui.UiText
 
 class SplashContract {
     data class State(
         val isLoading: Boolean = true,
-        val startDestination: Screen? = null,
+        val startDestination: NavigationScreen? = null,
         val themeMode: ThemeMode = ThemeMode.SYSTEM,
         val isLanguageSelected: Boolean = false,
         val errorMessage: UiText? = null,

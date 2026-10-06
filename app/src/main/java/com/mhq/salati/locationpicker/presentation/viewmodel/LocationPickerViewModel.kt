@@ -2,14 +2,16 @@ package com.mhq.salati.locationpicker.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.location.domain.GeocodeResult
+import com.mhq.salati.location.domain.model.GeocodeResult
 import com.mhq.salati.location.domain.model.LocationSearchResult
+import com.mhq.salati.location.domain.model.SavedLocation
 import com.mhq.salati.location.domain.usecases.ReverseGeocodeLocationUseCase
 import com.mhq.salati.location.domain.usecases.SaveManualLocationUseCase
 import com.mhq.salati.location.domain.usecases.SearchLocationByNameUseCase
 import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract
 import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
-import com.mhq.salati.shared.presentation.components.UiText
+import com.mhq.salati.shared.domain.Coordinates
+import com.mhq.salati.shared.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -65,7 +67,11 @@ class LocationPickerViewModel @Inject constructor(
             is LocationPickerContract.Intent.QueryChanged -> onQueryChanged(intent.query)
             is LocationPickerContract.Intent.SearchClicked -> executeManualSearch(_state.value.query)
             is LocationPickerContract.Intent.SearchResultClicked -> selectResult(intent.result)
-            is LocationPickerContract.Intent.MapPointSelected -> selectMapPoint(intent.latitude, intent.longitude)
+            is LocationPickerContract.Intent.MapPointSelected -> selectMapPoint(
+                intent.latitude,
+                intent.longitude
+            )
+
             is LocationPickerContract.Intent.ConfirmClicked -> confirmSelection()
         }
     }
@@ -105,7 +111,12 @@ class LocationPickerViewModel @Inject constructor(
             .onEach { result ->
                 result.fold(
                     onSuccess = { results ->
-                        _state.update { it.copy(isSearching = false, searchResults = results.toContractResults()) }
+                        _state.update {
+                            it.copy(
+                                isSearching = false,
+                                searchResults = results.toContractResults()
+                            )
+                        }
                     },
                     onFailure = {
                         _state.update {
@@ -125,16 +136,11 @@ class LocationPickerViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    //    private fun executeManualSearch(query: String) {
-    //        if (query.isBlank()) return
-    //        viewModelScope.launch { immediateSearchFlow.emit(query) }
-    //    }
-
     private fun executeManualSearch(query: String) {
         if (query.isBlank()) return
 
         val currentTime = System.currentTimeMillis()
-        // Prevent spamming the search button
+
         if (currentTime - lastManualSearchTimeMs < SEARCH_COOLDOWN_MS) {
             return
         }
@@ -180,7 +186,7 @@ class LocationPickerViewModel @Inject constructor(
                 )
             }
             val lang = currentLanguageCode()
-            when (val result = reverseGeocodeLocation(latitude, longitude, lang)) {
+            when (val result = reverseGeocodeLocation(Coordinates(latitude, normalizeLongitude(longitude)), lang)) {
                 is GeocodeResult.Found -> {
                     val name = listOfNotNull(result.cityName, result.countryName)
                         .joinToString(", ")
@@ -196,6 +202,7 @@ class LocationPickerViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is GeocodeResult.NotFound -> {
                     _state.update {
                         it.copy(
@@ -208,6 +215,7 @@ class LocationPickerViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is GeocodeResult.Failed -> {
                     _state.update { it.copy(isResolvingSelection = false) }
                     _effect.send(
@@ -224,11 +232,13 @@ class LocationPickerViewModel @Inject constructor(
         val selected = _state.value.selectedLocation ?: return
         viewModelScope.launch {
             try {
+                val (city, country) = parseDisplayName(selected.displayName)
                 saveManualLocation(
-                    latitude = selected.latitude,
-                    longitude = selected.longitude,
-                    cityName = selected.displayName,
-                    countryName = null
+                    SavedLocation(
+                        coordinates = Coordinates(selected.latitude, normalizeLongitude(selected.longitude)),
+                        cityName = city,
+                        countryName = country
+                    )
                 )
                 _effect.send(LocationPickerContract.Effect.LocationSaved)
             } catch (e: CancellationException) {
@@ -243,6 +253,19 @@ class LocationPickerViewModel @Inject constructor(
         }
     }
 
+    // Panning the map around the world can push longitude past ±180°; Coordinates only accepts values inside that range.
+    private fun normalizeLongitude(longitude: Double): Double = ((longitude + 540.0) % 360.0) - 180.0
+
+    private fun parseDisplayName(displayName: String?): Pair<String?, String?> {
+        if (displayName == null) return null to null
+        val parts = displayName.split(", ", limit = 2)
+        return when (parts.size) {
+            2 -> parts[0] to parts[1]
+            1 -> parts[0] to null
+            else -> null to null
+        }
+    }
+
     private suspend fun currentLanguageCode(): String {
         return observeSettings().first().language.code
     }
@@ -251,8 +274,8 @@ class LocationPickerViewModel @Inject constructor(
         map { result ->
             LocationPickerContract.LocationSearchResult(
                 displayName = result.displayName,
-                latitude = result.latitude,
-                longitude = result.longitude
+                latitude = result.coordinates.latitude,
+                longitude = result.coordinates.longitude
             )
         }
 }

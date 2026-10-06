@@ -10,6 +10,7 @@
 .DS_Store
 /build
 /captures
+/extractions/
 .externalNativeBuild
 .cxx
 *.zip

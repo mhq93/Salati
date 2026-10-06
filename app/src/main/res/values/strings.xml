@@ -52,11 +52,9 @@
 
     <!-- Notifications -->
     <string name="adhan_playing_title">Prayer time is due</string>
-    <string name="adhan_playing_body">It\'s time for Al-%1$s prayer</string>
-    <string name="stop">Stop</string>
+    <string name="adhan_playing_body">It\'s time for Al-%1$s prayer</string>    <string name="stop">Stop</string>
     <string name="minor_timing_playing_title">%1$s</string>
     <string name="minor_timing_playing_body">It\'s time for %1$s</string>
-
     <!-- Qibla -->
     <string name="qibla_direction">Qibla Direction</string>
     <string name="face_the_kaaba_wherever_you_are">Face the Kaaba wherever you are</string>
@@ -111,7 +109,7 @@
     <string name="new_custom_alarm">Customize an alarm</string>
     <string name="alarm_label_optional">Label (Optional)</string>
     <string name="edit_custom_alarm">Edit custom alarm</string>
-    <string name="custom_alarm_default_title">Custom alarm default title</string>
+    <string name="custom_alarm_default_title">Custom Alarm</string>
     <string name="add_custom_alarm">Add custom alarm</string>
     <string name="custom_alarm_body">Custom alarm body</string>
     <string name="custom_alarms_channel_name" translatable="false">Custom alarms channel name</string>
@@ -123,7 +121,7 @@
     <string name="repeat_every_day">Repeat everyday</string>
     <string name="repeats_every_day">Every day</string>
     <string name="repeats_once">Once</string>
-    <string name="at_prayer_time">At %1$s time</string>
+    <string name="at_prayer_time">At %s time</string>
     <string name="save">Save</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
@@ -181,18 +179,26 @@
     <string name="couldn_t_update_adhan_sound">Couldn\'t update adhan sound</string>
     <string name="couldn_t_update_hijri_offset">Couldn\'t update Hijri offset</string>
 
+    <string name="custom_alarm_sound">Custom alarm sound</string>
+    <string name="custom_alarm_sound_default">Device default</string>
+    <string name="custom_alarm_sound_alert">Alert</string>
+    <string name="couldn_t_update_custom_alarm_sound">Couldn\'t update custom alarm sound</string>
+
+    <!-- Streak -->
     <plurals name="day_streak">
         <item quantity="one">%1$d Day streak</item>
         <item quantity="other">%1$d Days streak</item>
     </plurals>
 
-    <plurals name="minutes_before_prayer" translatable="false">
+    <!-- Alarm offset descriptions -->
+    <plurals name="minutes_before_prayer">
         <item quantity="one">%1$d minute before %2$s</item>
         <item quantity="other">%1$d minutes before %2$s</item>
     </plurals>
 
-    <plurals name="minutes_after_prayer" translatable="false">
+    <plurals name="minutes_after_prayer">
         <item quantity="one">%1$d minute after %2$s</item>
         <item quantity="other">%1$d minutes after %2$s</item>
     </plurals>
+
 </resources>

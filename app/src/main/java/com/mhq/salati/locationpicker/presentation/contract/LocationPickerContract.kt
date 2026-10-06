@@ -1,6 +1,6 @@
 package com.mhq.salati.locationpicker.presentation.contract
 
-import com.mhq.salati.shared.presentation.components.UiText
+import com.mhq.salati.shared.ui.UiText
 
 object LocationPickerContract {
 
