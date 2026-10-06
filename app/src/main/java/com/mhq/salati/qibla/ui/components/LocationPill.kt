@@ -39,11 +39,11 @@ fun LocationPill(
             .border(
                 border = BorderStroke(
                     1.dp,
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+                    MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)
                 ),
                 shape = CircleShape
             )
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
@@ -55,7 +55,7 @@ fun LocationPill(
         ) {
             Icon(
                 imageVector = Icons.Default.LocationOn,
-                tint = MaterialTheme.colorScheme.onSecondary,
+                tint = MaterialTheme.colorScheme.onSecondaryFixed,
                 contentDescription = "Prayer Location",
                 modifier = Modifier.size(14.dp)
             )
@@ -63,7 +63,7 @@ fun LocationPill(
         Text(
             text = locationName ?: stringResource(R.string.location_not_found),
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 16.dp.value.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             maxLines = 1,
             modifier = Modifier.padding(horizontal = 12.dp)
@@ -76,7 +76,7 @@ fun LocationPill(
         ) {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
-                tint = MaterialTheme.colorScheme.onSecondary,
+                tint = MaterialTheme.colorScheme.onSecondaryFixed,
                 contentDescription = "Location Drop-down",
                 modifier = Modifier.size(16.dp)
             )

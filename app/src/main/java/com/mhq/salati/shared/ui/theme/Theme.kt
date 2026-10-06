@@ -49,36 +49,36 @@ private val LightColors = lightColorScheme(
 )
 
 private val DarkColors = darkColorScheme(
-    primary = AccentEmerald,
-    onPrimary = ObsidianDark,
-    primaryContainer = DarkGreenLight,
-    onPrimaryContainer = MetallicSilver,
+    primary = RadiantEmerald,
+    onPrimary = CelestialObsidian,
+    primaryContainer = DeepSeaTeal,
+    onPrimaryContainer = CosmicWhite,
 
-    secondary = AccentGreen,
-    onSecondary = ObsidianDark,
-    secondaryContainer = GaugeTrackDim,
-    onSecondaryContainer = MetallicSilver,
+    secondary = EmeraldGlow,
+    onSecondary = CelestialObsidian,
+    secondaryContainer = AuroraMuted,
+    onSecondaryContainer = AstralSlate,
 
-    tertiary = AccentGold,
-    onTertiary = ObsidianDark,
-    tertiaryContainer = AccentGold.copy(alpha = 0.2f),
-    onTertiaryContainer = AccentGold,
+    tertiary = CelestialGold,
+    onTertiary = CelestialObsidian,
+    tertiaryContainer = AuroraMuted,
+    onTertiaryContainer = CelestialGold,
 
-    background = SheetBackgroundDark,
-    onBackground = InkTextDark,
+    background = CelestialObsidian,
+    onBackground = CosmicWhite,
 
-    surface = CardBackgroundDark,
-    onSurface = InkTextDark,
-    surfaceVariant = DeepGunmetal,
-    onSurfaceVariant = QuickSilver,
+    surface = CosmicGunmetal,
+    onSurface = CosmicWhite,
+    surfaceVariant = TwilightSurface,
+    onSurfaceVariant = AstralSlate,
 
-    outline = MutedSlate,
-    outlineVariant = MutedSage,
+    outline = CosmicMuted,
+    outlineVariant = CelestialGoldMuted.copy(alpha = 0.4f),
 
-    error = MaterialRed,
-    onError = ObsidianDark,
-    errorContainer = ErrorContainerDark,
-    onErrorContainer = MaterialRed
+    error = ErrorCrimsonDark,
+    onError = CelestialObsidian,
+    errorContainer = ErrorCrimsonContainer,
+    onErrorContainer = ErrorCrimsonDark
 )
 
 @Composable
@@ -102,7 +102,6 @@ fun SalatiTheme(
             val window = (view.context as Activity).window
             WindowCompat.getInsetsController(window, view).apply {
                 isAppearanceLightStatusBars = !darkTheme
-                //isAppearanceLightNavigationBars = !darkTheme
             }
         }
     }
