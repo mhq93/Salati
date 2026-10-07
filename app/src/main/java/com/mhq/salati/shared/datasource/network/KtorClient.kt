@@ -34,7 +34,7 @@ object KtorClient {
                 )
             }
             install(Logging) {
-                level = LogLevel.INFO
+                level = if (BuildConfig.DEBUG) LogLevel.INFO else LogLevel.NONE
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = REQUEST_TIMEOUT_MILLIS
