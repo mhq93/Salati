@@ -125,7 +125,7 @@ fun LocationPickerContent(
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )
-                        // Autocomplete search stopped;
+                        // Nominatim: Autocomplete search stopped;
                         // I may stretch the search duration to avoid 1 request per minute limit
                         //                        TextField(
                         //                            value = state.query,

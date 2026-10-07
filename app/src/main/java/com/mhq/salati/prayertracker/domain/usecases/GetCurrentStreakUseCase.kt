@@ -11,37 +11,35 @@ class GetCurrentStreakUseCase @Inject constructor(
     private val clock: Clock
 ) {
     suspend operator fun invoke(): Int {
-        val today = clock.today()
-        // CHANGED — was 365, which was capping real multi-year streaks.
-        val startDate = today.minusDays(MAX_STREAK_LOOKBACK_DAYS)
-
-        val recordsMap = prayerTrackerRepository.getRecordsForRange(startDate, today)
-
         var streak = 0
-        var day = today
+        var day = clock.today()
         var isToday = true
 
-        while (day >= startDate) {
-            val records = recordsMap[day] ?: emptyMap()
-            val allPrayed = PrayerName.majorEntries.all { records[it] == PrayerStatus.PRAYED }
-            val hasMissed = records.values.any { it == PrayerStatus.MISSED }
+        // Walk back one window at a time and stop at the first day that breaks the streak:
+        // a short streak reads one small window, a long one reads only as much as it needs,
+        // and there is no artificial cap. A day with no records always ends the walk.
+        while (true) {
+            val windowStart = day.minusDays(WINDOW_DAYS - 1)
+            val records = prayerTrackerRepository.getRecordsForRange(windowStart, day)
 
-            when {
-                allPrayed -> {
-                    streak++
-                    day = day.minusDays(1)
+            while (day >= windowStart) {
+                val dayRecords = records[day].orEmpty()
+                val allPrayed = PrayerName.majorEntries.all { dayRecords[it] == PrayerStatus.PRAYED }
+                val hasMissed = dayRecords.values.any { it == PrayerStatus.MISSED }
+
+                when {
+                    allPrayed -> streak++
+                    // Today is still in progress: it doesn't break the streak unless something was missed.
+                    isToday && !hasMissed -> Unit
+                    else -> return streak
                 }
-                isToday && !hasMissed -> {
-                    day = day.minusDays(1)
-                }
-                else -> break
+                isToday = false
+                day = day.minusDays(1)
             }
-            isToday = false
         }
-        return streak
     }
 
     private companion object {
-        const val MAX_STREAK_LOOKBACK_DAYS = 3_650L // NEW — ~10 years, was 365
+        const val WINDOW_DAYS = 90L
     }
 }

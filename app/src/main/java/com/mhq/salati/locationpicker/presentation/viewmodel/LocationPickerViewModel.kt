@@ -159,7 +159,7 @@ class LocationPickerViewModel @Inject constructor(
         }
     }
 
-    // Autocomplete search stopped;
+    // Nominatim: Autocomplete search stopped;
     // I may stretch the search duration to avoid 1 request per minute limit
     //    private fun onQueryChanged(query: String) {
     //        _state.update {

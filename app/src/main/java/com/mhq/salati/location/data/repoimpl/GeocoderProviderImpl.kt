@@ -43,7 +43,7 @@ class GeocoderProviderImpl @Inject constructor(
     ): List<LocationSearchResult> =
         nominatimApi.search(query, acceptLanguage).mapNotNull { it.toDomainOrNull() }
 
-    // Autocomplete search stopped;
+    // Nominatim: Autocomplete search stopped;
     // I may stretch the search duration to avoid 1 request per minute limit
     //    override suspend fun searchByName(
     //        query: String,
