@@ -7,6 +7,6 @@ import javax.inject.Inject
 class UpdateAdhanPlaybackStateUseCase @Inject constructor(
     private val adhanPlaybackController: AdhanPlaybackController
 ) {
-    operator fun invoke(state: AdhanPlaybackState) =
-        adhanPlaybackController.updatePlaybackState(state)
+    operator fun invoke(adhanPlaybackState: AdhanPlaybackState) =
+        adhanPlaybackController.updatePlaybackState(adhanPlaybackState)
 }
