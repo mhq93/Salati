@@ -48,11 +48,13 @@ class PrayerTrackerRepoImpl @Inject constructor(
     }
 
     private fun List<PrayerRecordEntity>.toStatusMap(): Map<PrayerName, PrayerStatus> =
-        associate { entity ->
-            val prayerName = PrayerName.fromStorageKey(entity.prayer)
-                ?: throw IllegalArgumentException("Unknown prayer storage key: ${entity.prayer}")
-            prayerName to PrayerStatus.valueOf(entity.status)
-        }
+        mapNotNull { entity ->
+            // Skip rows we can't read instead of crashing the whole flow.
+            val prayerName = PrayerName.fromStorageKey(entity.prayer) ?: return@mapNotNull null
+            val status = runCatching { PrayerStatus.valueOf(entity.status) }.getOrNull()
+                ?: return@mapNotNull null
+            prayerName to status
+        }.toMap()
 
     private fun List<PrayerRecordEntity>.toMonthMap(): Map<LocalDate, Map<PrayerName, PrayerStatus>> =
         groupBy { LocalDate.parse(it.date, formatter) }
