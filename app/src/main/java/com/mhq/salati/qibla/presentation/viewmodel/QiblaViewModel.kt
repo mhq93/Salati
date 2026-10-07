@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.R
 import com.mhq.salati.permissions.presentation.LocationPermissionEffect
+import com.mhq.salati.qibla.domain.model.CompassUnavailableException
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.qibla.presentation.handlers.QiblaCompassHandler
 import com.mhq.salati.qibla.presentation.handlers.QiblaLocationHandler
@@ -254,10 +255,7 @@ class QiblaViewModel @Inject constructor(
             is QiblaLocationLoad.TimedOut ->
                 showError(UiText.Res(R.string.failed_to_get_location))
             is QiblaLocationLoad.Failed ->
-                showError(
-                    load.message?.let { UiText.Raw(it) }
-                        ?: UiText.Res(R.string.failed_to_load_qibla_direction)
-                )
+                showError(UiText.Res(R.string.failed_to_load_qibla_direction))
         }
     }
 
@@ -289,9 +287,8 @@ class QiblaViewModel @Inject constructor(
 
     // Also covers a device without a rotation sensor, which makes the compass stream fail.
     private suspend fun showLoadError(error: Throwable) {
-        val isSensorMissing = error.message?.contains("not available") == true
-        val message = error.message?.let { UiText.Raw(it) }
-            ?: UiText.Res(R.string.failed_to_load_qibla_direction)
+        val isSensorMissing = error is CompassUnavailableException
+        val message = UiText.Res(R.string.failed_to_load_qibla_direction)
         _state.update {
             it.copy(
                 isLoading = false,

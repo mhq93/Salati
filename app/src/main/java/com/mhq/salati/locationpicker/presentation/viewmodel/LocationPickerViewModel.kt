@@ -2,6 +2,7 @@ package com.mhq.salati.locationpicker.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mhq.salati.R
 import com.mhq.salati.location.domain.model.GeocodeResult
 import com.mhq.salati.location.domain.model.LocationSearchResult
 import com.mhq.salati.location.domain.model.SavedLocation
@@ -122,12 +123,12 @@ class LocationPickerViewModel @Inject constructor(
                         _state.update {
                             it.copy(
                                 isSearching = false,
-                                errorMessage = UiText.Raw("Search failed. Check your connection.")
+                                errorMessage = UiText.Res(R.string.search_failed_check_connection)
                             )
                         }
                         _effect.send(
                             LocationPickerContract.Effect.ShowError(
-                                UiText.Raw("Search failed. Check your connection.")
+                                UiText.Res(R.string.couldn_t_determine_location_name)
                             )
                         )
                     }
@@ -220,7 +221,7 @@ class LocationPickerViewModel @Inject constructor(
                     _state.update { it.copy(isResolvingSelection = false) }
                     _effect.send(
                         LocationPickerContract.Effect.ShowError(
-                            UiText.Raw("Couldn't determine location name. Check your connection.")
+                            UiText.Res(R.string.couldn_t_determine_location_name)
                         )
                     )
                 }
@@ -246,7 +247,7 @@ class LocationPickerViewModel @Inject constructor(
             } catch (e: Exception) {
                 _effect.send(
                     LocationPickerContract.Effect.ShowError(
-                        UiText.Raw("Couldn't save location. Try again.")
+                        UiText.Res(R.string.couldn_t_save_location)
                     )
                 )
             }

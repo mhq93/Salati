@@ -13,10 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
@@ -54,7 +56,7 @@ fun SettingsStepperRow(
         IconButton(onClick = onDecrement, modifier = Modifier.size(32.dp)) {
             Icon(
                 Icons.Default.RemoveCircleOutline,
-                contentDescription = "Decrease",
+                contentDescription = stringResource(R.string.cd_decrease),
                 tint = MaterialTheme.colorScheme.primary
             )
         }
@@ -69,7 +71,7 @@ fun SettingsStepperRow(
         IconButton(onClick = onIncrement, modifier = Modifier.size(32.dp)) {
             Icon(
                 Icons.Default.AddCircleOutline,
-                contentDescription = "Increase",
+                contentDescription = stringResource(R.string.cd_increase),
                 tint = MaterialTheme.colorScheme.primary
             )
         }

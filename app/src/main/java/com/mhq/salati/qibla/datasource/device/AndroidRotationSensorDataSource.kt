@@ -27,7 +27,7 @@ class AndroidRotationSensorDataSource @Inject constructor(
 
     override fun headings(latitude: Double, longitude: Double): Flow<CompassSample> = callbackFlow {
         if (rotationSensor == null) {
-            close(IllegalStateException("Rotation vector sensor not available on this device"))
+            close(RotationSensorUnavailableException())
             return@callbackFlow
         }
 

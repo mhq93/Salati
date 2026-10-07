@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mhq.salati.R
 import com.mhq.salati.language.domain.usecases.SetLanguageSelectedUseCase
 import com.mhq.salati.settings.domain.model.AppLanguage
 import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
@@ -73,7 +74,7 @@ class SplashViewModel @Inject constructor(
         } catch (e: Exception) {
             _effect.send(
                 SplashContract.Effect.ShowError(
-                    UiText.Raw("Something went wrong.")
+                    UiText.Res(R.string.something_went_wrong)
                 )
             )
         }

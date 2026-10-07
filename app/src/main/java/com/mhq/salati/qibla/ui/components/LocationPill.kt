@@ -56,7 +56,7 @@ fun LocationPill(
             Icon(
                 imageVector = Icons.Default.LocationOn,
                 tint = MaterialTheme.colorScheme.onSecondaryFixed,
-                contentDescription = "Prayer Location",
+                contentDescription = stringResource(R.string.cd_prayer_location),
                 modifier = Modifier.size(14.dp)
             )
         }
@@ -77,7 +77,7 @@ fun LocationPill(
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 tint = MaterialTheme.colorScheme.onSecondaryFixed,
-                contentDescription = "Location Drop-down",
+                contentDescription = stringResource(R.string.cd_location_dropdown),
                 modifier = Modifier.size(16.dp)
             )
         }

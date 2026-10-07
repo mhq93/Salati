@@ -64,8 +64,9 @@ class AlarmsViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _state.update { it.copy(isLoading = false, errorMessage = UiText.Raw(e.message.orEmpty())) }
-                _effect.send(Effect.ShowError(UiText.Raw(e.message.orEmpty())))
+                val message = UiText.Res(R.string.couldn_t_load_alarms)
+                _state.update { it.copy(isLoading = false, errorMessage = message) }
+                _effect.send(Effect.ShowError(message))
             }
         }
     }
@@ -86,8 +87,9 @@ class AlarmsViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _state.update { it.copy(errorMessage = UiText.Raw(e.message.orEmpty())) }
-                _effect.send(Effect.ShowError(UiText.Raw(e.message.orEmpty())))
+                val message = UiText.Res(R.string.couldn_t_save_alarm)
+                _state.update { it.copy(errorMessage = message) }
+                _effect.send(Effect.ShowError(message))
             }
         }
     }
@@ -106,7 +108,7 @@ class AlarmsViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _effect.send(Effect.ShowError(UiText.Raw(e.message.orEmpty())))
+                _effect.send(Effect.ShowError(UiText.Res(R.string.couldn_t_delete_alarm)))
             }
         }
     }
@@ -118,7 +120,7 @@ class AlarmsViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _effect.send(Effect.ShowError(UiText.Raw(e.message.orEmpty())))
+                _effect.send(Effect.ShowError(UiText.Res(R.string.couldn_t_update_alarm)))
             }
         }
     }

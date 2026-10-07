@@ -33,9 +33,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mhq.salati.R
 import com.mhq.salati.qibla.domain.model.CompassAccuracy
+import com.mhq.salati.shared.ui.theme.SalatiTheme
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -92,13 +96,13 @@ fun CompassCalibrationOverlay(
             }
 
             Text(
-                text = "Calibrate your compass",
+                text = stringResource(R.string.compass_calibrate_title),
                 color = textColor,
                 style = MaterialTheme.typography.titleMedium
             )
 
             Text(
-                text = "Move your phone in a figure-8 motion to improve accuracy.",
+                text = stringResource(R.string.compass_calibrate_body),
                 color = textSecondaryColor,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
@@ -117,7 +121,7 @@ fun CompassCalibrationOverlay(
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = textColor),
                 border = BorderStroke(1.dp, buttonBorderColor)
             ) {
-                Text("Done")
+                Text(stringResource(R.string.compass_calibrate_done))
             }
         }
     }
@@ -183,6 +187,21 @@ private fun AccuracyStatus(
                 .size(8.dp)
                 .background(color, shape = CircleShape)
         )
-        Text(text = label, color = color, style = MaterialTheme.typography.bodySmall)
+        Text(
+            text = label,
+            color = color,
+            style = MaterialTheme.typography.bodySmall
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CompassCalibrationOverlayPreview(){
+    SalatiTheme() {
+        CompassCalibrationOverlay(
+            accuracy = CompassAccuracy.HIGH,
+            onDismiss = {}
+        )
     }
 }

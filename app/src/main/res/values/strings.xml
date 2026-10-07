@@ -172,6 +172,30 @@
     <string name="contact_support">Contact Support</string>
     <string name="version">Version</string>
 
+    <!--To be sorted-->
+    <string name="couldn_t_load_alarms">تعذّر تحميل المنبهات</string>
+    <string name="couldn_t_save_alarm">تعذّر حفظ المنبه</string>
+    <string name="couldn_t_delete_alarm">تعذّر حذف المنبه</string>
+    <string name="couldn_t_update_alarm">تعذّر تحديث المنبه</string>
+    <string name="search_failed_check_connection">فشل البحث. تحقق من اتصالك بالإنترنت.</string>
+    <string name="couldn_t_determine_location_name">تعذّر تحديد اسم الموقع. تحقق من اتصالك بالإنترنت.</string>
+    <string name="couldn_t_save_location">تعذّر حفظ الموقع. حاول مرة أخرى.</string>
+    <string name="request_timed_out_check_connection">انتهت مهلة الطلب. تحقق من اتصالك بالإنترنت.</string>
+    <string name="cd_back">رجوع</string>
+    <string name="cd_search">بحث</string>
+    <string name="location_picker_search_hint">ابحث عن مدينة أو مكان</string>
+    <string name="location_picker_resolving">جارٍ تحديد الموقع…</string>
+    <string name="location_picker_confirm">تأكيد الموقع</string>
+    <string name="compass_calibrate_title">معايرة البوصلة</string>
+    <string name="compass_calibrate_body">حرّك هاتفك بحركة رقم 8 لتحسين الدقة.</string>
+    <string name="compass_calibrate_done">تم</string>
+    <string name="cd_status_badge">شارة الحالة</string>
+    <string name="cd_prayer_location">موقع الصلاة</string>
+    <string name="cd_location_dropdown">قائمة المواقع المنسدلة</string>
+    <string name="cd_decrease">إنقاص</string>
+    <string name="cd_increase">زيادة</string>
+
+
     <string name="couldn_t_update_notification_settings">Couldn\'t update notification settings</string>
     <string name="couldn_t_update_calculation_method">Couldn\'t update calculation method</string>
     <string name="couldn_t_update_madhab">Couldn\'t update madhab</string>

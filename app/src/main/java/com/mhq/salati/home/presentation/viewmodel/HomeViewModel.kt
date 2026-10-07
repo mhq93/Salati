@@ -390,9 +390,8 @@ class HomeViewModel @Inject constructor(
         val isOffline = error is PrayerTimesError.Offline
         val message = when (error) {
             is PrayerTimesError.Offline -> Res(R.string.no_internet_connection)
-            is PrayerTimesError.TimedOut -> Raw("Request timed out. Check your connection.")
-            is PrayerTimesError.Other ->
-                error.message?.let { Raw(it) } ?: Res(R.string.something_went_wrong)
+            is PrayerTimesError.TimedOut -> Res(R.string.request_timed_out_check_connection)
+            is PrayerTimesError.Other -> Res(R.string.something_went_wrong)
         }
         _state.update {
             it.copy(

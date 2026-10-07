@@ -33,9 +33,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
 import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract.Intent
 import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract.State
 
@@ -81,7 +83,7 @@ fun LocationPickerContent(
                     IconButton(onClick = onBackClicked) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.cd_back),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -89,7 +91,7 @@ fun LocationPickerContent(
                     Box(modifier = Modifier.weight(1f)) {
                         if (state.query.isEmpty()) {
                             Text(
-                                text = "Search a city or place",
+                                text = stringResource(R.string.location_picker_search_hint),
                                 style = TextStyle(
                                     fontSize = 16.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -120,7 +122,7 @@ fun LocationPickerContent(
                     IconButton(onClick = { onIntent(Intent.SearchClicked) }) {
                         Icon(
                             imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
+                            contentDescription = stringResource(R.string.cd_search),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -165,8 +167,8 @@ fun LocationPickerContent(
                 .padding(16.dp)
         ) {
             Text(
-                if (state.isResolvingSelection) "Resolving location…"
-                else state.selectedLocation?.displayName ?: "Confirm location"
+                if (state.isResolvingSelection) stringResource(R.string.location_picker_resolving)
+                else state.selectedLocation?.displayName ?: stringResource(R.string.location_picker_confirm)
             )
         }
     }
