@@ -11,9 +11,7 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.mhq.salati.R
@@ -24,10 +22,14 @@ import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.ui.labelRes
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @AndroidEntryPoint
 class AdhanPlaybackService : Service() {
@@ -38,6 +40,7 @@ class AdhanPlaybackService : Service() {
     private var audioManager: AudioManager? = null
     private var focusRequest: AudioFocusRequest? = null
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private var autoDismissJob: Job? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -82,13 +85,12 @@ class AdhanPlaybackService : Service() {
         // to end them, so the foreground notification would otherwise stay
         // stuck until the user manually taps Stop. Auto-dismiss shortly instead.
         if (isMuted) {
-            // Use a foreground service notification that persists
-            startForeground(NOTIFICATION_ID, buildNotification(prayerName, isMinorTiming))
-            // Schedule auto-dismiss with Handler (more reliable than coroutine)
-            Handler(Looper.getMainLooper()).postDelayed(
-                { stopPlayback() },
-                MUTED_AUTO_DISMISS_MS
-            )
+            // Muted prayers have nothing to play and no completion callback,
+            // so dismiss the notification shortly instead of leaving it stuck.
+            autoDismissJob = serviceScope.launch {
+                delay(MUTED_AUTO_DISMISS_MS.milliseconds)
+                stopPlayback()
+            }
             return
         }
 
@@ -123,6 +125,8 @@ class AdhanPlaybackService : Service() {
     // onPlaybackCompleted() and stopPlayback() (and now startPlayback()'s guard)
     // so the two paths can't drift out of sync again.
     private fun releasePlayer() {
+        autoDismissJob?.cancel()
+        autoDismissJob = null
         mediaPlayer?.apply { if (isPlaying) stop(); release() }
         mediaPlayer = null
         focusRequest?.let { audioManager?.abandonAudioFocusRequest(it) }
