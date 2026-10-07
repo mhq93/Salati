@@ -35,6 +35,14 @@ class AndroidRotationSensorDataSource @Inject constructor(
         val orientationAngles = FloatArray(3)
         var currentAccuracy = SensorAccuracy.HIGH
 
+        // Declination depends only on place and date, so compute it once per compass session.
+        val declination = GeomagneticField(
+            latitude.toFloat(),
+            longitude.toFloat(),
+            0f,
+            System.currentTimeMillis()
+        ).declination
+
         val rotationListener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent) {
                 SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
@@ -43,13 +51,6 @@ class AndroidRotationSensorDataSource @Inject constructor(
                 val azimuthRadians = orientationAngles[0]
                 var magneticAzimuth = Math.toDegrees(azimuthRadians.toDouble()).toFloat()
                 if (magneticAzimuth < 0) magneticAzimuth += 360f
-
-                val declination = GeomagneticField(
-                    latitude.toFloat(),
-                    longitude.toFloat(),
-                    0f,
-                    System.currentTimeMillis()
-                ).declination
 
                 var trueAzimuth = magneticAzimuth + declination
                 if (trueAzimuth < 0) trueAzimuth += 360f
