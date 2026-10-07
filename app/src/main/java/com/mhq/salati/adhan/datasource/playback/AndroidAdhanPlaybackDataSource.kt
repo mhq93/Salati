@@ -19,12 +19,13 @@ class AndroidAdhanPlaybackDataSource @Inject constructor(
     private val _status = MutableStateFlow<PlaybackStatus>(PlaybackStatus.Idle)
     override val status: StateFlow<PlaybackStatus> = _status.asStateFlow()
 
-    override fun start(prayerKey: String, isMinorTiming: Boolean, isMuted: Boolean) {
+    override fun start(prayerKey: String, isMinorTiming: Boolean, isMuted: Boolean, soundKey: String) {
         val intent = Intent(context, service.componentClass).apply {
             action = ACTION_START
             putExtra(EXTRA_PRAYER_NAME, prayerKey)
             putExtra(EXTRA_IS_MINOR_TIMING, isMinorTiming)
             putExtra(EXTRA_IS_MUTED, isMuted)
+            putExtra(EXTRA_ADHAN_SOUND, soundKey)
         }
         ContextCompat.startForegroundService(context, intent)
     }
@@ -47,5 +48,6 @@ class AndroidAdhanPlaybackDataSource @Inject constructor(
         const val EXTRA_PRAYER_NAME = "extra_prayer_name"
         const val EXTRA_IS_MINOR_TIMING = "extra_is_minor_timing"
         const val EXTRA_IS_MUTED = "extra_is_muted"
+        const val EXTRA_ADHAN_SOUND = "extra_adhan_sound"
     }
 }

@@ -136,6 +136,7 @@
 
     <string name="adhan_sound">Adhan Sound</string>
     <string name="adhan_sound_default">Default Beep</string>
+    <string name="adhan_sound_egypt">Egypt Adhan</string>
     <string name="adhan_sound_makkah">Makkah Adhan</string>
     <string name="adhan_sound_madinah">Madinah Adhan</string>
     <string name="adhan_sound_silent">Silent (Notification Only)</string>

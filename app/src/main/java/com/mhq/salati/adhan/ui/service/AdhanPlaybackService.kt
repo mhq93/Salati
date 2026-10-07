@@ -18,6 +18,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.mhq.salati.R
 import com.mhq.salati.adhan.datasource.playback.AdhanPlaybackStateHolder
+import com.mhq.salati.settings.domain.model.AdhanSound
 import com.mhq.salati.shared.data.mapper.fromStorageKey
 import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.ui.labelRes
@@ -45,7 +46,10 @@ class AdhanPlaybackService : Service() {
             ACTION_START -> startPlayback(
                 prayerName = intent.getStringExtra(EXTRA_PRAYER_NAME) ?: "Prayer",
                 isMinorTiming = intent.getBooleanExtra(EXTRA_IS_MINOR_TIMING, false),
-                isMuted = intent.getBooleanExtra(EXTRA_IS_MUTED, false)
+                isMuted = intent.getBooleanExtra(EXTRA_IS_MUTED, false),
+                adhanSound = intent.getStringExtra(EXTRA_ADHAN_SOUND)
+                    ?.let { runCatching { AdhanSound.valueOf(it) }.getOrNull() }
+                    ?: AdhanSound.DEFAULT
             )
 
             ACTION_STOP -> stopPlayback()
@@ -56,7 +60,8 @@ class AdhanPlaybackService : Service() {
     private fun startPlayback(
         prayerName: String,
         isMinorTiming: Boolean,
-        isMuted: Boolean
+        isMuted: Boolean,
+        adhanSound: AdhanSound
     ) {
         releasePlayer()
 
@@ -106,7 +111,7 @@ class AdhanPlaybackService : Service() {
 
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(audioAttributes)
-            setDataSource(this@AdhanPlaybackService, soundUri(isMinorTiming))
+            setDataSource(this@AdhanPlaybackService, soundUri(isMinorTiming, adhanSound))
             setOnPreparedListener { it.start() }
             setOnCompletionListener { onPlaybackCompleted() }
             setOnErrorListener { _, _, _ -> stopPlayback(); true }
@@ -135,8 +140,16 @@ class AdhanPlaybackService : Service() {
         stopSelf()
     }
 
-    private fun soundUri(isMinorTiming: Boolean): Uri {
-        val resId = if (isMinorTiming) R.raw.alert else R.raw.adhan
+    private fun soundUri(isMinorTiming: Boolean, adhanSound: AdhanSound): Uri {
+        val resId = if (isMinorTiming) {
+            R.raw.minor_timing_alert
+        } else when (adhanSound) {
+            AdhanSound.DEFAULT -> R.raw.default_beep
+            AdhanSound.EGYPT -> R.raw.adhan_egypt
+            AdhanSound.MAKKAH -> R.raw.adhan_makkah
+            AdhanSound.MADINAH -> R.raw.adhan_madinah
+            AdhanSound.SILENT -> R.raw.default_beep
+        }
         return "android.resource://$packageName/$resId".toUri()
     }
 
@@ -196,6 +209,7 @@ class AdhanPlaybackService : Service() {
         const val EXTRA_PRAYER_NAME = "extra_prayer_name"
         const val EXTRA_IS_MINOR_TIMING = "extra_is_minor_timing"
         const val EXTRA_IS_MUTED = "extra_is_muted"
+        const val EXTRA_ADHAN_SOUND = "extra_adhan_sound"
         const val CHANNEL_ID = "adhan_playback_channel"
     }
 }

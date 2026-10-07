@@ -5,6 +5,7 @@ import com.mhq.salati.R
 
 enum class AdhanSound(@StringRes val displayNameRes: Int) {
     DEFAULT(R.string.adhan_sound_default),
+    EGYPT(R.string.adhan_sound_egypt),
     MAKKAH(R.string.adhan_sound_makkah),
     MADINAH(R.string.adhan_sound_madinah),
     SILENT(R.string.adhan_sound_silent)

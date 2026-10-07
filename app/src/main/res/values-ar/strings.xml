@@ -137,6 +137,7 @@
 
     <string name="adhan_sound">نغمة الآذان</string>
     <string name="adhan_sound_default">النغمة الافتراضية</string>
+    <string name="adhan_sound_egypt">آذان مصر</string>
     <string name="adhan_sound_makkah">آذان مكة</string>
     <string name="adhan_sound_madinah">آذان المدينة</string>
     <string name="adhan_sound_silent">صامت (إشعارات فقط)</string>

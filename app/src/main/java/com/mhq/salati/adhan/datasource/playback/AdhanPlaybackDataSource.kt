@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface AdhanPlaybackDataSource {
     val status: StateFlow<PlaybackStatus>
 
-    fun start(prayerKey: String, isMinorTiming: Boolean, isMuted: Boolean)
+    fun start(prayerKey: String, isMinorTiming: Boolean, isMuted: Boolean, soundKey: String)
     fun stop()
     fun updateStatus(status: PlaybackStatus)
 }

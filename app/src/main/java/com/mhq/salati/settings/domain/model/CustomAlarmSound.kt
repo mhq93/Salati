@@ -6,5 +6,5 @@ import com.mhq.salati.R
 
 enum class CustomAlarmSound(@StringRes val displayNameRes: Int, @RawRes val rawRes: Int?) {
     DEFAULT(R.string.custom_alarm_sound_default, null),
-    ALERT(R.string.custom_alarm_sound_alert, R.raw.alert)
+    ALERT(R.string.custom_alarm_sound_alert, R.raw.minor_timing_alert)
 }
