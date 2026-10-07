@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
@@ -35,11 +37,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
+import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract
 import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract.Intent
 import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract.State
+import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
 fun LocationPickerContent(
@@ -74,11 +80,11 @@ fun LocationPickerContent(
                 color = MaterialTheme.colorScheme.surface
             ) {
                 Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
                         .padding(horizontal = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = onBackClicked) {
                         Icon(
@@ -102,6 +108,8 @@ fun LocationPickerContent(
                             value = state.query,
                             onValueChange = { onIntent(Intent.QueryChanged(it)) },
                             singleLine = true,
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                            keyboardActions = KeyboardActions(onSearch = { onIntent(Intent.SearchClicked) }),
                             textStyle = TextStyle(
                                 fontSize = 16.sp,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -117,6 +125,27 @@ fun LocationPickerContent(
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )
+                        // Autocomplete search stopped;
+                        // I may stretch the search duration to avoid 1 request per minute limit
+                        //                        TextField(
+                        //                            value = state.query,
+                        //                            onValueChange = { onIntent(Intent.QueryChanged(it)) },
+                        //                            singleLine = true,
+                        //                            textStyle = TextStyle(
+                        //                                fontSize = 16.sp,
+                        //                                color = MaterialTheme.colorScheme.onSurface
+                        //                            ),
+                        //                            colors = TextFieldDefaults.colors(
+                        //                                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        //                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        //                                disabledContainerColor = MaterialTheme.colorScheme.surface,
+                        //                                focusedIndicatorColor = Color.Transparent,
+                        //                                unfocusedIndicatorColor = Color.Transparent,
+                        //                                disabledIndicatorColor = Color.Transparent,
+                        //                                cursorColor = MaterialTheme.colorScheme.primary
+                        //                            ),
+                        //                            modifier = Modifier.fillMaxWidth()
+                        //                        )
                     }
 
                     IconButton(onClick = { onIntent(Intent.SearchClicked) }) {
@@ -171,5 +200,50 @@ fun LocationPickerContent(
                 else state.selectedLocation?.displayName ?: stringResource(R.string.location_picker_confirm)
             )
         }
+    }
+}
+
+@Preview(name = "Default State", showBackground = true)
+@Composable
+private fun LocationPickerContentDefaultPreview() {
+    SalatiTheme {
+        LocationPickerContent(
+            state = State(),
+            onIntent = {},
+            onBackClicked = {}
+        )
+    }
+}
+
+@Preview(name = "Searching State", showBackground = true)
+@Composable
+private fun LocationPickerContentSearchingPreview() {
+    SalatiTheme {
+        LocationPickerContent(
+            state = State(
+                query = "Makkah",
+                isSearching = true
+            ),
+            onIntent = {},
+            onBackClicked = {}
+        )
+    }
+}
+
+@Preview(name = "Results State", showBackground = true)
+@Composable
+private fun LocationPickerContentResultsPreview() {
+    SalatiTheme {
+        LocationPickerContent(
+            state = State(
+                query = "Mecca",
+                searchResults = listOf(
+                    LocationPickerContract.LocationSearchResult("Grand Mosque, Makkah", 21.4225, 39.8262),
+                    LocationPickerContract.LocationSearchResult("Makkah Mall", 21.3891, 39.8812)
+                )
+            ),
+            onIntent = {},
+            onBackClicked = {}
+        )
     }
 }

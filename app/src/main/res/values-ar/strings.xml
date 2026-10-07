@@ -57,15 +57,25 @@
     <string name="stop">إيقاف</string>
     <string name="minor_timing_playing_title">%1$s</string>
     <string name="minor_timing_playing_body">حان الآن وقت %1$s</string>
+
     <!-- Qibla -->
     <string name="qibla_direction">اتجاه القبلة</string>
     <string name="face_the_kaaba_wherever_you_are">توجه ناحية القبلة أينما كنت</string>
     <string name="location_not_found">الموقع غير موجود</string>
     <string name="unknown_location">موقع غير معروف</string>
     <string name="recalibrate">أعد الضبط</string>
-    <string name="sensor_accuracy_is_excellent">حساسية المستشعر ممتازة</string>
-    <string name="sensor_accuracy_is_moderate">حساسية المستشعر متوسطة</string>
-    <string name="sensor_accuracy_is_poor">حساسية المستشعر ضعيفة</string>
+    <string name="sensor_accuracy_is_excellent">دقة المستشعر ممتازة</string>
+    <string name="sensor_accuracy_is_moderate">دقة المستشعر متوسطة</string>
+    <string name="sensor_accuracy_is_poor">دقة المستشعر ضعيفة</string>
+
+    <!-- Qibla Overlay -->
+    <string name="compass_calibrate_title">معايرة البوصلة</string>
+    <string name="compass_calibrate_body">حرّك هاتفك بحركة رقم 8 لتحسين الدقة.</string>
+    <string name="compass_calibrate_done">تم</string>
+    <string name="accuracy_excellent">دقة المستشعر: ممتازة</string>
+    <string name="accuracy_moderate">دقة المستشعر: متوسطة، واصل المعايرة</string>
+    <string name="accuracy_poor"> دقة المستشعر: ضعيفة، واصل تحريك الهاتف على شكل رقم 8 لإعادة المعايرة</string>
+    <string name="accuracy_unreliable">دقة المستشعر: منعدمة، ابتعد عن الأسطح المعدنية والممغنطة ثم أعد المعايرة</string>
 
     <!-- Home & Qibla Errors-->
     <string name="error">خطأ: %1$s</string>
@@ -187,9 +197,6 @@
     <string name="location_picker_search_hint">ابحث عن مدينة أو مكان</string>
     <string name="location_picker_resolving">جارٍ تحديد الموقع…</string>
     <string name="location_picker_confirm">تأكيد الموقع</string>
-    <string name="compass_calibrate_title">معايرة البوصلة</string>
-    <string name="compass_calibrate_body">حرّك هاتفك بحركة رقم 8 لتحسين الدقة.</string>
-    <string name="compass_calibrate_done">تم</string>
     <string name="cd_status_badge">شارة الحالة</string>
     <string name="cd_prayer_location">موقع الصلاة</string>
     <string name="cd_location_dropdown">قائمة المواقع المنسدلة</string>

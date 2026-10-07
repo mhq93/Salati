@@ -13,6 +13,7 @@ import com.mhq.salati.shared.ui.UiText
 import com.mhq.salati.splash.domain.usecases.GetStartDestinationUseCase
 import com.mhq.salati.splash.presentation.contract.SplashContract
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -71,6 +72,9 @@ class SplashViewModel @Inject constructor(
                 LocaleListCompat.forLanguageTags(language.code)
             )
             setLanguageSelectedUseCase(true)
+
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             _effect.send(
                 SplashContract.Effect.ShowError(

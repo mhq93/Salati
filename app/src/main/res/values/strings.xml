@@ -55,15 +55,25 @@
     <string name="adhan_playing_body">It\'s time for Al-%1$s prayer</string>    <string name="stop">Stop</string>
     <string name="minor_timing_playing_title">%1$s</string>
     <string name="minor_timing_playing_body">It\'s time for %1$s</string>
+
     <!-- Qibla -->
     <string name="qibla_direction">Qibla Direction</string>
     <string name="face_the_kaaba_wherever_you_are">Face the Kaaba wherever you are</string>
-    <string name="location_not_found">Location Not Found</string>
     <string name="unknown_location">Unknown Location</string>
-    <string name="recalibrate">Recalibrate</string>
+    <string name="location_not_found">Location Not Found</string>
     <string name="sensor_accuracy_is_excellent">Sensor accuracy is excellent.</string>
     <string name="sensor_accuracy_is_moderate">Sensor accuracy is moderate.</string>
     <string name="sensor_accuracy_is_poor">Sensor accuracy is poor.</string>
+    <string name="recalibrate">Recalibrate</string>
+
+    <!-- Qibla Overlay -->
+    <string name="compass_calibrate_title">Calibrate your compass</string>
+    <string name="compass_calibrate_body">Move your phone in a figure-8 motion to improve accuracy.</string>
+    <string name="compass_calibrate_done">Done</string>
+    <string name="accuracy_excellent">Accuracy: Excellent</string>
+    <string name="accuracy_moderate">Accuracy: Moderate — Keep going</string>
+    <string name="accuracy_poor">Accuracy: Poor — Keep moving in a figure-8 to recalibrate</string>
+    <string name="accuracy_unreliable">Accuracy: Unreliable — Move away from metal or magnets then recalibrate</string>
 
     <!-- Home & Qibla Errors-->
     <string name="error">Error: %1$s</string>
@@ -173,27 +183,24 @@
     <string name="version">Version</string>
 
     <!--To be sorted-->
-    <string name="couldn_t_load_alarms">تعذّر تحميل المنبهات</string>
-    <string name="couldn_t_save_alarm">تعذّر حفظ المنبه</string>
-    <string name="couldn_t_delete_alarm">تعذّر حذف المنبه</string>
-    <string name="couldn_t_update_alarm">تعذّر تحديث المنبه</string>
-    <string name="search_failed_check_connection">فشل البحث. تحقق من اتصالك بالإنترنت.</string>
-    <string name="couldn_t_determine_location_name">تعذّر تحديد اسم الموقع. تحقق من اتصالك بالإنترنت.</string>
-    <string name="couldn_t_save_location">تعذّر حفظ الموقع. حاول مرة أخرى.</string>
-    <string name="request_timed_out_check_connection">انتهت مهلة الطلب. تحقق من اتصالك بالإنترنت.</string>
-    <string name="cd_back">رجوع</string>
-    <string name="cd_search">بحث</string>
-    <string name="location_picker_search_hint">ابحث عن مدينة أو مكان</string>
-    <string name="location_picker_resolving">جارٍ تحديد الموقع…</string>
-    <string name="location_picker_confirm">تأكيد الموقع</string>
-    <string name="compass_calibrate_title">معايرة البوصلة</string>
-    <string name="compass_calibrate_body">حرّك هاتفك بحركة رقم 8 لتحسين الدقة.</string>
-    <string name="compass_calibrate_done">تم</string>
-    <string name="cd_status_badge">شارة الحالة</string>
-    <string name="cd_prayer_location">موقع الصلاة</string>
-    <string name="cd_location_dropdown">قائمة المواقع المنسدلة</string>
-    <string name="cd_decrease">إنقاص</string>
-    <string name="cd_increase">زيادة</string>
+    <string name="couldn_t_load_alarms">Couldn\'t load alarms</string>
+    <string name="couldn_t_save_alarm">Couldn\'t save alarm</string>
+    <string name="couldn_t_delete_alarm">Couldn\'t delete alarm</string>
+    <string name="couldn_t_update_alarm">Couldn\'t update alarm</string>
+    <string name="search_failed_check_connection">Search failed. Check your connection.</string>
+    <string name="couldn_t_determine_location_name">Couldn\'t determine location name. Check your connection.</string>
+    <string name="couldn_t_save_location">Couldn\'t save location. Try again.</string>
+    <string name="request_timed_out_check_connection">Request timed out. Check your connection.</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_search">Search</string>
+    <string name="location_picker_search_hint">Search a city or place</string>
+    <string name="location_picker_resolving">Resolving location…</string>
+    <string name="location_picker_confirm">Confirm location</string>
+    <string name="cd_status_badge">Status badge</string>
+    <string name="cd_prayer_location">Prayer location</string>
+    <string name="cd_location_dropdown">Location drop-down</string>
+    <string name="cd_decrease">Decrease</string>
+    <string name="cd_increase">Increase</string>
 
 
     <string name="couldn_t_update_notification_settings">Couldn\'t update notification settings</string>

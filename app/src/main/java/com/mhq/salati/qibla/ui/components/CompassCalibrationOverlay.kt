@@ -67,10 +67,10 @@ fun CompassCalibrationOverlay(
     val textSecondaryColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
     val buttonBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
 
-    val (highLabel, highColor) = "Accuracy: Excellent" to MaterialTheme.colorScheme.primary
-    val (mediumLabel, mediumColor) = "Accuracy: Moderate — Keep going" to MaterialTheme.colorScheme.tertiary
-    val (lowLabel, lowColor) = "Accuracy: Poor — Keep moving in a figure-8 to recalibrate" to MaterialTheme.colorScheme.error
-    val (unreliableLabel, unreliableColor) = "Accuracy: Unreliable — Move away from metal or magnets then recalibrate" to MaterialTheme.colorScheme.error
+    val (highLabel, highColor) = stringResource(R.string.accuracy_excellent) to MaterialTheme.colorScheme.primary
+    val (mediumLabel, mediumColor) = stringResource(R.string.accuracy_moderate) to MaterialTheme.colorScheme.tertiary
+    val (lowLabel, lowColor) = stringResource(R.string.accuracy_poor) to MaterialTheme.colorScheme.error
+    val (unreliableLabel, unreliableColor) = stringResource(R.string.accuracy_unreliable) to MaterialTheme.colorScheme.error
 
     Box(
         contentAlignment = Alignment.Center,

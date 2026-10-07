@@ -4,11 +4,19 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.GestureDetector
 import android.view.MotionEvent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
+import com.mhq.salati.shared.ui.theme.SalatiTheme
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
@@ -30,6 +38,18 @@ fun LocationPickerMap(
     onPointSelected: (Double, Double) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    // Check if the composable is running inside Android Studio's preview window
+    if (LocalInspectionMode.current) {
+        Box(
+            modifier = modifier.background(Color.LightGray),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("OSM Map Placeholder (Preview Mode)")
+        }
+        return
+    }
+
     val context = LocalContext.current
 
     // CRITICAL: Configure OSMDroid with a valid User-Agent to avoid 403 blocks
@@ -119,4 +139,18 @@ fun LocationPickerMap(
         },
         modifier = modifier
     )
+}
+
+@Preview
+@Composable
+private fun LocationPickerMapPreview() {
+    SalatiTheme() {
+        LocationPickerMap(
+            initialLat = 21.4225,
+            initialLng = 39.8262,
+            selectedLatitude = null,
+            selectedLongitude = null,
+            onPointSelected = { _, _ -> }
+        )
+    }
 }

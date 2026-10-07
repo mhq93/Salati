@@ -78,32 +78,23 @@ class LocationPickerViewModel @Inject constructor(
     }
 
     private fun onQueryChanged(query: String) {
+        // Typing never triggers a request; the user searches explicitly.
         _state.update {
             it.copy(
                 query = query,
                 searchResults = emptyList(),
-                isSearching = query.isNotBlank(),
+                isSearching = false,
                 errorMessage = null
             )
         }
-        searchQueryFlow.value = query
     }
 
     private fun observeSearchQuery() {
-        merge(
-            searchQueryFlow
-                .debounce(350.milliseconds)
-                .distinctUntilChanged(),
-            immediateSearchFlow
-        )
+        immediateSearchFlow
             .flatMapLatest { query ->
                 flow {
-                    if (query.isNotBlank()) {
-                        val lang = currentLanguageCode()
-                        emit(Result.success(searchLocationByName(query, lang)))
-                    } else {
-                        emit(Result.success(emptyList()))
-                    }
+                    val lang = currentLanguageCode()
+                    emit(Result.success(searchLocationByName(query, lang)))
                 }.catch { e ->
                     if (e is CancellationException) throw e
                     emit(Result.failure(e))
@@ -120,17 +111,14 @@ class LocationPickerViewModel @Inject constructor(
                         }
                     },
                     onFailure = {
+                        val message = UiText.Res(R.string.search_failed_check_connection)
                         _state.update {
                             it.copy(
                                 isSearching = false,
-                                errorMessage = UiText.Res(R.string.search_failed_check_connection)
+                                errorMessage = message
                             )
                         }
-                        _effect.send(
-                            LocationPickerContract.Effect.ShowError(
-                                UiText.Res(R.string.couldn_t_determine_location_name)
-                            )
-                        )
+                        _effect.send(LocationPickerContract.Effect.ShowError(message))
                     }
                 )
             }
@@ -142,18 +130,19 @@ class LocationPickerViewModel @Inject constructor(
 
         val currentTime = System.currentTimeMillis()
 
+        // Nominatim's usage policy allows at most one request per second.
         if (currentTime - lastManualSearchTimeMs < SEARCH_COOLDOWN_MS) {
             return
         }
 
         lastManualSearchTimeMs = currentTime
+        _state.update { it.copy(isSearching = true, errorMessage = null) }
         viewModelScope.launch {
             immediateSearchFlow.emit(query)
         }
     }
 
     private fun selectResult(result: LocationPickerContract.LocationSearchResult) {
-        searchQueryFlow.value = ""
         _state.update {
             it.copy(
                 selectedLocation = LocationPickerContract.SelectedLocation(
@@ -169,6 +158,98 @@ class LocationPickerViewModel @Inject constructor(
             )
         }
     }
+
+    // Autocomplete search stopped;
+    // I may stretch the search duration to avoid 1 request per minute limit
+    //    private fun onQueryChanged(query: String) {
+    //        _state.update {
+    //            it.copy(
+    //                query = query,
+    //                searchResults = emptyList(),
+    //                isSearching = query.isNotBlank(),
+    //                errorMessage = null
+    //            )
+    //        }
+    //        searchQueryFlow.value = query
+    //    }
+    //
+    //    private fun observeSearchQuery() {
+    //        merge(
+    //            searchQueryFlow
+    //                .debounce(350.milliseconds)
+    //                .distinctUntilChanged(),
+    //            immediateSearchFlow
+    //        )
+    //            .flatMapLatest { query ->
+    //                flow {
+    //                    if (query.isNotBlank()) {
+    //                        val lang = currentLanguageCode()
+    //                        emit(Result.success(searchLocationByName(query, lang)))
+    //                    } else {
+    //                        emit(Result.success(emptyList()))
+    //                    }
+    //                }.catch { e ->
+    //                    if (e is CancellationException) throw e
+    //                    emit(Result.failure(e))
+    //                }
+    //            }
+    //            .onEach { result ->
+    //                result.fold(
+    //                    onSuccess = { results ->
+    //                        _state.update {
+    //                            it.copy(
+    //                                isSearching = false,
+    //                                searchResults = results.toContractResults()
+    //                            )
+    //                        }
+    //                    },
+    //                    onFailure = {
+    //                        val message = UiText.Res(R.string.search_failed_check_connection)
+    //                        _state.update {
+    //                            it.copy(
+    //                                isSearching = false,
+    //                                errorMessage = message
+    //                            )
+    //                        }
+    //                        _effect.send(LocationPickerContract.Effect.ShowError(message))
+    //                    }
+    //                )
+    //            }
+    //            .launchIn(viewModelScope)
+    //    }
+    //
+    //    private fun executeManualSearch(query: String) {
+    //        if (query.isBlank()) return
+    //
+    //        val currentTime = System.currentTimeMillis()
+    //
+    //        if (currentTime - lastManualSearchTimeMs < SEARCH_COOLDOWN_MS) {
+    //            return
+    //        }
+    //
+    //        lastManualSearchTimeMs = currentTime
+    //        viewModelScope.launch {
+    //            immediateSearchFlow.emit(query)
+    //        }
+    //    }
+    //
+    //    private fun selectResult(result: LocationPickerContract.LocationSearchResult) {
+    //        searchQueryFlow.value = ""
+    //        _state.update {
+    //            it.copy(
+    //                selectedLocation = LocationPickerContract.SelectedLocation(
+    //                    displayName = result.displayName,
+    //                    latitude = result.latitude,
+    //                    longitude = result.longitude
+    //                ),
+    //                searchResults = emptyList(),
+    //                query = result.displayName,
+    //                mapCenterLat = result.latitude,
+    //                mapCenterLng = result.longitude,
+    //                mapZoom = 12
+    //            )
+    //        }
+    //    }
 
     private fun selectMapPoint(latitude: Double, longitude: Double) {
         reverseGeocodeJob?.cancel()
