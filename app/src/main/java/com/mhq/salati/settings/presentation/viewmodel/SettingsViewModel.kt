@@ -25,14 +25,13 @@ import com.mhq.salati.settings.domain.usecases.UpdateThemeModeUseCase
 import com.mhq.salati.settings.presentation.contract.SettingsContract
 import com.mhq.salati.shared.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -57,8 +56,8 @@ class SettingsViewModel @Inject constructor(
     )
     val state: StateFlow<SettingsContract.State> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<SettingsContract.Effect>()
-    val effect: SharedFlow<SettingsContract.Effect> = _effect.asSharedFlow()
+    private val _effect = Channel<SettingsContract.Effect>(Channel.BUFFERED)
+    val effect = _effect.receiveAsFlow()
 
     init {
         observeSettingsUseCase()
@@ -142,7 +141,7 @@ class SettingsViewModel @Inject constructor(
             } catch (e: Exception) {
                 val message = UiText.Res(errorRes)
                 _state.update { it.copy(errorMessage = message) }
-                _effect.emit(SettingsContract.Effect.ShowError(message))
+                _effect.send(SettingsContract.Effect.ShowError(message))
             }
         }
 
@@ -165,7 +164,7 @@ class SettingsViewModel @Inject constructor(
     private fun updateLanguage(language: AppLanguage) =
         launchUpdate(R.string.couldn_t_update_language) {
             updateLanguageUseCase(language)
-            _effect.emit(SettingsContract.Effect.LanguageChangedRestartRequired(language.code))
+            _effect.send(SettingsContract.Effect.LanguageChangedRestartRequired(language.code))
         }
 
     private fun updateAdhanSound(sound: AdhanSound) =
@@ -183,6 +182,6 @@ class SettingsViewModel @Inject constructor(
 
     private fun emitEffect(effect: SettingsContract.Effect) =
         viewModelScope.launch {
-            _effect.emit(effect)
+            _effect.send(effect)
         }
 }

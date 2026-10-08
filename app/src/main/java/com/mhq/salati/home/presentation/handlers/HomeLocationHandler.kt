@@ -8,7 +8,6 @@ import com.mhq.salati.permissions.presentation.LocationPermissionDelegate
 import com.mhq.salati.permissions.presentation.LocationPermissionEffect
 import com.mhq.salati.permissions.presentation.LocationPermissionState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -30,7 +29,7 @@ class HomeLocationHandler @Inject constructor(
     private var permissionPromptShown = false
 
     val permissionState: StateFlow<LocationPermissionState> = permissionDelegate.state
-    val permissionEffects: SharedFlow<LocationPermissionEffect> = permissionDelegate.effect
+    val permissionEffects: Flow<LocationPermissionEffect> = permissionDelegate.effect
 
     /** The place's name in the new language, each time the app language changes. */
     val localizedNameChanges: Flow<String?> =

@@ -1,21 +1,22 @@
 package com.mhq.salati.permissions.presentation
 
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+/** Each screen's ViewModel gets its own instance and is its only collector of [effect]. */
 class LocationPermissionDelegate @Inject constructor() {
 
     private val _state = MutableStateFlow(LocationPermissionState())
     val state: StateFlow<LocationPermissionState> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<LocationPermissionEffect>()
-    val effect: SharedFlow<LocationPermissionEffect> = _effect.asSharedFlow()
+    private val _effect = Channel<LocationPermissionEffect>(Channel.BUFFERED)
+    val effect: Flow<LocationPermissionEffect> = _effect.receiveAsFlow()
 
     // Whether the system permission prompt was already requested, so a screen only asks once per attempt.
     private var promptShown = false
@@ -34,22 +35,22 @@ class LocationPermissionDelegate @Inject constructor() {
 
     suspend fun requirePermission() {
         _state.update { LocationPermissionState(required = true) }
-        _effect.emit(LocationPermissionEffect.RequestPermission)
+        _effect.send(LocationPermissionEffect.RequestPermission)
     }
 
     suspend fun onPermissionGranted() {
         _state.update { LocationPermissionState(required = false) }
-        _effect.emit(LocationPermissionEffect.PermissionResolved)
+        _effect.send(LocationPermissionEffect.PermissionResolved)
     }
 
     suspend fun markServicesDisabled() {
         _state.update { it.copy(required = false, servicesDisabled = true) }
-        _effect.emit(LocationPermissionEffect.PermissionResolved)
+        _effect.send(LocationPermissionEffect.PermissionResolved)
     }
 
     suspend fun onPermissionDenied(permanentlyDenied: Boolean) {
         _state.update { it.copy(granted = false, required = false, permanentlyDenied = permanentlyDenied) }
-        _effect.emit(LocationPermissionEffect.PermissionResolved)
+        _effect.send(LocationPermissionEffect.PermissionResolved)
     }
 
     fun reset() {
@@ -64,10 +65,10 @@ class LocationPermissionDelegate @Inject constructor() {
     }
 
     suspend fun requestAppSettings() {
-        _effect.emit(LocationPermissionEffect.NavigateToAppSettings)
+        _effect.send(LocationPermissionEffect.NavigateToAppSettings)
     }
 
     suspend fun requestLocationSettings() {
-        _effect.emit(LocationPermissionEffect.NavigateToLocationSettings)
+        _effect.send(LocationPermissionEffect.NavigateToLocationSettings)
     }
 }

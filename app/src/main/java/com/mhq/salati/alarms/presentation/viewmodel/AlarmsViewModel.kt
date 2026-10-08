@@ -38,7 +38,7 @@ class AlarmsViewModel @Inject constructor(
     private val _state = MutableStateFlow(State())
     val state: StateFlow<State> = _state.asStateFlow()
 
-    private val _effect = Channel<Effect>()
+    private val _effect = Channel<Effect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
 
     init { observeAlarms() }

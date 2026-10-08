@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
 import com.mhq.salati.settings.domain.model.AppLanguage
+import com.mhq.salati.settings.ui.displayNameRes
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds

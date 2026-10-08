@@ -19,8 +19,9 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
- * Everything about "where is the user" for the Qibla screen. A GPS fix is enough to calculate a
- * bearing, so unlike Home this never needs the internet: names are looked up only when possible.
+ * Everything about "where is the user" for the Qibla screen.
+ * A GPS fix is enough to calculate a bearing,
+ * so unlike Home this never needs the internet: names are looked up only when possible.
  * It only reports what happened; the ViewModel decides what the screen shows.
  */
 class QiblaLocationHandler @Inject constructor(
@@ -31,7 +32,7 @@ class QiblaLocationHandler @Inject constructor(
     private val locationLocalizer: LocationLocalizer
 ) {
     val permissionState: StateFlow<LocationPermissionState> = permissionDelegate.state
-    val permissionEffects: SharedFlow<LocationPermissionEffect> = permissionDelegate.effect
+    val permissionEffects: Flow<LocationPermissionEffect> = permissionDelegate.effect
 
     /** The place's name in the new language, each time the app language changes. */
     val localizedNameChanges: Flow<String?> =
