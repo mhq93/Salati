@@ -1,124 +1,89 @@
 package com.mhq.salati.alarms.domain.usecases
 
+import com.mhq.salati.alarms.domain.model.CustomAlarm
 import com.mhq.salati.alarms.domain.model.OffsetDirection
 import com.mhq.salati.alarms.domain.repo.CustomAlarmRepository
 import com.mhq.salati.alarms.domain.repo.CustomAlarmScheduler
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.prayertimes.domain.usecases.GetCachedPrayerTimesUseCase
+import com.mhq.salati.shared.domain.Clock
+import com.mhq.salati.shared.domain.toDateKey
 import kotlinx.coroutines.flow.first
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import javax.inject.Inject
 
 class ScheduleCustomAlarmsUseCase @Inject constructor(
+    private val clock: Clock,
     private val customAlarmRepository: CustomAlarmRepository,
     private val customAlarmScheduler: CustomAlarmScheduler,
     private val getSavedLocationUseCase: GetSavedLocationUseCase,
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase
 ) {
     suspend operator fun invoke(timings: PrayerTimings) {
-        val now = Calendar.getInstance()
-        val todayDow = now.get(Calendar.DAY_OF_WEEK)
-        val dateKeyFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+        val now = clock.now()
+        val zone = clock.zone()
         val location = getSavedLocationUseCase().first()
 
         customAlarmRepository.getAlarms().forEach { alarm ->
-            if (!alarm.isEnabled) {
-                customAlarmScheduler.cancel(alarm.id)
-                return@forEach
-            }
-            val runsToday = alarm.everyDay || alarm.activeDays.contains(todayDow)
-            if (!runsToday) {
+            if (!alarm.isEnabled || !alarm.runsOn(now.toLocalDate())) {
                 customAlarmScheduler.cancel(alarm.id)
                 return@forEach
             }
 
-            val prayerTime = timings[alarm.prayerName]
+            var trigger = alarm.triggerOn(now.toLocalDate(), timings[alarm.prayerName])
 
-            val triggerCal = Calendar.getInstance().apply {
-                set(Calendar.YEAR, now.get(Calendar.YEAR))
-                set(Calendar.MONTH, now.get(Calendar.MONTH))
-                set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH))
-                set(Calendar.HOUR_OF_DAY, prayerTime.hour)
-                set(Calendar.MINUTE, prayerTime.minute)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-
-                val delta =
-                    if (alarm.offsetDirection == OffsetDirection.BEFORE)
-                        -alarm.offsetMinutes
-                    else
-                        alarm.offsetMinutes
-
-                add(Calendar.MINUTE, delta)
-            }
-
-            if (triggerCal.timeInMillis <= now.timeInMillis) {
-                val rolledForward = when {
-                    alarm.everyDay -> {
-                        triggerCal.add(Calendar.DAY_OF_YEAR, 1)
-                        true
-                    }
+            if (!trigger.isAfter(now)) {
+                when {
+                    alarm.everyDay -> trigger = trigger.plusDays(1)
 
                     alarm.activeDays.isNotEmpty() -> {
                         var daysAhead = 0
                         do {
-                            triggerCal.add(Calendar.DAY_OF_YEAR, 1)
+                            trigger = trigger.plusDays(1)
                             daysAhead++
                         } while (
-                            !alarm.activeDays.contains(triggerCal.get(Calendar.DAY_OF_WEEK)) &&
+                            trigger.toLocalDate().calendarDayOfWeek() !in alarm.activeDays &&
                             daysAhead < 7
                         )
-                        true
                     }
 
                     else -> {
+                        // A one-off alarm whose time has passed.
                         customAlarmScheduler.cancel(alarm.id)
-                        false
+                        return@forEach
                     }
                 }
-                if (!rolledForward) return@forEach
 
-                // Re-anchor to that future day's ACTUAL cached prayer time
-                // instead of reusing today's snapshotted time-of-day. Falls back
-                // to the drifted estimate (already computed above) only if that
-                // day genuinely isn't cached yet — e.g. crossing a year boundary
-                // before the next annual calendar fetch — and self-corrects the
-                // next time this use case reruns closer to that day.
+                // Re-anchor to that future day's ACTUAL cached prayer time instead of reusing
+                // today's time-of-day. Falls back to the drifted estimate above only if that day
+                // isn't cached yet (e.g. across a year boundary); it self-corrects on the next run.
                 if (location != null) {
-                    val futureDateKey = dateKeyFormat.format(triggerCal.time)
+                    val futureDate = trigger.toLocalDate()
                     val futurePrayerTime = getCachedPrayerTimesUseCase(
-                        futureDateKey, location.coordinates
+                        futureDate.toDateKey(), location.coordinates
                     )?.timings?.get(alarm.prayerName)
 
                     if (futurePrayerTime != null) {
-                        val futureCal = Calendar.getInstance().apply {
-                            set(Calendar.YEAR, triggerCal.get(Calendar.YEAR))
-                            set(Calendar.MONTH, triggerCal.get(Calendar.MONTH))
-                            set(Calendar.DAY_OF_MONTH, triggerCal.get(Calendar.DAY_OF_MONTH))
-                            set(Calendar.HOUR_OF_DAY, futurePrayerTime.hour)
-                            set(Calendar.MINUTE, futurePrayerTime.minute)
-                            set(Calendar.SECOND, 0)
-                            set(Calendar.MILLISECOND, 0)
-
-                            val delta =
-                                if (alarm.offsetDirection == OffsetDirection.BEFORE)
-                                    -alarm.offsetMinutes
-                                else
-                                    alarm.offsetMinutes
-
-                            add(Calendar.MINUTE, delta)
-                        }
-                        triggerCal.timeInMillis = futureCal.timeInMillis
+                        trigger = alarm.triggerOn(futureDate, futurePrayerTime)
                     }
                 }
             }
-            customAlarmScheduler.schedule(
-                alarm,
-                triggerCal.timeInMillis
-            )
+
+            customAlarmScheduler.schedule(alarm, trigger.atZone(zone).toInstant().toEpochMilli())
         }
     }
+
+    private fun CustomAlarm.runsOn(date: LocalDate): Boolean =
+        everyDay || date.calendarDayOfWeek() in activeDays
+
+    private fun CustomAlarm.triggerOn(date: LocalDate, prayerTime: LocalTime): LocalDateTime {
+        val offset = if (offsetDirection == OffsetDirection.BEFORE) -offsetMinutes else offsetMinutes
+        return date.atTime(prayerTime.hour, prayerTime.minute).plusMinutes(offset.toLong())
+    }
+
+    // Stored days use java.util.Calendar numbering: Sunday = 1 ... Saturday = 7.
+    private fun LocalDate.calendarDayOfWeek(): Int = dayOfWeek.value % 7 + 1
 }

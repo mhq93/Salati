@@ -7,12 +7,11 @@ import com.mhq.salati.prayertimes.domain.model.PrayerTimesResult
 import com.mhq.salati.prayertimes.domain.usecases.GetCachedPrayerTimesUseCase
 import com.mhq.salati.prayertimes.domain.usecases.GetPrayerTimesUseCase
 import com.mhq.salati.shared.domain.Coordinates
+import com.mhq.salati.shared.domain.toDateKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -25,11 +24,9 @@ class LoadPrayerTimesUseCase @Inject constructor(
     private val calculatePrayerStatusUseCase: CalculatePrayerStatusUseCase,
     private val connectivityChecker: ConnectivityChecker
 ) {
-    private val dateKeyFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.US)
-
     /** Cache first. Only on a cache miss does it emit [PrayerTimesLoad.FetchingFromNetwork] and go online. */
     operator fun invoke(date: LocalDate, coordinates: Coordinates): Flow<PrayerTimesLoad> = flow {
-        val dateKey = date.format(dateKeyFormatter)
+        val dateKey = date.toDateKey()
 
         val cached = getCachedPrayerTimesUseCase(dateKey, coordinates)
         if (cached != null) {

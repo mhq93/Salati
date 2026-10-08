@@ -11,6 +11,7 @@ import com.mhq.salati.location.domain.usecases.SaveManualLocationUseCase
 import com.mhq.salati.location.domain.usecases.SearchLocationByNameUseCase
 import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContract
 import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
+import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.Coordinates
 import com.mhq.salati.shared.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,7 +45,8 @@ class LocationPickerViewModel @Inject constructor(
     private val searchLocationByName: SearchLocationByNameUseCase,
     private val reverseGeocodeLocation: ReverseGeocodeLocationUseCase,
     private val saveManualLocation: SaveManualLocationUseCase,
-    private val observeSettings: ObserveSettingsUseCase
+    private val observeSettings: ObserveSettingsUseCase,
+    private val clock: Clock
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LocationPickerContract.State())
@@ -128,7 +130,7 @@ class LocationPickerViewModel @Inject constructor(
     private fun executeManualSearch(query: String) {
         if (query.isBlank()) return
 
-        val currentTime = System.currentTimeMillis()
+        val currentTime = clock.instant().toEpochMilli()
 
         // Nominatim's usage policy allows at most one request per second.
         if (currentTime - lastManualSearchTimeMs < SEARCH_COOLDOWN_MS) {

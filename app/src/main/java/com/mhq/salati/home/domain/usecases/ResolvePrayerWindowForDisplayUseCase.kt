@@ -6,10 +6,9 @@ import com.mhq.salati.prayertimes.domain.usecases.GetCachedPrayerTimesUseCase
 import com.mhq.salati.prayertimes.domain.usecases.GetPrayerTimesUseCase
 import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.Coordinates
+import com.mhq.salati.shared.domain.toDateKey
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Locale
 import javax.inject.Inject
 
 class ResolvePrayerWindowForDisplayUseCase @Inject constructor(
@@ -18,20 +17,18 @@ class ResolvePrayerWindowForDisplayUseCase @Inject constructor(
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
     private val calculatePrayerWindowUseCase: CalculatePrayerWindowUseCase
 ) {
-    private val dateKeyFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.US)
-
     suspend operator fun invoke(
         browsedTimings: PrayerTimings,
         browsedDate: LocalDate,
         coordinates: Coordinates
     ): PrayerWindow {
-        val browsedDateKey = browsedDate.format(dateKeyFormatter)
+        val browsedDateKey = clock.today().toDateKey()
 
         if (browsedDate == clock.today()) {
             return calculatePrayerWindowUseCase(browsedTimings, browsedDateKey, coordinates)
         }
 
-        val todayKey = clock.today().format(dateKeyFormatter)
+        val todayKey = clock.today().toDateKey()
         val todayTimings = getCachedPrayerTimesUseCase(todayKey, coordinates)?.timings
             ?: getPrayerTimesUseCase(todayKey, coordinates).getOrNull()?.timings
             ?: browsedTimings

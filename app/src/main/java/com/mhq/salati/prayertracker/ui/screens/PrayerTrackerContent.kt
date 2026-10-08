@@ -17,14 +17,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
+import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.Intent
+import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.State
 import com.mhq.salati.prayertracker.ui.components.CalendarMonthView
 import com.mhq.salati.prayertracker.ui.components.PrayerStatusList
 import com.mhq.salati.prayertracker.ui.components.StreakBanner
-import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.Intent
-import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.State
-import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.components.TabHeader
+import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.theme.SalatiTheme
+import java.time.LocalDate
+import java.time.YearMonth
 
 @Composable
 fun PrayerTrackerContent(
@@ -69,6 +71,7 @@ fun PrayerTrackerContent(
                 Spacer(modifier = Modifier.height(24.dp))
                 PrayerStatusList(
                     selectedDate = state.selectedDate,
+                    today = state.today,
                     records = state.selectedDateRecords,
                     onPrayerTapped = { onIntent(Intent.PrayerTileTapped(it)) }
                 )
@@ -82,7 +85,11 @@ fun PrayerTrackerContent(
 private fun PrayerTrackerContentPreview() {
     SalatiTheme() {
         PrayerTrackerContent(
-            state = State(),
+            state = State(
+                today = LocalDate.of(2026, 10, 8),
+                selectedMonth = YearMonth.of(2026, 10),
+                selectedDate = LocalDate.of(2026, 10, 8)
+            ),
             onIntent = {}
         )
     }

@@ -24,10 +24,11 @@ import java.time.LocalDate
 @Composable
 fun PrayerStatusList(
     selectedDate: LocalDate,
+    today: LocalDate,
     records: Map<PrayerName, PrayerStatus>,
     onPrayerTapped: (PrayerName) -> Unit
 ) {
-    val locked = selectedDate.isAfter(LocalDate.now())
+    val locked = selectedDate.isAfter(today)
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -61,7 +62,8 @@ fun PrayerStatusList(
 private fun PrayerStatusListPreview() {
     SalatiTheme() {
         PrayerStatusList(
-            selectedDate = LocalDate.now(),
+            selectedDate = LocalDate.of(2026, 10, 8),
+            today = LocalDate.of(2026, 10, 8),
             records = emptyMap(),
             onPrayerTapped = {}
         )

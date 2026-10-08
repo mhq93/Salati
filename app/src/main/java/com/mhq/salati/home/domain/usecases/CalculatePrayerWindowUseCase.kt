@@ -7,13 +7,13 @@ import com.mhq.salati.prayertimes.domain.usecases.GetPrayerTimesUseCase
 import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.Coordinates
 import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.shared.domain.toDateKey
+import com.mhq.salati.shared.domain.toLocalDateFromKey
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -22,17 +22,13 @@ class CalculatePrayerWindowUseCase @Inject constructor(
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase
 ) {
-    // Single formatter, always Locale.US, used for both parse and format
-    // so the date-key round-trip can't drift under non-Latin-digit locales.
-    private val dateKeyFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.US)
-
     suspend operator fun invoke(
         timings: PrayerTimings,
         date: String,
         coordinates: Coordinates
     ): PrayerWindow {
         val zoneId = clock.zone()
-        val day = LocalDate.parse(date, dateKeyFormatter)
+        val day = date.toLocalDateFromKey()
 
         val now = clock.instant()
         val prayerInstants = PrayerName.majorEntries.map { name ->
@@ -79,7 +75,7 @@ class CalculatePrayerWindowUseCase @Inject constructor(
         zoneId: ZoneId,
         fallback: LocalTime
     ): Instant {
-        val yesterdayKey = yesterday.format(dateKeyFormatter)
+        val yesterdayKey = yesterday.toDateKey()
 
         val cached = getCachedPrayerTimesUseCase(yesterdayKey, coordinates)
         if (cached != null) {

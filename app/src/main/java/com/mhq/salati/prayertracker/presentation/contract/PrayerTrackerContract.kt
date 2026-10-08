@@ -9,8 +9,9 @@ import java.time.YearMonth
 
 object PrayerTrackerContract {
     data class State(
-        val selectedMonth: YearMonth = YearMonth.now(),
-        val selectedDate: LocalDate = LocalDate.now(),
+        val today: LocalDate,
+        val selectedMonth: YearMonth,
+        val selectedDate: LocalDate,
         val monthDayStatus: Map<LocalDate, DayStatus> = emptyMap(),
         val selectedDateRecords: Map<PrayerName, PrayerStatus> = emptyMap(),
         val dialogPrayer: PrayerName? = null,

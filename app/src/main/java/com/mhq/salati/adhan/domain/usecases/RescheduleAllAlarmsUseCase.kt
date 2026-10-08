@@ -11,12 +11,11 @@ import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
 import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.Coordinates
 import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.shared.domain.toDateKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -33,8 +32,6 @@ class RescheduleAllAlarmsUseCase @Inject constructor(
     private val observeSettingsUseCase: ObserveSettingsUseCase,
     private val rescheduleCustomAlarmsUseCase: RescheduleCustomAlarmsUseCase
 ) {
-    private val dateKeyFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.US)
-
     suspend operator fun invoke() = withContext(Dispatchers.IO) {
         if (observeSettingsUseCase().first().notificationsEnabled) {
             schedulePrayerAlarms()
@@ -54,8 +51,8 @@ class RescheduleAllAlarmsUseCase @Inject constructor(
         // (off by a minute or two at most); the next Home load corrects it.
         val tomorrowTimings = cachedTimings(tomorrow, coordinates) ?: todayTimings
 
-        val mutedToday = mutedPrayersRepository.getMutedPrayers(today.format(dateKeyFormatter))
-        val mutedTomorrow = mutedPrayersRepository.getMutedPrayers(tomorrow.format(dateKeyFormatter))
+        val mutedToday = mutedPrayersRepository.getMutedPrayers(today.toDateKey())
+        val mutedTomorrow = mutedPrayersRepository.getMutedPrayers(tomorrow.toDateKey())
 
         PrayerName.entries.forEach { name ->
             val todayTrigger = todayTimings
@@ -77,5 +74,5 @@ class RescheduleAllAlarmsUseCase @Inject constructor(
     }
 
     private suspend fun cachedTimings(date: LocalDate, coordinates: Coordinates): PrayerTimings? =
-        getCachedPrayerTimesUseCase(date.format(dateKeyFormatter), coordinates)?.timings
+        getCachedPrayerTimesUseCase(date.toDateKey(), coordinates)?.timings
 }

@@ -3,9 +3,8 @@ package com.mhq.salati.alarms.domain.usecases
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
 import com.mhq.salati.prayertimes.domain.usecases.GetCachedPrayerTimesUseCase
 import com.mhq.salati.shared.domain.Clock
+import com.mhq.salati.shared.domain.toDateKey
 import kotlinx.coroutines.flow.first
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -20,11 +19,9 @@ class RescheduleCustomAlarmsUseCase @Inject constructor(
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
     private val scheduleCustomAlarmsUseCase: ScheduleCustomAlarmsUseCase
 ) {
-    private val dateKeyFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.US)
-
     suspend operator fun invoke() {
         val location = getSavedLocationUseCase().first() ?: return
-        val todayKey = clock.today().format(dateKeyFormatter)
+        val todayKey = clock.today().toDateKey()
         val cached = getCachedPrayerTimesUseCase(todayKey, location.coordinates)
             ?: return
         scheduleCustomAlarmsUseCase(cached.timings)

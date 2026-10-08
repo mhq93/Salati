@@ -5,19 +5,17 @@ import com.mhq.salati.adhan.datasource.database.MutedPrayerEntity
 import com.mhq.salati.adhan.domain.repo.MutedPrayersRepository
 import com.mhq.salati.shared.data.mapper.fromStorageKey
 import com.mhq.salati.shared.data.mapper.storageKey
+import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.shared.domain.toLocalDateFromKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import javax.inject.Inject
 
 class MutedPrayersRepoImpl @Inject constructor(
-    private val mutedPrayerDao: MutedPrayerDao
+    private val mutedPrayerDao: MutedPrayerDao,
+    private val clock: Clock
 ) : MutedPrayersRepository {
-
-    private val dateKeyFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.US)
 
     override suspend fun getMutedPrayers(date: String): Set<PrayerName> =
         mutedPrayerDao.getMutedPrayers(date).toPrayerNames()
@@ -27,7 +25,7 @@ class MutedPrayersRepoImpl @Inject constructor(
 
     override suspend fun toggleMute(date: String, prayerName: PrayerName, muted: Boolean) {
         if (muted) {
-            val epochDay = LocalDate.parse(date, dateKeyFormatter).toEpochDay()
+            val epochDay = date.toLocalDateFromKey().toEpochDay()
             mutedPrayerDao.mute(
                 MutedPrayerEntity(date, prayerName.storageKey, epochDay)
             )
@@ -37,8 +35,7 @@ class MutedPrayersRepoImpl @Inject constructor(
     }
 
     override suspend fun purgePastDates() {
-        val todayEpoch = LocalDate.now().toEpochDay()
-        mutedPrayerDao.purgePast(todayEpoch)
+        mutedPrayerDao.purgePast(clock.today().toEpochDay())
     }
 
     // Rows with a key this version doesn't know are ignored rather than crashing the screen.

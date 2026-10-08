@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.YearMonth
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,7 +37,17 @@ class PrayerTrackerViewModel @Inject constructor(
     private val setStatus: SetPrayerStatusUseCase,
     private val getCurrentStreak: GetCurrentStreakUseCase,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(PrayerTrackerContract.State())
+
+    private val _state = MutableStateFlow(
+        clock.today().let { today ->
+            PrayerTrackerContract.State(
+                today = today,
+                selectedMonth = YearMonth.from(today),
+                selectedDate = today
+            )
+        }
+    )
+
     val state = _state.asStateFlow()
 
     private val _effect = Channel<PrayerTrackerContract.Effect>(Channel.BUFFERED)
@@ -51,7 +62,7 @@ class PrayerTrackerViewModel @Inject constructor(
                 val statusMap = recordsByDate.mapValues { (date, records) ->
                     dayStatusFor(date, records, today)
                 }
-                _state.update { it.copy(monthDayStatus = statusMap, isLoading = false) }
+                _state.update { it.copy(today = today, monthDayStatus = statusMap, isLoading = false) }
             }
             .launchIn(viewModelScope)
 
@@ -72,7 +83,8 @@ class PrayerTrackerViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         selectedDate = intent.date,
-                        selectedDateRecords = emptyMap()
+                        selectedDateRecords = emptyMap(),
+                        today = clock.today()
                     )
                 }
             }
