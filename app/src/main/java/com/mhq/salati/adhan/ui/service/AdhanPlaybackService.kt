@@ -15,19 +15,19 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.mhq.salati.R
-import com.mhq.salati.adhan.datasource.playback.AdhanPlaybackStateHolder
+import com.mhq.salati.adhan.presentation.presenter.AdhanPlaybackPresenter
 import com.mhq.salati.settings.domain.model.AdhanSound
 import com.mhq.salati.shared.data.mapper.fromStorageKey
 import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.ui.labelRes
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -35,7 +35,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class AdhanPlaybackService : Service() {
 
     @Inject
-    lateinit var adhanPlaybackStateHolder: AdhanPlaybackStateHolder
+    lateinit var adhanPlaybackPresenter: AdhanPlaybackPresenter
     private var mediaPlayer: MediaPlayer? = null
     private var audioManager: AudioManager? = null
     private var focusRequest: AudioFocusRequest? = null
@@ -79,7 +79,7 @@ class AdhanPlaybackService : Service() {
             startForeground(NOTIFICATION_ID, notification)
         }
 
-        adhanPlaybackStateHolder.setPlaying(prayerName)
+        adhanPlaybackPresenter.onPlaybackStarted(prayerName)
 
         // NEW — muted prayers have nothing to play and no completion callback
         // to end them, so the foreground notification would otherwise stay
@@ -106,10 +106,10 @@ class AdhanPlaybackService : Service() {
 
         val focusResult = audioManager?.requestAudioFocus(focusRequest!!)
         if (focusResult != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            adhanPlaybackStateHolder.setIdle()
             stopPlayback()
             return
         }
+
 
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(audioAttributes)
@@ -139,7 +139,7 @@ class AdhanPlaybackService : Service() {
 
     private fun stopPlayback() {
         releasePlayer()
-        adhanPlaybackStateHolder.setIdle()
+        adhanPlaybackPresenter.onPlaybackStopped()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
