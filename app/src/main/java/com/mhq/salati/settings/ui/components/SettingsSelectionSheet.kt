@@ -32,6 +32,7 @@ import com.mhq.salati.settings.presentation.SelectorType
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.settings.presentation.contract.SettingsContract.State
 import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
+import com.mhq.salati.settings.ui.displayNameRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

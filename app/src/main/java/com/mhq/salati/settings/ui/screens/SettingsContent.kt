@@ -48,6 +48,7 @@ import com.mhq.salati.settings.ui.components.SettingsSwitchRow
 import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
 import com.mhq.salati.settings.presentation.contract.SettingsContract.State
 import com.mhq.salati.settings.presentation.SelectorType
+import com.mhq.salati.settings.ui.displayNameRes
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.components.TabHeader
 import com.mhq.salati.shared.ui.theme.SalatiTheme
