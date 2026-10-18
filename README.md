@@ -11,8 +11,8 @@
 </p>
 
 An offline-first Android prayer times app built with **Kotlin**, **Jetpack Compose**, **Ktor**, **MVI** and **Clean Architecture**.<br>
-It fetches prayer timings via Ktor after resolving location, plays Adhan with notifications, schedules alarm via `AlarmManager`.<br>
-**Salati** handles background alarms and notifications, and integrates with OpenStreetMap Nominatim for location services.
+It fetches prayer timings using AlAdhan API, plays Adhan with notifications, schedules custom alarms via `AlarmManager`.<br>
+**Salati** handles background alarms and notifications, and integrates with Nominatim for location services.
 
 </div>
 
@@ -20,10 +20,9 @@ It fetches prayer timings via Ktor after resolving location, plays Adhan with no
 
 ## 🚀 About the Project
 
-**Salati** is an offline-first app that fetches prayer timings and plays Adhan sound to help users pray on time<br>
+**Salati** is an offline-first app with localization and dark mode support<br>
 Users can find Qibla direction, set custom alarms (periodic or one-off) before or after prayers and track prayers streak.<br>
 Users can also track minor timings such as: Shorouq, First and last Thirds of the night to verify prayer times.<br>
-**Salati** has localization and dark mode support.<br>
 
 ---
 
@@ -33,8 +32,8 @@ Users can also track minor timings such as: Shorouq, First and last Thirds of th
 - **UI Toolkit:** [Jetpack Compose](https://developer.android.com/jetpack/compose) & [Material 3](https://m3.material.io/) — Modern declarative UI framework.
 - **Architecture:** **MVI (Model-View-Intent)** and **MVVM** with Clean Architecture and Unidirectional Data Flow (UDF).
 - **Concurrency:** [Kotlin Coroutines & Flow](https://kotlinlang.org/docs/coroutines-guide.html) — Asynchronous operations and reactive stream handling.
-- **Local Persistence:** [Room](https://developer.android.com/training/data-storage/room) & [DataStore](https://developer.android.com/topic/libraries/architecture/datastore) — Type-safe relational storage and multi-day range queries for streak analysis.
-- **Alarm & Background Services:** `AlarmManager` & Foreground Services — Precise prayer notifications, audio focus management, and immediate alarm re-arming (`rescheduleAlarmsQuietly`).
+- **Persistence:** [Room](https://developer.android.com/training/data-storage/room) & [DataStore](https://developer.android.com/topic/libraries/architecture/datastore) — Type-safe relational storage and multi-day range queries for streak analysis.
+- **`AlarmManager` & Foreground Services:** Precise prayer notifications, audio focus management, and immediate alarm re-arming (`rescheduleAlarmsQuietly`).
 - **Networking:** [Retrofit](https://square.github.io/retrofit/) & [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization) — REST API integration and type-safe payload parsing.
 - **Location & Geocoding:** Nominatim API with typed error states and rate-compliance execution cooldowns.
 
