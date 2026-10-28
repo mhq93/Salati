@@ -1,10 +1,13 @@
 package com.mhq.salati.prayertracker.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -78,17 +82,22 @@ fun PrayerConfirmDialog(
     }
 }
 
-//@Preview
-//@Composable
-//private fun PrayerConfirmDialogPreview() {
-//    SalatiTheme() {
-//        PrayerConfirmDialog(
-//            prayer = PrayerName(
-//                isMinorTiming = false
-//            ),
-//            onConfirmPrayed = {},
-//            onConfirmMissed = {},
-//            onDismiss = {}
-//        )
-//    }
-//}
+@Preview(name = "Light Mode", showBackground = true)
+@Preview(name = "Dark Mode", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun PrayerConfirmDialogPreview() {
+    SalatiTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Gray.copy(alpha = 0.5f))
+        ) {
+            PrayerConfirmDialog(
+                prayer = PrayerName.FAJR,
+                onConfirmPrayed = {},
+                onConfirmMissed = {},
+                onDismiss = {}
+            )
+        }
+    }
+}

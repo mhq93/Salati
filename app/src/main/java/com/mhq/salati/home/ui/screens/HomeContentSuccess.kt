@@ -1,10 +1,22 @@
 package com.mhq.salati.home.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -14,19 +26,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
+import com.mhq.salati.home.domain.model.PrayerWindow
+import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.home.ui.components.DateBanner
 import com.mhq.salati.home.ui.components.LocationHeader
 import com.mhq.salati.home.ui.components.PrayerCountdownRing
 import com.mhq.salati.home.ui.components.PrayersList
-import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.prayertimes.domain.model.HijriDate
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.shared.domain.HijriMonth
 import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.ui.labelRes
+import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.shared.ui.theme.prayerGradient
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -148,35 +163,49 @@ fun HomeContentSuccess(
     }
 }
 
-@Preview
+@Preview(name = "Light Mode - Success", showSystemUi = true)
+@Preview(
+    name = "Dark Mode - Success",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES,
+    showSystemUi = true
+)
 @Composable
-fun HomeContentSuccessPreview() {
-    HomeContentSuccess(
-        locationName = "Cairo, Egypt",
-        prayerDate = PrayerDate(
-            gregorianDate = LocalDate.of(2026, 8, 17),
-            hijriDate = HijriDate(day = 4, month = HijriMonth.SHAWWAL, year = 1448)
-        ),
-        prayerTimings = PrayerTimings(
-            fajr = LocalTime.of(4, 30),
-            dhuhr = LocalTime.of(12, 0),
-            asr = LocalTime.of(15, 30),
-            maghrib = LocalTime.of(18, 45),
-            isha = LocalTime.of(20, 15),
-            imsak = LocalTime.of(4, 15),
-            sunrise = LocalTime.of(5, 45),
-            firstThird = LocalTime.of(22, 0),
-            midnight = LocalTime.of(23, 30),
-            lastThird = LocalTime.of(2, 0),
-            sunset = LocalTime.of(18, 30)
-        ),
-        nextPrayer = PrayerName.FAJR,
-        remaining = Duration.ofHours(1),
-        windowProgress = 0.4f,
-        currentPrayerName = PrayerName.DHUHR,
-        mutedPrayers = setOf(PrayerName.FAJR),
-        pastPrayers = setOf(PrayerName.FAJR),
-        isToday = true,
-        onIntent = {}
-    )
+private fun HomeContentSuccessPreview() {
+    SalatiTheme {
+        HomeContent(
+            state = HomeContract.State(
+                isLoading = false,
+                errorMessage = null,
+                location = HomeContract.LocationUiState(locationName = "Cairo, Egypt"),
+                dateBrowser = HomeContract.DateBrowserUiState(isBrowsingToday = true),
+                prayerTimes = HomeContract.PrayerTimesUiState(
+                    date = PrayerDate(
+                        gregorianDate = LocalDate.of(2026, 8, 17),
+                        hijriDate = HijriDate(4, HijriMonth.SHAWWAL, 1448)
+                    ),
+                    timings = PrayerTimings(
+                        LocalTime.of(4, 15),
+                        LocalTime.of(4, 30),
+                        LocalTime.of(5, 45),
+                        LocalTime.of(12, 0),
+                        LocalTime.of(15, 30),
+                        LocalTime.of(18, 30),
+                        LocalTime.of(18, 45),
+                        LocalTime.of(20, 15),
+                        LocalTime.of(23, 30),
+                        LocalTime.of(22, 0),
+                        LocalTime.of(2, 0)
+                    ),
+                    prayerWindow = PrayerWindow(
+                        PrayerName.FAJR,
+                        Instant.now(),
+                        Instant.now().plusSeconds(3600)
+                    ),
+                    remaining = Duration.ofMinutes(45),
+                    windowProgress = 0.6f
+                )
+            ),
+            onIntent = {}
+        )
+    }
 }

@@ -1,5 +1,6 @@
 package com.mhq.salati.qibla.ui.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.mhq.salati.R
+import com.mhq.salati.qibla.domain.model.CompassAccuracy
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.components.TabHeader
@@ -80,12 +82,19 @@ fun QiblaContent(
     }
 }
 
-@Preview
+@Preview(name = "Light Mode - Active Compass", showSystemUi = true)
+@Preview(name = "Dark Mode - Active Compass", showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun QiblaContentPreview() {
+private fun QiblaContentActivePreview() {
     SalatiTheme {
         QiblaContent(
-            state = QiblaContract.State(),
+            state = QiblaContract.State(
+                isLoading = false,
+                qiblaBearing = 135f,
+                deviceHeading = 45f,
+                locationName = "Alexandria, Egypt",
+                compassAccuracy = CompassAccuracy.HIGH
+            ),
             onIntent = {}
         )
     }

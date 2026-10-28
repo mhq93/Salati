@@ -1,5 +1,7 @@
 package com.mhq.salati.prayertracker.ui.components
 
+import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,10 +26,12 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
 import com.mhq.salati.prayertracker.domain.model.DayStatus
+import com.mhq.salati.shared.ui.theme.SalatiTheme
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.chrono.HijrahChronology
@@ -174,6 +178,28 @@ fun CalendarMonthView(
                     }
                 }
             }
+        }
+    }
+}
+
+@Preview(name = "Light Mode", showBackground = true)
+@Preview(name = "Dark Mode", showBackground = true,  uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun CalendarMonthViewPreview() {
+    SalatiTheme {
+        Box(modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .padding(12.dp)) {
+            CalendarMonthView(
+                selectedMonth = YearMonth.of(2026, 10),
+                selectedDate = LocalDate.of(2026, 10, 8),
+                dayStatus = mapOf(
+                    LocalDate.of(2026, 10, 7) to DayStatus.ALL_PRAYED,
+                    LocalDate.of(2026, 10, 8) to DayStatus.IN_PROGRESS
+                ),
+                onDateSelected = {},
+                onMonthChanged = {}
+            )
         }
     }
 }

@@ -4,10 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.R
 import com.mhq.salati.alarms.domain.model.CustomAlarm
+import com.mhq.salati.alarms.domain.model.conflictsWith
 import com.mhq.salati.alarms.domain.usecases.CreateCustomAlarmUseCase
+import com.mhq.salati.alarms.domain.usecases.DayToggleResult
 import com.mhq.salati.alarms.domain.usecases.DeleteCustomAlarmUseCase
 import com.mhq.salati.alarms.domain.usecases.ObserveCustomAlarmsUseCase
 import com.mhq.salati.alarms.domain.usecases.RescheduleCustomAlarmsUseCase
+import com.mhq.salati.alarms.domain.usecases.ToggleCustomAlarmDayUseCase
 import com.mhq.salati.alarms.domain.usecases.ToggleCustomAlarmUseCase
 import com.mhq.salati.alarms.domain.usecases.UpdateCustomAlarmUseCase
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract.Effect
@@ -32,6 +35,7 @@ class AlarmsViewModel @Inject constructor(
     private val updateCustomAlarmUseCase: UpdateCustomAlarmUseCase,
     private val deleteCustomAlarmUseCase: DeleteCustomAlarmUseCase,
     private val toggleCustomAlarmUseCase: ToggleCustomAlarmUseCase,
+    private val toggleCustomAlarmDayUseCase: ToggleCustomAlarmDayUseCase,
     private val rescheduleCustomAlarmsUseCase: RescheduleCustomAlarmsUseCase
 ) : ViewModel() {
 
@@ -52,6 +56,7 @@ class AlarmsViewModel @Inject constructor(
             is Intent.SaveAlarm -> saveAlarm(intent.alarm)
             is Intent.DeleteAlarm -> deleteAlarm(intent.id)
             is Intent.ToggleAlarm -> toggleAlarm(intent.id, intent.enabled)
+            is Intent.AlarmDayToggled -> toggleAlarmDay(intent.id, intent.calendarDay)
         }
     }
 
@@ -74,8 +79,8 @@ class AlarmsViewModel @Inject constructor(
     private fun saveAlarm(alarm: CustomAlarm) {
         viewModelScope.launch {
             try {
-                val isDuplicate = alarm.id == 0L && _state.value.alarms.any { it.isEquivalentTo(alarm) }
-                if (isDuplicate) {
+                val hasConflict = _state.value.alarms.any { it.id != alarm.id && it.conflictsWith(alarm) }
+                if (hasConflict) {
                     _effect.send(Effect.ShowError(UiText.Res(R.string.duplicate_alarm_exists)))
                     return@launch
                 }
@@ -94,13 +99,6 @@ class AlarmsViewModel @Inject constructor(
         }
     }
 
-    private fun CustomAlarm.isEquivalentTo(other: CustomAlarm): Boolean =
-        prayerName == other.prayerName &&
-                offsetMinutes == other.offsetMinutes &&
-                offsetDirection == other.offsetDirection &&
-                everyDay == other.everyDay &&
-                activeDays == other.activeDays
-
     private fun deleteAlarm(id: Long) {
         viewModelScope.launch {
             try {
@@ -117,6 +115,20 @@ class AlarmsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 toggleCustomAlarmUseCase(id, enabled)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _effect.send(Effect.ShowError(UiText.Res(R.string.couldn_t_update_alarm)))
+            }
+        }
+    }
+
+    private fun toggleAlarmDay(id: Long, calendarDay: Int) {
+        viewModelScope.launch {
+            try {
+                if (toggleCustomAlarmDayUseCase(id, calendarDay) == DayToggleResult.CONFLICT) {
+                    _effect.send(Effect.ShowError(UiText.Res(R.string.duplicate_alarm_exists)))
+                }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {

@@ -1,5 +1,7 @@
 package com.mhq.salati.home.ui.components
 
+import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -34,7 +37,7 @@ fun PrayersList(
 
             Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
                 Box(modifier = Modifier.weight(1f)) {
-                    PrayerListItem(
+                    PrayerGridItem(
                         prayerName = stringResource(name.labelRes),
                         prayerTime = time,
                         isPrayerHighlighted = name == currentTimingName,
@@ -44,7 +47,7 @@ fun PrayersList(
                     )
                 }
                 Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                    PrayerListItem(
+                    PrayerGridItem(
                         prayerName = stringResource(minorName.labelRes),
                         prayerTime = minorTime,
                         isPrayerHighlighted = minorName == currentTimingName,
@@ -58,17 +61,20 @@ fun PrayersList(
     }
 }
 
-@Preview
+@Preview(name = "Light Mode Grid", showBackground = true)
+@Preview(name = "Dark Mode Grid", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PrayersListPreview() {
-    SalatiTheme() {
-        PrayersList(
-            prayers = emptyList(),
-            minorTimings = emptyList(),
-            currentTimingName = null,
-            mutedTimings = emptySet(),
-            pastTimings = emptySet(),
-            onIntent = {}
-        )
+    SalatiTheme {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+            PrayersList(
+                prayers = listOf("Fajr" to "04:30", "Dhuhr" to "12:00", "Asr" to "15:30").map { PrayerName.FAJR to it.second },
+                minorTimings = listOf("Imsak" to "04:15", "Shorouq" to "05:45", "Midnight" to "23:30").map { PrayerName.IMSAK to it.second },
+                currentTimingName = PrayerName.FAJR,
+                mutedTimings = setOf(PrayerName.IMSAK),
+                pastTimings = emptySet(),
+                onIntent = {}
+            )
+        }
     }
 }

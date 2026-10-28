@@ -1,6 +1,6 @@
 package com.mhq.salati.onboarding.ui.screens
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,14 +40,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
+import com.mhq.salati.onboarding.presentation.contract.OnboardingContract
 import com.mhq.salati.onboarding.ui.components.OnboardingPageData
 import com.mhq.salati.onboarding.ui.components.OnboardingPageItem
 import com.mhq.salati.onboarding.ui.components.PageIndicator
-import com.mhq.salati.onboarding.presentation.contract.OnboardingContract
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.shared.ui.theme.prayerGradient
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingContent(
     state: OnboardingContract.State,
@@ -191,12 +190,13 @@ fun OnboardingContent(
     }
 }
 
-@Preview
+@Preview(name = "Light Mode", showSystemUi = true)
+@Preview(name = "Dark Mode", showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun OnboardingContentPreview() {
     SalatiTheme {
         OnboardingContent(
-            state = OnboardingContract.State(),
+            state = OnboardingContract.State(currentPage = 0, isLoading = false),
             onIntent = {}
         )
     }

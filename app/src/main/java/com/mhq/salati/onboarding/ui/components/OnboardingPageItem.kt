@@ -1,5 +1,6 @@
 package com.mhq.salati.onboarding.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,8 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.shared.ui.theme.SalatiTheme
+import com.mhq.salati.shared.ui.theme.prayerGradient
 
 @Composable
 fun OnboardingPageItem(page: OnboardingPageData) {
@@ -76,5 +82,22 @@ fun OnboardingPageItem(page: OnboardingPageData) {
             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f),
             lineHeight = 22.sp
         )
+    }
+}
+
+@Preview(name = "Light Mode", showBackground = true)
+@Preview(name = "Dark Mode", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun OnboardingPageItemPreview() {
+    SalatiTheme {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.prayerGradient)) {
+            OnboardingPageItem(
+                page = OnboardingPageData(
+                    icon = Icons.Default.Schedule,
+                    title = "Never Miss a Prayer",
+                    description = "Get beautifully timed notifications and track your daily obligations effortlessly wherever you are."
+                )
+            )
+        }
     }
 }

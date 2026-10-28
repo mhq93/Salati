@@ -1,5 +1,6 @@
 package com.mhq.salati.language.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -138,12 +139,27 @@ fun LanguageSelectionContent(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    name = "Light Mode - English Layout",
+    locale = "en",
+    showBackground = true
+)
+@Preview(
+    name = "Dark Mode - Arabic Layout",
+    locale = "ar",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true
+)
 @Composable
-private fun LanguageSelectionDialogPreview() {
+private fun LanguageSelectionContentPreview() {
     SalatiTheme {
-        LanguageSelectionContent(
-            onLanguageSelected = {}
-        )
+        Surface(
+            color = MaterialTheme.colorScheme.background,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            LanguageSelectionContent(
+                onLanguageSelected = {}
+            )
+        }
     }
 }

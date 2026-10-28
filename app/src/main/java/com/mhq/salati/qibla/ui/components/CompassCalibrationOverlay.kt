@@ -1,5 +1,6 @@
 package com.mhq.salati.qibla.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -195,12 +196,13 @@ private fun AccuracyStatus(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "Light Mode Overlay", showSystemUi = true)
+@Preview(name = "Dark Mode Overlay", showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun CompassCalibrationOverlayPreview(){
-    SalatiTheme() {
+private fun CompassCalibrationOverlayPreview() {
+    SalatiTheme {
         CompassCalibrationOverlay(
-            accuracy = CompassAccuracy.HIGH,
+            accuracy = CompassAccuracy.LOW,
             onDismiss = {}
         )
     }

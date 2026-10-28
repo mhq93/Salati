@@ -1,5 +1,6 @@
 package com.mhq.salati.home.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,11 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
-fun PrayerListItem(
+fun PrayerGridItem(
     prayerName: String,
     prayerTime: String,
     isPrayerHighlighted: Boolean,
@@ -103,6 +106,42 @@ fun PrayerListItem(
                     modifier = Modifier.size(16.dp)
                 )
             }
+        }
+    }
+}
+
+@Preview(name = "Light Mode - Active", showBackground = true)
+@Preview(name = "Dark Mode - Active", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun PrayerGridItemActivePreview() {
+    SalatiTheme {
+        Box(modifier = Modifier.padding(8.dp)) {
+            PrayerGridItem(
+                prayerName = "Asr",
+                prayerTime = "15:30",
+                isPrayerHighlighted = true,
+                isPrayerAdhanMuted = false,
+                isPrayerPassed = false,
+                onMutePrayerToggle = {}
+            )
+        }
+    }
+}
+
+@Preview(name = "Light Mode - Passed & Muted", showBackground = true)
+@Preview(name = "Dark Mode - Passed & Muted", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun PrayerGridItemMutedPreview() {
+    SalatiTheme {
+        Box(modifier = Modifier.padding(8.dp)) {
+            PrayerGridItem(
+                prayerName = "Fajr",
+                prayerTime = "04:45",
+                isPrayerHighlighted = false,
+                isPrayerAdhanMuted = true,
+                isPrayerPassed = true,
+                onMutePrayerToggle = {}
+            )
         }
     }
 }

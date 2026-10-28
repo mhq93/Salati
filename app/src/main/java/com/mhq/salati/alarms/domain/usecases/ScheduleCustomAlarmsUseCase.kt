@@ -15,6 +15,13 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.inject.Inject
 
+/** How far ahead to look for an alarm's next active day (today plus a full week). */
+private const val MAX_DAYS_AHEAD = 7
+
+/**
+ * Arms every enabled custom alarm for its next occurrence, which may be today or a later active day.
+ * Disabled alarms, and alarms with no active day, are cancelled.
+ */
 class ScheduleCustomAlarmsUseCase @Inject constructor(
     private val clock: Clock,
     private val customAlarmRepository: CustomAlarmRepository,
@@ -28,52 +35,55 @@ class ScheduleCustomAlarmsUseCase @Inject constructor(
         val location = getSavedLocationUseCase().first()
 
         customAlarmRepository.getAlarms().forEach { alarm ->
-            if (!alarm.isEnabled || !alarm.runsOn(now.toLocalDate())) {
+            val trigger = if (alarm.isEnabled) {
+                nextTrigger(alarm, now, timings) { date ->
+                    // The actual cached prayer time for a future day; null when that day isn't cached yet.
+                    location?.let {
+                        getCachedPrayerTimesUseCase(date.toDateKey(), it.coordinates)
+                            ?.timings?.get(alarm.prayerName)
+                    }
+                }
+            } else {
+                null
+            }
+
+            if (trigger == null) {
                 customAlarmScheduler.cancel(alarm.id)
-                return@forEach
+            } else {
+                customAlarmScheduler.schedule(alarm, trigger.atZone(zone).toInstant().toEpochMilli())
             }
-
-            var trigger = alarm.triggerOn(now.toLocalDate(), timings[alarm.prayerName])
-
-            if (!trigger.isAfter(now)) {
-                when {
-                    alarm.everyDay -> trigger = trigger.plusDays(1)
-
-                    alarm.activeDays.isNotEmpty() -> {
-                        var daysAhead = 0
-                        do {
-                            trigger = trigger.plusDays(1)
-                            daysAhead++
-                        } while (
-                            trigger.toLocalDate().calendarDayOfWeek() !in alarm.activeDays &&
-                            daysAhead < 7
-                        )
-                    }
-
-                    else -> {
-                        // A one-off alarm whose time has passed.
-                        customAlarmScheduler.cancel(alarm.id)
-                        return@forEach
-                    }
-                }
-
-                // Re-anchor to that future day's ACTUAL cached prayer time instead of reusing
-                // today's time-of-day. Falls back to the drifted estimate above only if that day
-                // isn't cached yet (e.g. across a year boundary); it self-corrects on the next run.
-                if (location != null) {
-                    val futureDate = trigger.toLocalDate()
-                    val futurePrayerTime = getCachedPrayerTimesUseCase(
-                        futureDate.toDateKey(), location.coordinates
-                    )?.timings?.get(alarm.prayerName)
-
-                    if (futurePrayerTime != null) {
-                        trigger = alarm.triggerOn(futureDate, futurePrayerTime)
-                    }
-                }
-            }
-
-            customAlarmScheduler.schedule(alarm, trigger.atZone(zone).toInstant().toEpochMilli())
         }
+    }
+
+    /**
+     * The first moment after [now] at which [alarm] should ring, or null if it never will.
+     *
+     * Walks forward day by day, skipping days the alarm doesn't run on. Today uses [todayTimings];
+     * later days use [futurePrayerTime], falling back to today's prayer time if that day isn't
+     * cached yet (it self-corrects on the next run).
+     */
+    private suspend fun nextTrigger(
+        alarm: CustomAlarm,
+        now: LocalDateTime,
+        todayTimings: PrayerTimings,
+        futurePrayerTime: suspend (LocalDate) -> LocalTime?
+    ): LocalDateTime? {
+        val today = now.toLocalDate()
+        val todayPrayerTime = todayTimings[alarm.prayerName]
+
+        for (daysAhead in 0..MAX_DAYS_AHEAD) {
+            val date = today.plusDays(daysAhead.toLong())
+            if (!alarm.runsOn(date)) continue
+
+            val prayerTime = if (daysAhead == 0) {
+                todayPrayerTime
+            } else {
+                futurePrayerTime(date) ?: todayPrayerTime
+            }
+            val trigger = alarm.triggerOn(date, prayerTime)
+            if (trigger.isAfter(now)) return trigger
+        }
+        return null
     }
 
     private fun CustomAlarm.runsOn(date: LocalDate): Boolean =

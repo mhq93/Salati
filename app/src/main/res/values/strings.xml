@@ -114,6 +114,11 @@
     <string name="no_custom_alarms_title">There are no set custom alarms</string>
     <string name="no_custom_alarms_body">Click the button \u002B below to add a new custom alarm.</string>
     <string name="alarm_saved">Alarm saved</string>
+    <string name="minutes_short">min</string>
+    <string name="custom_alarm_label_fallback">Custom Alarm</string>
+    <string name="alarm_offset_before">before %1$s</string>
+    <string name="alarm_offset_after">after %1$s</string>
+    <string name="alarm_minutes_field_label">Minutes</string>
 
     <!-- Alarm Editor sheet -->
     <string name="new_custom_alarm">Customize an alarm</string>

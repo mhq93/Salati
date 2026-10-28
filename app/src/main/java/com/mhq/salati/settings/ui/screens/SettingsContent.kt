@@ -1,5 +1,6 @@
 package com.mhq.salati.settings.ui.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
+import com.mhq.salati.settings.presentation.SelectorType
+import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
+import com.mhq.salati.settings.presentation.contract.SettingsContract.State
 import com.mhq.salati.settings.ui.components.SettingsActionRow
 import com.mhq.salati.settings.ui.components.SettingsCard
 import com.mhq.salati.settings.ui.components.SettingsDivider
@@ -45,12 +49,9 @@ import com.mhq.salati.settings.ui.components.SettingsSelectionSheet
 import com.mhq.salati.settings.ui.components.SettingsSelectorRow
 import com.mhq.salati.settings.ui.components.SettingsStepperRow
 import com.mhq.salati.settings.ui.components.SettingsSwitchRow
-import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
-import com.mhq.salati.settings.presentation.contract.SettingsContract.State
-import com.mhq.salati.settings.presentation.SelectorType
 import com.mhq.salati.settings.ui.displayNameRes
-import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.components.TabHeader
+import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -248,12 +249,19 @@ fun SettingsContent(
     }
 }
 
-@Preview
+@Preview(name = "Light Mode", showSystemUi = true)
+@Preview(name = "Dark Mode", showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun SettingsContentPreview() {
-    SalatiTheme() {
+    SalatiTheme {
         SettingsContent(
-            state = State(),
+            state = State(
+                isLoading = false,
+                notificationsEnabled = true,
+                hasNotificationPermission = true,
+                hijriDateOffset = 1,
+                appVersion = "1.0.4-release"
+            ),
             onIntent = {}
         )
     }

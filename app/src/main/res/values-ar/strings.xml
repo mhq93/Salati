@@ -116,6 +116,11 @@
     <string name="no_custom_alarms_title">لا توجد منبهات خاصة بك</string>
     <string name="no_custom_alarms_body">اضغط الزر \u002B أدناه لإنشاء منبه جديد</string>
     <string name="alarm_saved">تم حفظ المنبه</string>
+    <string name="minutes_short">min</string>
+    <string name="custom_alarm_label_fallback">تنبيه مخصص</string>
+    <string name="alarm_offset_before">قبل %1$s</string>
+    <string name="alarm_offset_after">بعد %1$s</string>
+    <string name="alarm_minutes_field_label">الدقائق</string>
 
     <!-- Alarm Editor sheet -->
     <string name="new_custom_alarm">منبه خاص جديد</string>

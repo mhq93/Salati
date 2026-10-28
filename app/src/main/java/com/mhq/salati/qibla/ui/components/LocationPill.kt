@@ -1,10 +1,15 @@
 package com.mhq.salati.qibla.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -84,13 +89,15 @@ fun LocationPill(
     }
 }
 
-@Preview
+@Preview(name = "Light Mode", showBackground = true)
+@Preview(name = "Dark Mode", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun LocationPillPreview() {
-    SalatiTheme() {
-        LocationPill(
-            locationName = "Alexandria, Egypt",
-            onClick = {}
-        )
+    SalatiTheme {
+        Box(modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)) {
+            LocationPill(locationName = "Mecca, Saudi Arabia", onClick = {})
+        }
     }
 }

@@ -70,6 +70,9 @@ object AlarmsContract {
         /** Enables or disables the alarm with the given [id] without deleting it. */
         data class ToggleAlarm(val id: Long, val enabled: Boolean) : Intent
 
+        /** The user tapped [calendarDay] on the card of the alarm with the given [id]. */
+        data class AlarmDayToggled(val id: Long, val calendarDay: Int) : Intent
+
         /** Closes the editor and discards any unsaved edits. */
         data object DismissEditor : Intent
     }

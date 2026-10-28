@@ -1,6 +1,9 @@
 package com.mhq.salati.settings.ui.components
 
+import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,9 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
 fun SettingsSelectorRow(
@@ -75,5 +81,21 @@ fun SettingsSelectorRow(
             tint = MaterialTheme.colorScheme.outline,
             modifier = Modifier.size(18.dp)
         )
+    }
+}
+
+@Preview(name = "Light Mode", showBackground = true)
+@Preview(name = "Dark Mode", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun SettingsSelectorRowPreview() {
+    SalatiTheme {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
+            SettingsSelectorRow(
+                icon = Icons.Default.Language,
+                title = "App Language",
+                valueLabel = "English",
+                onClick = {}
+            )
+        }
     }
 }

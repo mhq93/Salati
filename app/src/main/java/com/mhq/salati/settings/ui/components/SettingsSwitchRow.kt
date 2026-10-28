@@ -1,5 +1,8 @@
 package com.mhq.salati.settings.ui.components
 
+import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -7,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -67,16 +70,19 @@ fun SettingsSwitchRow(
     }
 }
 
-@Preview
+@Preview(name = "Light Mode Row", showBackground = true)
+@Preview(name = "Dark Mode Row", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun SettingsSwitchRowPreview() {
-    SalatiTheme() {
-        SettingsSwitchRow(
-            icon = Icons.Filled.CheckCircle,
-            title = "title",
-            subtitle = "subtitle",
-            isChecked = true,
-            onCheckedChange = {}
-        )
+    SalatiTheme {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
+            SettingsSwitchRow(
+                icon = Icons.Default.NotificationsActive,
+                title = "Push Notifications",
+                subtitle = "Receive reminders right at the time of entry",
+                isChecked = true,
+                onCheckedChange = {}
+            )
+        }
     }
 }
