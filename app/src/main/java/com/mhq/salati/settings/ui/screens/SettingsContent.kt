@@ -55,10 +55,10 @@ import com.mhq.salati.shared.ui.components.TabHeader
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsContent(
     state: State,
+    appVersion: String,
     onIntent: (Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -228,7 +228,7 @@ fun SettingsContent(
                         SettingsActionRow(
                             icon = Icons.Default.Info,
                             title = stringResource(R.string.version),
-                            trailingText = state.appVersion,
+                            trailingText = appVersion,
                             onClick = null
                         )
                     }
@@ -269,9 +269,9 @@ private fun SettingsContentPreview() {
                 isLoading = false,
                 notificationsEnabled = true,
                 hasNotificationPermission = true,
-                hijriDateOffset = 1,
-                appVersion = "1.0.4-release"
+                hijriDateOffset = 1
             ),
+            appVersion = "1.0.4-release",
             onIntent = {}
         )
     }

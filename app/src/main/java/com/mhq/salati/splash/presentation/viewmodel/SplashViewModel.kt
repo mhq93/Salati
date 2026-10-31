@@ -1,17 +1,14 @@
 package com.mhq.salati.splash.presentation.viewmodel
 
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.R
 import com.mhq.salati.language.domain.usecases.SetLanguageSelectedUseCase
 import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateLanguageUseCase
 import com.mhq.salati.settings.presentation.mapper.toDomain
 import com.mhq.salati.settings.presentation.mapper.toUi
 import com.mhq.salati.settings.presentation.model.AppLanguageUi
-import com.mhq.salati.shared.ui.UiText
+import com.mhq.salati.shared.presentation.model.MessageUi
 import com.mhq.salati.splash.domain.usecases.GetStartDestinationUseCase
 import com.mhq.salati.splash.presentation.contract.SplashContract
 import com.mhq.salati.splash.presentation.mapper.toUi
@@ -62,30 +59,38 @@ class SplashViewModel @Inject constructor(
         when (intent) {
             is SplashContract.Intent.CheckStartDestination -> checkStartDestination()
             is SplashContract.Intent.SelectInitialLanguage -> selectInitialLanguage(intent.language)
+            is SplashContract.Intent.LanguageApplied -> completeLanguageSelection()
         }
     }
 
+    // Step 1: save the choice, then ask the UI to apply the locale.
+    // The UI answers with LanguageApplied, so the locale is always applied BEFORE
+    // isLanguageSelected flips, and the app only recreates once.
     private fun selectInitialLanguage(languageUi: AppLanguageUi) = viewModelScope.launch {
         try {
             val language = languageUi.toDomain()
             updateLanguageUseCase(language)
-            // Apply the locale BEFORE flipping isLanguageSelected, so the app
-            // recreates into the right locale instead of briefly showing
-            // main content in the old one, and so we only recreate once.
-            AppCompatDelegate.setApplicationLocales(
-                LocaleListCompat.forLanguageTags(language.code)
-            )
-            setLanguageSelectedUseCase(true)
-
+            _effect.send(SplashContract.Effect.ApplyLanguage(language.code))
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            _effect.send(
-                SplashContract.Effect.ShowError(
-                    UiText.Res(R.string.something_went_wrong)
-                )
-            )
+            showGenericError()
         }
+    }
+
+    // Step 2: the locale is applied, so the language counts as selected.
+    private fun completeLanguageSelection() = viewModelScope.launch {
+        try {
+            setLanguageSelectedUseCase(true)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            showGenericError()
+        }
+    }
+
+    private suspend fun showGenericError() {
+        _effect.send(SplashContract.Effect.ShowError(MessageUi.SOMETHING_WENT_WRONG))
     }
 
     private fun checkStartDestination() {

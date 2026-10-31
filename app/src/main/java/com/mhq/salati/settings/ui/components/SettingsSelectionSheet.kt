@@ -129,8 +129,7 @@ private fun SettingsSelectionSheetPreview() {
                 themeMode = ThemeModeUi.SYSTEM,
                 language = AppLanguageUi.ENGLISH,
                 adhanSound = AdhanSoundUi.DEFAULT,
-                hijriDateOffset = 0,
-                appVersion = ""
+                hijriDateOffset = 0
             ),
             selector = SelectorType.CalculationMethod,
             onSelect = {},

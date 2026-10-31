@@ -2,7 +2,6 @@ package com.mhq.salati.prayertracker.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.R
 import com.mhq.salati.prayertracker.domain.model.DayStatus
 import com.mhq.salati.prayertracker.domain.model.PrayerStatus
 import com.mhq.salati.prayertracker.domain.usecases.GetCurrentStreakUseCase
@@ -17,9 +16,8 @@ import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.presentation.mapper.toDomain
 import com.mhq.salati.shared.presentation.mapper.toUiSet
-import com.mhq.salati.shared.ui.UiText
+import com.mhq.salati.shared.presentation.model.MessageUi
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,7 +34,6 @@ import java.time.YearMonth
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class PrayerTrackerViewModel @Inject constructor(
     private val clock: Clock,
@@ -180,7 +177,7 @@ class PrayerTrackerViewModel @Inject constructor(
                 _state.update { it.copy(dialogPrayer = null) }
                 _effect.send(
                     PrayerTrackerContract.Effect.ShowError(
-                        UiText.Res(R.string.failed_to_update_prayer_status)
+                        MessageUi.FAILED_TO_UPDATE_PRAYER_STATUS
                     )
                 )
             }

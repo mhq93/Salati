@@ -2,7 +2,6 @@ package com.mhq.salati.locationpicker.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.R
 import com.mhq.salati.location.domain.model.GeocodeResult
 import com.mhq.salati.location.domain.model.LocationSearchResult
 import com.mhq.salati.location.domain.model.SavedLocation
@@ -13,7 +12,7 @@ import com.mhq.salati.locationpicker.presentation.contract.LocationPickerContrac
 import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
 import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.Coordinates
-import com.mhq.salati.shared.ui.UiText
+import com.mhq.salati.shared.presentation.model.MessageUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -113,7 +112,7 @@ class LocationPickerViewModel @Inject constructor(
                         }
                     },
                     onFailure = {
-                        val message = UiText.Res(R.string.search_failed_check_connection)
+                        val message = MessageUi.SEARCH_FAILED_CHECK_CONNECTION
                         _state.update {
                             it.copy(
                                 isSearching = false,
@@ -206,7 +205,7 @@ class LocationPickerViewModel @Inject constructor(
     //                        }
     //                    },
     //                    onFailure = {
-    //                        val message = UiText.Res(R.string.search_failed_check_connection)
+    //                        val message = MessageUi.SEARCH_FAILED_CHECK_CONNECTION
     //                        _state.update {
     //                            it.copy(
     //                                isSearching = false,
@@ -304,7 +303,7 @@ class LocationPickerViewModel @Inject constructor(
                     _state.update { it.copy(isResolvingSelection = false) }
                     _effect.send(
                         LocationPickerContract.Effect.ShowError(
-                            UiText.Res(R.string.couldn_t_determine_location_name)
+                            MessageUi.COULDNT_DETERMINE_LOCATION_NAME
                         )
                     )
                 }
@@ -330,7 +329,7 @@ class LocationPickerViewModel @Inject constructor(
             } catch (e: Exception) {
                 _effect.send(
                     LocationPickerContract.Effect.ShowError(
-                        UiText.Res(R.string.couldn_t_save_location)
+                        MessageUi.COULDNT_SAVE_LOCATION
                     )
                 )
             }

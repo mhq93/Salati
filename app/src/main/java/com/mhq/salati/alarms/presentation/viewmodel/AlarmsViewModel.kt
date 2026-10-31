@@ -2,7 +2,6 @@ package com.mhq.salati.alarms.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.R
 import com.mhq.salati.alarms.domain.model.DayToggleResult
 import com.mhq.salati.alarms.domain.usecases.CreateCustomAlarmUseCase
 import com.mhq.salati.alarms.domain.usecases.DeleteCustomAlarmUseCase
@@ -18,7 +17,7 @@ import com.mhq.salati.alarms.presentation.mapper.conflictsWith
 import com.mhq.salati.alarms.presentation.mapper.toDomain
 import com.mhq.salati.alarms.presentation.mapper.toUi
 import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
-import com.mhq.salati.shared.ui.UiText
+import com.mhq.salati.shared.presentation.model.MessageUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
@@ -71,7 +70,7 @@ class AlarmsViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                val message = UiText.Res(R.string.couldn_t_load_alarms)
+                val message = MessageUi.COULDNT_LOAD_ALARMS
                 _state.update { it.copy(isLoading = false, errorMessage = message) }
                 _effect.send(Effect.ShowError(message))
             }
@@ -83,7 +82,7 @@ class AlarmsViewModel @Inject constructor(
             try {
                 val hasConflict = _state.value.alarms.any { it.id != alarm.id && it.conflictsWith(alarm) }
                 if (hasConflict) {
-                    _effect.send(Effect.ShowError(UiText.Res(R.string.duplicate_alarm_exists)))
+                    _effect.send(Effect.ShowError(MessageUi.DUPLICATE_ALARM_EXISTS))
                     return@launch
                 }
                 if (alarm.id == 0L) createCustomAlarmUseCase(alarm.toDomain()) else updateCustomAlarmUseCase(alarm.toDomain())
@@ -94,7 +93,7 @@ class AlarmsViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                val message = UiText.Res(R.string.couldn_t_save_alarm)
+                val message = MessageUi.COULDNT_SAVE_ALARM
                 _state.update { it.copy(errorMessage = message) }
                 _effect.send(Effect.ShowError(message))
             }
@@ -108,7 +107,7 @@ class AlarmsViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _effect.send(Effect.ShowError(UiText.Res(R.string.couldn_t_delete_alarm)))
+                _effect.send(Effect.ShowError(MessageUi.COULDNT_DELETE_ALARM))
             }
         }
     }
@@ -120,7 +119,7 @@ class AlarmsViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _effect.send(Effect.ShowError(UiText.Res(R.string.couldn_t_update_alarm)))
+                _effect.send(Effect.ShowError(MessageUi.COULDNT_UPDATE_ALARM))
             }
         }
     }
@@ -129,12 +128,12 @@ class AlarmsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 if (toggleCustomAlarmDayUseCase(id, calendarDay) == DayToggleResult.CONFLICT) {
-                    _effect.send(Effect.ShowError(UiText.Res(R.string.duplicate_alarm_exists)))
+                    _effect.send(Effect.ShowError(MessageUi.DUPLICATE_ALARM_EXISTS))
                 }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _effect.send(Effect.ShowError(UiText.Res(R.string.couldn_t_update_alarm)))
+                _effect.send(Effect.ShowError(MessageUi.COULDNT_UPDATE_ALARM))
             }
         }
     }

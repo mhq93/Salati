@@ -1,8 +1,7 @@
 package com.mhq.salati.alarms.presentation.contract
 
-import com.mhq.salati.R
 import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
-import com.mhq.salati.shared.ui.UiText
+import com.mhq.salati.shared.presentation.model.MessageUi
 
 /**
  * MVI contract for the custom alarms screen,
@@ -38,7 +37,7 @@ object AlarmsContract {
         val alarms: List<CustomAlarmUi> = emptyList(),
         val isEditorVisible: Boolean = false,
         val editingAlarm: CustomAlarmUi? = null,
-        val errorMessage: UiText? = null
+        val errorMessage: MessageUi? = null
     )
 
     /** User actions and lifecycle events the alarms screen can send to its ViewModel. */
@@ -81,10 +80,10 @@ object AlarmsContract {
     sealed interface Effect {
 
         /** Shows [message] to the user as a transient error (for example, in a snackbar). */
-        data class ShowError(val message: UiText) : Effect
+        data class ShowError(val message: MessageUi) : Effect
 
         /** Confirms that an alarm was saved.
          * [message] defaults to the standard "alarm saved" text. */
-        data class AlarmSaved(val message: UiText = UiText.Res(R.string.alarm_saved)) : Effect
+        data class AlarmSaved(val message: MessageUi = MessageUi.ALARM_SAVED) : Effect
     }
 }

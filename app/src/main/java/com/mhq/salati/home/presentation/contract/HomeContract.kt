@@ -4,7 +4,7 @@ import com.mhq.salati.home.presentation.model.PrayerDateUi
 import com.mhq.salati.home.presentation.model.PrayerTimingsUi
 import com.mhq.salati.settings.presentation.model.TimeFormatUi
 import com.mhq.salati.shared.presentation.model.PrayerNameUi
-import com.mhq.salati.shared.ui.UiText
+import com.mhq.salati.shared.presentation.model.MessageUi
 import java.time.Duration
 import java.time.LocalDate
 
@@ -17,7 +17,7 @@ class HomeContract {
         val adhan: AdhanUiState = AdhanUiState(),
         val systemPermissions: SystemPermissionsUiState = SystemPermissionsUiState(),
         val dateBrowser: DateBrowserUiState = DateBrowserUiState(),
-        val errorMessage: UiText? = null,
+        val errorMessage: MessageUi? = null,
         val timeFormat: TimeFormatUi = TimeFormatUi.HOUR_24,
     )
 
@@ -73,7 +73,7 @@ class HomeContract {
     }
 
     sealed interface Effect {
-        data class ShowError(val message: UiText) : Effect
+        data class ShowError(val message: MessageUi) : Effect
         data object RequestExactAlarmPermission : Effect
         data object RequestNotificationPermission : Effect
         data object RequestLocationPermission : Effect

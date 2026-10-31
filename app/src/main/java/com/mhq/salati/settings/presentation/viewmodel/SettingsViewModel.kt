@@ -1,10 +1,7 @@
 package com.mhq.salati.settings.presentation.viewmodel
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.BuildConfig
-import com.mhq.salati.R
 import com.mhq.salati.permissions.domain.repo.PermissionChecker
 import com.mhq.salati.settings.domain.model.AppSettings
 import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
@@ -27,7 +24,7 @@ import com.mhq.salati.settings.presentation.model.CustomAlarmSoundUi
 import com.mhq.salati.settings.presentation.model.MadhabUi
 import com.mhq.salati.settings.presentation.model.ThemeModeUi
 import com.mhq.salati.settings.presentation.model.TimeFormatUi
-import com.mhq.salati.shared.ui.UiText
+import com.mhq.salati.shared.presentation.model.MessageUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,7 +54,7 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(
-        SettingsContract.State(appVersion = BuildConfig.VERSION_NAME)
+        SettingsContract.State()
     )
     val state: StateFlow<SettingsContract.State> = _state.asStateFlow()
 
@@ -139,57 +136,57 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    private fun launchUpdate(@StringRes errorRes: Int, block: suspend () -> Unit) =
+    private fun launchUpdate(errorMessage: MessageUi, block: suspend () -> Unit) =
         viewModelScope.launch {
             try {
                 block()
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                val message = UiText.Res(errorRes)
+                val message = errorMessage
                 _state.update { it.copy(errorMessage = message) }
                 _effect.send(SettingsContract.Effect.ShowError(message))
             }
         }
 
     private fun updateNotifications(enabled: Boolean) =
-        launchUpdate(R.string.couldn_t_update_notification_settings) {
+        launchUpdate(MessageUi.COULDNT_UPDATE_NOTIFICATION_SETTINGS) {
             updateNotificationsEnabledUseCase(enabled)
         }
 
     private fun updateCalculationMethod(method: CalculationMethodUi) =
-        launchUpdate(R.string.couldn_t_update_calculation_method) {
+        launchUpdate(MessageUi.COULDNT_UPDATE_CALCULATION_METHOD) {
             updateCalculationMethodUseCase(method.toDomain())
         }
 
     private fun updateMadhab(madhab: MadhabUi) =
-        launchUpdate(R.string.couldn_t_update_madhab) { updateMadhabUseCase(madhab.toDomain()) }
+        launchUpdate(MessageUi.COULDNT_UPDATE_MADHAB) { updateMadhabUseCase(madhab.toDomain()) }
 
     private fun updateTheme(mode: ThemeModeUi) =
-        launchUpdate(R.string.couldn_t_update_theme) { updateThemeModeUseCase(mode.toDomain()) }
+        launchUpdate(MessageUi.COULDNT_UPDATE_THEME) { updateThemeModeUseCase(mode.toDomain()) }
 
     private fun updateLanguage(language: AppLanguageUi) =
-        launchUpdate(R.string.couldn_t_update_language) {
+        launchUpdate(MessageUi.COULDNT_UPDATE_LANGUAGE) {
             val domainLanguage = language.toDomain()
             updateLanguageUseCase(domainLanguage)
             _effect.send(SettingsContract.Effect.LanguageChangedRestartRequired(domainLanguage.code))
         }
 
     private fun updateAdhanSound(sound: AdhanSoundUi) =
-        launchUpdate(R.string.couldn_t_update_adhan_sound) { updateAdhanSoundUseCase(sound.toDomain()) }
+        launchUpdate(MessageUi.COULDNT_UPDATE_ADHAN_SOUND) { updateAdhanSoundUseCase(sound.toDomain()) }
 
     private fun updateCustomAlarmSound(sound: CustomAlarmSoundUi) =
-        launchUpdate(R.string.couldn_t_update_custom_alarm_sound) {
+        launchUpdate(MessageUi.COULDNT_UPDATE_CUSTOM_ALARM_SOUND) {
             updateCustomAlarmSoundUseCase(sound.toDomain())
         }
 
     private fun updateHijriOffset(offset: Int) =
-        launchUpdate(R.string.couldn_t_update_hijri_offset) {
+        launchUpdate(MessageUi.COULDNT_UPDATE_HIJRI_OFFSET) {
             updateHijriDateOffsetUseCase(offset.coerceIn(-2, 2))
         }
 
     private fun updateTimeFormat(format: TimeFormatUi) =
-        launchUpdate(R.string.couldn_t_update_time_format) { updateTimeFormatUseCase(format.toDomain()) }
+        launchUpdate(MessageUi.COULDNT_UPDATE_TIME_FORMAT) { updateTimeFormatUseCase(format.toDomain()) }
 
     private fun emitEffect(effect: SettingsContract.Effect) =
         viewModelScope.launch {

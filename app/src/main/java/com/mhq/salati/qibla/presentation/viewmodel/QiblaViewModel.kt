@@ -1,9 +1,7 @@
 package com.mhq.salati.qibla.presentation.viewmodel
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.R
 import com.mhq.salati.permissions.presentation.LocationPermissionEffect
 import com.mhq.salati.qibla.domain.model.CompassUnavailableException
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
@@ -12,7 +10,7 @@ import com.mhq.salati.qibla.presentation.handlers.QiblaLocationHandler
 import com.mhq.salati.qibla.presentation.handlers.QiblaLocationLoad
 import com.mhq.salati.qibla.presentation.mapper.toUi
 import com.mhq.salati.shared.domain.Coordinates
-import com.mhq.salati.shared.ui.UiText
+import com.mhq.salati.shared.presentation.model.MessageUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -113,9 +111,9 @@ class QiblaViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         errorMessage = if (intent.permanentlyDenied) {
-                            UiText.Res(R.string.location_permission_permanently_denied)
+                            MessageUi.LOCATION_PERMISSION_PERMANENTLY_DENIED
                         } else {
-                            UiText.Res(R.string.location_permission_required)
+                            MessageUi.LOCATION_PERMISSION_REQUIRED
                         }
                     )
                 }
@@ -214,7 +212,7 @@ class QiblaViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = UiText.Res(R.string.location_services_disabled),
+                        errorMessage = MessageUi.LOCATION_SERVICES_DISABLED,
                         areLocationServicesDisabled = true,
                         isLocationPermissionRequired = false,
                         isLocationPermissionPermanentlyDenied = false,
@@ -225,7 +223,7 @@ class QiblaViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = UiText.Res(R.string.location_permission_permanently_denied),
+                        errorMessage = MessageUi.LOCATION_PERMISSION_PERMANENTLY_DENIED,
                         isLocationPermissionPermanentlyDenied = true,
                         areLocationServicesDisabled = false,
                         isLocationPermissionRequired = false,
@@ -236,7 +234,7 @@ class QiblaViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = UiText.Res(R.string.location_permission_required),
+                        errorMessage = MessageUi.LOCATION_PERMISSION_REQUIRED,
                         isLocationPermissionRequired = true,
                         areLocationServicesDisabled = false,
                         isLocationPermissionPermanentlyDenied = false,
@@ -255,9 +253,9 @@ class QiblaViewModel @Inject constructor(
                     )
                 }
             is QiblaLocationLoad.TimedOut ->
-                showError(UiText.Res(R.string.failed_to_get_location))
+                showError(MessageUi.FAILED_TO_GET_LOCATION)
             is QiblaLocationLoad.Failed ->
-                showError(UiText.Res(R.string.failed_to_load_qibla_direction))
+                showError(MessageUi.FAILED_TO_LOAD_QIBLA_DIRECTION)
         }
     }
 
@@ -282,7 +280,7 @@ class QiblaViewModel @Inject constructor(
         startCompassUpdates(coordinates)
     }
 
-    private suspend fun showError(message: UiText) {
+    private suspend fun showError(message: MessageUi) {
         _state.update { it.copy(isLoading = false, errorMessage = message) }
         _effect.send(QiblaContract.Effect.ShowError(message))
     }
@@ -290,7 +288,7 @@ class QiblaViewModel @Inject constructor(
     // Also covers a device without a rotation sensor, which makes the compass stream fail.
     private suspend fun showLoadError(error: Throwable) {
         val isSensorMissing = error is CompassUnavailableException
-        val message = UiText.Res(R.string.failed_to_load_qibla_direction)
+        val message = MessageUi.FAILED_TO_LOAD_QIBLA_DIRECTION
         _state.update {
             it.copy(
                 isLoading = false,
@@ -329,7 +327,6 @@ class QiblaViewModel @Inject constructor(
         compassJob = null
     }
 
-    @SuppressLint("EmptySuperCall")
     override fun onCleared() {
         compassJob?.cancel()
         super.onCleared()

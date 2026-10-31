@@ -1,6 +1,6 @@
 package com.mhq.salati.locationpicker.presentation.contract
 
-import com.mhq.salati.shared.ui.UiText
+import com.mhq.salati.shared.presentation.model.MessageUi
 
 object LocationPickerContract {
 
@@ -10,7 +10,7 @@ object LocationPickerContract {
         val searchResults: List<LocationSearchResult> = emptyList(),
         val selectedLocation: SelectedLocation? = null,
         val isResolvingSelection: Boolean = false,
-        val errorMessage: UiText? = null,
+        val errorMessage: MessageUi? = null,
         val mapCenterLat: Double = 21.4225,
         val mapCenterLng: Double = 39.8262,
         val mapZoom: Int = 5
@@ -37,7 +37,7 @@ object LocationPickerContract {
     }
 
     sealed interface Effect {
-        data class ShowError(val message: UiText) : Effect
+        data class ShowError(val message: MessageUi) : Effect
         data object LocationSaved : Effect
     }
 }

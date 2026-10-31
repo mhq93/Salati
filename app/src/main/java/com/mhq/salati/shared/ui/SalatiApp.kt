@@ -1,6 +1,8 @@
 package com.mhq.salati.shared.ui
 
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -107,6 +109,15 @@ fun SalatiApp() {
                         effect.message.asString(context),
                         Toast.LENGTH_SHORT
                     ).show()
+                }
+
+                // Apply the chosen locale first, then tell the ViewModel it is done,
+                // so isLanguageSelected only flips after the locale is set.
+                is SplashContract.Effect.ApplyLanguage -> {
+                    AppCompatDelegate.setApplicationLocales(
+                        LocaleListCompat.forLanguageTags(effect.languageCode)
+                    )
+                    splashViewModel.onIntent(SplashContract.Intent.LanguageApplied)
                 }
             }
         }

@@ -20,6 +20,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mhq.salati.BuildConfig
 import com.mhq.salati.settings.presentation.contract.SettingsContract.Effect
 import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
 import com.mhq.salati.settings.presentation.viewmodel.SettingsViewModel
@@ -138,6 +139,7 @@ fun SettingsContainer(
 
     SettingsContent(
         state = state,
+        appVersion = BuildConfig.VERSION_NAME,
         onIntent = settingsViewModel::onIntent,
         modifier = Modifier.fillMaxSize()
     )

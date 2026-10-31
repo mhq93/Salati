@@ -1,7 +1,7 @@
 package com.mhq.salati.qibla.presentation.contract
 
 import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
-import com.mhq.salati.shared.ui.UiText
+import com.mhq.salati.shared.presentation.model.MessageUi
 
 class QiblaContract {
 
@@ -19,7 +19,7 @@ class QiblaContract {
         val isLocationPermissionGranted: Boolean = false,
         val isLocationPermissionPermanentlyDenied: Boolean = false,
         val locationName: String? = null,
-        val errorMessage: UiText? = null
+        val errorMessage: MessageUi? = null
     )
 
     sealed interface Intent {
@@ -42,7 +42,7 @@ class QiblaContract {
     }
 
     sealed interface Effect {
-        data class ShowError(val message: UiText) : Effect
+        data class ShowError(val message: MessageUi) : Effect
         data object RequestLocationPermission : Effect
         data object NavigateToLocationSettings : Effect
         data object NavigateToLocationPicker : Effect
