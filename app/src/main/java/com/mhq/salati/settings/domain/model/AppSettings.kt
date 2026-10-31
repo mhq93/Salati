@@ -9,5 +9,6 @@ data class AppSettings(
     val adhanSound: AdhanSound = AdhanSound.DEFAULT,
     val customAlarmSound: CustomAlarmSound = CustomAlarmSound.DEFAULT,
     val hijriDateOffset: Int = 0,
-    val isLanguageSelected: Boolean = false
+    val isLanguageSelected: Boolean = false,
+    val timeFormat: TimeFormat = TimeFormat.HOUR_24,
 )

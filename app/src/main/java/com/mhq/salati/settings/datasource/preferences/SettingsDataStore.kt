@@ -13,6 +13,7 @@ import com.mhq.salati.settings.domain.model.CalculationMethod
 import com.mhq.salati.settings.domain.model.CustomAlarmSound
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.settings.domain.model.ThemeMode
+import com.mhq.salati.settings.domain.model.TimeFormat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -35,6 +36,7 @@ class SettingsDataStore @Inject constructor(
         val ADHAN_SOUND = stringPreferencesKey("adhan_sound")
         val CUSTOM_ALARM_SOUND = stringPreferencesKey("custom_alarm_sound")
         val HIJRI_OFFSET = intPreferencesKey("hijri_date_offset")
+        val TIME_FORMAT = stringPreferencesKey("time_format")
     }
 
     val settingsFlow: Flow<AppSettings> = context.settingsDataStore.data.map { prefs ->
@@ -59,7 +61,10 @@ class SettingsDataStore @Inject constructor(
             customAlarmSound = prefs[Keys.CUSTOM_ALARM_SOUND]
                 ?.let { runCatching { CustomAlarmSound.valueOf(it) }.getOrNull() }
                 ?: CustomAlarmSound.DEFAULT,
-            hijriDateOffset = prefs[Keys.HIJRI_OFFSET] ?: 0
+            hijriDateOffset = prefs[Keys.HIJRI_OFFSET] ?: 0,
+            timeFormat = prefs[Keys.TIME_FORMAT]
+                ?.let { runCatching { TimeFormat.valueOf(it) }.getOrNull() }
+            ?: TimeFormat.HOUR_24
         )
     }
 
@@ -97,5 +102,9 @@ class SettingsDataStore @Inject constructor(
 
     suspend fun setHijriDateOffset(offset: Int) {
         context.settingsDataStore.edit { it[Keys.HIJRI_OFFSET] = offset }
+    }
+
+    suspend fun setTimeFormat(format: TimeFormat) {
+        context.settingsDataStore.edit { it[Keys.TIME_FORMAT] = format.name }
     }
 }

@@ -3,6 +3,7 @@ package com.mhq.salati.home.presentation.contract
 import com.mhq.salati.home.domain.model.PrayerWindow
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
+import com.mhq.salati.settings.domain.model.TimeFormat
 import com.mhq.salati.shared.domain.Coordinates
 import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.ui.UiText
@@ -18,7 +19,8 @@ class HomeContract {
         val adhan: AdhanUiState = AdhanUiState(),
         val systemPermissions: SystemPermissionsUiState = SystemPermissionsUiState(),
         val dateBrowser: DateBrowserUiState = DateBrowserUiState(),
-        val errorMessage: UiText? = null
+        val errorMessage: UiText? = null,
+        val timeFormat: TimeFormat = TimeFormat.HOUR_24,
     )
 
     data class PrayerTimesUiState(

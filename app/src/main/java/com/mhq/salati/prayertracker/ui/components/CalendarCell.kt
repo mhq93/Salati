@@ -24,6 +24,7 @@ fun DayCell(
     gregorianDay: Int,
     hijriDay: Int,
     isCurrentMonth: Boolean,
+    isFuture: Boolean = false,
     isSelected: Boolean,
     status: DayStatus?,
     onClick: () -> Unit,
@@ -44,7 +45,7 @@ fun DayCell(
 
     val baseTextColor = MaterialTheme.colorScheme.onSurface
 
-    val cellBorderColor = if (isCurrentMonth) {
+    val cellBorderColor = if (isCurrentMonth && !isFuture) {
         MaterialTheme.colorScheme.outlineVariant
     } else {
         MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f)
@@ -62,7 +63,7 @@ fun DayCell(
                 cellBorderColor,
                 RoundedCornerShape(8.dp)
             )
-            .clickable(enabled = isCurrentMonth, onClick = onClick)
+            .clickable(enabled = isCurrentMonth && !isFuture, onClick = onClick)
             .padding(4.dp)
     ) {
         Text(
@@ -72,7 +73,8 @@ fun DayCell(
             // [FIX 3]: Native alpha blending for out-of-month days
             color = when {
                 isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-                !isCurrentMonth -> baseTextColor.copy(alpha = 0.38f)
+                //!isCurrentMonth -> baseTextColor.copy(alpha = 0.38f)
+                !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
                 else -> baseTextColor
             }
         )
@@ -83,7 +85,8 @@ fun DayCell(
             fontWeight = FontWeight.Light,
             color = when {
                 isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                !isCurrentMonth -> baseTextColor.copy(alpha = 0.24f)
+                //!isCurrentMonth -> baseTextColor.copy(alpha = 0.24f)
+                !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
                 else -> MaterialTheme.colorScheme.onSurfaceVariant
             }
         )

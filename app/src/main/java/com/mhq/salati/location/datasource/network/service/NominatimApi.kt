@@ -18,5 +18,3 @@ interface NominatimApi {
         acceptLanguage: String?
     ): List<NominatimSearchDto>
 }
-
-class NominatimHttpException(val statusCode: Int) : Exception("HTTP $statusCode")

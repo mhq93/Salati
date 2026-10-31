@@ -107,6 +107,7 @@
     <string name="prayed">Prayed</string>
     <string name="missed">Missed</string>
     <string name="failed_to_update_prayer_status">Failed to update prayer status</string>
+    <string name="prayer_marking_opens_at_prayer_time">You can mark each prayer once its time arrives</string>
 
     <!-- Alarms -->
     <string name="custom_alarms">Custom Alarms</string>
@@ -148,6 +149,10 @@
     <string name="notifications">Notifications</string>
     <string name="prayer_notifications">Prayer Notifications</string>
     <string name="get_alerted_and_notified_at_each_prayer_time">Get alerted and notified at each prayer time</string>
+    <string name="time_format">Time format</string>
+    <string name="time_format_12_hour">12-hour</string>
+    <string name="time_format_24_hour">24-hour</string>
+    <string name="couldn_t_update_time_format">Couldn\'t update time format</string>
 
     <string name="adhan_sound">Adhan Sound</string>
     <string name="adhan_sound_default">Default Beep</string>

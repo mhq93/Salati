@@ -28,6 +28,7 @@ import com.mhq.salati.settings.domain.model.CalculationMethod
 import com.mhq.salati.settings.domain.model.CustomAlarmSound
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.settings.domain.model.ThemeMode
+import com.mhq.salati.settings.domain.model.TimeFormat
 import com.mhq.salati.settings.presentation.SelectorType
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.settings.presentation.contract.SettingsContract.State
@@ -66,6 +67,9 @@ fun SettingsSelectionSheet(
 
             SelectorType.CustomAlarmSound -> R.string.custom_alarm_sound to CustomAlarmSound.entries
                 .map { Triple(it.displayNameRes, it == state.customAlarmSound) { Intent.SelectCustomAlarmSound(it) } }
+
+            SelectorType.TimeFormat -> R.string.time_format to TimeFormat.entries
+                .map { Triple(it.displayNameRes, it == state.timeFormat) { Intent.SelectTimeFormat(it) } }
         }
 
         Column(

@@ -16,7 +16,8 @@ object PrayerTrackerContract {
         val selectedDateRecords: Map<PrayerName, PrayerStatus> = emptyMap(),
         val dialogPrayer: PrayerName? = null,
         val currentStreak: Int = 0,
-        val isLoading: Boolean = true
+        val isLoading: Boolean = true,
+        val duePrayers: Set<PrayerName> = PrayerName.majorEntries.toSet()
     )
 
     sealed interface Intent {
@@ -26,6 +27,7 @@ object PrayerTrackerContract {
         data object ConfirmPrayed : Intent
         data object ConfirmMissed : Intent
         data object DismissDialog : Intent
+        data object ScreenResumed : Intent
     }
 
     sealed interface Effect {

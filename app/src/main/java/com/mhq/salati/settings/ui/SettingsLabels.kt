@@ -9,11 +9,18 @@ import com.mhq.salati.settings.domain.model.CalculationMethod
 import com.mhq.salati.settings.domain.model.CustomAlarmSound
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.settings.domain.model.ThemeMode
+import com.mhq.salati.settings.domain.model.TimeFormat
 
 val AppLanguage.displayNameRes: Int
     @StringRes get() = when (this) {
         AppLanguage.ENGLISH -> R.string.language_english
         AppLanguage.ARABIC -> R.string.language_arabic
+    }
+
+val TimeFormat.displayNameRes: Int
+    @StringRes get() = when (this) {
+        TimeFormat.HOUR_12 -> R.string.time_format_12_hour
+        TimeFormat.HOUR_24 -> R.string.time_format_24_hour
     }
 
 val ThemeMode.displayNameRes: Int

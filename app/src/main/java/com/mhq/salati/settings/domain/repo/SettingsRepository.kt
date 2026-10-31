@@ -7,6 +7,7 @@ import com.mhq.salati.settings.domain.model.CalculationMethod
 import com.mhq.salati.settings.domain.model.CustomAlarmSound
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.settings.domain.model.ThemeMode
+import com.mhq.salati.settings.domain.model.TimeFormat
 import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository {
@@ -20,4 +21,5 @@ interface SettingsRepository {
     suspend fun setAdhanSound(sound: AdhanSound)
     suspend fun setCustomAlarmSound(sound: CustomAlarmSound)
     suspend fun setHijriDateOffset(offset: Int)
+    suspend fun setTimeFormat(format: TimeFormat)
 }

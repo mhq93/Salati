@@ -77,7 +77,7 @@ fun TabHeader(
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text = subtitle,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f),
+                        color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.85f),
                         fontSize = 14.sp
                     )
                 }

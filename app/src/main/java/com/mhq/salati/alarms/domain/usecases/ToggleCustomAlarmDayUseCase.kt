@@ -1,21 +1,10 @@
 package com.mhq.salati.alarms.domain.usecases
 
+import com.mhq.salati.alarms.domain.model.DayToggleResult
 import com.mhq.salati.alarms.domain.model.conflictsWith
 import com.mhq.salati.alarms.domain.model.withDayToggled
 import com.mhq.salati.alarms.domain.repo.CustomAlarmRepository
 import javax.inject.Inject
-
-/** Outcome of switching one weekday on an alarm. */
-enum class DayToggleResult {
-    /** The change was saved and alarms were rescheduled. */
-    APPLIED,
-
-    /** Nothing changed (alarm missing, or the tap would remove the last remaining day). */
-    UNCHANGED,
-
-    /** The change would make this alarm fire at the same time as another alarm. */
-    CONFLICT
-}
 
 /**
  * Switches one weekday on or off for the alarm with the given [id],

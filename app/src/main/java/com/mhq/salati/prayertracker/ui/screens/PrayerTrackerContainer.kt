@@ -6,6 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mhq.salati.prayertracker.ui.components.PrayerConfirmDialog
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract
@@ -33,6 +35,10 @@ fun PrayerTrackerContainer(
                 }
             }
         }
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        prayerTrackerViewModel.onIntent(PrayerTrackerContract.Intent.ScreenResumed)
     }
 
     PrayerTrackerContent(

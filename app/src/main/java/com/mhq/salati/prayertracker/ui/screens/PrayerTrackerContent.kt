@@ -64,12 +64,14 @@ fun PrayerTrackerContent(
                 CalendarMonthView(
                     selectedMonth = state.selectedMonth,
                     selectedDate = state.selectedDate,
+                    today = state.today,
                     dayStatus = state.monthDayStatus,
                     onDateSelected = { onIntent(Intent.DateSelected(it)) },
                     onMonthChanged = { onIntent(Intent.MonthChanged(it)) }
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 PrayerStatusList(
+                    duePrayers = state.duePrayers,
                     selectedDate = state.selectedDate,
                     today = state.today,
                     records = state.selectedDateRecords,

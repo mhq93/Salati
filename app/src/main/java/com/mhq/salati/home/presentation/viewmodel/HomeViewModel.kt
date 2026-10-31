@@ -18,6 +18,7 @@ import com.mhq.salati.home.presentation.handlers.MutedPrayersHandler
 import com.mhq.salati.home.presentation.handlers.PrayerTimesHandler
 import com.mhq.salati.permissions.presentation.LocationPermissionEffect
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
+import com.mhq.salati.settings.domain.usecases.ObserveTimeFormatUseCase
 import com.mhq.salati.shared.domain.Coordinates
 import com.mhq.salati.shared.ui.UiText
 import com.mhq.salati.shared.ui.UiText.*
@@ -44,7 +45,8 @@ class HomeViewModel @Inject constructor(
     private val locationHandler: HomeLocationHandler,
     private val prayerTimesHandler: PrayerTimesHandler,
     private val mutedPrayersHandler: MutedPrayersHandler,
-    private val alarmsHandler: HomeAlarmsHandler
+    private val alarmsHandler: HomeAlarmsHandler,
+    private val observeTimeFormatUseCase: ObserveTimeFormatUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeContract.State())
@@ -94,6 +96,10 @@ class HomeViewModel @Inject constructor(
             .onEach { name ->
                 _state.update { it.copy(location = it.location.copy(locationName = name)) }
             }
+            .launchIn(viewModelScope)
+
+        observeTimeFormatUseCase()
+            .onEach { format -> _state.update { it.copy(timeFormat = format) } }
             .launchIn(viewModelScope)
     }
 

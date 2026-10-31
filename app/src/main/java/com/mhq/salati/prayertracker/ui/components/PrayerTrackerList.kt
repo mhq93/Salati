@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,10 +26,13 @@ import java.time.LocalDate
 fun PrayerStatusList(
     selectedDate: LocalDate,
     today: LocalDate,
+    duePrayers: Set<PrayerName>,
     records: Map<PrayerName, PrayerStatus>,
     onPrayerTapped: (PrayerName) -> Unit
 ) {
-    val locked = selectedDate.isAfter(today)
+    //val locked = selectedDate.isAfter(today)
+    val isFutureDate = selectedDate.isAfter(today)
+    val hasUnduePrayers = selectedDate == today && PrayerName.majorEntries.any { it !in duePrayers }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -48,11 +52,21 @@ fun PrayerStatusList(
                 PrayerStatusCard(
                     prayer = prayer,
                     status = status,
-                    locked = locked,
+                    //locked = locked,
+                    locked = isFutureDate || (selectedDate == today && prayer !in duePrayers),
                     onClick = { onPrayerTapped(prayer) },
                     modifier = Modifier.weight(1f)
                 )
             }
+        }
+        if (hasUnduePrayers) {
+            Text(
+                text = stringResource(R.string.prayer_marking_opens_at_prayer_time),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 13.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 12.dp)
+            )
         }
     }
 }
@@ -63,6 +77,7 @@ private fun PrayerStatusListPreview() {
     SalatiTheme() {
         PrayerStatusList(
             selectedDate = LocalDate.of(2026, 10, 8),
+            duePrayers = PrayerName.majorEntries.toSet(),
             today = LocalDate.of(2026, 10, 8),
             records = emptyMap(),
             onPrayerTapped = {}

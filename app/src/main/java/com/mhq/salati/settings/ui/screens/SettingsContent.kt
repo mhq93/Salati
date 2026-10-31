@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
@@ -147,6 +148,15 @@ fun SettingsContent(
                                         SelectorType.Madhab
                                     )
                                 )
+                            }
+                        )
+                        SettingsDivider()
+                        SettingsSelectorRow(
+                            icon = Icons.Default.Schedule,
+                            title = stringResource(R.string.time_format),
+                            valueLabel = stringResource(state.timeFormat.displayNameRes),
+                            onClick = {
+                                onIntent(Intent.OpenSelector(SelectorType.TimeFormat))
                             }
                         )
                     }

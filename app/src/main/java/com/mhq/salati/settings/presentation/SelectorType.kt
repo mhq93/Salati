@@ -6,5 +6,6 @@ enum class SelectorType {
     Theme,
     Language,
     AdhanSound,
-    CustomAlarmSound
+    CustomAlarmSound,
+    TimeFormat
 }

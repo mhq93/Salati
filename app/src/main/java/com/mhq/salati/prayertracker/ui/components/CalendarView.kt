@@ -44,10 +44,11 @@ import java.time.temporal.WeekFields
 fun CalendarMonthView(
     selectedMonth: YearMonth,
     selectedDate: LocalDate,
+    today: LocalDate,
     dayStatus: Map<LocalDate, DayStatus>,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (Int) -> Unit,
-    hijriOffsetDays: Int = 0
+    hijriOffsetDays: Int = 0,
 ) {
     val locale = LocalLocale.current.platformLocale
     val hijriChronology = HijrahChronology.INSTANCE
@@ -126,13 +127,21 @@ fun CalendarMonthView(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            IconButton(onClick = { onMonthChanged(1) }) {
+            val canGoForward = selectedMonth.isBefore(YearMonth.from(today))
+            IconButton(onClick = { onMonthChanged(1) }, enabled = canGoForward) {
                 Icon(
                     Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = stringResource(R.string.next_month),
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = if (canGoForward) 1f else 0.38f)
                 )
             }
+            //            IconButton(onClick = { onMonthChanged(1) }) {
+            //                Icon(
+            //                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            //                    contentDescription = stringResource(R.string.next_month),
+            //                    tint = MaterialTheme.colorScheme.onSurface
+            //                )
+            //            }
         }
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -170,6 +179,7 @@ fun CalendarMonthView(
                             gregorianDay = cellDate.dayOfMonth,
                             hijriDay = hijriDate.get(ChronoField.DAY_OF_MONTH),
                             isSelected = isCurrentMonth && cellDate == selectedDate,
+                            isFuture = cellDate.isAfter(today),
                             isCurrentMonth = isCurrentMonth,
                             status = if (isCurrentMonth) dayStatus[cellDate]
                                 ?: DayStatus.FUTURE else null,
@@ -183,22 +193,25 @@ fun CalendarMonthView(
 }
 
 @Preview(name = "Light Mode", showBackground = true)
-@Preview(name = "Dark Mode", showBackground = true,  uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Dark Mode", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun CalendarMonthViewPreview() {
     SalatiTheme {
-        Box(modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
-            .padding(12.dp)) {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .padding(12.dp)
+        ) {
             CalendarMonthView(
                 selectedMonth = YearMonth.of(2026, 10),
                 selectedDate = LocalDate.of(2026, 10, 8),
+                today = LocalDate.of(2026, 10, 8),
                 dayStatus = mapOf(
                     LocalDate.of(2026, 10, 7) to DayStatus.ALL_PRAYED,
                     LocalDate.of(2026, 10, 8) to DayStatus.IN_PROGRESS
                 ),
                 onDateSelected = {},
-                onMonthChanged = {}
+                onMonthChanged = {},
             )
         }
     }

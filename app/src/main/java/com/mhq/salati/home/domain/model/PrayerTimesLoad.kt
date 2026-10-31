@@ -16,9 +16,3 @@ sealed interface PrayerTimesLoad {
 
     data class Failed(val error: PrayerTimesError) : PrayerTimesLoad
 }
-
-sealed interface PrayerTimesError {
-    data object Offline : PrayerTimesError
-    data object TimedOut : PrayerTimesError
-    data class Other(val message: String?) : PrayerTimesError
-}

@@ -109,6 +109,7 @@
     <string name="prayed">مقضية</string>
     <string name="missed">منسية</string>
     <string name="failed_to_update_prayer_status">خطأ أثناء تحديث الصلاة</string>
+    <string name="prayer_marking_opens_at_prayer_time">يمكنك تسجيل كل صلاة عند حلول وقتها</string>
 
     <!-- Alarms -->
     <string name="custom_alarms">المنبهات</string>
@@ -149,6 +150,10 @@
     <string name="notifications">الإشعارات</string>
     <string name="prayer_notifications">إشعارات الصلاة</string>
     <string name="get_alerted_and_notified_at_each_prayer_time">احصل على تنبيهات لكل صلاة</string>
+    <string name="time_format">تنسيق الوقت</string>
+    <string name="time_format_12_hour">12 ساعة</string>
+    <string name="time_format_24_hour">24 ساعة</string>
+    <string name="couldn_t_update_time_format">تعذّر تحديث تنسيق الوقت</string>
 
     <string name="adhan_sound">نغمة الآذان</string>
     <string name="adhan_sound_default">النغمة الافتراضية</string>

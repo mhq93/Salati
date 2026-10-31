@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -35,8 +36,10 @@ import com.mhq.salati.home.ui.components.PrayersList
 import com.mhq.salati.prayertimes.domain.model.HijriDate
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
+import com.mhq.salati.settings.domain.model.TimeFormat
 import com.mhq.salati.shared.domain.HijriMonth
 import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.shared.ui.formatForDisplay
 import com.mhq.salati.shared.ui.labelRes
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.shared.ui.theme.prayerGradient
@@ -48,9 +51,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 // Prayer times are shown as plain 24h "HH:mm" with ASCII digits (same as the raw API string was).
-private val PrayerTimeDisplayFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.US)
+//private val PrayerTimeDisplayFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.US)
 
-private fun LocalTime.toDisplayTime(): String = format(PrayerTimeDisplayFormatter)
+//private fun LocalTime.toDisplayTime(): String = format(PrayerTimeDisplayFormatter)
 
 @Composable
 fun HomeContentSuccess(
@@ -64,28 +67,40 @@ fun HomeContentSuccess(
     mutedPrayers: Set<PrayerName>,
     pastPrayers: Set<PrayerName>,
     isToday: Boolean,
+    timeFormat: TimeFormat = TimeFormat.HOUR_24,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val locale = LocalConfiguration.current.locales[0]
     // Row i of the list shows prayers[i] next to minorTimings[i], so the order here is the layout.
-    val prayers = remember(prayerTimings) {
-        listOf(
-            PrayerName.FAJR,
-            PrayerName.DHUHR,
-            PrayerName.ASR,
-            PrayerName.MAGHRIB,
-            PrayerName.ISHA
-        ).map { name -> name to prayerTimings[name].toDisplayTime() }
+    //    val prayers = remember(prayerTimings) {
+    //        listOf(
+    //            PrayerName.FAJR,
+    //            PrayerName.DHUHR,
+    //            PrayerName.ASR,
+    //            PrayerName.MAGHRIB,
+    //            PrayerName.ISHA
+    //        ).map { name -> name to prayerTimings[name].toDisplayTime() }
+    //    }
+    val prayers = remember(prayerTimings, timeFormat, locale) {
+        listOf(PrayerName.FAJR, PrayerName.DHUHR, PrayerName.ASR, PrayerName.MAGHRIB, PrayerName.ISHA)
+            .map { name -> name to prayerTimings[name].formatForDisplay(timeFormat, locale) }
     }
 
-    val minorTimings = remember(prayerTimings) {
+    //    val minorTimings = remember(prayerTimings) {
+    //        listOf(
+    //            PrayerName.IMSAK,
+    //            PrayerName.SHOROUQ,
+    //            PrayerName.FIRST_THIRD,
+    //            PrayerName.MIDNIGHT,
+    //            PrayerName.LAST_THIRD
+    //        ).map { name -> name to prayerTimings[name].toDisplayTime() }
+    //    }
+    val minorTimings = remember(prayerTimings, timeFormat, locale) {
         listOf(
-            PrayerName.IMSAK,
-            PrayerName.SHOROUQ,
-            PrayerName.FIRST_THIRD,
-            PrayerName.MIDNIGHT,
-            PrayerName.LAST_THIRD
-        ).map { name -> name to prayerTimings[name].toDisplayTime() }
+            PrayerName.IMSAK, PrayerName.SHOROUQ, PrayerName.FIRST_THIRD,
+            PrayerName.MIDNIGHT, PrayerName.LAST_THIRD
+        ).map { name -> name to prayerTimings[name].formatForDisplay(timeFormat, locale) }
     }
 
     var headerHeightPx by remember { mutableIntStateOf(0) }

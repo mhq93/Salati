@@ -6,6 +6,7 @@ import com.mhq.salati.settings.domain.model.CalculationMethod
 import com.mhq.salati.settings.domain.model.CustomAlarmSound
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.settings.domain.model.ThemeMode
+import com.mhq.salati.settings.domain.model.TimeFormat
 import com.mhq.salati.settings.presentation.SelectorType
 import com.mhq.salati.shared.ui.UiText
 
@@ -24,7 +25,8 @@ object SettingsContract {
         val activeSelector: SelectorType? = null,
         val hijriDateOffset: Int = 0,
         val appVersion: String = "",
-        val errorMessage: UiText? = null
+        val errorMessage: UiText? = null,
+        val timeFormat: TimeFormat = TimeFormat.HOUR_24,
     )
 
     sealed interface Intent {
@@ -44,6 +46,7 @@ object SettingsContract {
         data object RateApp : Intent
         data object ShareApp : Intent
         data object ContactSupport : Intent
+        data class SelectTimeFormat(val format: TimeFormat) : Intent
     }
 
     sealed interface Effect {

@@ -8,6 +8,7 @@ import com.mhq.salati.settings.domain.model.CalculationMethod
 import com.mhq.salati.settings.domain.model.CustomAlarmSound
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.settings.domain.model.ThemeMode
+import com.mhq.salati.settings.domain.model.TimeFormat
 import com.mhq.salati.settings.domain.repo.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -44,4 +45,7 @@ class SettingsRepoImpl @Inject constructor(
 
     override suspend fun setHijriDateOffset(offset: Int) =
         settingsDataStore.setHijriDateOffset(offset)
+
+    override suspend fun setTimeFormat(format: TimeFormat) =
+        settingsDataStore.setTimeFormat(format)
 }

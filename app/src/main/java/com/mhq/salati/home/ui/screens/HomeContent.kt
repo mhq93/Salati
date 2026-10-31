@@ -60,6 +60,7 @@ fun HomeContent(
                         mutedPrayers = state.adhan.mutedPrayers,
                         pastPrayers = state.prayerTimes.pastPrayers,
                         isToday = state.dateBrowser.isBrowsingToday,
+                        timeFormat = state.timeFormat,
                         onIntent = onIntent,
                         modifier = Modifier.weight(1f)
                     )

@@ -13,6 +13,7 @@ import com.mhq.salati.settings.domain.model.CalculationMethod
 import com.mhq.salati.settings.domain.model.CustomAlarmSound
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.settings.domain.model.ThemeMode
+import com.mhq.salati.settings.domain.model.TimeFormat
 import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateAdhanSoundUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateCalculationMethodUseCase
@@ -22,6 +23,7 @@ import com.mhq.salati.settings.domain.usecases.UpdateLanguageUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateMadhabUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateNotificationsEnabledUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateThemeModeUseCase
+import com.mhq.salati.settings.domain.usecases.UpdateTimeFormatUseCase
 import com.mhq.salati.settings.presentation.contract.SettingsContract
 import com.mhq.salati.shared.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,6 +50,7 @@ class SettingsViewModel @Inject constructor(
     private val updateAdhanSoundUseCase: UpdateAdhanSoundUseCase,
     private val updateCustomAlarmSoundUseCase: UpdateCustomAlarmSoundUseCase,
     private val updateHijriDateOffsetUseCase: UpdateHijriDateOffsetUseCase,
+    private val updateTimeFormatUseCase: UpdateTimeFormatUseCase,
     private val permissionChecker: PermissionChecker
 ) : ViewModel() {
 
@@ -85,6 +88,7 @@ class SettingsViewModel @Inject constructor(
             is SettingsContract.Intent.RateApp -> emitEffect(SettingsContract.Effect.OpenPlayStoreListing)
             is SettingsContract.Intent.ShareApp -> emitEffect(SettingsContract.Effect.LaunchShareSheet)
             is SettingsContract.Intent.ContactSupport -> emitEffect(SettingsContract.Effect.OpenEmailClient)
+            is SettingsContract.Intent.SelectTimeFormat -> updateTimeFormat(intent.format)
         }
     }
 
@@ -99,7 +103,8 @@ class SettingsViewModel @Inject constructor(
                 language = settings.language,
                 adhanSound = settings.adhanSound,
                 customAlarmSound = settings.customAlarmSound,
-                hijriDateOffset = settings.hijriDateOffset
+                hijriDateOffset = settings.hijriDateOffset,
+                timeFormat = settings.timeFormat
             )
         }
     }
@@ -179,6 +184,9 @@ class SettingsViewModel @Inject constructor(
         launchUpdate(R.string.couldn_t_update_hijri_offset) {
             updateHijriDateOffsetUseCase(offset.coerceIn(-2, 2))
         }
+
+    private fun updateTimeFormat(format: TimeFormat) =
+        launchUpdate(R.string.couldn_t_update_time_format) { updateTimeFormatUseCase(format) }
 
     private fun emitEffect(effect: SettingsContract.Effect) =
         viewModelScope.launch {
