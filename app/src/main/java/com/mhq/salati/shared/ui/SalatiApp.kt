@@ -55,6 +55,7 @@ import com.mhq.salati.shared.ui.components.LocalSnackbarHostState
 import com.mhq.salati.shared.ui.navigation.BottomNavBar
 import com.mhq.salati.shared.ui.navigation.BottomNavBarItem
 import com.mhq.salati.shared.ui.navigation.NavigationScreen
+import com.mhq.salati.shared.ui.navigation.toNavigationScreen
 import com.mhq.salati.splash.presentation.contract.SplashContract
 import com.mhq.salati.splash.presentation.viewmodel.SplashViewModel
 
@@ -133,7 +134,7 @@ fun SalatiApp() {
         val navController = rememberNavController()
         val snackbarHostState = remember { SnackbarHostState() }
         val startRoute: String =
-            splashState.startDestination?.route ?: NavigationScreen.Onboarding.route
+            splashState.startDestination?.toNavigationScreen()?.route ?: NavigationScreen.Onboarding.route
 
         Box(modifier = Modifier.fillMaxSize()) {
             Scaffold(

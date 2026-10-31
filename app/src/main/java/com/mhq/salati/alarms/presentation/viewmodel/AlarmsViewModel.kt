@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.R
 import com.mhq.salati.alarms.domain.model.CustomAlarm
+import com.mhq.salati.alarms.domain.model.DayToggleResult
 import com.mhq.salati.alarms.domain.model.conflictsWith
 import com.mhq.salati.alarms.domain.usecases.CreateCustomAlarmUseCase
-import com.mhq.salati.alarms.domain.usecases.DayToggleResult
 import com.mhq.salati.alarms.domain.usecases.DeleteCustomAlarmUseCase
 import com.mhq.salati.alarms.domain.usecases.ObserveCustomAlarmsUseCase
 import com.mhq.salati.alarms.domain.usecases.RescheduleCustomAlarmsUseCase
