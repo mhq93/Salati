@@ -3,9 +3,7 @@ package com.mhq.salati.alarms.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.R
-import com.mhq.salati.alarms.domain.model.CustomAlarm
 import com.mhq.salati.alarms.domain.model.DayToggleResult
-import com.mhq.salati.alarms.domain.model.conflictsWith
 import com.mhq.salati.alarms.domain.usecases.CreateCustomAlarmUseCase
 import com.mhq.salati.alarms.domain.usecases.DeleteCustomAlarmUseCase
 import com.mhq.salati.alarms.domain.usecases.ObserveCustomAlarmsUseCase
@@ -16,6 +14,10 @@ import com.mhq.salati.alarms.domain.usecases.UpdateCustomAlarmUseCase
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract.Effect
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract.Intent
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract.State
+import com.mhq.salati.alarms.presentation.mapper.conflictsWith
+import com.mhq.salati.alarms.presentation.mapper.toDomain
+import com.mhq.salati.alarms.presentation.mapper.toUi
+import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
 import com.mhq.salati.shared.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
@@ -64,7 +66,7 @@ class AlarmsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 observeCustomAlarmsUseCase().collect { alarms ->
-                    _state.update { it.copy(isLoading = false, alarms = alarms) }
+                    _state.update { it.copy(isLoading = false, alarms = alarms.map { alarm -> alarm.toUi() }) }
                 }
             } catch (e: CancellationException) {
                 throw e
@@ -76,7 +78,7 @@ class AlarmsViewModel @Inject constructor(
         }
     }
 
-    private fun saveAlarm(alarm: CustomAlarm) {
+    private fun saveAlarm(alarm: CustomAlarmUi) {
         viewModelScope.launch {
             try {
                 val hasConflict = _state.value.alarms.any { it.id != alarm.id && it.conflictsWith(alarm) }
@@ -84,7 +86,7 @@ class AlarmsViewModel @Inject constructor(
                     _effect.send(Effect.ShowError(UiText.Res(R.string.duplicate_alarm_exists)))
                     return@launch
                 }
-                if (alarm.id == 0L) createCustomAlarmUseCase(alarm) else updateCustomAlarmUseCase(alarm)
+                if (alarm.id == 0L) createCustomAlarmUseCase(alarm.toDomain()) else updateCustomAlarmUseCase(alarm.toDomain())
                 _state.update { it.copy(isEditorVisible = false, editingAlarm = null) }
                 _effect.send(Effect.AlarmSaved())
                 // NEW — take effect now instead of waiting for Home's next reload

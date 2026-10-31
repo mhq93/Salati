@@ -45,10 +45,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
-import com.mhq.salati.alarms.domain.model.CustomAlarm
-import com.mhq.salati.alarms.domain.model.OffsetDirection
-import com.mhq.salati.alarms.domain.model.conflictsWith
-import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
+import com.mhq.salati.alarms.presentation.model.OffsetDirectionUi
+import com.mhq.salati.alarms.presentation.mapper.conflictsWith
+import com.mhq.salati.shared.presentation.model.PrayerNameUi
 import com.mhq.salati.shared.ui.labelRes
 import java.text.NumberFormat
 import java.time.DayOfWeek
@@ -81,13 +81,13 @@ private const val MAX_OFFSET_DIGITS = 3
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditAlarmSheet(
-    existingAlarm: CustomAlarm?,
-    existingAlarms: List<CustomAlarm>,
-    onSave: (CustomAlarm) -> Unit,
+    existingAlarm: CustomAlarmUi?,
+    existingAlarms: List<CustomAlarmUi>,
+    onSave: (CustomAlarmUi) -> Unit,
     onDismiss: () -> Unit
 ) {
     var prayerName by remember(existingAlarm) {
-        mutableStateOf(existingAlarm?.prayerName ?: PrayerName.entries.first())
+        mutableStateOf(existingAlarm?.prayerName ?: PrayerNameUi.entries.first())
     }
     var label by remember(existingAlarm) {
         mutableStateOf(existingAlarm?.label ?: "")
@@ -97,7 +97,7 @@ fun AddEditAlarmSheet(
         mutableStateOf((existingAlarm?.offsetMinutes ?: 5).toString())
     }
     var offsetDirection by remember(existingAlarm) {
-        mutableStateOf(existingAlarm?.offsetDirection ?: OffsetDirection.BEFORE)
+        mutableStateOf(existingAlarm?.offsetDirection ?: OffsetDirectionUi.BEFORE)
     }
     var everyDay by remember(existingAlarm) {
         mutableStateOf(existingAlarm?.everyDay ?: true)
@@ -110,7 +110,7 @@ fun AddEditAlarmSheet(
     val offsetMinutes = minutesText.toIntOrNull()
     val hasDays = everyDay || activeDays.isNotEmpty()
     val draft = offsetMinutes?.let {
-        CustomAlarm(
+        CustomAlarmUi(
             id = existingAlarm?.id ?: 0L,
             prayerName = prayerName,
             label = label.trim(),
@@ -189,7 +189,7 @@ fun AddEditAlarmSheet(
                     expanded = isPrayerMenuExpanded,
                     onDismissRequest = { isPrayerMenuExpanded = false }
                 ) {
-                    PrayerName.entries.forEach { name ->
+                    PrayerNameUi.entries.forEach { name ->
                         DropdownMenuItem(
                             text = { Text(stringResource(name.labelRes)) },
                             onClick = { prayerName = name; isPrayerMenuExpanded = false }
@@ -207,8 +207,8 @@ fun AddEditAlarmSheet(
                 Spacer(modifier = Modifier.height(8.dp))
                 SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                     SegmentedButton(
-                        selected = offsetDirection == OffsetDirection.BEFORE,
-                        onClick = { offsetDirection = OffsetDirection.BEFORE },
+                        selected = offsetDirection == OffsetDirectionUi.BEFORE,
+                        onClick = { offsetDirection = OffsetDirectionUi.BEFORE },
                         shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
                         colors = SegmentedButtonDefaults.colors(
                             activeContainerColor = MaterialTheme.colorScheme.primary,
@@ -216,8 +216,8 @@ fun AddEditAlarmSheet(
                         )
                     ) { Text(stringResource(R.string.before)) }
                     SegmentedButton(
-                        selected = offsetDirection == OffsetDirection.AFTER,
-                        onClick = { offsetDirection = OffsetDirection.AFTER },
+                        selected = offsetDirection == OffsetDirectionUi.AFTER,
+                        onClick = { offsetDirection = OffsetDirectionUi.AFTER },
                         shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
                         colors = SegmentedButtonDefaults.colors(
                             activeContainerColor = MaterialTheme.colorScheme.primary,

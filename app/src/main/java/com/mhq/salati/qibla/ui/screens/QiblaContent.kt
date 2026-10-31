@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.mhq.salati.R
-import com.mhq.salati.qibla.domain.model.CompassAccuracy
+import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.components.TabHeader
@@ -93,7 +93,7 @@ private fun QiblaContentActivePreview() {
                 qiblaBearing = 135f,
                 deviceHeading = 45f,
                 locationName = "Alexandria, Egypt",
-                compassAccuracy = CompassAccuracy.HIGH
+                compassAccuracy = CompassAccuracyUi.HIGH
             ),
             onIntent = {}
         )

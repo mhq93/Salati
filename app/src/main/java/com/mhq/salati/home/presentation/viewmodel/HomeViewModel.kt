@@ -4,24 +4,29 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.R
-import com.mhq.salati.home.presentation.handlers.DayNavigator
 import com.mhq.salati.home.domain.model.AlarmPermissions
 import com.mhq.salati.home.domain.model.PrayerTimesError
 import com.mhq.salati.home.domain.model.PrayerTimesLoad
 import com.mhq.salati.home.domain.model.PrayerTimesTick
 import com.mhq.salati.home.domain.model.PrayerWindow
 import com.mhq.salati.home.presentation.contract.HomeContract
+import com.mhq.salati.home.presentation.handlers.DayNavigator
 import com.mhq.salati.home.presentation.handlers.HomeAlarmsHandler
 import com.mhq.salati.home.presentation.handlers.HomeLocationHandler
 import com.mhq.salati.home.presentation.handlers.HomeLocationLoadingHandler
 import com.mhq.salati.home.presentation.handlers.MutedPrayersHandler
 import com.mhq.salati.home.presentation.handlers.PrayerTimesHandler
+import com.mhq.salati.home.presentation.mapper.toUi
 import com.mhq.salati.permissions.presentation.LocationPermissionEffect
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.settings.domain.usecases.ObserveTimeFormatUseCase
+import com.mhq.salati.settings.presentation.mapper.toUi
 import com.mhq.salati.shared.domain.Coordinates
+import com.mhq.salati.shared.presentation.mapper.toDomain
+import com.mhq.salati.shared.presentation.mapper.toUi
+import com.mhq.salati.shared.presentation.mapper.toUiSet
 import com.mhq.salati.shared.ui.UiText
-import com.mhq.salati.shared.ui.UiText.*
+import com.mhq.salati.shared.ui.UiText.Res
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -41,12 +46,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val dayNavigator: DayNavigator,
+    private val observeTimeFormatUseCase: ObserveTimeFormatUseCase,
     private val locationHandler: HomeLocationHandler,
     private val prayerTimesHandler: PrayerTimesHandler,
     private val mutedPrayersHandler: MutedPrayersHandler,
-    private val alarmsHandler: HomeAlarmsHandler,
-    private val observeTimeFormatUseCase: ObserveTimeFormatUseCase
+    private val dayNavigator: DayNavigator,
+    private val alarmsHandler: HomeAlarmsHandler
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeContract.State())
@@ -59,16 +64,22 @@ class HomeViewModel @Inject constructor(
     private var countdownJob: Job? = null
     private var mutedPrayersJob: Job? = null
 
+    // The domain timings the alarm handler needs. The state only holds the screen's copy (PrayerTimingsUi).
+    private var loadedTimings: PrayerTimings? = null
+
     init {
         viewModelScope.launch {
             locationHandler.permissionEffects.collect { permissionEffect ->
                 val mapped = when (permissionEffect) {
                     is LocationPermissionEffect.RequestPermission ->
                         HomeContract.Effect.RequestLocationPermission
+
                     is LocationPermissionEffect.NavigateToAppSettings ->
                         HomeContract.Effect.NavigateToAppSettings
+
                     is LocationPermissionEffect.NavigateToLocationSettings ->
                         HomeContract.Effect.NavigateToLocationSettings
+
                     is LocationPermissionEffect.PermissionResolved -> null
                 }
                 mapped?.let { _effect.send(it) }
@@ -99,7 +110,7 @@ class HomeViewModel @Inject constructor(
             .launchIn(viewModelScope)
 
         observeTimeFormatUseCase()
-            .onEach { format -> _state.update { it.copy(timeFormat = format) } }
+            .onEach { format -> _state.update { it.copy(timeFormat = format.toUi()) } }
             .launchIn(viewModelScope)
     }
 
@@ -110,14 +121,17 @@ class HomeViewModel @Inject constructor(
                 locationHandler.allowPermissionPromptAgain()
                 checkPermissionAndLoad()
             }
+
             is HomeContract.Intent.PreviousDay -> {
                 dayNavigator.previousOrNull(currentDate())?.let { browseDate(it) }
             }
+
             is HomeContract.Intent.NextDay -> browseDate(dayNavigator.next(currentDate()))
             is HomeContract.Intent.LocationPermissionGranted -> {
                 viewModelScope.launch { locationHandler.onPermissionGranted() }
                 loadPrayerTimes()
             }
+
             is HomeContract.Intent.LocationPermissionDenied -> {
                 viewModelScope.launch {
                     locationHandler.onPermissionDenied(intent.permanentlyDenied)
@@ -132,18 +146,28 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
             is HomeContract.Intent.AccessAppSettings -> {
                 viewModelScope.launch { locationHandler.openAppSettings() }
             }
+
             is HomeContract.Intent.AccessDeviceLocationSettings -> {
                 viewModelScope.launch { locationHandler.openLocationSettings() }
             }
+
             is HomeContract.Intent.ToggleMute -> {
-                viewModelScope.launch { mutedPrayersHandler.toggle(currentDate(), intent.prayerName) }
+                viewModelScope.launch {
+                    mutedPrayersHandler.toggle(
+                        currentDate(),
+                        intent.prayerName.toDomain()
+                    )
+                }
             }
+
             is HomeContract.Intent.RecheckSystemPermissions -> {
                 viewModelScope.launch { recheckAlarmPermissions() }
             }
+
             is HomeContract.Intent.NotificationPermissionResult -> {
                 _state.update {
                     it.copy(
@@ -153,16 +177,19 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
             is HomeContract.Intent.ExactAlarmBannerClicked -> {
                 viewModelScope.launch {
                     _effect.send(HomeContract.Effect.RequestExactAlarmPermission)
                 }
             }
+
             is HomeContract.Intent.NotificationBannerClicked -> {
                 viewModelScope.launch {
                     _effect.send(HomeContract.Effect.RequestNotificationPermission)
                 }
             }
+
             is HomeContract.Intent.ScreenResumed -> {
                 viewModelScope.launch {
                     val currentLocationState = _state.value.location
@@ -189,11 +216,13 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             }
+
             is HomeContract.Intent.LocationServicesToggled -> {
                 if (intent.enabled && _state.value.location.areServicesDisabled) {
                     checkPermissionAndLoad()
                 }
             }
+
             is HomeContract.Intent.ConnectivityChanged -> {
                 if (intent.isConnected && isShowingGenericOfflineError()) {
                     checkPermissionAndLoad()
@@ -277,6 +306,7 @@ class HomeViewModel @Inject constructor(
             is HomeLocationLoadingHandler.Located -> showLocationAndLoadPrayerTimes(load)
             is HomeLocationLoadingHandler.LookingUpCurrentLocation ->
                 _state.update { it.copy(isLoading = true, errorMessage = null) }
+
             is HomeLocationLoadingHandler.PermissionPermanentlyDenied ->
                 _state.update {
                     it.copy(
@@ -284,8 +314,10 @@ class HomeViewModel @Inject constructor(
                         errorMessage = Res(R.string.location_permission_permanently_denied)
                     )
                 }
+
             is HomeLocationLoadingHandler.PermissionPrompted ->
                 _state.update { it.copy(isLoading = false) }
+
             is HomeLocationLoadingHandler.PermissionRequired ->
                 _state.update {
                     it.copy(
@@ -293,6 +325,7 @@ class HomeViewModel @Inject constructor(
                         errorMessage = Res(R.string.location_permission_is_required_to_show_prayer_times)
                     )
                 }
+
             is HomeLocationLoadingHandler.ServicesDisabled ->
                 _state.update {
                     it.copy(
@@ -301,36 +334,39 @@ class HomeViewModel @Inject constructor(
                         location = it.location.copy(areServicesDisabled = true)
                     )
                 }
+
             is HomeLocationLoadingHandler.NoInternet ->
                 showError(Res(R.string.no_internet_connection), isOffline = true)
+
             is HomeLocationLoadingHandler.GeocodingFailed ->
                 showError(Res(R.string.failed_to_get_location_name), isOffline = false)
+
             is HomeLocationLoadingHandler.Unavailable ->
                 showError(Res(R.string.failed_to_get_location), isOffline = false)
         }
     }
 
     // Shows the place right away with the names it already has, then localizes them while the times load.
-    private suspend fun showLocationAndLoadPrayerTimes(located: HomeLocationLoadingHandler.Located) = coroutineScope {
-        val location = located.location
-        _state.update {
-            it.copy(
-                location = it.location.copy(
-                    coordinates = location.coordinates,
-                    locationName = location.displayName // instant fallback, closes the race window
+    private suspend fun showLocationAndLoadPrayerTimes(located: HomeLocationLoadingHandler.Located) =
+        coroutineScope {
+            val location = located.location
+            _state.update {
+                it.copy(
+                    location = it.location.copy(
+                        locationName = location.displayName // instant fallback, closes the race window
+                    )
                 )
-            )
-        }
+            }
 
-        val nameDeferred = async { locationHandler.localizedName(located) }
-        val prayerTimesDeferred = async { loadAndApplyPrayerTimes(location.coordinates) }
+            val nameDeferred = async { locationHandler.localizedName(located) }
+            val prayerTimesDeferred = async { loadAndApplyPrayerTimes(location.coordinates) }
 
-        val finalName = nameDeferred.await()
-        _state.update {
-            it.copy(location = it.location.copy(locationName = finalName))
+            val finalName = nameDeferred.await()
+            _state.update {
+                it.copy(location = it.location.copy(locationName = finalName))
+            }
+            prayerTimesDeferred.await()
         }
-        prayerTimesDeferred.await()
-    }
 
     // While offline the error is only shown inline: no snackbar, and the location flags stay as they were.
     private suspend fun showError(message: UiText, isOffline: Boolean) {
@@ -366,22 +402,27 @@ class HomeViewModel @Inject constructor(
                         _state.update { it.copy(isLoading = true) }
                     }
                 }
+
                 is PrayerTimesLoad.Loaded -> applyLoadedPrayerTimes(load, coordinates)
                 is PrayerTimesLoad.Failed -> showPrayerTimesError(load.error)
             }
         }
     }
 
-    private suspend fun applyLoadedPrayerTimes(load: PrayerTimesLoad.Loaded, coordinates: Coordinates) {
+    private suspend fun applyLoadedPrayerTimes(
+        load: PrayerTimesLoad.Loaded,
+        coordinates: Coordinates
+    ) {
+        loadedTimings = load.timings
         _state.update {
             it.copy(
                 isLoading = false,
                 prayerTimes = it.prayerTimes.copy(
-                    timings = load.timings,
-                    date = load.prayerDate,
-                    prayerWindow = load.status.window,
-                    currentPrayerName = load.status.currentPrayer,
-                    pastPrayers = load.status.pastPrayers
+                    timings = load.timings.toUi(),
+                    date = load.prayerDate.toUi(),
+                    nextPrayerName = load.status.window.nextPrayer.toUi(),
+                    currentPrayerName = load.status.currentPrayer?.toUi(),
+                    pastPrayers = load.status.pastPrayers.toUiSet()
                 )
             )
         }
@@ -423,43 +464,49 @@ class HomeViewModel @Inject constructor(
     ) {
         countdownJob?.cancel()
         countdownJob = viewModelScope.launch {
-            prayerTimesHandler.keepCountingDown(timings, date, coordinates, window).collect { tick ->
-                when (tick) {
-                    is PrayerTimesTick.Countdown -> _state.update {
-                        it.copy(
-                            prayerTimes = it.prayerTimes.copy(
-                                remaining = tick.countdown.remaining,
-                                windowProgress = tick.countdown.progress
+            prayerTimesHandler.keepCountingDown(timings, date, coordinates, window)
+                .collect { tick ->
+                    when (tick) {
+                        is PrayerTimesTick.Countdown -> _state.update {
+                            it.copy(
+                                prayerTimes = it.prayerTimes.copy(
+                                    remaining = tick.countdown.remaining,
+                                    windowProgress = tick.countdown.progress
+                                )
                             )
-                        )
-                    }
-                    is PrayerTimesTick.StatusRefreshed -> _state.update {
-                        it.copy(
-                            prayerTimes = it.prayerTimes.copy(
-                                prayerWindow = tick.status.window,
-                                currentPrayerName = tick.status.currentPrayer,
-                                pastPrayers = tick.status.pastPrayers
+                        }
+
+                        is PrayerTimesTick.StatusRefreshed -> _state.update {
+                            it.copy(
+                                prayerTimes = it.prayerTimes.copy(
+                                    nextPrayerName = tick.status.window.nextPrayer.toUi(),
+                                    currentPrayerName = tick.status.currentPrayer?.toUi(),
+                                    pastPrayers = tick.status.pastPrayers.toUiSet()
+                                )
                             )
-                        )
+                        }
+
+                        is PrayerTimesTick.DayRolledOver -> browseDate(tick.date)
                     }
-                    is PrayerTimesTick.DayRolledOver -> browseDate(tick.date)
                 }
-            }
         }
     }
 
     // ---------------------------------------------------------------- alarms
 
     private suspend fun rescheduleAlarms() {
-        alarmsHandler.schedule(_state.value.prayerTimes.timings, currentDate())
+        alarmsHandler.schedule(loadedTimings, currentDate())
     }
 
     private suspend fun recheckAlarmPermissions() {
-        val permissions = alarmsHandler.recheck(_state.value.prayerTimes.timings, currentDate())
+        val permissions = alarmsHandler.recheck(loadedTimings, currentDate())
         applyAlarmPermissions(permissions, promptIfMissing = false)
     }
 
-    private suspend fun applyAlarmPermissions(permissions: AlarmPermissions, promptIfMissing: Boolean) {
+    private suspend fun applyAlarmPermissions(
+        permissions: AlarmPermissions,
+        promptIfMissing: Boolean
+    ) {
         _state.update {
             it.copy(
                 systemPermissions = it.systemPermissions.copy(
@@ -480,7 +527,7 @@ class HomeViewModel @Inject constructor(
         mutedPrayersJob = viewModelScope.launch {
             mutedPrayersHandler.observe(currentDate()).collect { mutedPrayers ->
                 _state.update {
-                    it.copy(adhan = it.adhan.copy(mutedPrayers = mutedPrayers))
+                    it.copy(adhan = it.adhan.copy(mutedPrayers = mutedPrayers.toUiSet()))
                 }
                 rescheduleAlarms()
             }

@@ -2,22 +2,18 @@ package com.mhq.salati.shared.ui
 
 import androidx.annotation.StringRes
 import com.mhq.salati.R
-import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.shared.presentation.model.PrayerNameUi
 
-// The user-facing name of a prayer.
-// Lives here (not in the domain enum)
-// Because it is an Android resource.
-
-val PrayerName.labelRes: Int
+val PrayerNameUi.labelRes: Int
     @StringRes get() = when (this) {
-        PrayerName.FAJR -> R.string.fajr
-        PrayerName.DHUHR -> R.string.dhuhr
-        PrayerName.ASR -> R.string.asr
-        PrayerName.MAGHRIB -> R.string.maghrib
-        PrayerName.ISHA -> R.string.isha
-        PrayerName.IMSAK -> R.string.imsak
-        PrayerName.SHOROUQ -> R.string.shorouq
-        PrayerName.FIRST_THIRD -> R.string.first_third
-        PrayerName.MIDNIGHT -> R.string.midnight
-        PrayerName.LAST_THIRD -> R.string.last_third
+        PrayerNameUi.FAJR -> R.string.fajr
+        PrayerNameUi.DHUHR -> R.string.dhuhr
+        PrayerNameUi.ASR -> R.string.asr
+        PrayerNameUi.MAGHRIB -> R.string.maghrib
+        PrayerNameUi.ISHA -> R.string.isha
+        PrayerNameUi.IMSAK -> R.string.imsak
+        PrayerNameUi.SHOROUQ -> R.string.shorouq
+        PrayerNameUi.FIRST_THIRD -> R.string.first_third
+        PrayerNameUi.MIDNIGHT -> R.string.midnight
+        PrayerNameUi.LAST_THIRD -> R.string.last_third
     }

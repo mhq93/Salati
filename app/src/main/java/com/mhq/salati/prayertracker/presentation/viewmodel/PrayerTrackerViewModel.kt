@@ -11,10 +11,15 @@ import com.mhq.salati.prayertracker.domain.usecases.ObservePrayerRecordsForDateU
 import com.mhq.salati.prayertracker.domain.usecases.ObservePrayerRecordsForMonthUseCase
 import com.mhq.salati.prayertracker.domain.usecases.SetPrayerStatusUseCase
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract
+import com.mhq.salati.prayertracker.presentation.mapper.toUi
+import com.mhq.salati.prayertracker.presentation.mapper.toUiMap
 import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.shared.presentation.mapper.toDomain
+import com.mhq.salati.shared.presentation.mapper.toUiSet
 import com.mhq.salati.shared.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,6 +36,7 @@ import java.time.YearMonth
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class PrayerTrackerViewModel @Inject constructor(
     private val clock: Clock,
@@ -63,7 +69,7 @@ class PrayerTrackerViewModel @Inject constructor(
             .onEach { recordsByDate ->
                 val today = clock.today()
                 val statusMap = recordsByDate.mapValues { (date, records) ->
-                    dayStatusFor(date, records, today)
+                    dayStatusFor(date, records, today).toUi()
                 }
                 _state.update {
                     it.copy(
@@ -79,7 +85,7 @@ class PrayerTrackerViewModel @Inject constructor(
             .distinctUntilChanged()
             .flatMapLatest { date -> observePrayerRecordsForDateUseCase(date) }
             .onEach { records ->
-                _state.update { it.copy(selectedDateRecords = records) }
+                _state.update { it.copy(selectedDateRecords = records.toUiMap()) }
             }
             .launchIn(viewModelScope)
 
@@ -107,8 +113,8 @@ class PrayerTrackerViewModel @Inject constructor(
                 // Re-checked at tap time, so a stale screen can never mark a prayer that isn't due.
                 viewModelScope.launch {
                     val due = getDuePrayersUseCase(_state.value.selectedDate)
-                    _state.update { it.copy(duePrayers = due) }
-                    if (intent.prayer in due) {
+                    _state.update { it.copy(duePrayers = due.toUiSet()) }
+                    if (intent.prayer.toDomain() in due) {
                         _state.update { it.copy(dialogPrayer = intent.prayer) }
                     }
                 }
@@ -125,7 +131,7 @@ class PrayerTrackerViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val due = getDuePrayersUseCase(_state.value.selectedDate)
-                _state.update { it.copy(today = clock.today(), duePrayers = due) }
+                _state.update { it.copy(today = clock.today(), duePrayers = due.toUiSet()) }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -163,7 +169,7 @@ class PrayerTrackerViewModel @Inject constructor(
     //    }
 
     private fun applyDialogResult(status: PrayerStatus) {
-        val prayer = _state.value.dialogPrayer ?: return
+        val prayer = _state.value.dialogPrayer?.toDomain() ?: return
         val date = _state.value.selectedDate
         viewModelScope.launch {
             try {

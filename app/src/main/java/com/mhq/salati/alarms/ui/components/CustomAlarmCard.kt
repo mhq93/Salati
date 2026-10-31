@@ -51,9 +51,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
-import com.mhq.salati.alarms.domain.model.CustomAlarm
-import com.mhq.salati.alarms.domain.model.OffsetDirection
-import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
+import com.mhq.salati.alarms.presentation.model.OffsetDirectionUi
+import com.mhq.salati.shared.presentation.model.PrayerNameUi
 import com.mhq.salati.shared.ui.labelRes
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import java.text.NumberFormat
@@ -89,7 +89,7 @@ private data class DayBadge(val calendarDay: Int, val initial: String, val fullN
  */
 @Composable
 fun CustomAlarmCard(
-    customAlarm: CustomAlarm,
+    customAlarm: CustomAlarmUi,
     onToggle: (Boolean) -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
@@ -235,7 +235,7 @@ fun CustomAlarmCard(
 /** Big offset number with its unit and "before/after <prayer>", or "At <prayer>" for a zero offset. */
 @Composable
 private fun OffsetHeadline(
-    customAlarm: CustomAlarm,
+    customAlarm: CustomAlarmUi,
     prayerName: String,
     contentAlpha: Float
 ) {
@@ -255,7 +255,7 @@ private fun OffsetHeadline(
         NumberFormat.getInstance().format(customAlarm.offsetMinutes)
     }
     val directionText = stringResource(
-        if (customAlarm.offsetDirection == OffsetDirection.BEFORE) {
+        if (customAlarm.offsetDirection == OffsetDirectionUi.BEFORE) {
             R.string.alarm_offset_before
         } else {
             R.string.alarm_offset_after
@@ -425,12 +425,12 @@ private fun CustomAlarmCardPreview() {
         ) {
             // With label, selected days
             CustomAlarmCard(
-                customAlarm = CustomAlarm(
+                customAlarm = CustomAlarmUi(
                     id = 1L,
-                    prayerName = PrayerName.FAJR,
+                    prayerName = PrayerNameUi.FAJR,
                     label = "Morning Devotion",
                     offsetMinutes = 30,
-                    offsetDirection = OffsetDirection.BEFORE,
+                    offsetDirection = OffsetDirectionUi.BEFORE,
                     everyDay = false,
                     activeDays = setOf(Calendar.MONDAY, Calendar.WEDNESDAY, Calendar.FRIDAY),
                     isEnabled = true
@@ -439,12 +439,12 @@ private fun CustomAlarmCardPreview() {
             )
             // No label (fallback), every day
             CustomAlarmCard(
-                customAlarm = CustomAlarm(
+                customAlarm = CustomAlarmUi(
                     id = 2L,
-                    prayerName = PrayerName.MAGHRIB,
+                    prayerName = PrayerNameUi.MAGHRIB,
                     label = "",
                     offsetMinutes = 10,
-                    offsetDirection = OffsetDirection.AFTER,
+                    offsetDirection = OffsetDirectionUi.AFTER,
                     everyDay = true,
                     activeDays = emptySet(),
                     isEnabled = true
@@ -453,12 +453,12 @@ private fun CustomAlarmCardPreview() {
             )
             // No label, disabled, zero offset
             CustomAlarmCard(
-                customAlarm = CustomAlarm(
+                customAlarm = CustomAlarmUi(
                     id = 3L,
-                    prayerName = PrayerName.ISHA,
+                    prayerName = PrayerNameUi.ISHA,
                     label = "",
                     offsetMinutes = 0,
-                    offsetDirection = OffsetDirection.BEFORE,
+                    offsetDirection = OffsetDirectionUi.BEFORE,
                     everyDay = false,
                     activeDays = setOf(Calendar.SATURDAY, Calendar.SUNDAY),
                     isEnabled = false

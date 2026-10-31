@@ -1,11 +1,9 @@
 package com.mhq.salati.home.presentation.contract
 
-import com.mhq.salati.home.domain.model.PrayerWindow
-import com.mhq.salati.prayertimes.domain.model.PrayerDate
-import com.mhq.salati.prayertimes.domain.model.PrayerTimings
-import com.mhq.salati.settings.domain.model.TimeFormat
-import com.mhq.salati.shared.domain.Coordinates
-import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.home.presentation.model.PrayerDateUi
+import com.mhq.salati.home.presentation.model.PrayerTimingsUi
+import com.mhq.salati.settings.presentation.model.TimeFormatUi
+import com.mhq.salati.shared.presentation.model.PrayerNameUi
 import com.mhq.salati.shared.ui.UiText
 import java.time.Duration
 import java.time.LocalDate
@@ -20,21 +18,20 @@ class HomeContract {
         val systemPermissions: SystemPermissionsUiState = SystemPermissionsUiState(),
         val dateBrowser: DateBrowserUiState = DateBrowserUiState(),
         val errorMessage: UiText? = null,
-        val timeFormat: TimeFormat = TimeFormat.HOUR_24,
+        val timeFormat: TimeFormatUi = TimeFormatUi.HOUR_24,
     )
 
     data class PrayerTimesUiState(
-        val date: PrayerDate? = null,
-        val timings: PrayerTimings? = null,
-        val currentPrayerName: PrayerName? = null,
-        val prayerWindow: PrayerWindow? = null,
-        val pastPrayers: Set<PrayerName> = emptySet(),
+        val date: PrayerDateUi? = null,
+        val timings: PrayerTimingsUi? = null,
+        val currentPrayerName: PrayerNameUi? = null,
+        val nextPrayerName: PrayerNameUi? = null,
+        val pastPrayers: Set<PrayerNameUi> = emptySet(),
         val remaining: Duration = Duration.ZERO,
         val windowProgress: Float = 0f
     )
 
     data class LocationUiState(
-        val coordinates: Coordinates? = null,
         val locationName: String? = null,
         val isPermissionGranted: Boolean = false,
         val isPermanentlyDenied: Boolean = false,
@@ -43,7 +40,7 @@ class HomeContract {
     )
 
     data class AdhanUiState(
-        val mutedPrayers: Set<PrayerName> = emptySet()
+        val mutedPrayers: Set<PrayerNameUi> = emptySet()
     )
 
     data class SystemPermissionsUiState(
@@ -65,7 +62,7 @@ class HomeContract {
         data object AccessAppSettings : Intent
         data object AccessDeviceLocationSettings : Intent
         data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
-        data class ToggleMute(val prayerName: PrayerName) : Intent
+        data class ToggleMute(val prayerName: PrayerNameUi) : Intent
         data object RecheckSystemPermissions : Intent
         data class NotificationPermissionResult(val granted: Boolean) : Intent
         data object ExactAlarmBannerClicked : Intent

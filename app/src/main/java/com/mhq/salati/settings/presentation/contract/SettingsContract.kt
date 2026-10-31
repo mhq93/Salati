@@ -1,13 +1,13 @@
 package com.mhq.salati.settings.presentation.contract
 
-import com.mhq.salati.settings.domain.model.AdhanSound
-import com.mhq.salati.settings.domain.model.AppLanguage
-import com.mhq.salati.settings.domain.model.CalculationMethod
-import com.mhq.salati.settings.domain.model.CustomAlarmSound
-import com.mhq.salati.settings.domain.model.Madhab
-import com.mhq.salati.settings.domain.model.ThemeMode
-import com.mhq.salati.settings.domain.model.TimeFormat
 import com.mhq.salati.settings.presentation.SelectorType
+import com.mhq.salati.settings.presentation.model.AdhanSoundUi
+import com.mhq.salati.settings.presentation.model.AppLanguageUi
+import com.mhq.salati.settings.presentation.model.CalculationMethodUi
+import com.mhq.salati.settings.presentation.model.CustomAlarmSoundUi
+import com.mhq.salati.settings.presentation.model.MadhabUi
+import com.mhq.salati.settings.presentation.model.ThemeModeUi
+import com.mhq.salati.settings.presentation.model.TimeFormatUi
 import com.mhq.salati.shared.ui.UiText
 
 object SettingsContract {
@@ -16,29 +16,29 @@ object SettingsContract {
         val isLoading: Boolean = true,
         val notificationsEnabled: Boolean = true,
         val hasNotificationPermission: Boolean = true,
-        val calculationMethod: CalculationMethod = CalculationMethod.EGYPTIAN_GENERAL_AUTHORITY,
-        val madhab: Madhab = Madhab.SHAFI,
-        val themeMode: ThemeMode = ThemeMode.SYSTEM,
-        val language: AppLanguage = AppLanguage.ENGLISH,
-        val adhanSound: AdhanSound = AdhanSound.DEFAULT,
-        val customAlarmSound: CustomAlarmSound = CustomAlarmSound.DEFAULT,
+        val calculationMethod: CalculationMethodUi = CalculationMethodUi.EGYPTIAN_GENERAL_AUTHORITY,
+        val madhab: MadhabUi = MadhabUi.SHAFI,
+        val themeMode: ThemeModeUi = ThemeModeUi.SYSTEM,
+        val language: AppLanguageUi = AppLanguageUi.ENGLISH,
+        val adhanSound: AdhanSoundUi = AdhanSoundUi.DEFAULT,
+        val customAlarmSound: CustomAlarmSoundUi = CustomAlarmSoundUi.DEFAULT,
         val activeSelector: SelectorType? = null,
         val hijriDateOffset: Int = 0,
         val appVersion: String = "",
         val errorMessage: UiText? = null,
-        val timeFormat: TimeFormat = TimeFormat.HOUR_24,
+        val timeFormat: TimeFormatUi = TimeFormatUi.HOUR_24,
     )
 
     sealed interface Intent {
         data class ToggleNotifications(val enabled: Boolean) : Intent
         data class NotificationPermissionResult(val granted: Boolean) : Intent
         data object RecheckNotificationPermission : Intent
-        data class SelectCalculationMethod(val method: CalculationMethod) : Intent
-        data class SelectMadhab(val madhab: Madhab) : Intent
-        data class SelectTheme(val mode: ThemeMode) : Intent
-        data class SelectLanguage(val language: AppLanguage) : Intent
-        data class SelectAdhanSound(val sound: AdhanSound) : Intent
-        data class SelectCustomAlarmSound(val sound: CustomAlarmSound) : Intent
+        data class SelectCalculationMethod(val method: CalculationMethodUi) : Intent
+        data class SelectMadhab(val madhab: MadhabUi) : Intent
+        data class SelectTheme(val mode: ThemeModeUi) : Intent
+        data class SelectLanguage(val language: AppLanguageUi) : Intent
+        data class SelectAdhanSound(val sound: AdhanSoundUi) : Intent
+        data class SelectCustomAlarmSound(val sound: CustomAlarmSoundUi) : Intent
         data object IncrementHijriOffset : Intent
         data object DecrementHijriOffset : Intent
         data class OpenSelector(val type: SelectorType) : Intent
@@ -46,7 +46,7 @@ object SettingsContract {
         data object RateApp : Intent
         data object ShareApp : Intent
         data object ContactSupport : Intent
-        data class SelectTimeFormat(val format: TimeFormat) : Intent
+        data class SelectTimeFormat(val format: TimeFormatUi) : Intent
     }
 
     sealed interface Effect {

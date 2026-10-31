@@ -25,18 +25,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
-import com.mhq.salati.qibla.domain.model.CompassAccuracy
+import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
 fun CalibrationBanner(
-    compassAccuracy: CompassAccuracy,
+    compassAccuracy: CompassAccuracyUi,
     onRecalibrateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val (label, dotColor) = when (compassAccuracy) {
-        CompassAccuracy.HIGH -> stringResource(R.string.sensor_accuracy_is_excellent) to MaterialTheme.colorScheme.primary
-        CompassAccuracy.MEDIUM -> stringResource(R.string.sensor_accuracy_is_moderate) to MaterialTheme.colorScheme.tertiary
+        CompassAccuracyUi.HIGH -> stringResource(R.string.sensor_accuracy_is_excellent) to MaterialTheme.colorScheme.primary
+        CompassAccuracyUi.MEDIUM -> stringResource(R.string.sensor_accuracy_is_moderate) to MaterialTheme.colorScheme.tertiary
         else -> stringResource(R.string.sensor_accuracy_is_poor) to MaterialTheme.colorScheme.error
     }
 
@@ -89,7 +89,7 @@ fun CalibrationBanner(
 private fun CalibrationBannerPreview() {
     SalatiTheme() {
         CalibrationBanner(
-            compassAccuracy = CompassAccuracy.HIGH,
+            compassAccuracy = CompassAccuracyUi.HIGH,
             onRecalibrateClick = {}
         )
     }

@@ -1,8 +1,8 @@
 package com.mhq.salati.prayertracker.presentation.contract
 
-import com.mhq.salati.prayertracker.domain.model.DayStatus
-import com.mhq.salati.prayertracker.domain.model.PrayerStatus
-import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.prayertracker.presentation.model.DayStatusUi
+import com.mhq.salati.prayertracker.presentation.model.PrayerStatusUi
+import com.mhq.salati.shared.presentation.model.PrayerNameUi
 import com.mhq.salati.shared.ui.UiText
 import java.time.LocalDate
 import java.time.YearMonth
@@ -12,18 +12,18 @@ object PrayerTrackerContract {
         val today: LocalDate,
         val selectedMonth: YearMonth,
         val selectedDate: LocalDate,
-        val monthDayStatus: Map<LocalDate, DayStatus> = emptyMap(),
-        val selectedDateRecords: Map<PrayerName, PrayerStatus> = emptyMap(),
-        val dialogPrayer: PrayerName? = null,
+        val monthDayStatus: Map<LocalDate, DayStatusUi> = emptyMap(),
+        val selectedDateRecords: Map<PrayerNameUi, PrayerStatusUi> = emptyMap(),
+        val dialogPrayer: PrayerNameUi? = null,
         val currentStreak: Int = 0,
         val isLoading: Boolean = true,
-        val duePrayers: Set<PrayerName> = PrayerName.majorEntries.toSet()
+        val duePrayers: Set<PrayerNameUi> = PrayerNameUi.majorEntries.toSet()
     )
 
     sealed interface Intent {
         data class DateSelected(val date: LocalDate) : Intent
         data class MonthChanged(val delta: Int) : Intent
-        data class PrayerTileTapped(val prayer: PrayerName) : Intent
+        data class PrayerTileTapped(val prayer: PrayerNameUi) : Intent
         data object ConfirmPrayed : Intent
         data object ConfirmMissed : Intent
         data object DismissDialog : Intent

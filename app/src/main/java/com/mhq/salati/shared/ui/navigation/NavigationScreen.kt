@@ -1,6 +1,6 @@
 package com.mhq.salati.shared.ui.navigation
 
-import com.mhq.salati.splash.domain.model.StartDestination
+import com.mhq.salati.splash.presentation.model.StartDestinationUi
 
 sealed class NavigationScreen(val route: String) {
     object Onboarding : NavigationScreen("onboarding")
@@ -12,7 +12,7 @@ sealed class NavigationScreen(val route: String) {
     data object LocationPicker : NavigationScreen("location_picker")
 }
 
-fun StartDestination.toNavigationScreen(): NavigationScreen = when (this) {
-    StartDestination.ONBOARDING -> NavigationScreen.Onboarding
-    StartDestination.HOME -> NavigationScreen.Home
+fun StartDestinationUi.toNavigationScreen(): NavigationScreen = when (this) {
+    StartDestinationUi.ONBOARDING -> NavigationScreen.Onboarding
+    StartDestinationUi.HOME -> NavigationScreen.Home
 }

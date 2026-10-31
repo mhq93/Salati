@@ -39,7 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
-import com.mhq.salati.qibla.domain.model.CompassAccuracy
+import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import kotlin.math.PI
 import kotlin.math.cos
@@ -47,7 +47,7 @@ import kotlin.math.sin
 
 @Composable
 fun CompassCalibrationOverlay(
-    accuracy: CompassAccuracy,
+    accuracy: CompassAccuracyUi,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -172,17 +172,17 @@ private fun DrawScope.drawFigure8Path(progress: Float, pathColor: Color, dotColo
 
 @Composable
 private fun AccuracyStatus(
-    accuracy: CompassAccuracy,
+    accuracy: CompassAccuracyUi,
     highLabel: String, highColor: Color,
     mediumLabel: String, mediumColor: Color,
     lowLabel: String, lowColor: Color,
     unreliableLabel: String, unreliableColor: Color
 ) {
     val (label, color) = when (accuracy) {
-        CompassAccuracy.HIGH -> highLabel to highColor
-        CompassAccuracy.MEDIUM -> mediumLabel to mediumColor
-        CompassAccuracy.LOW -> lowLabel to lowColor
-        CompassAccuracy.UNRELIABLE -> unreliableLabel to unreliableColor
+        CompassAccuracyUi.HIGH -> highLabel to highColor
+        CompassAccuracyUi.MEDIUM -> mediumLabel to mediumColor
+        CompassAccuracyUi.LOW -> lowLabel to lowColor
+        CompassAccuracyUi.UNRELIABLE -> unreliableLabel to unreliableColor
     }
 
     Row(
@@ -208,7 +208,7 @@ private fun AccuracyStatus(
 private fun CompassCalibrationOverlayPreview() {
     SalatiTheme {
         CompassCalibrationOverlay(
-            accuracy = CompassAccuracy.LOW,
+            accuracy = CompassAccuracyUi.LOW,
             onDismiss = {}
         )
     }

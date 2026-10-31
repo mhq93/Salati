@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
-import com.mhq.salati.prayertracker.domain.model.DayStatus
+import com.mhq.salati.prayertracker.presentation.model.DayStatusUi
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import java.time.LocalDate
 import java.time.YearMonth
@@ -45,7 +45,7 @@ fun CalendarMonthView(
     selectedMonth: YearMonth,
     selectedDate: LocalDate,
     today: LocalDate,
-    dayStatus: Map<LocalDate, DayStatus>,
+    dayStatus: Map<LocalDate, DayStatusUi>,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (Int) -> Unit,
     hijriOffsetDays: Int = 0,
@@ -182,7 +182,7 @@ fun CalendarMonthView(
                             isFuture = cellDate.isAfter(today),
                             isCurrentMonth = isCurrentMonth,
                             status = if (isCurrentMonth) dayStatus[cellDate]
-                                ?: DayStatus.FUTURE else null,
+                                ?: DayStatusUi.FUTURE else null,
                             onClick = { onDateSelected(cellDate) }
                         )
                     }
@@ -207,8 +207,8 @@ private fun CalendarMonthViewPreview() {
                 selectedDate = LocalDate.of(2026, 10, 8),
                 today = LocalDate.of(2026, 10, 8),
                 dayStatus = mapOf(
-                    LocalDate.of(2026, 10, 7) to DayStatus.ALL_PRAYED,
-                    LocalDate.of(2026, 10, 8) to DayStatus.IN_PROGRESS
+                    LocalDate.of(2026, 10, 7) to DayStatusUi.ALL_PRAYED,
+                    LocalDate.of(2026, 10, 8) to DayStatusUi.IN_PROGRESS
                 ),
                 onDateSelected = {},
                 onMonthChanged = {},

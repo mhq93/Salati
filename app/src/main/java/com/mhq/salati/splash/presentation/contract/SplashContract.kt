@@ -1,15 +1,15 @@
 package com.mhq.salati.splash.presentation.contract
 
-import com.mhq.salati.settings.domain.model.AppLanguage
-import com.mhq.salati.settings.domain.model.ThemeMode
-import com.mhq.salati.splash.domain.model.StartDestination
+import com.mhq.salati.settings.presentation.model.AppLanguageUi
+import com.mhq.salati.settings.presentation.model.ThemeModeUi
 import com.mhq.salati.shared.ui.UiText
+import com.mhq.salati.splash.presentation.model.StartDestinationUi
 
 class SplashContract {
     data class State(
         val isLoading: Boolean = true,
-        val startDestination: StartDestination? = null,
-        val themeMode: ThemeMode = ThemeMode.SYSTEM,
+        val startDestination: StartDestinationUi? = null,
+        val themeMode: ThemeModeUi = ThemeModeUi.SYSTEM,
         val isLanguageSelected: Boolean = false,
         val errorMessage: UiText? = null,
         val isDestinationReady: Boolean = false,
@@ -18,7 +18,7 @@ class SplashContract {
 
     sealed class Intent {
         object CheckStartDestination : Intent()
-        data class SelectInitialLanguage(val language: AppLanguage) : Intent()
+        data class SelectInitialLanguage(val language: AppLanguageUi) : Intent()
     }
 
     sealed interface Effect {

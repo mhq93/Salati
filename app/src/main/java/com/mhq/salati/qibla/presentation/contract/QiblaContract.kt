@@ -1,6 +1,6 @@
 package com.mhq.salati.qibla.presentation.contract
 
-import com.mhq.salati.qibla.domain.model.CompassAccuracy
+import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.shared.ui.UiText
 
 class QiblaContract {
@@ -10,7 +10,7 @@ class QiblaContract {
         val qiblaBearing: Float? = null,
         val deviceHeading: Float = 0f,
         val sensorUnavailable: Boolean = false,
-        val compassAccuracy: CompassAccuracy = CompassAccuracy.HIGH,
+        val compassAccuracy: CompassAccuracyUi = CompassAccuracyUi.HIGH,
         val isCalibrationGuideVisible: Boolean = false,
 
         // FIX: Flattened LocationPermissionState into UI flags

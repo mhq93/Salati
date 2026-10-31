@@ -1,5 +1,6 @@
 package com.mhq.salati.qibla.presentation.viewmodel
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.R
@@ -9,6 +10,7 @@ import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.qibla.presentation.handlers.QiblaCompassHandler
 import com.mhq.salati.qibla.presentation.handlers.QiblaLocationHandler
 import com.mhq.salati.qibla.presentation.handlers.QiblaLocationLoad
+import com.mhq.salati.qibla.presentation.mapper.toUi
 import com.mhq.salati.shared.domain.Coordinates
 import com.mhq.salati.shared.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -314,7 +316,7 @@ class QiblaViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             deviceHeading = reading.headingDegrees,
-                            compassAccuracy = reading.accuracy
+                            compassAccuracy = reading.accuracy.toUi()
                         )
                     }
                 }
@@ -327,6 +329,7 @@ class QiblaViewModel @Inject constructor(
         compassJob = null
     }
 
+    @SuppressLint("EmptySuperCall")
     override fun onCleared() {
         compassJob?.cancel()
         super.onCleared()

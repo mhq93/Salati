@@ -6,12 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.R
 import com.mhq.salati.language.domain.usecases.SetLanguageSelectedUseCase
-import com.mhq.salati.settings.domain.model.AppLanguage
 import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateLanguageUseCase
+import com.mhq.salati.settings.presentation.mapper.toDomain
+import com.mhq.salati.settings.presentation.mapper.toUi
+import com.mhq.salati.settings.presentation.model.AppLanguageUi
 import com.mhq.salati.shared.ui.UiText
 import com.mhq.salati.splash.domain.usecases.GetStartDestinationUseCase
 import com.mhq.salati.splash.presentation.contract.SplashContract
+import com.mhq.salati.splash.presentation.mapper.toUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
@@ -45,7 +48,7 @@ class SplashViewModel @Inject constructor(
             .onEach { settings ->
                 _state.update {
                     it.copy(
-                        themeMode = settings.themeMode,
+                        themeMode = settings.themeMode.toUi(),
                         isLanguageSelected = settings.isLanguageSelected,
                         isSettingsReady = true,
                         isLoading = !it.isDestinationReady
@@ -62,8 +65,9 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    private fun selectInitialLanguage(language: AppLanguage) = viewModelScope.launch {
+    private fun selectInitialLanguage(languageUi: AppLanguageUi) = viewModelScope.launch {
         try {
+            val language = languageUi.toDomain()
             updateLanguageUseCase(language)
             // Apply the locale BEFORE flipping isLanguageSelected, so the app
             // recreates into the right locale instead of briefly showing
@@ -89,7 +93,7 @@ class SplashViewModel @Inject constructor(
             val destination = getStartDestinationUseCase()
             _state.update {
                 it.copy(
-                    startDestination = destination,
+                    startDestination = destination.toUi(),
                     isDestinationReady = true,
                     isLoading = !it.isSettingsReady
                 )

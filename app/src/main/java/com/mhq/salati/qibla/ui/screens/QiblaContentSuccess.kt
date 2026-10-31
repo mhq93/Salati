@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mhq.salati.qibla.domain.model.CompassAccuracy
+import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.qibla.ui.components.CalibrationBanner
 import com.mhq.salati.qibla.ui.components.LocationPill
 import com.mhq.salati.qibla.ui.components.RotatingCompassDial
@@ -30,7 +30,7 @@ fun QiblaContentSuccess(
     locationName: String?,
     deviceHeading: Float,
     qiblaBearing: Float,
-    compassAccuracy: CompassAccuracy,
+    compassAccuracy: CompassAccuracyUi,
     onLocationPillClick: () -> Unit,
     onRecalibrateClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -91,7 +91,7 @@ private fun QiblaContentSuccessPreview() {
             locationName = "",
             deviceHeading = 1.0f,
             qiblaBearing = 1.0f,
-            compassAccuracy = CompassAccuracy.HIGH,
+            compassAccuracy = CompassAccuracyUi.HIGH,
             onLocationPillClick = {},
             onRecalibrateClick = {}
         )

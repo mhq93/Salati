@@ -17,8 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
-import com.mhq.salati.prayertracker.domain.model.PrayerStatus
-import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.prayertracker.presentation.model.PrayerStatusUi
+import com.mhq.salati.shared.presentation.model.PrayerNameUi
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import java.time.LocalDate
 
@@ -26,13 +26,13 @@ import java.time.LocalDate
 fun PrayerStatusList(
     selectedDate: LocalDate,
     today: LocalDate,
-    duePrayers: Set<PrayerName>,
-    records: Map<PrayerName, PrayerStatus>,
-    onPrayerTapped: (PrayerName) -> Unit
+    duePrayers: Set<PrayerNameUi>,
+    records: Map<PrayerNameUi, PrayerStatusUi>,
+    onPrayerTapped: (PrayerNameUi) -> Unit
 ) {
     //val locked = selectedDate.isAfter(today)
     val isFutureDate = selectedDate.isAfter(today)
-    val hasUnduePrayers = selectedDate == today && PrayerName.majorEntries.any { it !in duePrayers }
+    val hasUnduePrayers = selectedDate == today && PrayerNameUi.majorEntries.any { it !in duePrayers }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -47,8 +47,8 @@ fun PrayerStatusList(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            PrayerName.majorEntries.forEach { prayer ->
-                val status = records[prayer] ?: PrayerStatus.PENDING
+            PrayerNameUi.majorEntries.forEach { prayer ->
+                val status = records[prayer] ?: PrayerStatusUi.PENDING
                 PrayerStatusCard(
                     prayer = prayer,
                     status = status,
@@ -77,7 +77,7 @@ private fun PrayerStatusListPreview() {
     SalatiTheme() {
         PrayerStatusList(
             selectedDate = LocalDate.of(2026, 10, 8),
-            duePrayers = PrayerName.majorEntries.toSet(),
+            duePrayers = PrayerNameUi.majorEntries.toSet(),
             today = LocalDate.of(2026, 10, 8),
             records = emptyMap(),
             onPrayerTapped = {}

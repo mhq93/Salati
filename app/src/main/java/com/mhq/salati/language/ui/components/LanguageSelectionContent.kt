@@ -38,7 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
-import com.mhq.salati.settings.domain.model.AppLanguage
+import com.mhq.salati.settings.presentation.model.AppLanguageUi
 import com.mhq.salati.settings.ui.displayNameRes
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import kotlinx.coroutines.delay
@@ -48,14 +48,14 @@ private const val SELECTION_FEEDBACK_DELAY_MS = 500L
 
 @Composable
 fun LanguageSelectionContent(
-    onLanguageSelected: (AppLanguage) -> Unit,
+    onLanguageSelected: (AppLanguageUi) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Track the tapped language locally so we can show a checkmark/highlight
     // before handing off to the caller — the caller may recreate the Activity
     // almost immediately, so this feedback has to happen here, synchronously
     // with the tap, not depend on upstream state.
-    var pendingSelection by remember { mutableStateOf<AppLanguage?>(null) }
+    var pendingSelection by remember { mutableStateOf<AppLanguageUi?>(null) }
 
     LaunchedEffect(pendingSelection) {
         val selection = pendingSelection ?: return@LaunchedEffect
@@ -94,7 +94,7 @@ fun LanguageSelectionContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             LazyColumn {
-                items(AppLanguage.entries) { language ->
+                items(AppLanguageUi.entries) { language ->
                     val isSelected = language == pendingSelection
                     val rowColor by animateColorAsState(
                         targetValue = if (isSelected) {
@@ -130,7 +130,7 @@ fun LanguageSelectionContent(
                             )
                         }
                     }
-                    if (language != AppLanguage.entries.last()) {
+                    if (language != AppLanguageUi.entries.last()) {
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     }
                 }

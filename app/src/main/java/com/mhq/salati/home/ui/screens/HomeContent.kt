@@ -48,12 +48,12 @@ fun HomeContent(
                 }
                 state.prayerTimes.timings != null
                         && state.prayerTimes.date != null
-                        && state.prayerTimes.prayerWindow != null -> {
+                        && state.prayerTimes.nextPrayerName != null -> {
                     HomeContentSuccess(
                         locationName = state.location.locationName,
                         prayerDate = state.prayerTimes.date,
                         prayerTimings = state.prayerTimes.timings,
-                        nextPrayer = state.prayerTimes.prayerWindow.nextPrayer,
+                        nextPrayer = state.prayerTimes.nextPrayerName,
                         remaining = state.prayerTimes.remaining,
                         windowProgress = state.prayerTimes.windowProgress,
                         currentPrayerName = state.prayerTimes.currentPrayerName,

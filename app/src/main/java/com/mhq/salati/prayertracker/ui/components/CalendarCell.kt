@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mhq.salati.prayertracker.domain.model.DayStatus
+import com.mhq.salati.prayertracker.presentation.model.DayStatusUi
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
@@ -26,14 +26,14 @@ fun DayCell(
     isCurrentMonth: Boolean,
     isFuture: Boolean = false,
     isSelected: Boolean,
-    status: DayStatus?,
+    status: DayStatusUi?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val dotIndicatorColor = when (status) {
-        DayStatus.ALL_PRAYED -> MaterialTheme.colorScheme.primary
-        DayStatus.HAS_MISSED -> MaterialTheme.colorScheme.error
-        DayStatus.IN_PROGRESS -> MaterialTheme.colorScheme.tertiary
+        DayStatusUi.ALL_PRAYED -> MaterialTheme.colorScheme.primary
+        DayStatusUi.HAS_MISSED -> MaterialTheme.colorScheme.error
+        DayStatusUi.IN_PROGRESS -> MaterialTheme.colorScheme.tertiary
         else -> null
     }
 
@@ -113,7 +113,7 @@ private fun DayCellPreview() {
             hijriDay = 1,
             isSelected = true,
             isCurrentMonth = true,
-            status = DayStatus.ALL_PRAYED,
+            status = DayStatusUi.ALL_PRAYED,
             onClick = {}
         )
     }

@@ -17,17 +17,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.home.presentation.contract.HomeContract
-import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.shared.presentation.model.PrayerNameUi
 import com.mhq.salati.shared.ui.labelRes
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
 fun PrayersList(
-    prayers: List<Pair<PrayerName, String>>,
-    minorTimings: List<Pair<PrayerName, String>>,
-    currentTimingName: PrayerName?,
-    mutedTimings: Set<PrayerName>,
-    pastTimings: Set<PrayerName>,
+    prayers: List<Pair<PrayerNameUi, String>>,
+    minorTimings: List<Pair<PrayerNameUi, String>>,
+    currentTimingName: PrayerNameUi?,
+    mutedTimings: Set<PrayerNameUi>,
+    pastTimings: Set<PrayerNameUi>,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -68,10 +68,10 @@ private fun PrayersListPreview() {
     SalatiTheme {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             PrayersList(
-                prayers = listOf("Fajr" to "04:30", "Dhuhr" to "12:00", "Asr" to "15:30").map { PrayerName.FAJR to it.second },
-                minorTimings = listOf("Imsak" to "04:15", "Shorouq" to "05:45", "Midnight" to "23:30").map { PrayerName.IMSAK to it.second },
-                currentTimingName = PrayerName.FAJR,
-                mutedTimings = setOf(PrayerName.IMSAK),
+                prayers = listOf("Fajr" to "04:30", "Dhuhr" to "12:00", "Asr" to "15:30").map { PrayerNameUi.FAJR to it.second },
+                minorTimings = listOf("Imsak" to "04:15", "Shorouq" to "05:45", "Midnight" to "23:30").map { PrayerNameUi.IMSAK to it.second },
+                currentTimingName = PrayerNameUi.FAJR,
+                mutedTimings = setOf(PrayerNameUi.IMSAK),
                 pastTimings = emptySet(),
                 onIntent = {}
             )

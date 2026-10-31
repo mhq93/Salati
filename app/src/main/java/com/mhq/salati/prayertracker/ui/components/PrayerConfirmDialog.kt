@@ -28,13 +28,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.mhq.salati.R
-import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.shared.presentation.model.PrayerNameUi
 import com.mhq.salati.shared.ui.labelRes
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
 fun PrayerConfirmDialog(
-    prayer: PrayerName,
+    prayer: PrayerNameUi,
     onConfirmPrayed: () -> Unit,
     onConfirmMissed: () -> Unit,
     onDismiss: () -> Unit
@@ -93,7 +93,7 @@ private fun PrayerConfirmDialogPreview() {
                 .background(Color.Gray.copy(alpha = 0.5f))
         ) {
             PrayerConfirmDialog(
-                prayer = PrayerName.FAJR,
+                prayer = PrayerNameUi.FAJR,
                 onConfirmPrayed = {},
                 onConfirmMissed = {},
                 onDismiss = {}

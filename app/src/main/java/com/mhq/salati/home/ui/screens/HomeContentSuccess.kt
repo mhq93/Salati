@@ -27,79 +27,63 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
-import com.mhq.salati.home.domain.model.PrayerWindow
 import com.mhq.salati.home.presentation.contract.HomeContract
+import com.mhq.salati.home.presentation.model.HijriDateUi
+import com.mhq.salati.home.presentation.model.PrayerDateUi
+import com.mhq.salati.home.presentation.model.PrayerTimingsUi
 import com.mhq.salati.home.ui.components.DateBanner
 import com.mhq.salati.home.ui.components.LocationHeader
 import com.mhq.salati.home.ui.components.PrayerCountdownRing
 import com.mhq.salati.home.ui.components.PrayersList
-import com.mhq.salati.prayertimes.domain.model.HijriDate
-import com.mhq.salati.prayertimes.domain.model.PrayerDate
-import com.mhq.salati.prayertimes.domain.model.PrayerTimings
-import com.mhq.salati.settings.domain.model.TimeFormat
-import com.mhq.salati.shared.domain.HijriMonth
-import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.settings.presentation.model.TimeFormatUi
+import com.mhq.salati.shared.presentation.model.HijriMonthUi
+import com.mhq.salati.shared.presentation.model.PrayerNameUi
 import com.mhq.salati.shared.ui.formatForDisplay
 import com.mhq.salati.shared.ui.labelRes
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.shared.ui.theme.prayerGradient
 import java.time.Duration
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
-// Prayer times are shown as plain 24h "HH:mm" with ASCII digits (same as the raw API string was).
-//private val PrayerTimeDisplayFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.US)
-
-//private fun LocalTime.toDisplayTime(): String = format(PrayerTimeDisplayFormatter)
+/** Prayer times are shown as plain 24h "HH:mm" with ASCII digits (same as the raw API string was).
+private val PrayerTimeDisplayFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.US) */
 
 @Composable
 fun HomeContentSuccess(
     locationName: String?,
-    prayerDate: PrayerDate,
-    prayerTimings: PrayerTimings,
-    nextPrayer: PrayerName,
+    prayerDate: PrayerDateUi,
+    prayerTimings: PrayerTimingsUi,
+    nextPrayer: PrayerNameUi,
     remaining: Duration,
     windowProgress: Float,
-    currentPrayerName: PrayerName?,
-    mutedPrayers: Set<PrayerName>,
-    pastPrayers: Set<PrayerName>,
+    currentPrayerName: PrayerNameUi?,
+    mutedPrayers: Set<PrayerNameUi>,
+    pastPrayers: Set<PrayerNameUi>,
     isToday: Boolean,
-    timeFormat: TimeFormat = TimeFormat.HOUR_24,
+    timeFormat: TimeFormatUi = TimeFormatUi.HOUR_24,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val locale = LocalConfiguration.current.locales[0]
-    // Row i of the list shows prayers[i] next to minorTimings[i], so the order here is the layout.
-    //    val prayers = remember(prayerTimings) {
-    //        listOf(
-    //            PrayerName.FAJR,
-    //            PrayerName.DHUHR,
-    //            PrayerName.ASR,
-    //            PrayerName.MAGHRIB,
-    //            PrayerName.ISHA
-    //        ).map { name -> name to prayerTimings[name].toDisplayTime() }
-    //    }
+
     val prayers = remember(prayerTimings, timeFormat, locale) {
-        listOf(PrayerName.FAJR, PrayerName.DHUHR, PrayerName.ASR, PrayerName.MAGHRIB, PrayerName.ISHA)
-            .map { name -> name to prayerTimings[name].formatForDisplay(timeFormat, locale) }
+        listOf(
+            PrayerNameUi.FAJR,
+            PrayerNameUi.DHUHR,
+            PrayerNameUi.ASR,
+            PrayerNameUi.MAGHRIB,
+            PrayerNameUi.ISHA
+        ).map { name -> name to prayerTimings[name].formatForDisplay(timeFormat, locale) }
     }
 
-    //    val minorTimings = remember(prayerTimings) {
-    //        listOf(
-    //            PrayerName.IMSAK,
-    //            PrayerName.SHOROUQ,
-    //            PrayerName.FIRST_THIRD,
-    //            PrayerName.MIDNIGHT,
-    //            PrayerName.LAST_THIRD
-    //        ).map { name -> name to prayerTimings[name].toDisplayTime() }
-    //    }
     val minorTimings = remember(prayerTimings, timeFormat, locale) {
         listOf(
-            PrayerName.IMSAK, PrayerName.SHOROUQ, PrayerName.FIRST_THIRD,
-            PrayerName.MIDNIGHT, PrayerName.LAST_THIRD
+            PrayerNameUi.IMSAK,
+            PrayerNameUi.SHOROUQ,
+            PrayerNameUi.FIRST_THIRD,
+            PrayerNameUi.MIDNIGHT,
+            PrayerNameUi.LAST_THIRD
         ).map { name -> name to prayerTimings[name].formatForDisplay(timeFormat, locale) }
     }
 
@@ -194,28 +178,25 @@ private fun HomeContentSuccessPreview() {
                 location = HomeContract.LocationUiState(locationName = "Cairo, Egypt"),
                 dateBrowser = HomeContract.DateBrowserUiState(isBrowsingToday = true),
                 prayerTimes = HomeContract.PrayerTimesUiState(
-                    date = PrayerDate(
+                    date = PrayerDateUi(
                         gregorianDate = LocalDate.of(2026, 8, 17),
-                        hijriDate = HijriDate(4, HijriMonth.SHAWWAL, 1448)
+                        hijriDate = HijriDateUi(4, HijriMonthUi.SHAWWAL, 1448)
                     ),
-                    timings = PrayerTimings(
-                        LocalTime.of(4, 15),
-                        LocalTime.of(4, 30),
-                        LocalTime.of(5, 45),
-                        LocalTime.of(12, 0),
-                        LocalTime.of(15, 30),
-                        LocalTime.of(18, 30),
-                        LocalTime.of(18, 45),
-                        LocalTime.of(20, 15),
-                        LocalTime.of(23, 30),
-                        LocalTime.of(22, 0),
-                        LocalTime.of(2, 0)
+                    timings = PrayerTimingsUi(
+                        mapOf(
+                            PrayerNameUi.IMSAK to LocalTime.of(4, 15),
+                            PrayerNameUi.FAJR to LocalTime.of(4, 30),
+                            PrayerNameUi.SHOROUQ to LocalTime.of(5, 45),
+                            PrayerNameUi.DHUHR to LocalTime.of(12, 0),
+                            PrayerNameUi.ASR to LocalTime.of(15, 30),
+                            PrayerNameUi.MAGHRIB to LocalTime.of(18, 45),
+                            PrayerNameUi.ISHA to LocalTime.of(20, 15),
+                            PrayerNameUi.MIDNIGHT to LocalTime.of(23, 30),
+                            PrayerNameUi.FIRST_THIRD to LocalTime.of(22, 0),
+                            PrayerNameUi.LAST_THIRD to LocalTime.of(2, 0)
+                        )
                     ),
-                    prayerWindow = PrayerWindow(
-                        PrayerName.FAJR,
-                        Instant.now(),
-                        Instant.now().plusSeconds(3600)
-                    ),
+                    nextPrayerName = PrayerNameUi.FAJR,
                     remaining = Duration.ofMinutes(45),
                     windowProgress = 0.6f
                 )

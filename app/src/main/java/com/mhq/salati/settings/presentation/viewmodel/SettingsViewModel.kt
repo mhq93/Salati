@@ -6,14 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.mhq.salati.BuildConfig
 import com.mhq.salati.R
 import com.mhq.salati.permissions.domain.repo.PermissionChecker
-import com.mhq.salati.settings.domain.model.AdhanSound
-import com.mhq.salati.settings.domain.model.AppLanguage
 import com.mhq.salati.settings.domain.model.AppSettings
-import com.mhq.salati.settings.domain.model.CalculationMethod
-import com.mhq.salati.settings.domain.model.CustomAlarmSound
-import com.mhq.salati.settings.domain.model.Madhab
-import com.mhq.salati.settings.domain.model.ThemeMode
-import com.mhq.salati.settings.domain.model.TimeFormat
 import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateAdhanSoundUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateCalculationMethodUseCase
@@ -25,6 +18,15 @@ import com.mhq.salati.settings.domain.usecases.UpdateNotificationsEnabledUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateThemeModeUseCase
 import com.mhq.salati.settings.domain.usecases.UpdateTimeFormatUseCase
 import com.mhq.salati.settings.presentation.contract.SettingsContract
+import com.mhq.salati.settings.presentation.mapper.toDomain
+import com.mhq.salati.settings.presentation.mapper.toUi
+import com.mhq.salati.settings.presentation.model.AdhanSoundUi
+import com.mhq.salati.settings.presentation.model.AppLanguageUi
+import com.mhq.salati.settings.presentation.model.CalculationMethodUi
+import com.mhq.salati.settings.presentation.model.CustomAlarmSoundUi
+import com.mhq.salati.settings.presentation.model.MadhabUi
+import com.mhq.salati.settings.presentation.model.ThemeModeUi
+import com.mhq.salati.settings.presentation.model.TimeFormatUi
 import com.mhq.salati.shared.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -97,14 +99,14 @@ class SettingsViewModel @Inject constructor(
             it.copy(
                 isLoading = false,
                 notificationsEnabled = settings.notificationsEnabled,
-                calculationMethod = settings.calculationMethod,
-                madhab = settings.madhab,
-                themeMode = settings.themeMode,
-                language = settings.language,
-                adhanSound = settings.adhanSound,
-                customAlarmSound = settings.customAlarmSound,
+                calculationMethod = settings.calculationMethod.toUi(),
+                madhab = settings.madhab.toUi(),
+                themeMode = settings.themeMode.toUi(),
+                language = settings.language.toUi(),
+                adhanSound = settings.adhanSound.toUi(),
+                customAlarmSound = settings.customAlarmSound.toUi(),
                 hijriDateOffset = settings.hijriDateOffset,
-                timeFormat = settings.timeFormat
+                timeFormat = settings.timeFormat.toUi()
             )
         }
     }
@@ -155,29 +157,30 @@ class SettingsViewModel @Inject constructor(
             updateNotificationsEnabledUseCase(enabled)
         }
 
-    private fun updateCalculationMethod(method: CalculationMethod) =
+    private fun updateCalculationMethod(method: CalculationMethodUi) =
         launchUpdate(R.string.couldn_t_update_calculation_method) {
-            updateCalculationMethodUseCase(method)
+            updateCalculationMethodUseCase(method.toDomain())
         }
 
-    private fun updateMadhab(madhab: Madhab) =
-        launchUpdate(R.string.couldn_t_update_madhab) { updateMadhabUseCase(madhab) }
+    private fun updateMadhab(madhab: MadhabUi) =
+        launchUpdate(R.string.couldn_t_update_madhab) { updateMadhabUseCase(madhab.toDomain()) }
 
-    private fun updateTheme(mode: ThemeMode) =
-        launchUpdate(R.string.couldn_t_update_theme) { updateThemeModeUseCase(mode) }
+    private fun updateTheme(mode: ThemeModeUi) =
+        launchUpdate(R.string.couldn_t_update_theme) { updateThemeModeUseCase(mode.toDomain()) }
 
-    private fun updateLanguage(language: AppLanguage) =
+    private fun updateLanguage(language: AppLanguageUi) =
         launchUpdate(R.string.couldn_t_update_language) {
-            updateLanguageUseCase(language)
-            _effect.send(SettingsContract.Effect.LanguageChangedRestartRequired(language.code))
+            val domainLanguage = language.toDomain()
+            updateLanguageUseCase(domainLanguage)
+            _effect.send(SettingsContract.Effect.LanguageChangedRestartRequired(domainLanguage.code))
         }
 
-    private fun updateAdhanSound(sound: AdhanSound) =
-        launchUpdate(R.string.couldn_t_update_adhan_sound) { updateAdhanSoundUseCase(sound) }
+    private fun updateAdhanSound(sound: AdhanSoundUi) =
+        launchUpdate(R.string.couldn_t_update_adhan_sound) { updateAdhanSoundUseCase(sound.toDomain()) }
 
-    private fun updateCustomAlarmSound(sound: CustomAlarmSound) =
+    private fun updateCustomAlarmSound(sound: CustomAlarmSoundUi) =
         launchUpdate(R.string.couldn_t_update_custom_alarm_sound) {
-            updateCustomAlarmSoundUseCase(sound)
+            updateCustomAlarmSoundUseCase(sound.toDomain())
         }
 
     private fun updateHijriOffset(offset: Int) =
@@ -185,8 +188,8 @@ class SettingsViewModel @Inject constructor(
             updateHijriDateOffsetUseCase(offset.coerceIn(-2, 2))
         }
 
-    private fun updateTimeFormat(format: TimeFormat) =
-        launchUpdate(R.string.couldn_t_update_time_format) { updateTimeFormatUseCase(format) }
+    private fun updateTimeFormat(format: TimeFormatUi) =
+        launchUpdate(R.string.couldn_t_update_time_format) { updateTimeFormatUseCase(format.toDomain()) }
 
     private fun emitEffect(effect: SettingsContract.Effect) =
         viewModelScope.launch {

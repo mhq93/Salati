@@ -1,7 +1,7 @@
 package com.mhq.salati.alarms.presentation.contract
 
 import com.mhq.salati.R
-import com.mhq.salati.alarms.domain.model.CustomAlarm
+import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
 import com.mhq.salati.shared.ui.UiText
 
 /**
@@ -35,9 +35,9 @@ object AlarmsContract {
      */
     data class State(
         val isLoading: Boolean = true,
-        val alarms: List<CustomAlarm> = emptyList(),
+        val alarms: List<CustomAlarmUi> = emptyList(),
         val isEditorVisible: Boolean = false,
-        val editingAlarm: CustomAlarm? = null,
+        val editingAlarm: CustomAlarmUi? = null,
         val errorMessage: UiText? = null
     )
 
@@ -52,7 +52,7 @@ object AlarmsContract {
         data object AddAlarm : Intent
 
         /** Opens the editor pre-filled with [alarm]. */
-        data class EditAlarm(val alarm: CustomAlarm) : Intent
+        data class EditAlarm(val alarm: CustomAlarmUi) : Intent
 
         /**
          * Persists [alarm] and closes the editor.
@@ -62,7 +62,7 @@ object AlarmsContract {
          * Creating an alarm equivalent to an existing one
          * (same prayer, offset,direction and active days) is rejected with [Effect.ShowError].
          */
-        data class SaveAlarm(val alarm: CustomAlarm) : Intent
+        data class SaveAlarm(val alarm: CustomAlarmUi) : Intent
 
         /** Permanently deletes the alarm with the given [id]. */
         data class DeleteAlarm(val id: Long) : Intent

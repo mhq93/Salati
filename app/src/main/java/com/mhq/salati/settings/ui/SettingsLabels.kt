@@ -3,66 +3,66 @@ package com.mhq.salati.settings.ui
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
 import com.mhq.salati.R
-import com.mhq.salati.settings.domain.model.AdhanSound
-import com.mhq.salati.settings.domain.model.AppLanguage
-import com.mhq.salati.settings.domain.model.CalculationMethod
-import com.mhq.salati.settings.domain.model.CustomAlarmSound
-import com.mhq.salati.settings.domain.model.Madhab
-import com.mhq.salati.settings.domain.model.ThemeMode
-import com.mhq.salati.settings.domain.model.TimeFormat
+import com.mhq.salati.settings.presentation.model.AdhanSoundUi
+import com.mhq.salati.settings.presentation.model.AppLanguageUi
+import com.mhq.salati.settings.presentation.model.CalculationMethodUi
+import com.mhq.salati.settings.presentation.model.CustomAlarmSoundUi
+import com.mhq.salati.settings.presentation.model.MadhabUi
+import com.mhq.salati.settings.presentation.model.ThemeModeUi
+import com.mhq.salati.settings.presentation.model.TimeFormatUi
 
-val AppLanguage.displayNameRes: Int
+val AppLanguageUi.displayNameRes: Int
     @StringRes get() = when (this) {
-        AppLanguage.ENGLISH -> R.string.language_english
-        AppLanguage.ARABIC -> R.string.language_arabic
+        AppLanguageUi.ENGLISH -> R.string.language_english
+        AppLanguageUi.ARABIC -> R.string.language_arabic
     }
 
-val TimeFormat.displayNameRes: Int
+val TimeFormatUi.displayNameRes: Int
     @StringRes get() = when (this) {
-        TimeFormat.HOUR_12 -> R.string.time_format_12_hour
-        TimeFormat.HOUR_24 -> R.string.time_format_24_hour
+        TimeFormatUi.HOUR_12 -> R.string.time_format_12_hour
+        TimeFormatUi.HOUR_24 -> R.string.time_format_24_hour
     }
 
-val ThemeMode.displayNameRes: Int
+val ThemeModeUi.displayNameRes: Int
     @StringRes get() = when (this) {
-        ThemeMode.SYSTEM -> R.string.theme_system_default
-        ThemeMode.LIGHT -> R.string.theme_light
-        ThemeMode.DARK -> R.string.theme_dark
+        ThemeModeUi.SYSTEM -> R.string.theme_system_default
+        ThemeModeUi.LIGHT -> R.string.theme_light
+        ThemeModeUi.DARK -> R.string.theme_dark
     }
 
-val Madhab.displayNameRes: Int
+val MadhabUi.displayNameRes: Int
     @StringRes get() = when (this) {
-        Madhab.SHAFI -> R.string.madhab_shafi
-        Madhab.HANAFI -> R.string.madhab_hanafi
+        MadhabUi.SHAFI -> R.string.madhab_shafi
+        MadhabUi.HANAFI -> R.string.madhab_hanafi
     }
 
-val CalculationMethod.displayNameRes: Int
+val CalculationMethodUi.displayNameRes: Int
     @StringRes get() = when (this) {
-        CalculationMethod.EGYPTIAN_GENERAL_AUTHORITY -> R.string.calc_method_egyptian_general_authority
-        CalculationMethod.UMM_AL_QURA -> R.string.calc_method_umm_al_qura
-        CalculationMethod.MUSLIM_WORLD_LEAGUE -> R.string.calc_method_muslim_world_league
-        CalculationMethod.ISLAMIC_SOCIETY_OF_NORTH_AMERICA -> R.string.calc_method_isna
-        CalculationMethod.UNIVERSITY_OF_ISLAMIC_SCIENCES_KARACHI -> R.string.calc_method_karachi
+        CalculationMethodUi.EGYPTIAN_GENERAL_AUTHORITY -> R.string.calc_method_egyptian_general_authority
+        CalculationMethodUi.UMM_AL_QURA -> R.string.calc_method_umm_al_qura
+        CalculationMethodUi.MUSLIM_WORLD_LEAGUE -> R.string.calc_method_muslim_world_league
+        CalculationMethodUi.ISLAMIC_SOCIETY_OF_NORTH_AMERICA -> R.string.calc_method_isna
+        CalculationMethodUi.UNIVERSITY_OF_ISLAMIC_SCIENCES_KARACHI -> R.string.calc_method_karachi
     }
 
-val AdhanSound.displayNameRes: Int
+val AdhanSoundUi.displayNameRes: Int
     @StringRes get() = when (this) {
-        AdhanSound.DEFAULT -> R.string.adhan_sound_default
-        AdhanSound.EGYPT -> R.string.adhan_sound_egypt
-        AdhanSound.MAKKAH -> R.string.adhan_sound_makkah
-        AdhanSound.MADINAH -> R.string.adhan_sound_madinah
-        AdhanSound.SILENT -> R.string.adhan_sound_silent
+        AdhanSoundUi.DEFAULT -> R.string.adhan_sound_default
+        AdhanSoundUi.EGYPT -> R.string.adhan_sound_egypt
+        AdhanSoundUi.MAKKAH -> R.string.adhan_sound_makkah
+        AdhanSoundUi.MADINAH -> R.string.adhan_sound_madinah
+        AdhanSoundUi.SILENT -> R.string.adhan_sound_silent
     }
 
-val CustomAlarmSound.displayNameRes: Int
+val CustomAlarmSoundUi.displayNameRes: Int
     @StringRes get() = when (this) {
-        CustomAlarmSound.DEFAULT -> R.string.custom_alarm_sound_default
-        CustomAlarmSound.ALERT -> R.string.custom_alarm_sound_alert
+        CustomAlarmSoundUi.DEFAULT -> R.string.custom_alarm_sound_default
+        CustomAlarmSoundUi.ALERT -> R.string.custom_alarm_sound_alert
     }
 
 /** The bundled sound file, or null to use the system default. */
-val CustomAlarmSound.rawRes: Int?
+val CustomAlarmSoundUi.rawRes: Int?
     @RawRes get() = when (this) {
-        CustomAlarmSound.DEFAULT -> null
-        CustomAlarmSound.ALERT -> R.raw.minor_timing_alert
+        CustomAlarmSoundUi.DEFAULT -> null
+        CustomAlarmSoundUi.ALERT -> R.raw.minor_timing_alert
     }

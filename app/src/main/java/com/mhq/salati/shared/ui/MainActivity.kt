@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.graphics.toColorInt
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mhq.salati.settings.domain.model.ThemeMode
+import com.mhq.salati.settings.presentation.model.ThemeModeUi
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.splash.presentation.viewmodel.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,9 +52,9 @@ class MainActivity : AppCompatActivity() {
             val splashState by splashViewModel.state.collectAsStateWithLifecycle()
 
             val darkTheme = when (splashState.themeMode) {
-                ThemeMode.SYSTEM -> isSystemInDarkTheme()
-                ThemeMode.LIGHT -> false
-                ThemeMode.DARK -> true
+                ThemeModeUi.SYSTEM -> isSystemInDarkTheme()
+                ThemeModeUi.LIGHT -> false
+                ThemeModeUi.DARK -> true
             }
 
             SalatiTheme(darkTheme = darkTheme) {

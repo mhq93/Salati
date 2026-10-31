@@ -39,15 +39,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mhq.salati.prayertracker.domain.model.PrayerStatus
-import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.prayertracker.presentation.model.PrayerStatusUi
+import com.mhq.salati.shared.presentation.model.PrayerNameUi
 import com.mhq.salati.shared.ui.labelRes
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
 fun PrayerStatusCard(
-    prayer: PrayerName,
-    status: PrayerStatus,
+    prayer: PrayerNameUi,
+    status: PrayerStatusUi,
     locked: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -116,17 +116,17 @@ fun PrayerStatusCard(
             label = "statusBadge"
         ) { animatedStatus ->
             when (animatedStatus) {
-                PrayerStatus.PRAYED -> StatusBadge(
+                PrayerStatusUi.PRAYED -> StatusBadge(
                     icon = Icons.Filled.Check,
                     color = MaterialTheme.colorScheme.primary
                 )
 
-                PrayerStatus.MISSED -> StatusBadge(
+                PrayerStatusUi.MISSED -> StatusBadge(
                     icon = Icons.Filled.Close,
                     color = MaterialTheme.colorScheme.error
                 )
 
-                PrayerStatus.PENDING -> Box(
+                PrayerStatusUi.PENDING -> Box(
                     modifier = Modifier
                         .size(28.dp)
                         .clip(CircleShape)
@@ -154,8 +154,8 @@ fun PrayerStatusCard(
 private fun PrayerStatusCardPreview() {
     SalatiTheme {
         PrayerStatusCard(
-            prayer = PrayerName.FAJR,
-            status = PrayerStatus.PRAYED,
+            prayer = PrayerNameUi.FAJR,
+            status = PrayerStatusUi.PRAYED,
             locked = true,
             onClick = {}
         )

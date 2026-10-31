@@ -36,9 +36,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
-import com.mhq.salati.prayertimes.domain.model.HijriDate
-import com.mhq.salati.prayertimes.domain.model.PrayerDate
-import com.mhq.salati.shared.domain.HijriMonth
+import com.mhq.salati.home.presentation.model.HijriDateUi
+import com.mhq.salati.home.presentation.model.PrayerDateUi
+import com.mhq.salati.shared.presentation.model.HijriMonthUi
 import com.mhq.salati.shared.ui.labelRes
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import java.time.LocalDate
@@ -47,7 +47,7 @@ import java.util.Locale
 
 @Composable
 fun DateBanner(
-    prayerDate: PrayerDate,
+    prayerDate: PrayerDateUi,
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
     modifier: Modifier = Modifier
@@ -169,9 +169,9 @@ fun DateBanner(
 fun DateBannerPreview() {
     SalatiTheme() {
         DateBanner(
-            prayerDate = PrayerDate(
+            prayerDate = PrayerDateUi(
                 gregorianDate = LocalDate.of(2026, 8, 17),
-                hijriDate = HijriDate(day = 4, month = HijriMonth.RABI_AL_AWWAL, year = 1448)
+                hijriDate = HijriDateUi(day = 4, month = HijriMonthUi.RABI_AL_AWWAL, year = 1448)
             ),
             onPreviousDay = {},
             onNextDay = {}

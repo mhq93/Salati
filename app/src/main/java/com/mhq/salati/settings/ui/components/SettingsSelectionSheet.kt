@@ -22,13 +22,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
-import com.mhq.salati.settings.domain.model.AdhanSound
-import com.mhq.salati.settings.domain.model.AppLanguage
-import com.mhq.salati.settings.domain.model.CalculationMethod
-import com.mhq.salati.settings.domain.model.CustomAlarmSound
-import com.mhq.salati.settings.domain.model.Madhab
-import com.mhq.salati.settings.domain.model.ThemeMode
-import com.mhq.salati.settings.domain.model.TimeFormat
+import com.mhq.salati.settings.presentation.model.AdhanSoundUi
+import com.mhq.salati.settings.presentation.model.AppLanguageUi
+import com.mhq.salati.settings.presentation.model.CalculationMethodUi
+import com.mhq.salati.settings.presentation.model.CustomAlarmSoundUi
+import com.mhq.salati.settings.presentation.model.MadhabUi
+import com.mhq.salati.settings.presentation.model.ThemeModeUi
+import com.mhq.salati.settings.presentation.model.TimeFormatUi
 import com.mhq.salati.settings.presentation.SelectorType
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.settings.presentation.contract.SettingsContract.State
@@ -48,27 +48,27 @@ fun SettingsSelectionSheet(
         onDismissRequest = onDismiss
     ) {
         val (titleRes, options) = when (selector) {
-            SelectorType.CalculationMethod -> R.string.calculation_method to CalculationMethod.entries
+            SelectorType.CalculationMethod -> R.string.calculation_method to CalculationMethodUi.entries
                 .map {
                     Triple(it.displayNameRes, it == state.calculationMethod) { Intent.SelectCalculationMethod(it) }
                 }
 
-            SelectorType.Madhab -> R.string.asr_madhab to Madhab.entries
+            SelectorType.Madhab -> R.string.asr_madhab to MadhabUi.entries
                 .map { Triple(it.displayNameRes, it == state.madhab) { Intent.SelectMadhab(it) } }
 
-            SelectorType.Theme -> R.string.theme to ThemeMode.entries
+            SelectorType.Theme -> R.string.theme to ThemeModeUi.entries
                 .map { Triple(it.displayNameRes, it == state.themeMode) { Intent.SelectTheme(it) } }
 
-            SelectorType.Language -> R.string.language to AppLanguage.entries
+            SelectorType.Language -> R.string.language to AppLanguageUi.entries
                 .map { Triple(it.displayNameRes, it == state.language) { Intent.SelectLanguage(it) } }
 
-            SelectorType.AdhanSound -> R.string.adhan_sound to AdhanSound.entries
+            SelectorType.AdhanSound -> R.string.adhan_sound to AdhanSoundUi.entries
                 .map { Triple(it.displayNameRes, it == state.adhanSound) { Intent.SelectAdhanSound(it) } }
 
-            SelectorType.CustomAlarmSound -> R.string.custom_alarm_sound to CustomAlarmSound.entries
+            SelectorType.CustomAlarmSound -> R.string.custom_alarm_sound to CustomAlarmSoundUi.entries
                 .map { Triple(it.displayNameRes, it == state.customAlarmSound) { Intent.SelectCustomAlarmSound(it) } }
 
-            SelectorType.TimeFormat -> R.string.time_format to TimeFormat.entries
+            SelectorType.TimeFormat -> R.string.time_format to TimeFormatUi.entries
                 .map { Triple(it.displayNameRes, it == state.timeFormat) { Intent.SelectTimeFormat(it) } }
         }
 
@@ -124,11 +124,11 @@ private fun SettingsSelectionSheetPreview() {
             state = State(
                 isLoading = true,
                 notificationsEnabled = true,
-                calculationMethod = CalculationMethod.EGYPTIAN_GENERAL_AUTHORITY,
-                madhab = Madhab.SHAFI,
-                themeMode = ThemeMode.SYSTEM,
-                language = AppLanguage.ENGLISH,
-                adhanSound = AdhanSound.DEFAULT,
+                calculationMethod = CalculationMethodUi.EGYPTIAN_GENERAL_AUTHORITY,
+                madhab = MadhabUi.SHAFI,
+                themeMode = ThemeModeUi.SYSTEM,
+                language = AppLanguageUi.ENGLISH,
+                adhanSound = AdhanSoundUi.DEFAULT,
                 hijriDateOffset = 0,
                 appVersion = ""
             ),

@@ -4,11 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.mhq.salati.settings.domain.model.AppLanguage
+import com.mhq.salati.settings.presentation.model.AppLanguageUi
 
 @Composable
 fun LanguageSelectionDialog(
-    onLanguageSelected: (AppLanguage) -> Unit,
+    onLanguageSelected: (AppLanguageUi) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
