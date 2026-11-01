@@ -2,22 +2,21 @@ package com.mhq.salati.prayertracker.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.prayertracker.domain.model.DayStatus
 import com.mhq.salati.prayertracker.domain.model.PrayerStatus
 import com.mhq.salati.prayertracker.domain.usecases.GetCurrentStreakUseCase
 import com.mhq.salati.prayertracker.domain.usecases.GetDuePrayersUseCase
 import com.mhq.salati.prayertracker.domain.usecases.ObservePrayerRecordsForDateUseCase
-import com.mhq.salati.prayertracker.domain.usecases.ObservePrayerRecordsForMonthUseCase
+import com.mhq.salati.prayertracker.domain.usecases.ObserveMonthDayStatusUseCase
 import com.mhq.salati.prayertracker.domain.usecases.SetPrayerStatusUseCase
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract
 import com.mhq.salati.prayertracker.presentation.mapper.toUi
 import com.mhq.salati.prayertracker.presentation.mapper.toUiMap
 import com.mhq.salati.shared.domain.Clock
-import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.presentation.mapper.toDomain
 import com.mhq.salati.shared.presentation.mapper.toUiSet
 import com.mhq.salati.shared.presentation.model.MessageUi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,15 +28,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.YearMonth
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class PrayerTrackerViewModel @Inject constructor(
     private val clock: Clock,
-    private val observePrayerRecordsForMonthUseCase: ObservePrayerRecordsForMonthUseCase,
+    private val observeMonthDayStatusUseCase: ObserveMonthDayStatusUseCase,
     private val observePrayerRecordsForDateUseCase: ObservePrayerRecordsForDateUseCase,
     private val setPrayerStatusUseCase: SetPrayerStatusUseCase,
     private val getCurrentStreakUseCase: GetCurrentStreakUseCase,
@@ -62,16 +61,12 @@ class PrayerTrackerViewModel @Inject constructor(
     init {
         state.map { it.selectedMonth }
             .distinctUntilChanged()
-            .flatMapLatest { month -> observePrayerRecordsForMonthUseCase(month) }
-            .onEach { recordsByDate ->
-                val today = clock.today()
-                val statusMap = recordsByDate.mapValues { (date, records) ->
-                    dayStatusFor(date, records, today).toUi()
-                }
+            .flatMapLatest { month -> observeMonthDayStatusUseCase(month) }
+            .onEach { statusByDate ->
                 _state.update {
                     it.copy(
-                        today = today,
-                        monthDayStatus = statusMap,
+                        today = clock.today(),
+                        monthDayStatus = statusByDate.mapValues { (_, status) -> status.toUi() },
                         isLoading = false
                     )
                 }
@@ -137,34 +132,6 @@ class PrayerTrackerViewModel @Inject constructor(
         }
     }
 
-    //    fun onIntent(intent: PrayerTrackerContract.Intent) {
-    //        when (intent) {
-    //            is PrayerTrackerContract.Intent.DateSelected -> {
-    //                _state.update {
-    //                    it.copy(
-    //                        selectedDate = intent.date,
-    //                        selectedDateRecords = emptyMap(),
-    //                        today = clock.today()
-    //                    )
-    //                }
-    //            }
-    //
-    //            is PrayerTrackerContract.Intent.MonthChanged -> {
-    //                val newMonth = _state.value.selectedMonth.plusMonths(intent.delta.toLong())
-    //                _state.update { it.copy(selectedMonth = newMonth) }
-    //            }
-    //
-    //            is PrayerTrackerContract.Intent.PrayerTileTapped -> {
-    //                if (_state.value.selectedDate.isAfter(clock.today())) return
-    //                _state.update { it.copy(dialogPrayer = intent.prayer) }
-    //            }
-    //
-    //            PrayerTrackerContract.Intent.ConfirmPrayed -> applyDialogResult(PrayerStatus.PRAYED)
-    //            PrayerTrackerContract.Intent.ConfirmMissed -> applyDialogResult(PrayerStatus.MISSED)
-    //            PrayerTrackerContract.Intent.DismissDialog -> _state.update { it.copy(dialogPrayer = null) }
-    //        }
-    //    }
-
     private fun applyDialogResult(status: PrayerStatus) {
         val prayer = _state.value.dialogPrayer?.toDomain() ?: return
         val date = _state.value.selectedDate
@@ -188,16 +155,5 @@ class PrayerTrackerViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(currentStreak = getCurrentStreakUseCase()) }
         }
-    }
-
-    private fun dayStatusFor(
-        date: LocalDate,
-        records: Map<PrayerName, PrayerStatus>,
-        today: LocalDate
-    ): DayStatus = when {
-        date.isAfter(today) -> DayStatus.FUTURE
-        records.values.any { it == PrayerStatus.MISSED } -> DayStatus.HAS_MISSED
-        PrayerName.majorEntries.all { records[it] == PrayerStatus.PRAYED } -> DayStatus.ALL_PRAYED
-        else -> DayStatus.IN_PROGRESS
     }
 }

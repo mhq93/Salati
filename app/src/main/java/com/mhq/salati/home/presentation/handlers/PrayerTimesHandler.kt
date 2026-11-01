@@ -4,12 +4,10 @@ import com.mhq.salati.home.domain.model.PrayerTimesLoad
 import com.mhq.salati.home.domain.model.PrayerTimesTick
 import com.mhq.salati.home.domain.model.PrayerWindow
 import com.mhq.salati.home.domain.usecases.LoadPrayerTimesUseCase
-import com.mhq.salati.home.domain.usecases.ObservePrayerCountdownUseCase
-import com.mhq.salati.home.domain.usecases.RefreshPrayerStatusUseCase
+import com.mhq.salati.home.domain.usecases.ObservePrayerTimesTicksUseCase
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.shared.domain.Coordinates
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -17,9 +15,7 @@ import javax.inject.Inject
 
 class PrayerTimesHandler @Inject constructor(
     private val loadPrayerTimesUseCase: LoadPrayerTimesUseCase,
-    private val observePrayerCountdownUseCase: ObservePrayerCountdownUseCase,
-    private val refreshPrayerStatusUseCase: RefreshPrayerStatusUseCase,
-    private val dayNavigator: DayNavigator
+    private val observePrayerTimesTicksUseCase: ObservePrayerTimesTicksUseCase
 ) {
     fun load(date: LocalDate, coordinates: Coordinates): Flow<PrayerTimesLoad> =
         loadPrayerTimesUseCase(date, coordinates)
@@ -33,22 +29,5 @@ class PrayerTimesHandler @Inject constructor(
         date: LocalDate,
         coordinates: Coordinates,
         window: PrayerWindow
-    ): Flow<PrayerTimesTick> = flow {
-        var currentWindow = window
-        while (true) {
-            observePrayerCountdownUseCase(currentWindow).collect { emit(PrayerTimesTick.Countdown(it)) }
-
-            val nextDate = dayNavigator.rolloverDate(date, currentWindow)
-            if (nextDate != null) {
-                emit(PrayerTimesTick.DayRolledOver(nextDate))
-                return@flow
-            }
-
-            val status = refreshPrayerStatusUseCase(timings, date, coordinates)
-            // A window that doesn't end later than the one that just ended would loop forever.
-            if (!status.window.end.isAfter(currentWindow.end)) return@flow
-            emit(PrayerTimesTick.StatusRefreshed(status))
-            currentWindow = status.window
-        }
-    }
+    ): Flow<PrayerTimesTick> = observePrayerTimesTicksUseCase(timings, date, coordinates, window)
 }

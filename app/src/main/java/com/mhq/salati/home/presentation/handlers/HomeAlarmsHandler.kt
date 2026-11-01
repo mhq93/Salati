@@ -21,13 +21,8 @@ class HomeAlarmsHandler @Inject constructor(
     }
 
     /** Checks the permissions and, when exact alarms are allowed, schedules today's alarms again. */
-    suspend fun recheck(timings: PrayerTimings?, browsedDate: LocalDate): AlarmPermissions {
-        val permissions = prayerAlarmCoordinator.checkPermissions()
-        if (permissions.hasExactAlarm) {
-            prayerAlarmCoordinator.scheduleIfToday(timings, browsedDate)
-        }
-        return permissions
-    }
+    suspend fun recheck(timings: PrayerTimings?, browsedDate: LocalDate): AlarmPermissions =
+        prayerAlarmCoordinator.recheck(timings, browsedDate)
 
     suspend fun schedule(timings: PrayerTimings?, browsedDate: LocalDate) {
         prayerAlarmCoordinator.scheduleIfToday(timings, browsedDate)

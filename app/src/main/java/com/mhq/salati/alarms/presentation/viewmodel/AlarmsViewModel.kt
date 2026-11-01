@@ -3,17 +3,15 @@ package com.mhq.salati.alarms.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.alarms.domain.model.DayToggleResult
-import com.mhq.salati.alarms.domain.usecases.CreateCustomAlarmUseCase
+import com.mhq.salati.alarms.domain.model.SaveAlarmResult
 import com.mhq.salati.alarms.domain.usecases.DeleteCustomAlarmUseCase
 import com.mhq.salati.alarms.domain.usecases.ObserveCustomAlarmsUseCase
-import com.mhq.salati.alarms.domain.usecases.RescheduleCustomAlarmsUseCase
+import com.mhq.salati.alarms.domain.usecases.SaveCustomAlarmUseCase
 import com.mhq.salati.alarms.domain.usecases.ToggleCustomAlarmDayUseCase
 import com.mhq.salati.alarms.domain.usecases.ToggleCustomAlarmUseCase
-import com.mhq.salati.alarms.domain.usecases.UpdateCustomAlarmUseCase
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract.Effect
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract.Intent
 import com.mhq.salati.alarms.presentation.contract.AlarmsContract.State
-import com.mhq.salati.alarms.presentation.mapper.conflictsWith
 import com.mhq.salati.alarms.presentation.mapper.toDomain
 import com.mhq.salati.alarms.presentation.mapper.toUi
 import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
@@ -32,12 +30,10 @@ import javax.inject.Inject
 @HiltViewModel
 class AlarmsViewModel @Inject constructor(
     private val observeCustomAlarmsUseCase: ObserveCustomAlarmsUseCase,
-    private val createCustomAlarmUseCase: CreateCustomAlarmUseCase,
-    private val updateCustomAlarmUseCase: UpdateCustomAlarmUseCase,
+    private val saveCustomAlarmUseCase: SaveCustomAlarmUseCase,
     private val deleteCustomAlarmUseCase: DeleteCustomAlarmUseCase,
     private val toggleCustomAlarmUseCase: ToggleCustomAlarmUseCase,
-    private val toggleCustomAlarmDayUseCase: ToggleCustomAlarmDayUseCase,
-    private val rescheduleCustomAlarmsUseCase: RescheduleCustomAlarmsUseCase
+    private val toggleCustomAlarmDayUseCase: ToggleCustomAlarmDayUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(State())
@@ -80,16 +76,14 @@ class AlarmsViewModel @Inject constructor(
     private fun saveAlarm(alarm: CustomAlarmUi) {
         viewModelScope.launch {
             try {
-                val hasConflict = _state.value.alarms.any { it.id != alarm.id && it.conflictsWith(alarm) }
-                if (hasConflict) {
-                    _effect.send(Effect.ShowError(MessageUi.DUPLICATE_ALARM_EXISTS))
-                    return@launch
+                when (saveCustomAlarmUseCase(alarm.toDomain())) {
+                    SaveAlarmResult.CONFLICT ->
+                        _effect.send(Effect.ShowError(MessageUi.DUPLICATE_ALARM_EXISTS))
+                    SaveAlarmResult.SAVED -> {
+                        _state.update { it.copy(isEditorVisible = false, editingAlarm = null) }
+                        _effect.send(Effect.AlarmSaved())
+                    }
                 }
-                if (alarm.id == 0L) createCustomAlarmUseCase(alarm.toDomain()) else updateCustomAlarmUseCase(alarm.toDomain())
-                _state.update { it.copy(isEditorVisible = false, editingAlarm = null) }
-                _effect.send(Effect.AlarmSaved())
-                // NEW — take effect now instead of waiting for Home's next reload
-                rescheduleAlarmsQuietly()
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -135,19 +129,6 @@ class AlarmsViewModel @Inject constructor(
             } catch (e: Exception) {
                 _effect.send(Effect.ShowError(MessageUi.COULDNT_UPDATE_ALARM))
             }
-        }
-    }
-
-    // NEW — best-effort: if today's timings aren't cached yet (e.g. app just
-    // opened, nothing loaded), Home's own load will schedule everything anyway.
-    // A failure here shouldn't surface as an error on top of a successful save/toggle.
-    private suspend fun rescheduleAlarmsQuietly() {
-        try {
-            rescheduleCustomAlarmsUseCase()
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            // swallowed intentionally
         }
     }
 }

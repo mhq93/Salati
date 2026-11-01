@@ -1,9 +1,9 @@
 package com.mhq.salati.home.presentation.viewmodel
 
-// import android.annotation.SuppressLint
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.home.presentation.handlers.DayNavigator
+import com.mhq.salati.home.domain.service.DayNavigator
 import com.mhq.salati.home.domain.model.AlarmPermissions
 import com.mhq.salati.home.domain.model.PrayerTimesError
 import com.mhq.salati.home.domain.model.PrayerTimesLoad
@@ -493,7 +493,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    // @SuppressLint("EmptySuperCall")
+    @SuppressLint("EmptySuperCall")
     override fun onCleared() {
         countdownJob?.cancel()
         super.onCleared()
