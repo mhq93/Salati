@@ -60,18 +60,18 @@ fun OnboardingContent(
         ),
         OnboardingPageData(
             icon = Icons.Default.LocationOn,
-            title = stringResource(R.string.access_your_location),
-            description = stringResource(R.string.access_your_location_subtitle)
+            title = stringResource(R.string.access_location),
+            description = stringResource(R.string.access_location_subtitle)
         ),
         OnboardingPageData(
             icon = Icons.Default.Explore,
-            title = stringResource(R.string.find_your_qibla),
-            description = stringResource(R.string.find_your_qibla_subtitle)
+            title = stringResource(R.string.find_qibla),
+            description = stringResource(R.string.find_qibla_subtitle)
         ),
         OnboardingPageData(
             icon = Icons.Default.NotificationsActive,
-            title = stringResource(R.string.gentle_reminders),
-            description = stringResource(R.string.gentle_reminders_subtitle)
+            title = stringResource(R.string.custom_alarms),
+            description = stringResource(R.string.custom_alarms_subtitle)
         ),
         OnboardingPageData(
             icon = Icons.Default.Settings,

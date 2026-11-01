@@ -32,7 +32,7 @@ fun HomeContentError(
         isLocationPermissionRequired -> {
             LocationPermissionRequiredError(
                 errorMessage = errorMessage,
-                onRetryClicked = { onIntent(HomeContract.Intent.RetryClicked) },
+                onRetryClicked = { onIntent(HomeContract.Intent.RetryRequested) },
                 modifier = modifier
             )
         }
@@ -48,7 +48,7 @@ fun HomeContentError(
         else -> {
             CatchAllError(
                 errorMessage = errorMessage,
-                onRetryClicked = { onIntent(HomeContract.Intent.RetryClicked) },
+                onRetryClicked = { onIntent(HomeContract.Intent.RetryRequested) },
                 modifier = modifier
             )
         }

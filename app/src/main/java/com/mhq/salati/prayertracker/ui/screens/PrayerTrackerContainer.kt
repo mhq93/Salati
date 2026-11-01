@@ -51,7 +51,7 @@ fun PrayerTrackerContainer(
             prayer = prayer,
             onConfirmPrayed = { prayerTrackerViewModel.onIntent(PrayerTrackerContract.Intent.ConfirmPrayed) },
             onConfirmMissed = { prayerTrackerViewModel.onIntent(PrayerTrackerContract.Intent.ConfirmMissed) },
-            onDismiss = { prayerTrackerViewModel.onIntent(PrayerTrackerContract.Intent.DismissDialog) }
+            onDismiss = { prayerTrackerViewModel.onIntent(PrayerTrackerContract.Intent.DialogDismissed) }
         )
     }
 }

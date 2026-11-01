@@ -1,7 +1,7 @@
-package com.mhq.salati.home.domain.service
+package com.mhq.salati.adhan.domain.service
 
 import com.mhq.salati.adhan.domain.usecases.RescheduleAllAlarmsUseCase
-import com.mhq.salati.home.domain.model.AlarmPermissions
+import com.mhq.salati.adhan.domain.model.AlarmPermissions
 import com.mhq.salati.permissions.domain.repo.PermissionChecker
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.shared.domain.Clock

@@ -1,20 +1,25 @@
 <resources>
     <string name="app_name">Salati</string>
 
+    <!-- Splash -->
+    <string name="language">Language</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+
     <!-- Onboarding -->
     <string name="get_started">Get Started</string>
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
     <string name="never_miss_a_prayer">Never Miss a Prayer</string>
-    <string name="never_miss_a_prayer_subtitle">Accurate prayer times based on your exact location, updated automatically.</string>
-    <string name="find_your_qibla">Find your Qibla</string>
-    <string name="find_your_qibla_subtitle">A precise, live compass points you toward the Kaaba wherever you are.</string>
-    <string name="access_your_location">Access Location</string>
-    <string name="access_your_location_subtitle">Enable your network and GPS once per every new location, then enjoy a seamless offline user experience.</string>
-    <string name="gentle_reminders">Gentle Reminders</string>
-    <string name="gentle_reminders_subtitle">Custom Adhan alerts for every prayer, fully in your control.</string>
+    <string name="never_miss_a_prayer_subtitle">Accurate and automatically-updated prayer times based on your exact location</string>
+    <string name="access_location">Access Location</string>
+    <string name="access_location_subtitle">Enable your network and GPS only once per every new location</string>
+    <string name="find_qibla">Find your Qibla</string>
+    <string name="find_qibla_subtitle">A precise live compass pointing towards the Kaaba wherever you are</string>
+    <!--    <string name="custom_alarms">Custom Alarms</string>-->
+    <string name="custom_alarms_subtitle">Custom Adhan alerts for every prayer, fully in your control.</string>
     <string name="customize_your_app">Customize your App</string>
     <string name="customize_your_app_subtitle">Check Settings out to customize your own app experience.</string>
-    <string name="next">Next</string>
-    <string name="skip">Skip</string>
 
     <!-- Bottom Nav Bar -->
     <string name="home">Home</string>
@@ -177,9 +182,7 @@
     <string name="theme_system_default">System Default</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
-    <string name="language">Language</string>
-    <string name="language_english">English</string>
-    <string name="language_arabic">العربية</string>
+
     <string name="is_selected">Selected</string>
 
     <string name="hijri_calendar">Hijri Calendar</string>

@@ -1,7 +1,7 @@
 package com.mhq.salati.home.presentation.handlers
 
-import com.mhq.salati.home.domain.model.LocationResolution
-import com.mhq.salati.home.domain.usecases.ResolveLocationUseCase
+import com.mhq.salati.location.domain.model.LocationResolution
+import com.mhq.salati.location.domain.usecases.ResolveLocationUseCase
 import com.mhq.salati.location.domain.service.LocationLocalizer
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
 import com.mhq.salati.permissions.presentation.LocationPermissionDelegate

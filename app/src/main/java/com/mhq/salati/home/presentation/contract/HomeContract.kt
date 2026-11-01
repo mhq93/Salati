@@ -55,7 +55,7 @@ class HomeContract {
 
     sealed interface Intent {
         data object LoadPrayerTimes : Intent
-        data object RetryClicked : Intent
+        data object RetryRequested : Intent
         data object PreviousDay : Intent
         data object NextDay : Intent
         data object LocationPermissionGranted : Intent
@@ -65,8 +65,8 @@ class HomeContract {
         data class ToggleMute(val prayerName: PrayerNameUi) : Intent
         data object RecheckSystemPermissions : Intent
         data class NotificationPermissionResult(val granted: Boolean) : Intent
-        data object ExactAlarmBannerClicked : Intent
-        data object NotificationBannerClicked : Intent
+        data object ExactAlarmPermissionRequested : Intent
+        data object NotificationPermissionRequested : Intent
         data object ScreenResumed : Intent
         data class LocationServicesToggled(val enabled: Boolean) : Intent
         data class ConnectivityChanged(val isConnected: Boolean) : Intent

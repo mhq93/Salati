@@ -30,10 +30,10 @@ object LocationPickerContract {
 
     sealed interface Intent {
         data class QueryChanged(val query: String) : Intent
-        data object SearchClicked : Intent
-        data class SearchResultClicked(val result: LocationSearchResult) : Intent
+        data object SearchSubmitted : Intent
+        data class SearchResultSelected(val result: LocationSearchResult) : Intent
         data class MapPointSelected(val latitude: Double, val longitude: Double) : Intent
-        data object ConfirmClicked : Intent
+        data object LocationConfirmed : Intent
     }
 
     sealed interface Effect {

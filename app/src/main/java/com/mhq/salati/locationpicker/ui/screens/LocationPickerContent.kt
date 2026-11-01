@@ -109,7 +109,7 @@ fun LocationPickerContent(
                             onValueChange = { onIntent(Intent.QueryChanged(it)) },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                            keyboardActions = KeyboardActions(onSearch = { onIntent(Intent.SearchClicked) }),
+                            keyboardActions = KeyboardActions(onSearch = { onIntent(Intent.SearchSubmitted) }),
                             textStyle = TextStyle(
                                 fontSize = 16.sp,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -148,7 +148,7 @@ fun LocationPickerContent(
                         //                        )
                     }
 
-                    IconButton(onClick = { onIntent(Intent.SearchClicked) }) {
+                    IconButton(onClick = { onIntent(Intent.SearchSubmitted) }) {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = stringResource(R.string.cd_search),
@@ -175,7 +175,7 @@ fun LocationPickerContent(
                             ListItem(
                                 headlineContent = { Text(result.displayName) },
                                 modifier = Modifier.clickable {
-                                    onIntent(Intent.SearchResultClicked(result))
+                                    onIntent(Intent.SearchResultSelected(result))
                                 }
                             )
                             HorizontalDivider()
@@ -186,7 +186,7 @@ fun LocationPickerContent(
         }
 
         Button(
-            onClick = { onIntent(Intent.ConfirmClicked) },
+            onClick = { onIntent(Intent.LocationConfirmed) },
             enabled = state.selectedLocation != null && !state.isResolvingSelection,
             shape = RoundedCornerShape(28.dp),
             modifier = Modifier

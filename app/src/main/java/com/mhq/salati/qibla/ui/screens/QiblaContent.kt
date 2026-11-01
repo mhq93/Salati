@@ -70,8 +70,8 @@ fun QiblaContent(
                         deviceHeading = state.deviceHeading,
                         qiblaBearing = state.qiblaBearing,
                         compassAccuracy = state.compassAccuracy,
-                        onLocationPillClick = { onIntent(QiblaContract.Intent.LocationPillClicked) },
-                        onRecalibrateClick = { onIntent(QiblaContract.Intent.RecalibrateClicked) }
+                        onLocationPillClick = { onIntent(QiblaContract.Intent.LocationPickerRequested) },
+                        onRecalibrateClick = { onIntent(QiblaContract.Intent.RecalibrationRequested) }
                     )
                 }
                 else -> { //Added, will check it...

@@ -30,7 +30,7 @@ fun QiblaContentError(
         isLocationPermissionRequired -> {
             LocationPermissionRequiredError(
                 errorMessage = errorMessage,
-                onRetryClicked = { onIntent(QiblaContract.Intent.RetryClicked) },
+                onRetryClicked = { onIntent(QiblaContract.Intent.RetryRequested) },
                 modifier = modifier
             )
         }
@@ -50,7 +50,7 @@ fun QiblaContentError(
         else -> {
             CatchAllError(
                 errorMessage = errorMessage,
-                onRetryClicked = { onIntent(QiblaContract.Intent.RetryClicked) },
+                onRetryClicked = { onIntent(QiblaContract.Intent.RetryRequested) },
                 modifier = modifier
             )
         }

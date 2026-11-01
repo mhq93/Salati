@@ -6,14 +6,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.mhq.salati.settings.domain.model.AdhanSound
-import com.mhq.salati.settings.domain.model.AppLanguage
-import com.mhq.salati.settings.domain.model.AppSettings
-import com.mhq.salati.settings.domain.model.CalculationMethod
-import com.mhq.salati.settings.domain.model.CustomAlarmSound
-import com.mhq.salati.settings.domain.model.Madhab
-import com.mhq.salati.settings.domain.model.ThemeMode
-import com.mhq.salati.settings.domain.model.TimeFormat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -39,32 +31,18 @@ class SettingsDataStore @Inject constructor(
         val TIME_FORMAT = stringPreferencesKey("time_format")
     }
 
-    val settingsFlow: Flow<AppSettings> = context.settingsDataStore.data.map { prefs ->
-        AppSettings(
+    val storedSettings: Flow<StoredSettings> = context.settingsDataStore.data.map { prefs ->
+        StoredSettings(
             notificationsEnabled = prefs[Keys.NOTIFICATIONS_ENABLED] ?: true,
-            calculationMethod = prefs[Keys.CALCULATION_METHOD]
-                ?.let { runCatching { CalculationMethod.valueOf(it) }.getOrNull() }
-                ?: CalculationMethod.EGYPTIAN_GENERAL_AUTHORITY,
-            madhab = prefs[Keys.MADHAB]
-                ?.let { runCatching { Madhab.valueOf(it) }.getOrNull() }
-                ?: Madhab.SHAFI,
-            themeMode = prefs[Keys.THEME_MODE]
-                ?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() }
-                ?: ThemeMode.SYSTEM,
-            language = prefs[Keys.LANGUAGE]
-                ?.let { runCatching { AppLanguage.valueOf(it) }.getOrNull() }
-                ?: AppLanguage.ENGLISH,
+            calculationMethod = prefs[Keys.CALCULATION_METHOD],
+            madhab = prefs[Keys.MADHAB],
+            themeMode = prefs[Keys.THEME_MODE],
+            language = prefs[Keys.LANGUAGE],
             isLanguageSelected = prefs[Keys.IS_LANGUAGE_SELECTED] ?: false,
-            adhanSound = prefs[Keys.ADHAN_SOUND]
-                ?.let { runCatching { AdhanSound.valueOf(it) }.getOrNull() }
-                ?: AdhanSound.DEFAULT,
-            customAlarmSound = prefs[Keys.CUSTOM_ALARM_SOUND]
-                ?.let { runCatching { CustomAlarmSound.valueOf(it) }.getOrNull() }
-                ?: CustomAlarmSound.DEFAULT,
+            adhanSound = prefs[Keys.ADHAN_SOUND],
+            customAlarmSound = prefs[Keys.CUSTOM_ALARM_SOUND],
             hijriDateOffset = prefs[Keys.HIJRI_OFFSET] ?: 0,
             timeFormat = prefs[Keys.TIME_FORMAT]
-                ?.let { runCatching { TimeFormat.valueOf(it) }.getOrNull() }
-            ?: TimeFormat.HOUR_24
         )
     }
 
@@ -72,39 +50,39 @@ class SettingsDataStore @Inject constructor(
         context.settingsDataStore.edit { it[Keys.NOTIFICATIONS_ENABLED] = enabled }
     }
 
-    suspend fun setCalculationMethod(method: CalculationMethod) {
-        context.settingsDataStore.edit { it[Keys.CALCULATION_METHOD] = method.name }
+    suspend fun setCalculationMethod(value: String) {
+        context.settingsDataStore.edit { it[Keys.CALCULATION_METHOD] = value }
     }
 
-    suspend fun setMadhab(madhab: Madhab) {
-        context.settingsDataStore.edit { it[Keys.MADHAB] = madhab.name }
+    suspend fun setMadhab(value: String) {
+        context.settingsDataStore.edit { it[Keys.MADHAB] = value }
     }
 
-    suspend fun setThemeMode(mode: ThemeMode) {
-        context.settingsDataStore.edit { it[Keys.THEME_MODE] = mode.name }
+    suspend fun setThemeMode(value: String) {
+        context.settingsDataStore.edit { it[Keys.THEME_MODE] = value }
     }
 
-    suspend fun setLanguage(language: AppLanguage) {
-        context.settingsDataStore.edit { it[Keys.LANGUAGE] = language.name }
+    suspend fun setLanguage(value: String) {
+        context.settingsDataStore.edit { it[Keys.LANGUAGE] = value }
     }
 
     suspend fun setLanguageSelected(isSelected: Boolean) {
         context.settingsDataStore.edit { it[Keys.IS_LANGUAGE_SELECTED] = isSelected }
     }
 
-    suspend fun setAdhanSound(sound: AdhanSound) {
-        context.settingsDataStore.edit { it[Keys.ADHAN_SOUND] = sound.name }
+    suspend fun setAdhanSound(value: String) {
+        context.settingsDataStore.edit { it[Keys.ADHAN_SOUND] = value }
     }
 
-    suspend fun setCustomAlarmSound(sound: CustomAlarmSound) {
-        context.settingsDataStore.edit { it[Keys.CUSTOM_ALARM_SOUND] = sound.name }
+    suspend fun setCustomAlarmSound(value: String) {
+        context.settingsDataStore.edit { it[Keys.CUSTOM_ALARM_SOUND] = value }
     }
 
     suspend fun setHijriDateOffset(offset: Int) {
         context.settingsDataStore.edit { it[Keys.HIJRI_OFFSET] = offset }
     }
 
-    suspend fun setTimeFormat(format: TimeFormat) {
-        context.settingsDataStore.edit { it[Keys.TIME_FORMAT] = format.name }
+    suspend fun setTimeFormat(value: String) {
+        context.settingsDataStore.edit { it[Keys.TIME_FORMAT] = value }
     }
 }

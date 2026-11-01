@@ -7,8 +7,6 @@ import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.mhq.salati.location.domain.model.SavedLocation
-import com.mhq.salati.shared.domain.Coordinates
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -27,27 +25,23 @@ class LocationDataStore @Inject constructor(
         val COUNTRY = stringPreferencesKey("country_name")
     }
 
-    val savedLocation: Flow<SavedLocation?> = dataStore.data.map { prefs ->
+    val storedLocation: Flow<StoredLocation?> = dataStore.data.map { prefs ->
         val lat = prefs[Keys.LAT]
         val lon = prefs[Keys.LON]
-        // A stored pair that isn't a valid coordinate counts as "no saved location" instead of crashing.
-        val coordinates = if (lat != null && lon != null) {
-            runCatching { Coordinates(lat, lon) }.getOrNull()
-        } else null
-
-        coordinates?.let {
-            SavedLocation(
-                coordinates = it,
+        if (lat != null && lon != null) {
+            StoredLocation(
+                latitude = lat,
+                longitude = lon,
                 cityName = prefs[Keys.CITY],
                 countryName = prefs[Keys.COUNTRY]
             )
-        }
+        } else null
     }
 
-    suspend fun save(location: SavedLocation) {
+    suspend fun save(location: StoredLocation) {
         dataStore.edit { prefs ->
-            prefs[Keys.LAT] = location.coordinates.latitude
-            prefs[Keys.LON] = location.coordinates.longitude
+            prefs[Keys.LAT] = location.latitude
+            prefs[Keys.LON] = location.longitude
             if (location.cityName != null)
                 prefs[Keys.CITY] = location.cityName
             else

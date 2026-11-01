@@ -1,7 +1,7 @@
 package com.mhq.salati.home.presentation.handlers
 
-import com.mhq.salati.home.domain.service.PrayerAlarmCoordinator
-import com.mhq.salati.home.domain.model.AlarmPermissions
+import com.mhq.salati.adhan.domain.service.PrayerAlarmCoordinator
+import com.mhq.salati.adhan.domain.model.AlarmPermissions
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import java.time.LocalDate
 import javax.inject.Inject

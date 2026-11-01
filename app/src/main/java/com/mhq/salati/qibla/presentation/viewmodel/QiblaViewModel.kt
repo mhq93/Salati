@@ -96,7 +96,7 @@ class QiblaViewModel @Inject constructor(
         when (intent) {
             is QiblaContract.Intent.LoadQibla -> loadQibla()
             is QiblaContract.Intent.Retry -> loadQibla()
-            is QiblaContract.Intent.RetryClicked -> {
+            is QiblaContract.Intent.RetryRequested -> {
                 locationHandler.allowPermissionPromptAgain()
                 loadQibla()
             }
@@ -124,12 +124,12 @@ class QiblaViewModel @Inject constructor(
             is QiblaContract.Intent.AccessDeviceLocationSettings -> {
                 viewModelScope.launch { locationHandler.openLocationSettings() }
             }
-            is QiblaContract.Intent.LocationPillClicked -> {
+            is QiblaContract.Intent.LocationPickerRequested -> {
                 viewModelScope.launch {
                     _effect.send(QiblaContract.Effect.NavigateToLocationPicker)
                 }
             }
-            is QiblaContract.Intent.RecalibrateClicked -> {
+            is QiblaContract.Intent.RecalibrationRequested -> {
                 _state.update { it.copy(isCalibrationGuideVisible = true) }
             }
             is QiblaContract.Intent.DismissCalibrationGuide -> {

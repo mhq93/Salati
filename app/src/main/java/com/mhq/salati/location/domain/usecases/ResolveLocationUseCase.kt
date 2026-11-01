@@ -1,13 +1,10 @@
-package com.mhq.salati.home.domain.usecases
+package com.mhq.salati.location.domain.usecases
 
 import com.mhq.salati.connectivity.domain.repo.ConnectivityChecker
-import com.mhq.salati.home.domain.model.LocationResolution
+import com.mhq.salati.location.domain.model.LocationResolution
 import com.mhq.salati.location.domain.model.GeocodeResult
 import com.mhq.salati.location.domain.model.CoordinatesLookup
 import com.mhq.salati.location.domain.model.SavedLocation
-import com.mhq.salati.location.domain.usecases.GetCurrentCoordinatesUseCase
-import com.mhq.salati.location.domain.usecases.ReverseGeocodeLocationUseCase
-import com.mhq.salati.location.domain.usecases.SaveManualLocationUseCase
 import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first

@@ -101,7 +101,7 @@ class PrayerTrackerViewModel @Inject constructor(
                 _state.update { it.copy(selectedMonth = newMonth) }
             }
 
-            is PrayerTrackerContract.Intent.PrayerTileTapped -> {
+            is PrayerTrackerContract.Intent.PrayerSelected -> {
                 // Re-checked at tap time, so a stale screen can never mark a prayer that isn't due.
                 viewModelScope.launch {
                     val due = getDuePrayersUseCase(_state.value.selectedDate)
@@ -115,7 +115,7 @@ class PrayerTrackerViewModel @Inject constructor(
             PrayerTrackerContract.Intent.ScreenResumed -> refreshDuePrayers()
             PrayerTrackerContract.Intent.ConfirmPrayed -> applyDialogResult(PrayerStatus.PRAYED)
             PrayerTrackerContract.Intent.ConfirmMissed -> applyDialogResult(PrayerStatus.MISSED)
-            PrayerTrackerContract.Intent.DismissDialog -> _state.update { it.copy(dialogPrayer = null) }
+            PrayerTrackerContract.Intent.DialogDismissed -> _state.update { it.copy(dialogPrayer = null) }
         }
     }
 

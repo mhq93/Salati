@@ -12,7 +12,7 @@ The Salati codebase adheres to Clean Android Architecture with MVI:
 - **UI Layer**: Depends strictly on Presentation. Contains Jetpack Compose screens and components. Dispatches user actions as MVI intents.
 - **Use Cases & Intents**:
   - Exactly one use case per file with an `operator fun invoke()`.
-  - Intent names represent events describing what happened (e.g., `RetryClicked`, `AlarmToggled`), never imperative commands describing what to do (e.g., `LoadData`, `SaveAlarm`).
+  - Intent names represent events describing what happened (e.g., `RetryRequested`, `AlarmToggled`), never imperative commands describing what to do (e.g., `LoadData`, `SaveAlarm`).
 - **Code Standards**:
   - One public composable per file matching the file name (private helper composables and `@Preview` functions are permitted within the same file).
   - Delete commented-out code in all touched files.

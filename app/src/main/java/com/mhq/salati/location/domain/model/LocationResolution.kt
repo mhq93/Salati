@@ -1,6 +1,4 @@
-package com.mhq.salati.home.domain.model
-
-import com.mhq.salati.location.domain.model.SavedLocation
+package com.mhq.salati.location.domain.model
 
 /** What happened when the app tried to find where the user is. */
 sealed interface LocationResolution {

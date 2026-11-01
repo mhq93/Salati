@@ -67,14 +67,14 @@ class LocationPickerViewModel @Inject constructor(
     fun onIntent(intent: LocationPickerContract.Intent) {
         when (intent) {
             is LocationPickerContract.Intent.QueryChanged -> onQueryChanged(intent.query)
-            is LocationPickerContract.Intent.SearchClicked -> executeManualSearch(_state.value.query)
-            is LocationPickerContract.Intent.SearchResultClicked -> selectResult(intent.result)
+            is LocationPickerContract.Intent.SearchSubmitted -> executeManualSearch(_state.value.query)
+            is LocationPickerContract.Intent.SearchResultSelected -> selectResult(intent.result)
             is LocationPickerContract.Intent.MapPointSelected -> selectMapPoint(
                 intent.latitude,
                 intent.longitude
             )
 
-            is LocationPickerContract.Intent.ConfirmClicked -> confirmSelection()
+            is LocationPickerContract.Intent.LocationConfirmed -> confirmSelection()
         }
     }
 

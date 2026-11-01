@@ -25,13 +25,13 @@ class QiblaContract {
     sealed interface Intent {
         data object LoadQibla : Intent
         data object Retry : Intent
-        data object RetryClicked : Intent
+        data object RetryRequested : Intent
         data object LocationPermissionGranted : Intent
         data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
         data object AccessAppSettings : Intent
         data object AccessDeviceLocationSettings : Intent
-        data object LocationPillClicked : Intent
-        data object RecalibrateClicked : Intent
+        data object LocationPickerRequested : Intent
+        data object RecalibrationRequested : Intent
         data object DismissCalibrationGuide : Intent
 
         // NEW: Lifecycle events reported by UI, logic moved from Container

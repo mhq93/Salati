@@ -75,7 +75,7 @@ fun PrayerTrackerContent(
                     selectedDate = state.selectedDate,
                     today = state.today,
                     records = state.selectedDateRecords,
-                    onPrayerTapped = { onIntent(Intent.PrayerTileTapped(it)) }
+                    onPrayerTapped = { onIntent(Intent.PrayerSelected(it)) }
                 )
             }
         }

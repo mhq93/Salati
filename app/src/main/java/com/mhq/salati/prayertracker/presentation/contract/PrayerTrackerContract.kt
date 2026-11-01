@@ -23,10 +23,10 @@ object PrayerTrackerContract {
     sealed interface Intent {
         data class DateSelected(val date: LocalDate) : Intent
         data class MonthChanged(val delta: Int) : Intent
-        data class PrayerTileTapped(val prayer: PrayerNameUi) : Intent
+        data class PrayerSelected(val prayer: PrayerNameUi) : Intent
         data object ConfirmPrayed : Intent
         data object ConfirmMissed : Intent
-        data object DismissDialog : Intent
+        data object DialogDismissed : Intent
         data object ScreenResumed : Intent
     }
 

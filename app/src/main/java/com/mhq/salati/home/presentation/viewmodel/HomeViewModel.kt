@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhq.salati.home.domain.service.DayNavigator
-import com.mhq.salati.home.domain.model.AlarmPermissions
+import com.mhq.salati.adhan.domain.model.AlarmPermissions
 import com.mhq.salati.home.domain.model.PrayerTimesError
 import com.mhq.salati.home.domain.model.PrayerTimesLoad
 import com.mhq.salati.home.domain.model.PrayerTimesTick
@@ -112,7 +112,7 @@ class HomeViewModel @Inject constructor(
     fun onIntent(intent: HomeContract.Intent) {
         when (intent) {
             is HomeContract.Intent.LoadPrayerTimes -> checkPermissionAndLoad()
-            is HomeContract.Intent.RetryClicked -> {
+            is HomeContract.Intent.RetryRequested -> {
                 locationHandler.allowPermissionPromptAgain()
                 checkPermissionAndLoad()
             }
@@ -159,12 +159,12 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
-            is HomeContract.Intent.ExactAlarmBannerClicked -> {
+            is HomeContract.Intent.ExactAlarmPermissionRequested -> {
                 viewModelScope.launch {
                     _effect.send(HomeContract.Effect.RequestExactAlarmPermission)
                 }
             }
-            is HomeContract.Intent.NotificationBannerClicked -> {
+            is HomeContract.Intent.NotificationPermissionRequested -> {
                 viewModelScope.launch {
                     _effect.send(HomeContract.Effect.RequestNotificationPermission)
                 }
