@@ -116,8 +116,7 @@ fun HomeContentSuccess(
                 PrayerCountdownRing(
                     nextPrayerName = stringResource(nextPrayer.labelRes),
                     remaining = remaining,
-                    // The sweep only makes sense for today's real countdown.
-                    progress = if (isToday) windowProgress else 0f,
+                    progress = windowProgress,
                     modifier = Modifier.padding(top = 12.dp)
                 )
             }
@@ -147,8 +146,11 @@ fun HomeContentSuccess(
         }
         DateBanner(
             prayerDate = prayerDate,
+            isBrowsingToday = isToday,
+            onToday = { onIntent(HomeContract.Intent.TodayRequested) },
             onPreviousDay = { onIntent(HomeContract.Intent.PreviousDay) },
             onNextDay = { onIntent(HomeContract.Intent.NextDay) },
+            onEndOfMonth = { onIntent(HomeContract.Intent.EndOfMonthRequested) },
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .onGloballyPositioned { bannerHeightPx = it.size.height }
@@ -175,9 +177,9 @@ private fun HomeContentSuccessPreview() {
             state = HomeContract.State(
                 isLoading = false,
                 errorMessage = null,
-                location = HomeContract.LocationUiState(locationName = "Cairo, Egypt"),
-                dateBrowser = HomeContract.DateBrowserUiState(isBrowsingToday = true),
-                prayerTimes = HomeContract.PrayerTimesUiState(
+                locationUiState = HomeContract.LocationUiState(locationName = "Cairo, Egypt"),
+                dateBrowserUiState = HomeContract.DateBrowserUiState(isBrowsingToday = true),
+                prayerTimesUiState = HomeContract.PrayerTimesUiState(
                     date = PrayerDateUi(
                         gregorianDate = LocalDate.of(2026, 8, 17),
                         hijriDate = HijriDateUi(4, HijriMonthUi.SHAWWAL, 1448)

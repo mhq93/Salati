@@ -8,7 +8,6 @@ import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.Coordinates
 import com.mhq.salati.shared.domain.toDateKey
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class ResolvePrayerWindowForDisplayUseCase @Inject constructor(
@@ -17,25 +16,26 @@ class ResolvePrayerWindowForDisplayUseCase @Inject constructor(
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
     private val calculatePrayerWindowUseCase: CalculatePrayerWindowUseCase
 ) {
+    /**
+     * The countdown always runs to today's real next prayer, whichever day is being browsed.
+     * Today's own timings are used when available; the browsed ones are only a last resort.
+     */
     suspend operator fun invoke(
         browsedTimings: PrayerTimings,
         browsedDate: LocalDate,
         coordinates: Coordinates
     ): PrayerWindow {
-        val browsedDateKey = clock.today().toDateKey()
+        val today = clock.today()
+        val todayKey = today.toDateKey()
 
-        if (browsedDate == clock.today()) {
-            return calculatePrayerWindowUseCase(browsedTimings, browsedDateKey, coordinates)
+        val todayTimings = if (browsedDate == today) {
+            browsedTimings
+        } else {
+            getCachedPrayerTimesUseCase(todayKey, coordinates)?.timings
+                ?: getPrayerTimesUseCase(todayKey, coordinates).getOrNull()?.timings
+                ?: browsedTimings
         }
 
-        val todayKey = clock.today().toDateKey()
-        val todayTimings = getCachedPrayerTimesUseCase(todayKey, coordinates)?.timings
-            ?: getPrayerTimesUseCase(todayKey, coordinates).getOrNull()?.timings
-            ?: browsedTimings
-
-        val todayWindow = calculatePrayerWindowUseCase(todayTimings, todayKey, coordinates)
-        val daysOffset = ChronoUnit.DAYS.between(clock.today(), browsedDate)
-
-        return todayWindow.plusDays(daysOffset, clock.zone())
+        return calculatePrayerWindowUseCase(todayTimings, todayKey, coordinates)
     }
 }

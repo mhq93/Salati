@@ -12,13 +12,13 @@ class HomeContract {
 
     data class State(
         val isLoading: Boolean = false,
-        val prayerTimes: PrayerTimesUiState = PrayerTimesUiState(),
-        val location: LocationUiState = LocationUiState(),
-        val adhan: AdhanUiState = AdhanUiState(),
         val systemPermissions: SystemPermissionsUiState = SystemPermissionsUiState(),
-        val dateBrowser: DateBrowserUiState = DateBrowserUiState(),
-        val errorMessage: MessageUi? = null,
+        val locationUiState: LocationUiState = LocationUiState(),
+        val prayerTimesUiState: PrayerTimesUiState = PrayerTimesUiState(),
         val timeFormat: TimeFormatUi = TimeFormatUi.FORMAT_12_HOUR,
+        val dateBrowserUiState: DateBrowserUiState = DateBrowserUiState(),
+        val adhanUiState: AdhanUiState = AdhanUiState(),
+        val errorMessage: MessageUi? = null,
     )
 
     data class PrayerTimesUiState(
@@ -58,16 +58,18 @@ class HomeContract {
         data object RetryRequested : Intent
         data object PreviousDay : Intent
         data object NextDay : Intent
+        data object TodayRequested : Intent
+        data object EndOfMonthRequested : Intent
         data object LocationPermissionGranted : Intent
         data object AccessAppSettings : Intent
         data object AccessDeviceLocationSettings : Intent
-        data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
-        data class ToggleMute(val prayerName: PrayerNameUi) : Intent
         data object RecheckSystemPermissions : Intent
-        data class NotificationPermissionResult(val granted: Boolean) : Intent
         data object ExactAlarmPermissionRequested : Intent
         data object NotificationPermissionRequested : Intent
         data object ScreenResumed : Intent
+        data class ToggleMute(val prayerName: PrayerNameUi) : Intent
+        data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
+        data class NotificationPermissionResult(val granted: Boolean) : Intent
         data class LocationServicesToggled(val enabled: Boolean) : Intent
         data class ConnectivityChanged(val isConnected: Boolean) : Intent
     }

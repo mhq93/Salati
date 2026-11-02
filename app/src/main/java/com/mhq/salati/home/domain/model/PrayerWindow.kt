@@ -39,11 +39,4 @@ data class PrayerWindow(
      * (e.g. after Isha, running into tomorrow's Fajr). */
     fun endsAfterDay(day: LocalDate, zoneId: ZoneId): Boolean =
         end.atZone(zoneId).toLocalDate().isAfter(day)
-
-    /** Moves the whole window by calendar days (not by 24h blocks),
-     * so daylight-saving changes don't skew it. */
-    fun plusDays(days: Long, zoneId: ZoneId): PrayerWindow = copy(
-        start = start.atZone(zoneId).plusDays(days).toInstant(),
-        end = end.atZone(zoneId).plusDays(days).toInstant()
-    )
 }

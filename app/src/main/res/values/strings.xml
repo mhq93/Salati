@@ -85,6 +85,8 @@
     <string name="last_third">Last Third</string>
     <string name="previous_day">Previous day</string>
     <string name="next_day">Next day</string>
+    <string name="back_to_today">Back to today</string>
+    <string name="end_of_month">End of month</string>
 
     <string name="hijri_muharram">Muharram</string>
     <string name="hijri_safar">Safar</string>

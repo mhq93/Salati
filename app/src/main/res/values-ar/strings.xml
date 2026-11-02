@@ -77,6 +77,8 @@
     <string name="last_third">ثلث الليل الأخير</string>
     <string name="previous_day">اليوم الماضي</string>
     <string name="next_day">اليوم التالي</string>
+    <string name="back_to_today">العودة إلى اليوم</string>
+    <string name="end_of_month">نهاية الشهر</string>
 
     <string name="hijri_muharram">المحرم</string>
     <string name="hijri_safar">صفر</string>

@@ -20,8 +20,7 @@ private val FETCH_TIMEOUT = 5_000L.milliseconds
 class LoadPrayerTimesUseCase @Inject constructor(
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
-    private val calculatePrayerWindowUseCase: CalculatePrayerWindowUseCase,
-    private val calculatePrayerStatusUseCase: CalculatePrayerStatusUseCase,
+    private val resolvePrayerWindowForDisplayUseCase: ResolvePrayerWindowForDisplayUseCase,    private val calculatePrayerStatusUseCase: CalculatePrayerStatusUseCase,
     private val connectivityChecker: ConnectivityChecker
 ) {
     /** Cache first. Only on a cache miss does it emit [PrayerTimesLoad.FetchingFromNetwork] and go online. */
@@ -30,7 +29,7 @@ class LoadPrayerTimesUseCase @Inject constructor(
 
         val cached = getCachedPrayerTimesUseCase(dateKey, coordinates)
         if (cached != null) {
-            emit(loaded(cached, date, dateKey, coordinates))
+            emit(loaded(cached, date, coordinates))
             return@flow
         }
 
@@ -46,7 +45,7 @@ class LoadPrayerTimesUseCase @Inject constructor(
 
         val fetched = result.getOrNull()
         if (fetched != null) {
-            emit(loaded(fetched, date, dateKey, coordinates))
+            emit(loaded(fetched, date, coordinates))
         } else {
             val error = PrayerTimesError.Other(result.exceptionOrNull()?.message)
             emit(PrayerTimesLoad.Failed(failureWhileOnlineOr(error)))
@@ -56,10 +55,9 @@ class LoadPrayerTimesUseCase @Inject constructor(
     private suspend fun loaded(
         result: PrayerTimesResult,
         date: LocalDate,
-        dateKey: String,
         coordinates: Coordinates
     ): PrayerTimesLoad.Loaded {
-        val window = calculatePrayerWindowUseCase(result.timings, dateKey, coordinates)
+        val window = resolvePrayerWindowForDisplayUseCase(result.timings, date, coordinates)
         return PrayerTimesLoad.Loaded(
             timings = result.timings,
             prayerDate = result.date,
@@ -67,7 +65,6 @@ class LoadPrayerTimesUseCase @Inject constructor(
         )
     }
 
-    // Being offline explains any failure better than the raw error does.
     private fun failureWhileOnlineOr(error: PrayerTimesError): PrayerTimesError =
         if (connectivityChecker.isConnected()) error else PrayerTimesError.Offline
 }

@@ -39,27 +39,27 @@ fun HomeContent(
                 state.errorMessage != null -> {
                     HomeContentError(
                         errorMessage = state.errorMessage.asString(),
-                        isLocationPermissionPermanentlyDenied = state.location.isPermanentlyDenied,
-                        areLocationServicesDisabled = state.location.areServicesDisabled,
-                        isLocationPermissionRequired = state.location.isPermissionRequired,
+                        isLocationPermissionPermanentlyDenied = state.locationUiState.isPermanentlyDenied,
+                        areLocationServicesDisabled = state.locationUiState.areServicesDisabled,
+                        isLocationPermissionRequired = state.locationUiState.isPermissionRequired,
                         onIntent = onIntent,
                         modifier = Modifier.weight(1f)
                     )
                 }
-                state.prayerTimes.timings != null
-                        && state.prayerTimes.date != null
-                        && state.prayerTimes.nextPrayerName != null -> {
+                state.prayerTimesUiState.timings != null
+                        && state.prayerTimesUiState.date != null
+                        && state.prayerTimesUiState.nextPrayerName != null -> {
                     HomeContentSuccess(
-                        locationName = state.location.locationName,
-                        prayerDate = state.prayerTimes.date,
-                        prayerTimings = state.prayerTimes.timings,
-                        nextPrayer = state.prayerTimes.nextPrayerName,
-                        remaining = state.prayerTimes.remaining,
-                        windowProgress = state.prayerTimes.windowProgress,
-                        currentPrayerName = state.prayerTimes.currentPrayerName,
-                        mutedPrayers = state.adhan.mutedPrayers,
-                        pastPrayers = state.prayerTimes.pastPrayers,
-                        isToday = state.dateBrowser.isBrowsingToday,
+                        locationName = state.locationUiState.locationName,
+                        prayerDate = state.prayerTimesUiState.date,
+                        prayerTimings = state.prayerTimesUiState.timings,
+                        nextPrayer = state.prayerTimesUiState.nextPrayerName,
+                        remaining = state.prayerTimesUiState.remaining,
+                        windowProgress = state.prayerTimesUiState.windowProgress,
+                        currentPrayerName = state.prayerTimesUiState.currentPrayerName,
+                        mutedPrayers = state.adhanUiState.mutedPrayers,
+                        pastPrayers = state.prayerTimesUiState.pastPrayers,
+                        isToday = state.dateBrowserUiState.isBrowsingToday,
                         timeFormat = state.timeFormat,
                         onIntent = onIntent,
                         modifier = Modifier.weight(1f)

@@ -3,6 +3,7 @@ package com.mhq.salati.home.domain.service
 import com.mhq.salati.home.domain.model.PrayerWindow
 import com.mhq.salati.shared.domain.Clock
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 /** The rules for which day the Home screen may show. */
@@ -11,6 +12,10 @@ class DayNavigator @Inject constructor(
 ) {
     fun isToday(date: LocalDate): Boolean =
         date == clock.today()
+
+    /** The day browsing can always return to. */
+    fun today(): LocalDate =
+        clock.today()
 
     /** The day before [date], or null when [date] is today:
      * browsing into the past isn't allowed. */
@@ -30,4 +35,14 @@ class DayNavigator @Inject constructor(
             date.plusDays(1)
         else
             null
+
+    /** The last day of [date]'s month; when [date] already is that day, the last day of the next month. */
+    fun endOfMonth(date: LocalDate): LocalDate {
+        val lastDay = date.with(TemporalAdjusters.lastDayOfMonth())
+        return if (date == lastDay) {
+            date.plusMonths(1).with(TemporalAdjusters.lastDayOfMonth())
+        } else {
+            lastDay
+        }
+    }
 }

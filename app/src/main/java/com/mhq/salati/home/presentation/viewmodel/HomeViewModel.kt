@@ -85,7 +85,7 @@ class HomeViewModel @Inject constructor(
             locationHandler.permissionState.collect { ps ->
                 _state.update {
                     it.copy(
-                        location = it.location.copy(
+                        locationUiState = it.locationUiState.copy(
                             isPermissionGranted = ps.granted,
                             isPermanentlyDenied = ps.permanentlyDenied,
                             areServicesDisabled = ps.servicesDisabled,
@@ -100,7 +100,7 @@ class HomeViewModel @Inject constructor(
 
         locationHandler.localizedNameChanges
             .onEach { name ->
-                _state.update { it.copy(location = it.location.copy(locationName = name)) }
+                _state.update { it.copy(locationUiState = it.locationUiState.copy(locationName = name)) }
             }
             .launchIn(viewModelScope)
 
@@ -120,6 +120,11 @@ class HomeViewModel @Inject constructor(
                 dayNavigator.previousOrNull(currentDate())?.let { browseDate(it) }
             }
             is HomeContract.Intent.NextDay -> browseDate(dayNavigator.next(currentDate()))
+            is HomeContract.Intent.TodayRequested -> {
+                if (!dayNavigator.isToday(currentDate())) browseDate(dayNavigator.today())
+            }
+            is HomeContract.Intent.EndOfMonthRequested ->
+                browseDate(dayNavigator.endOfMonth(currentDate()))
             is HomeContract.Intent.LocationPermissionGranted -> {
                 viewModelScope.launch { locationHandler.onPermissionGranted() }
                 loadPrayerTimes()
@@ -171,7 +176,7 @@ class HomeViewModel @Inject constructor(
             }
             is HomeContract.Intent.ScreenResumed -> {
                 viewModelScope.launch {
-                    val currentLocationState = _state.value.location
+                    val currentLocationState = _state.value.locationUiState
                     if (currentLocationState.isPermanentlyDenied || currentLocationState.areServicesDisabled) {
                         locationHandler.recheckPermissions()
                         val freshState = locationHandler.permissionState.value
@@ -179,7 +184,7 @@ class HomeViewModel @Inject constructor(
                             _state.update {
                                 it.copy(
                                     isLoading = false,
-                                    location = it.location.copy(
+                                    locationUiState = it.locationUiState.copy(
                                         isPermanentlyDenied = freshState.permanentlyDenied,
                                         areServicesDisabled = freshState.servicesDisabled,
                                         isPermissionRequired = freshState.required
@@ -190,13 +195,13 @@ class HomeViewModel @Inject constructor(
                         }
                     }
                     recheckAlarmPermissions()
-                    if (_state.value.prayerTimes.timings == null) {
+                    if (_state.value.prayerTimesUiState.timings == null) {
                         checkPermissionAndLoad()
                     }
                 }
             }
             is HomeContract.Intent.LocationServicesToggled -> {
-                if (intent.enabled && _state.value.location.areServicesDisabled) {
+                if (intent.enabled && _state.value.locationUiState.areServicesDisabled) {
                     checkPermissionAndLoad()
                 }
             }
@@ -210,12 +215,12 @@ class HomeViewModel @Inject constructor(
 
     // ---------------------------------------------------------------- date browsing
 
-    private fun currentDate(): LocalDate = _state.value.dateBrowser.currentDate
+    private fun currentDate(): LocalDate = _state.value.dateBrowserUiState.currentDate
 
     private fun browseDate(date: LocalDate) {
         _state.update {
             it.copy(
-                dateBrowser = it.dateBrowser.copy(
+                dateBrowserUiState = it.dateBrowserUiState.copy(
                     currentDate = date,
                     isBrowsingToday = dayNavigator.isToday(date)
                 )
@@ -230,9 +235,9 @@ class HomeViewModel @Inject constructor(
     private fun isShowingGenericOfflineError(): Boolean {
         val s = _state.value
         return s.errorMessage != null &&
-                !s.location.isPermissionRequired &&
-                !s.location.isPermanentlyDenied &&
-                !s.location.areServicesDisabled
+                !s.locationUiState.isPermissionRequired &&
+                !s.locationUiState.isPermanentlyDenied &&
+                !s.locationUiState.areServicesDisabled
     }
 
     private fun checkPermissionAndLoad() {
@@ -304,7 +309,7 @@ class HomeViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         errorMessage = MessageUi.LOCATION_SERVICES_DISABLED,
-                        location = it.location.copy(areServicesDisabled = true)
+                        locationUiState = it.locationUiState.copy(areServicesDisabled = true)
                     )
                 }
             is HomeLocationLoadingHandler.NoInternet ->
@@ -321,7 +326,7 @@ class HomeViewModel @Inject constructor(
         val location = located.location
         _state.update {
             it.copy(
-                location = it.location.copy(
+                locationUiState = it.locationUiState.copy(
                     locationName = location.displayName // instant fallback, closes the race window
                 )
             )
@@ -332,7 +337,7 @@ class HomeViewModel @Inject constructor(
 
         val finalName = nameDeferred.await()
         _state.update {
-            it.copy(location = it.location.copy(locationName = finalName))
+            it.copy(locationUiState = it.locationUiState.copy(locationName = finalName))
         }
         prayerTimesDeferred.await()
     }
@@ -343,10 +348,10 @@ class HomeViewModel @Inject constructor(
             current.copy(
                 isLoading = false,
                 errorMessage = message,
-                location = if (isOffline) {
-                    current.location
+                locationUiState = if (isOffline) {
+                    current.locationUiState
                 } else {
-                    current.location.copy(
+                    current.locationUiState.copy(
                         isPermissionRequired = false,
                         isPermanentlyDenied = false,
                         areServicesDisabled = false
@@ -365,8 +370,8 @@ class HomeViewModel @Inject constructor(
         prayerTimesHandler.load(currentDate(), coordinates).collect { load ->
             when (load) {
                 is PrayerTimesLoad.FetchingFromNetwork -> {
-                    val isScreenCompletelyEmpty = _state.value.location.locationName == null &&
-                            _state.value.prayerTimes.timings == null
+                    val isScreenCompletelyEmpty = _state.value.locationUiState.locationName == null &&
+                            _state.value.prayerTimesUiState.timings == null
                     if (isScreenCompletelyEmpty) {
                         _state.update { it.copy(isLoading = true) }
                     }
@@ -382,7 +387,7 @@ class HomeViewModel @Inject constructor(
         _state.update {
             it.copy(
                 isLoading = false,
-                prayerTimes = it.prayerTimes.copy(
+                prayerTimesUiState = it.prayerTimesUiState.copy(
                     timings = load.timings.toUi(),
                     date = load.prayerDate.toUi(),
                     nextPrayerName = load.status.window.nextPrayer.toUi(),
@@ -409,7 +414,7 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 isLoading = false,
                 errorMessage = message,
-                location = it.location.copy(
+                locationUiState = it.locationUiState.copy(
                     isPermissionRequired = false,
                     isPermanentlyDenied = false,
                     areServicesDisabled = false
@@ -433,7 +438,7 @@ class HomeViewModel @Inject constructor(
                 when (tick) {
                     is PrayerTimesTick.Countdown -> _state.update {
                         it.copy(
-                            prayerTimes = it.prayerTimes.copy(
+                            prayerTimesUiState = it.prayerTimesUiState.copy(
                                 remaining = tick.countdown.remaining,
                                 windowProgress = tick.countdown.progress
                             )
@@ -441,7 +446,7 @@ class HomeViewModel @Inject constructor(
                     }
                     is PrayerTimesTick.StatusRefreshed -> _state.update {
                         it.copy(
-                            prayerTimes = it.prayerTimes.copy(
+                            prayerTimesUiState = it.prayerTimesUiState.copy(
                                 nextPrayerName = tick.status.window.nextPrayer.toUi(),
                                 currentPrayerName = tick.status.currentPrayer?.toUi(),
                                 pastPrayers = tick.status.pastPrayers.toUiSet()
@@ -486,7 +491,7 @@ class HomeViewModel @Inject constructor(
         mutedPrayersJob = viewModelScope.launch {
             mutedPrayersHandler.observe(currentDate()).collect { mutedPrayers ->
                 _state.update {
-                    it.copy(adhan = it.adhan.copy(mutedPrayers = mutedPrayers.toUiSet()))
+                    it.copy(adhanUiState = it.adhanUiState.copy(mutedPrayers = mutedPrayers.toUiSet()))
                 }
                 rescheduleAlarms()
             }
