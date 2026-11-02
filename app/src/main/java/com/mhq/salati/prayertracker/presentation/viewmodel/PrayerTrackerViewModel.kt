@@ -11,6 +11,7 @@ import com.mhq.salati.prayertracker.domain.usecases.SetPrayerStatusUseCase
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract
 import com.mhq.salati.prayertracker.presentation.mapper.toUi
 import com.mhq.salati.prayertracker.presentation.mapper.toUiMap
+import com.mhq.salati.settings.domain.usecases.ObserveHijriDateOffsetUseCase
 import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.presentation.mapper.toDomain
 import com.mhq.salati.shared.presentation.mapper.toUiSet
@@ -41,6 +42,7 @@ class PrayerTrackerViewModel @Inject constructor(
     private val setPrayerStatusUseCase: SetPrayerStatusUseCase,
     private val getCurrentStreakUseCase: GetCurrentStreakUseCase,
     private val getDuePrayersUseCase: GetDuePrayersUseCase,
+    private val observeHijriDateOffsetUseCase: ObserveHijriDateOffsetUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(
@@ -79,6 +81,10 @@ class PrayerTrackerViewModel @Inject constructor(
             .onEach { records ->
                 _state.update { it.copy(selectedDateRecords = records.toUiMap()) }
             }
+            .launchIn(viewModelScope)
+
+        observeHijriDateOffsetUseCase()
+            .onEach { offset -> _state.update { it.copy(hijriDateOffset = offset) } }
             .launchIn(viewModelScope)
 
         refreshStreak()

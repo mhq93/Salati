@@ -67,7 +67,8 @@ fun PrayerTrackerContent(
                     today = state.today,
                     dayStatus = state.monthDayStatus,
                     onDateSelected = { onIntent(Intent.DateSelected(it)) },
-                    onMonthChanged = { onIntent(Intent.MonthChanged(it)) }
+                    onMonthChanged = { onIntent(Intent.MonthChanged(it)) },
+                    hijriOffsetDays = state.hijriDateOffset
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 PrayerStatusList(

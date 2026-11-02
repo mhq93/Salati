@@ -17,7 +17,8 @@ object PrayerTrackerContract {
         val dialogPrayer: PrayerNameUi? = null,
         val currentStreak: Int = 0,
         val isLoading: Boolean = true,
-        val duePrayers: Set<PrayerNameUi> = PrayerNameUi.majorEntries.toSet()
+        val duePrayers: Set<PrayerNameUi> = PrayerNameUi.majorEntries.toSet(),
+        val hijriDateOffset: Int = 0
     )
 
     sealed interface Intent {
