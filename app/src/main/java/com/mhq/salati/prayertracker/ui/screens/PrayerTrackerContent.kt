@@ -46,7 +46,7 @@ fun PrayerTrackerContent(
         ) {
             TabHeader(
                 icon = Icons.Default.CheckCircle,
-                title = stringResource(R.string.prayer_tracker),
+                title = stringResource(R.string.tracker),
                 subtitle = stringResource(R.string.track_your_five_daily_prayers),
                 trailingContent = {
                     if (state.currentStreak > 0) {

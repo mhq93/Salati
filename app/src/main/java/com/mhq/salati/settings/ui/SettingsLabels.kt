@@ -19,8 +19,8 @@ val AppLanguageUi.displayNameRes: Int
 
 val TimeFormatUi.displayNameRes: Int
     @StringRes get() = when (this) {
-        TimeFormatUi.HOUR_12 -> R.string.time_format_12_hour
-        TimeFormatUi.HOUR_24 -> R.string.time_format_24_hour
+        TimeFormatUi.FORMAT_12_HOUR -> R.string.time_format_12_hour
+        TimeFormatUi.FORMAT_24_HOUR -> R.string.time_format_24_hour
     }
 
 val ThemeModeUi.displayNameRes: Int

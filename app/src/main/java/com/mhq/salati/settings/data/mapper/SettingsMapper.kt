@@ -18,7 +18,6 @@ fun StoredSettings.toDomain(): AppSettings {
         adhanSound = adhanSound.toEnumOrNull() ?: defaults.adhanSound,
         customAlarmSound = customAlarmSound.toEnumOrNull() ?: defaults.customAlarmSound,
         hijriDateOffset = hijriDateOffset,
-        isLanguageSelected = isLanguageSelected,
         timeFormat = timeFormat.toEnumOrNull() ?: defaults.timeFormat
     )
 }

@@ -45,22 +45,25 @@ fun RotatingCompassDial(
     val textMeasurer = rememberTextMeasurer()
     val shadowColor = MaterialTheme.colorScheme.scrim.toArgb()
 
-    // Restoring the dampened hardware smoothing layer
     val smoothedHeading by animateFloatAsState(
         targetValue = deviceHeading,
         animationSpec = spring(stiffness = 150f, dampingRatio = 0.85f),
         label = "smoothHeading"
     )
 
-    val degreeLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val cardinalLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val northLabelColor = MaterialTheme.colorScheme.secondary
+    val degreeLabelColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+    val cardinalLabelColor = MaterialTheme.colorScheme.onSurface
+    val northLabelColor = MaterialTheme.colorScheme.primary
 
     val compassBgGradient = Brush.radialGradient(
         colors = listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surface)
     )
-    val innerRingColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
-    val innerRingStrokeColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+
+    // Clean, normal Compose structural alphas
+    val baseContentColor = MaterialTheme.colorScheme.onSurface
+    val outerRingStrokeColor = baseContentColor.copy(alpha = 0.25f)
+    val centerGlassOverlayColor = baseContentColor.copy(alpha = 0.02f)
+    val tickColor = baseContentColor
 
     val pointerColor = MaterialTheme.colorScheme.onSurface
     val pointerSpineColor = MaterialTheme.colorScheme.secondary
@@ -78,27 +81,27 @@ fun RotatingCompassDial(
     val chassisShadowPaint = remember {
         AndroidPaint().apply {
             color = shadowColor
-            alpha = 140
-            maskFilter = BlurMaskFilter(16f, BlurMaskFilter.Blur.OUTER)
+            alpha = 100
+            maskFilter = BlurMaskFilter(24f, BlurMaskFilter.Blur.OUTER)
         }
     }
 
     val pointerShadowPaint = remember {
         AndroidPaint().apply {
             color = shadowColor
-            alpha = 160
-            maskFilter = BlurMaskFilter(4f, BlurMaskFilter.Blur.NORMAL)
+            alpha = 140
+            maskFilter = BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL)
         }
     }
 
     val degreeLabels = remember(textMeasurer, degreeLabelColor) {
         (0 until 360 step 30).associateWith { angle ->
             textMeasurer.measure(
-                text = angle.toString(),
+                text = angle.toString().padStart(3, '0'),
                 style = TextStyle(
                     color = degreeLabelColor,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Medium,
                     fontFamily = FontFamily.Monospace
                 )
             )
@@ -113,16 +116,15 @@ fun RotatingCompassDial(
                     text = label,
                     style = TextStyle(
                         color = if (label == "N") northLabelColor else cardinalLabelColor,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontFamily = FontFamily.Monospace
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Black,
+                        fontFamily = FontFamily.Default
                     )
                 )
             )
         }
     }
 
-    // Fixed: Standardizing on a single size boundary constraint (300.dp) so coordinate centers always coincide perfectly
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier.size(300.dp)
@@ -145,13 +147,13 @@ fun RotatingCompassDial(
                             center = center
                         )
                         drawCircle(
-                            color = innerRingColor,
+                            color = baseContentColor.copy(alpha = 0.02f),
                             radius = radius,
                             center = center,
                             style = Stroke(2.dp.toPx())
                         )
                         drawCircle(
-                            color = innerRingStrokeColor,
+                            color = outerRingStrokeColor,
                             radius = radius - 4.dp.toPx(),
                             center = center,
                             style = Stroke(1.dp.toPx())
@@ -162,12 +164,88 @@ fun RotatingCompassDial(
             val radius = size.minDimension / 2f
             val center = Offset(size.width / 2f, size.height / 2f)
 
+            // Inner Dashboard Details
+            val centerLensRadius = radius * 0.45f
+            val intermediateRingRadius = radius * 0.68f
+
+            // Fine Concentric Instrument Tracks using explicit explicit alpha levels
+            drawCircle(
+                color = baseContentColor.copy(alpha = 0.10f),
+                radius = intermediateRingRadius,
+                center = center,
+                style = Stroke(1.dp.toPx())
+            )
+            drawCircle(
+                color = baseContentColor.copy(alpha = 0.16f),
+                radius = centerLensRadius,
+                center = center,
+                style = Stroke(1.5.dp.toPx())
+            )
+            drawCircle(
+                color = centerGlassOverlayColor,
+                radius = centerLensRadius,
+                center = center
+            )
+
+            // Precise Inner Crosshairs
+            val crosshairStartOffset = 18.dp.toPx()
+            val verticalLength = centerLensRadius - 4.dp.toPx()
+            val crosshairColor = baseContentColor.copy(alpha = 0.10f)
+
+            // Vertical segments
+            drawLine(color = crosshairColor, start = Offset(center.x, center.y - crosshairStartOffset), end = Offset(center.x, center.y - verticalLength), strokeWidth = 1.dp.toPx())
+            drawLine(color = crosshairColor, start = Offset(center.x, center.y + crosshairStartOffset), end = Offset(center.x, center.y + verticalLength), strokeWidth = 1.dp.toPx())
+            // Horizontal segments
+            drawLine(color = crosshairColor, start = Offset(center.x - crosshairStartOffset, center.y), end = Offset(center.x - verticalLength, center.y), strokeWidth = 1.dp.toPx())
+            drawLine(color = crosshairColor, start = Offset(center.x + crosshairStartOffset, center.y), end = Offset(center.x + verticalLength, center.y), strokeWidth = 1.dp.toPx())
+
+            // High-Density Scale Loop
+            for (angle in 0 until 360 step 2) {
+                val angleRad = Math.toRadians((angle - 90).toDouble())
+                val isMajor = angle % 30 == 0
+                val isMedium = !isMajor && angle % 10 == 0
+                val isMinor = !isMajor && !isMedium && angle % 5 == 0
+
+                val tickLength = when {
+                    isMajor -> 12.dp.toPx()
+                    isMedium -> 8.dp.toPx()
+                    isMinor -> 6.dp.toPx()
+                    else -> 4.dp.toPx()
+                }
+                val strokeWidth = if (isMajor) 2.dp.toPx() else if (isMedium) 1.5.dp.toPx() else 1.dp.toPx()
+                val alphaFactor = if (isMajor) 0.9f else if (isMedium) 0.6f else if (isMinor) 0.4f else 0.2f
+
+                val outerBound = radius - 5.dp.toPx()
+                val innerBound = outerBound - tickLength
+
+                drawLine(
+                    color = tickColor.copy(alpha = alphaFactor),
+                    start = Offset(center.x + outerBound * cos(angleRad).toFloat(), center.y + outerBound * sin(angleRad).toFloat()),
+                    end = Offset(center.x + innerBound * cos(angleRad).toFloat(), center.y + innerBound * sin(angleRad).toFloat()),
+                    strokeWidth = strokeWidth,
+                    cap = StrokeCap.Round
+                )
+
+                // Secondary Inner Technical Ring Notches
+                if (isMedium || isMajor) {
+                    val innerRingTickLength = if (isMajor) 5.dp.toPx() else 3.dp.toPx()
+                    val innerTickStart = centerLensRadius
+                    val innerTickEnd = centerLensRadius + innerRingTickLength
+
+                    drawLine(
+                        color = tickColor.copy(alpha = if (isMajor) 0.4f else 0.2f),
+                        start = Offset(center.x + innerTickStart * cos(angleRad).toFloat(), center.y + innerTickStart * sin(angleRad).toFloat()),
+                        end = Offset(center.x + innerTickEnd * cos(angleRad).toFloat(), center.y + innerTickEnd * sin(angleRad).toFloat()),
+                        strokeWidth = 1.dp.toPx()
+                    )
+                }
+            }
+            // Render Degree Text Coordinates
             degreeLabels.forEach { (angle, textLayoutResult) ->
                 val angleRad = Math.toRadians((angle - 90).toDouble())
-                val textRadius = radius - 24.dp.toPx()
+                val textRadius = radius - 26.dp.toPx()
                 val x = center.x + textRadius * cos(angleRad).toFloat()
                 val y = center.y + textRadius * sin(angleRad).toFloat()
-
                 drawText(
                     textLayoutResult = textLayoutResult,
                     topLeft = Offset(
@@ -176,13 +254,12 @@ fun RotatingCompassDial(
                     )
                 )
             }
-
-            cardinalLabels.forEach { (label, angleDeg, textLayoutResult) ->
+            // Render Cardinal Headings
+            cardinalLabels.forEach { (_, angleDeg, textLayoutResult) ->
                 val angleRad = Math.toRadians((angleDeg - 90).toDouble())
-                val textRadius = radius - 40.dp.toPx()
+                val textRadius = radius - 46.dp.toPx()
                 val x = center.x + textRadius * cos(angleRad).toFloat()
                 val y = center.y + textRadius * sin(angleRad).toFloat()
-
                 drawText(
                     textLayoutResult = textLayoutResult,
                     topLeft = Offset(
@@ -192,9 +269,7 @@ fun RotatingCompassDial(
                 )
             }
         }
-
         // LAYER 2: ROTATING QIBLA NEEDLE
-        // Keeps geometry math completely isolated from dial face math
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
@@ -202,7 +277,6 @@ fun RotatingCompassDial(
         ) {
             val radius = size.minDimension / 2f
             val center = Offset(size.width / 2f, size.height / 2f)
-
             val outerTrackRadius = radius - 8.dp.toPx()
             val tip = Offset(center.x, center.y - outerTrackRadius)
             val baseLeft =
@@ -210,7 +284,6 @@ fun RotatingCompassDial(
             val baseRight =
                 Offset(center.x + 14.dp.toPx(), center.y - outerTrackRadius + 22.dp.toPx())
             val spineBase = Offset(center.x, center.y - outerTrackRadius + 16.dp.toPx())
-
             val arrowPath = Path().apply {
                 moveTo(tip.x, tip.y)
                 lineTo(baseLeft.x, baseLeft.y)
@@ -218,7 +291,6 @@ fun RotatingCompassDial(
                 lineTo(baseRight.x, baseRight.y)
                 close()
             }
-
             drawContext.canvas.nativeCanvas.drawPath(arrowPath.asAndroidPath(), pointerShadowPaint)
             drawPath(path = arrowPath, color = pointerColor)
             drawLine(
@@ -229,8 +301,7 @@ fun RotatingCompassDial(
                 cap = StrokeCap.Round
             )
         }
-
-        // LAYER 3: STATIC HARDWARE GUIDELINE & SPINDLE
+        // LAYER 3: STATIC HARDWARE GUIDELINE & BEZEL SPINDLE
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
@@ -254,8 +325,7 @@ fun RotatingCompassDial(
                             radius = 6.dp.toPx(), center = center
                         )
                         drawCircle(
-                            color =
-                                spindleHighlightColor,
+                            color = spindleHighlightColor,
                             radius = 2.dp.toPx(),
                             center = center - Offset(1.5.dp.toPx(), 1.5.dp.toPx())
                         )
@@ -263,14 +333,13 @@ fun RotatingCompassDial(
                 }) {}
     }
 }
-
 @Preview
 @Composable
 private fun RotatingCompassDialPreview() {
-    SalatiTheme() {
+    SalatiTheme {
         RotatingCompassDial(
-            deviceHeading = 1f,
-            qiblaBearing = 1f
+            deviceHeading = 0f,
+            qiblaBearing = 45f
         )
     }
 }

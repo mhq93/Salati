@@ -16,8 +16,8 @@ private val Time12Formatter = DateTimeFormatter.ofPattern("h:mm", Locale.US)
  */
 fun LocalTime.formatForDisplay(timeFormat: TimeFormatUi, locale: Locale): String =
     when (timeFormat) {
-        TimeFormatUi.HOUR_24 -> format(Time24Formatter)
-        TimeFormatUi.HOUR_12 -> {
+        TimeFormatUi.FORMAT_24_HOUR -> format(Time24Formatter)
+        TimeFormatUi.FORMAT_12_HOUR -> {
             val marker = format(DateTimeFormatter.ofPattern("a", locale))
             "${format(Time12Formatter)} $marker"
         }

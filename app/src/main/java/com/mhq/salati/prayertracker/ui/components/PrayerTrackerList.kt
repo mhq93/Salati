@@ -52,7 +52,6 @@ fun PrayerStatusList(
                 PrayerStatusCard(
                     prayer = prayer,
                     status = status,
-                    //locked = locked,
                     locked = isFutureDate || (selectedDate == today && prayer !in duePrayers),
                     onClick = { onPrayerTapped(prayer) },
                     modifier = Modifier.weight(1f)

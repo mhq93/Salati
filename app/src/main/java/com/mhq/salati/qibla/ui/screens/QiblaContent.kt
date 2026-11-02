@@ -62,7 +62,7 @@ fun QiblaContent(
                 state.qiblaBearing != null -> {
                     TabHeader(
                         icon = Icons.Default.Explore,
-                        title = stringResource(R.string.qibla_direction),
+                        title = stringResource(R.string.qibla),
                         subtitle = stringResource(R.string.face_the_kaaba_wherever_you_are)
                     )
                     QiblaContentSuccess(

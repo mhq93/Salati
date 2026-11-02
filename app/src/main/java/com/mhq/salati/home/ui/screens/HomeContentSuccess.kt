@@ -61,7 +61,7 @@ fun HomeContentSuccess(
     mutedPrayers: Set<PrayerNameUi>,
     pastPrayers: Set<PrayerNameUi>,
     isToday: Boolean,
-    timeFormat: TimeFormatUi = TimeFormatUi.HOUR_24,
+    timeFormat: TimeFormatUi = TimeFormatUi.FORMAT_12_HOUR,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {

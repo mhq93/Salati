@@ -25,7 +25,7 @@ object SettingsContract {
         val activeSelector: SelectorType? = null,
         val hijriDateOffset: Int = 0,
         val errorMessage: MessageUi? = null,
-        val timeFormat: TimeFormatUi = TimeFormatUi.HOUR_24,
+        val timeFormat: TimeFormatUi = TimeFormatUi.FORMAT_12_HOUR,
     )
 
     sealed interface Intent {

@@ -12,7 +12,7 @@
     <string name="next">Next</string>
     <string name="never_miss_a_prayer">Never Miss a Prayer</string>
     <string name="never_miss_a_prayer_subtitle">Accurate and automatically-updated prayer times based on your exact location</string>
-    <string name="access_location">Access Location</string>
+    <string name="access_location">Location</string>
     <string name="access_location_subtitle">Enable your network and GPS only once per every new location</string>
     <string name="find_qibla">Find your Qibla</string>
     <string name="find_qibla_subtitle">A precise live compass pointing towards the Kaaba wherever you are</string>
@@ -20,6 +20,50 @@
     <string name="custom_alarms_subtitle">Custom Adhan alerts for every prayer, fully in your control.</string>
     <string name="customize_your_app">Customize your App</string>
     <string name="customize_your_app_subtitle">Check Settings out to customize your own app experience.</string>
+
+
+    <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_not_now">Not now</string>
+    <string name="onboarding_open_settings">Open settings</string>
+
+    <string name="onboarding_internet_title">Connectivity</string>
+    <string name="onboarding_internet_subtitle">Salati needs the internet once to download your prayer times. After that they work offline.</string>
+    <string name="onboarding_internet_action">Enable</string>
+    <string name="onboarding_internet_connected">Connected</string>
+
+    <string name="onboarding_location_action">Grant location permission</string>
+    <string name="onboarding_location_ready">Enabled</string>
+
+    <string name="onboarding_madhab_subtitle">School of thought. It sets the Asr time.</string>
+    <string name="onboarding_madhab_shafi_group">Shafi\'i, Maliki, Hanbali</string>
+
+    <string name="onboarding_notifications_title">Notifications</string>
+    <string name="onboarding_notifications_subtitle">Get the adhan and prayer reminders on time.</string>
+    <string name="onboarding_notifications_toggle_title">Enable notifications</string>
+    <string name="onboarding_notifications_toggle_subtitle">Adhan and prayer alerts</string>
+    <string name="onboarding_notifications_action">Allow notifications</string>
+    <string name="onboarding_exact_alarm_note">Prayer alarms also need permission to set exact alarms.</string>
+    <string name="onboarding_exact_alarm_action">Allow exact alarms</string>
+
+
+    <!-- Onboarding: Welcome page -->
+    <string name="onboarding_language_label">Language</string>
+    <string name="onboarding_theme_label">Theme</string>
+    <string name="onboarding_time_format_label">Time format</string>
+    <string name="onboarding_change_later_hint">You can change all of this later in Settings.</string>
+
+    <!-- Onboarding: Connect page -->
+    <string name="onboarding_connect_title">Get connected</string>
+    <string name="onboarding_connect_subtitle">Connect to the internet and share your location to get accurate prayer times.</string>
+
+    <!-- Onboarding: Calculation page -->
+    <string name="onboarding_calculation_title">Prayer calculation</string>
+    <string name="onboarding_calculation_subtitle">Choose how prayer times are calculated for your location.</string>
+    <string name="onboarding_calculation_method_label">Method</string>
+
+    <!-- Onboarding: Alerts page -->
+    <string name="onboarding_adhan_sound_label">Adhan sound</string>
+
 
     <!-- Bottom Nav Bar -->
     <string name="home">Home</string>
@@ -62,7 +106,7 @@
     <string name="minor_timing_playing_body">It\'s time for %1$s</string>
 
     <!-- Qibla -->
-    <string name="qibla_direction">Qibla Direction</string>
+    <!--    <string name="qibla">Qibla</string>-->
     <string name="face_the_kaaba_wherever_you_are">Face the Kaaba wherever you are</string>
     <string name="unknown_location">Unknown Location</string>
     <string name="location_not_found">Location Not Found</string>
@@ -84,7 +128,7 @@
     <string name="error">Error: %1$s</string>
     <string name="please_wait">Please, wait</string>
     <string name="something_went_wrong">Something went wrong.</string>
-    <string name="open_settings">Open Settings</string>
+    <string name="open_settings">Enable</string>
     <string name="enable_location">Enable Location</string>
     <string name="failed_to_get_location_name">Failed to get Location name</string>
     <string name="retry">Retry</string>
@@ -102,7 +146,7 @@
     <string name="exact_alarms_are_disabled_prayer_alerts_may_not_ring_on_time">Exact alarms are disabled — prayer alerts may not ring on time.</string>
 
     <!-- Tracker -->
-    <string name="prayer_tracker">Prayer tracker</string>
+    <!--    <string name="tracker">Tracker</string>-->
     <string name="track_your_prayers">Track your prayers</string>
     <string name="track_your_five_daily_prayers">Track your five daily prayers</string>
     <string name="did_you_pray_x">Did you pray %1$s today?</string>

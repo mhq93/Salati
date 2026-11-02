@@ -18,7 +18,7 @@ class HomeContract {
         val systemPermissions: SystemPermissionsUiState = SystemPermissionsUiState(),
         val dateBrowser: DateBrowserUiState = DateBrowserUiState(),
         val errorMessage: MessageUi? = null,
-        val timeFormat: TimeFormatUi = TimeFormatUi.HOUR_24,
+        val timeFormat: TimeFormatUi = TimeFormatUi.FORMAT_12_HOUR,
     )
 
     data class PrayerTimesUiState(

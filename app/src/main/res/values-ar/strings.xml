@@ -22,6 +22,41 @@
     <string name="customize_your_app">تحكم بالتطبيق كيفما تريد</string>
     <string name="customize_your_app_subtitle">تحقق من إعدادات التطبيق لتجربة استخدام أكثر خصوصية.</string>
 
+    <string name="onboarding_continue">متابعة</string>
+    <string name="onboarding_not_now">ليس الآن</string>
+    <string name="onboarding_open_settings">فتح الإعدادات</string>
+
+    <string name="onboarding_internet_title">الاتصال بالإنترنت</string>
+    <string name="onboarding_internet_subtitle">يحتاج التطبيق إلى الإنترنت مرة واحدة لتحميل مواقيت الصلاة، ثم تعمل بدون اتصال.</string>
+    <string name="onboarding_internet_action">تشغيل الإنترنت</string>
+    <string name="onboarding_internet_connected">متصل</string>
+
+    <string name="onboarding_location_action">السماح بالوصول إلى الموقع</string>
+    <string name="onboarding_location_ready">تم تفعيل الموقع</string>
+
+    <string name="onboarding_madhab_subtitle">المذهب الفقهي، ويحدد وقت صلاة العصر.</string>
+    <string name="onboarding_madhab_shafi_group">الشافعي والمالكي والحنبلي</string>
+
+    <string name="onboarding_notifications_title">الإشعارات</string>
+    <string name="onboarding_notifications_subtitle">احصل على الأذان وتنبيهات الصلاة في وقتها.</string>
+    <string name="onboarding_notifications_toggle_title">تفعيل الإشعارات</string>
+    <string name="onboarding_notifications_toggle_subtitle">الأذان وتنبيهات الصلاة</string>
+    <string name="onboarding_notifications_action">السماح بالإشعارات</string>
+    <string name="onboarding_exact_alarm_note">تحتاج تنبيهات الصلاة أيضاً إلى إذن المنبهات الدقيقة.</string>
+    <string name="onboarding_exact_alarm_action">السماح بالمنبهات الدقيقة</string>
+
+
+    <string name="onboarding_language_label">اللغة</string>
+    <string name="onboarding_theme_label">المظهر</string>
+    <string name="onboarding_time_format_label">تنسيق الوقت</string>
+    <string name="onboarding_change_later_hint">يمكنك تغيير كل ذلك لاحقًا من الإعدادات.</string>
+    <string name="onboarding_connect_title">الاتصال بالإنترنت والموقع</string>
+    <string name="onboarding_connect_subtitle">اتصل بالإنترنت واسمح بالوصول إلى موقعك للحصول على مواقيت صلاة دقيقة.</string>
+    <string name="onboarding_calculation_title">حساب مواقيت الصلاة</string>
+    <string name="onboarding_calculation_subtitle">اختر طريقة حساب مواقيت الصلاة حسب موقعك.</string>
+    <string name="onboarding_calculation_method_label">طريقة الحساب</string>
+    <string name="onboarding_adhan_sound_label">صوت الأذان</string>
+
     <!-- Bottom Nav Bar -->
     <string name="home">الرئيسية</string>
     <string name="qibla">القبلة</string>
@@ -64,7 +99,7 @@
     <string name="minor_timing_playing_body">حان الآن وقت %1$s</string>
 
     <!-- Qibla -->
-    <string name="qibla_direction">اتجاه القبلة</string>
+    <!--    <string name="qibla">القبلة</string>-->
     <string name="face_the_kaaba_wherever_you_are">توجه ناحية القبلة أينما كنت</string>
     <string name="location_not_found">الموقع غير موجود</string>
     <string name="unknown_location">موقع غير معروف</string>
@@ -104,7 +139,7 @@
     <string name="exact_alarms_are_disabled_prayer_alerts_may_not_ring_on_time">تم إيقاف منبهات الآذان - قد لا يرن الجرس فى الوقت المحدد</string>
 
     <!-- Tracker -->
-    <string name="prayer_tracker">متتبع الصلوات</string>
+    <!--    <string name="tracker">المتتبع</string>-->
     <string name="track_your_prayers">تتبع صلواتك الخمس</string>
     <string name="track_your_five_daily_prayers">تتبع صلواتك الخمس كل يوم</string>
     <string name="did_you_pray_x">هل صليت %1$s اليوم؟</string>

@@ -110,11 +110,11 @@ fun ThemeModeUi.toDomain(): ThemeMode = when (this) {
 
 // ---- TimeFormat
 fun TimeFormat.toUi(): TimeFormatUi = when (this) {
-    TimeFormat.HOUR_12 -> TimeFormatUi.HOUR_12
-    TimeFormat.HOUR_24 -> TimeFormatUi.HOUR_24
+    TimeFormat.FORMAT_12_HOUR -> TimeFormatUi.FORMAT_12_HOUR
+    TimeFormat.FORMAT_24_HOUR -> TimeFormatUi.FORMAT_24_HOUR
 }
 
 fun TimeFormatUi.toDomain(): TimeFormat = when (this) {
-    TimeFormatUi.HOUR_12 -> TimeFormat.HOUR_12
-    TimeFormatUi.HOUR_24 -> TimeFormat.HOUR_24
+    TimeFormatUi.FORMAT_12_HOUR -> TimeFormat.FORMAT_12_HOUR
+    TimeFormatUi.FORMAT_24_HOUR -> TimeFormat.FORMAT_24_HOUR
 }

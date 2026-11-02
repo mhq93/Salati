@@ -7,7 +7,6 @@ data class StoredSettings(
     val madhab: String?,
     val themeMode: String?,
     val language: String?,
-    val isLanguageSelected: Boolean,
     val adhanSound: String?,
     val customAlarmSound: String?,
     val hijriDateOffset: Int,

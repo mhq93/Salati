@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
-fun PageIndicator(pageCount: Int, currentPage: Int) {
+fun OnboardingPageIndicator(pageCount: Int, currentPage: Int) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         repeat(pageCount) { index ->
             val isSelected = index == currentPage
@@ -31,7 +31,7 @@ fun PageIndicator(pageCount: Int, currentPage: Int) {
                         if (isSelected) {
                             MaterialTheme.colorScheme.primary
                         } else {
-                            MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f)
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                         }
                     )
             )
@@ -42,14 +42,14 @@ fun PageIndicator(pageCount: Int, currentPage: Int) {
 @Preview(name = "Light Mode", showBackground = true)
 @Preview(name = "Dark Mode", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun PageIndicatorPreview() {
+private fun OnboardingPageIndicatorPreview() {
     SalatiTheme {
         Box(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.primary)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ) {
-            PageIndicator(pageCount = 5, currentPage = 2)
+            OnboardingPageIndicator(pageCount = 4, currentPage = 1)
         }
     }
 }
