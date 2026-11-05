@@ -1,7 +1,9 @@
 package com.mhq.salati.qibla.presentation.handlers
 
-import com.mhq.salati.location.domain.service.LocationLocalizer
 import com.mhq.salati.location.domain.model.CoordinatesLookup
+import com.mhq.salati.location.domain.model.LocationPrerequisites
+import com.mhq.salati.location.domain.service.LocationLocalizer
+import com.mhq.salati.location.domain.usecases.CheckLocationPrerequisitesUseCase
 import com.mhq.salati.location.domain.usecases.GetCurrentCoordinatesUseCase
 import com.mhq.salati.location.domain.usecases.GetNamedLocationUseCase
 import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
@@ -11,7 +13,6 @@ import com.mhq.salati.permissions.presentation.LocationPermissionState
 import com.mhq.salati.shared.domain.Coordinates
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -19,26 +20,25 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
- * Everything about "where is the user" for the Qibla screen.
- * A GPS fix is enough to calculate a bearing,
- * so unlike Home this never needs the internet: names are looked up only when possible.
- * It only reports what happened; the ViewModel decides what the screen shows.
+ * Everything about "where is the user" for the Qibla screen. It never asks for the permission by
+ * itself: that happens only when the user taps Allow on the blocked screen.
  */
 class QiblaLocationHandler @Inject constructor(
-    private val permissionDelegate: LocationPermissionDelegate,
-    private val getSavedLocationUseCase: GetSavedLocationUseCase,
+    private val locationPermissionDelegate: LocationPermissionDelegate,
+    private val checkLocationPrerequisitesUseCase: CheckLocationPrerequisitesUseCase,
     private val getCurrentCoordinatesUseCase: GetCurrentCoordinatesUseCase,
+    private val getSavedLocationUseCase: GetSavedLocationUseCase,
     private val getNamedLocationUseCase: GetNamedLocationUseCase,
     private val locationLocalizer: LocationLocalizer
 ) {
-    val permissionState: StateFlow<LocationPermissionState> = permissionDelegate.state
-    val permissionEffects: Flow<LocationPermissionEffect> = permissionDelegate.effect
+    val permissionState: StateFlow<LocationPermissionState> = locationPermissionDelegate.state
+    val permissionEffects: Flow<LocationPermissionEffect> = locationPermissionDelegate.effect
 
     /** The place's name in the new language, each time the app language changes. */
     val localizedNameChanges: Flow<String?> =
         locationLocalizer.observeLanguageChanges().map { it.displayName }
 
-    /** The saved place if there is one, otherwise a fresh GPS lookup (which may ask for permission). */
+    /** The saved place if there is one, otherwise a fresh GPS lookup. */
     fun load(): Flow<QiblaLocationLoad> = flow {
         val saved = getSavedLocationUseCase().first()
         if (saved != null) {
@@ -46,13 +46,19 @@ class QiblaLocationHandler @Inject constructor(
             return@flow
         }
 
+        val prerequisites = checkLocationPrerequisitesUseCase()
+        if (!prerequisites.areMet) {
+            emit(QiblaLocationLoad.Blocked(prerequisites))
+            return@flow
+        }
+
         getCurrentCoordinatesUseCase().collect { lookup ->
             when (lookup) {
-                is CoordinatesLookup.ServicesDisabled -> {
-                    permissionDelegate.markServicesDisabled()
-                    emit(QiblaLocationLoad.ServicesDisabled)
-                }
-                is CoordinatesLookup.PermissionDenied -> emit(permissionOutcome())
+                // Changed between the check and the lookup.
+                is CoordinatesLookup.ServicesDisabled ->
+                    emit(QiblaLocationLoad.Blocked(prerequisites.copy(servicesEnabled = false)))
+                is CoordinatesLookup.PermissionDenied ->
+                    emit(QiblaLocationLoad.Blocked(prerequisites.copy(permissionGranted = false)))
                 is CoordinatesLookup.Locating -> emit(QiblaLocationLoad.LookingUpCurrentLocation)
                 is CoordinatesLookup.TimedOut -> emit(QiblaLocationLoad.TimedOut)
                 is CoordinatesLookup.Failed -> emit(QiblaLocationLoad.Failed(lookup.message))
@@ -61,12 +67,8 @@ class QiblaLocationHandler @Inject constructor(
         }
     }
 
-    // A permission that was denied for good isn't asked for again; otherwise ask once, then just report it.
-    private suspend fun permissionOutcome(): QiblaLocationLoad = when {
-        permissionDelegate.state.value.permanentlyDenied -> QiblaLocationLoad.PermissionPermanentlyDenied
-        permissionDelegate.requirePermissionOnce() -> QiblaLocationLoad.PermissionPrompted
-        else -> QiblaLocationLoad.PermissionRequired
-    }
+    suspend fun checkPrerequisites(): LocationPrerequisites =
+        checkLocationPrerequisitesUseCase()
 
     private suspend fun namedLocation(coordinates: Coordinates): QiblaLocationLoad = try {
         QiblaLocationLoad.Found(getNamedLocationUseCase(coordinates))
@@ -76,26 +78,20 @@ class QiblaLocationHandler @Inject constructor(
         QiblaLocationLoad.Failed(e.message)
     }
 
-    /** The place's name in the app language. A freshly found place also has its localized names stored. */
-    suspend fun localizedName(located: QiblaLocationLoad.Located): String? {
-        val localized = when (located) {
-            is QiblaLocationLoad.Saved -> locationLocalizer.localize(located.location)
-            is QiblaLocationLoad.Found -> locationLocalizer.localizeAndSave(located.location)
-        }
-        return localized.displayName
-    }
+    /** The place's name in the app language, stored when it changed. */
+    suspend fun localizedName(located: QiblaLocationLoad.Located): String? =
+        locationLocalizer.localizeAndSave(located.location).displayName
 
-    /** After a retry the permission prompt may be shown once more. */
-    fun allowPermissionPromptAgain() = permissionDelegate.allowPromptAgain()
+    fun recheckPermissions() = locationPermissionDelegate.reset()
 
-    fun recheckPermissions() = permissionDelegate.reset()
+    fun requirePermission() = locationPermissionDelegate.requirePermission()
 
-    suspend fun onPermissionGranted() = permissionDelegate.onPermissionGranted()
+    fun onPermissionGranted() = locationPermissionDelegate.onPermissionGranted()
 
-    suspend fun onPermissionDenied(permanentlyDenied: Boolean) =
-        permissionDelegate.onPermissionDenied(permanentlyDenied)
+    fun onPermissionDenied(permanentlyDenied: Boolean) =
+        locationPermissionDelegate.onPermissionDenied(permanentlyDenied)
 
-    suspend fun openAppSettings() = permissionDelegate.requestAppSettings()
+    fun openAppSettings() = locationPermissionDelegate.requestAppSettings()
 
-    suspend fun openLocationSettings() = permissionDelegate.requestLocationSettings()
+    fun openLocationSettings() = locationPermissionDelegate.requestLocationSettings()
 }

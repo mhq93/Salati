@@ -17,15 +17,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mhq.salati.connectivity.ui.components.rememberNetworkConnected
 import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.home.presentation.viewmodel.HomeViewModel
 import com.mhq.salati.permissions.ui.rememberExactAlarmPermissionLauncher
 import com.mhq.salati.permissions.ui.rememberLocationPermissionLauncher
 import com.mhq.salati.permissions.ui.rememberLocationServicesEnabled
 import com.mhq.salati.permissions.ui.rememberNotificationPermissionLauncher
+import com.mhq.salati.shared.presentation.model.MessageUi
 import com.mhq.salati.shared.ui.components.LocalSnackbarHostState
 import com.mhq.salati.shared.ui.asString
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @SuppressLint("InlinedApi", "NewApi")
 @Composable
@@ -36,6 +40,7 @@ fun HomeContainer(
     val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
     val locationServicesEnabled by rememberLocationServicesEnabled()
+    val isInternetConnected by rememberNetworkConnected()
 
     val state by homeViewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = LocalSnackbarHostState.current
@@ -125,6 +130,10 @@ fun HomeContainer(
         homeViewModel.onIntent(
             HomeContract.Intent.LocationServicesToggled(enabled = locationServicesEnabled)
         )
+    }
+
+    LaunchedEffect(isInternetConnected) {
+        homeViewModel.onIntent(HomeContract.Intent.ConnectivityChanged(isInternetConnected))
     }
 
     LaunchedEffect(Unit) {

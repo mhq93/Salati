@@ -55,7 +55,7 @@ import com.mhq.salati.shared.ui.navigation.NavigationScreen
 import com.mhq.salati.shared.ui.navigation.toNavigationScreen
 import com.mhq.salati.splash.presentation.viewmodel.SplashViewModel
 
-/** Routes that appear in the bottom bar. Switching between them should feel instant. */
+/** Routes that appear in the bottom bar. */
 private val TabRoutes = setOf(
     NavigationScreen.Home.route,
     NavigationScreen.Qibla.route,
@@ -64,6 +64,12 @@ private val TabRoutes = setOf(
     NavigationScreen.Settings.route
 )
 
+/**
+ * Cross-dissolve between tabs. A tab opened for the first time needs a moment to produce its first
+ * state; the outgoing tab fading out covers that gap, so there is no empty frame.
+ */
+private const val TAB_FADE_MILLIS = 120
+
 /** Fade used for non-tab navigation (onboarding to home, location picker). */
 private const val NON_TAB_FADE_MILLIS = 200
 
@@ -71,17 +77,11 @@ private fun AnimatedContentTransitionScope<NavBackStackEntry>.isTabSwitch(): Boo
     initialState.destination.route in TabRoutes && targetState.destination.route in TabRoutes
 
 private val ScreenEnter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-    if (isTabSwitch())
-        EnterTransition.None
-    else
-        fadeIn(tween(NON_TAB_FADE_MILLIS))
+    fadeIn(tween(if (isTabSwitch()) TAB_FADE_MILLIS else NON_TAB_FADE_MILLIS))
 }
 
 private val ScreenExit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-    if (isTabSwitch())
-        ExitTransition.None
-    else
-        fadeOut(tween(NON_TAB_FADE_MILLIS))
+    fadeOut(tween(if (isTabSwitch()) TAB_FADE_MILLIS else NON_TAB_FADE_MILLIS))
 }
 
 /**

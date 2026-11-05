@@ -32,10 +32,6 @@ val MessageUi.textRes: Int
         MessageUi.FAILED_TO_GET_LOCATION_NAME -> R.string.failed_to_get_location_name
         MessageUi.FAILED_TO_LOAD_QIBLA_DIRECTION -> R.string.failed_to_load_qibla_direction
         MessageUi.FAILED_TO_UPDATE_PRAYER_STATUS -> R.string.failed_to_update_prayer_status
-        MessageUi.LOCATION_PERMISSION_IS_REQUIRED_TO_SHOW_PRAYER_TIMES -> R.string.location_permission_is_required_to_show_prayer_times
-        MessageUi.LOCATION_PERMISSION_PERMANENTLY_DENIED -> R.string.location_permission_permanently_denied
-        MessageUi.LOCATION_PERMISSION_REQUIRED -> R.string.location_permission_required
-        MessageUi.LOCATION_SERVICES_DISABLED -> R.string.location_services_disabled
         MessageUi.NO_INTERNET_CONNECTION -> R.string.no_internet_connection
         MessageUi.REQUEST_TIMED_OUT_CHECK_CONNECTION -> R.string.request_timed_out_check_connection
         MessageUi.SEARCH_FAILED_CHECK_CONNECTION -> R.string.search_failed_check_connection

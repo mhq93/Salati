@@ -19,6 +19,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mhq.salati.connectivity.ui.components.rememberNetworkConnected
 import com.mhq.salati.permissions.ui.rememberLocationPermissionLauncher
 import com.mhq.salati.permissions.ui.rememberLocationServicesEnabled
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
@@ -37,6 +38,7 @@ fun QiblaContainer(
     val lifecycleOwner = LocalLifecycleOwner.current
     val state by qiblaViewModel.state.collectAsStateWithLifecycle()
     val locationServicesEnabled by rememberLocationServicesEnabled()
+    val isInternetConnected by rememberNetworkConnected()
     val snackbarHostState = LocalSnackbarHostState.current
     val scope = rememberCoroutineScope()
 
@@ -107,6 +109,10 @@ fun QiblaContainer(
         qiblaViewModel.onIntent(
             QiblaContract.Intent.LocationServicesToggled(enabled = locationServicesEnabled)
         )
+    }
+
+    LaunchedEffect(isInternetConnected) {
+        qiblaViewModel.onIntent(QiblaContract.Intent.ConnectivityChanged(isInternetConnected))
     }
 
     LaunchedEffect(Unit) {

@@ -16,11 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.mhq.salati.R
-import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
+import com.mhq.salati.location.ui.components.PrerequisitesError
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
-import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
-import com.mhq.salati.shared.ui.components.TabHeader
+import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
+import com.mhq.salati.shared.presentation.model.MessageUi
 import com.mhq.salati.shared.ui.asString
+import com.mhq.salati.shared.ui.components.TabHeader
+import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.screens.LoadingContent
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
@@ -43,6 +45,16 @@ fun QiblaContent(
                 .padding(bottom = BottomNavBarDefaults.Height)
         ) {
             when {
+                state.prerequisites != null -> {
+                    PrerequisitesError(
+                        prerequisites = state.prerequisites,
+                        onEnableLocation = { onIntent(QiblaContract.Intent.AccessDeviceLocationSettings) },
+                        onAllowPermission = { onIntent(QiblaContract.Intent.LocationPermissionRequested) },
+                        onOpenAppSettings = { onIntent(QiblaContract.Intent.AccessAppSettings) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
                 state.isLoading -> {
                     LoadingContent(modifier = Modifier.weight(1f))
                 }
@@ -50,10 +62,8 @@ fun QiblaContent(
                 state.errorMessage != null -> {
                     QiblaContentError(
                         errorMessage = state.errorMessage.asString(),
+                        isNoConnection = state.errorMessage == MessageUi.NO_INTERNET_CONNECTION,
                         sensorUnavailable = state.sensorUnavailable,
-                        isLocationPermissionPermanentlyDenied = state.isLocationPermissionPermanentlyDenied,
-                        areLocationServicesDisabled = state.areLocationServicesDisabled,
-                        isLocationPermissionRequired = state.isLocationPermissionRequired,
                         onIntent = onIntent,
                         modifier = Modifier.weight(1f)
                     )
@@ -74,9 +84,8 @@ fun QiblaContent(
                         onRecalibrateClick = { onIntent(QiblaContract.Intent.RecalibrationRequested) }
                     )
                 }
-                else -> { //Added, will check it...
-                    LoadingContent(modifier = Modifier.weight(1f))
-                }
+
+                else -> Box(modifier = Modifier.weight(1f))
             }
         }
     }

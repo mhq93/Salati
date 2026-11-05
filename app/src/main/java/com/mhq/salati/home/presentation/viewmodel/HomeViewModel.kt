@@ -3,12 +3,12 @@ package com.mhq.salati.home.presentation.viewmodel
 import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.home.domain.service.DayNavigator
 import com.mhq.salati.adhan.domain.model.AlarmPermissions
 import com.mhq.salati.home.domain.model.PrayerTimesError
 import com.mhq.salati.home.domain.model.PrayerTimesLoad
 import com.mhq.salati.home.domain.model.PrayerTimesTick
 import com.mhq.salati.home.domain.model.PrayerWindow
+import com.mhq.salati.home.domain.service.DayNavigator
 import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.home.presentation.handlers.HomeAlarmsHandler
 import com.mhq.salati.home.presentation.handlers.HomeLocationHandler
@@ -16,6 +16,9 @@ import com.mhq.salati.home.presentation.handlers.HomeLocationLoadingHandler
 import com.mhq.salati.home.presentation.handlers.MutedPrayersHandler
 import com.mhq.salati.home.presentation.handlers.PrayerTimesHandler
 import com.mhq.salati.home.presentation.mapper.toUi
+import com.mhq.salati.location.domain.model.LocationPrerequisites
+import com.mhq.salati.location.presentation.mapper.toPrerequisitesUi
+import com.mhq.salati.permissions.domain.usecases.HasLocationPermissionUseCase
 import com.mhq.salati.permissions.presentation.LocationPermissionEffect
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.settings.domain.usecases.ObserveTimeFormatUseCase
@@ -49,7 +52,8 @@ class HomeViewModel @Inject constructor(
     private val prayerTimesHandler: PrayerTimesHandler,
     private val mutedPrayersHandler: MutedPrayersHandler,
     private val alarmsHandler: HomeAlarmsHandler,
-    private val observeTimeFormatUseCase: ObserveTimeFormatUseCase
+    private val observeTimeFormatUseCase: ObserveTimeFormatUseCase,
+    private val hasLocationPermissionUseCase: HasLocationPermissionUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeContract.State())
@@ -62,39 +66,43 @@ class HomeViewModel @Inject constructor(
     private var countdownJob: Job? = null
     private var mutedPrayersJob: Job? = null
 
-    // The domain timings the alarm handler needs. The state only holds the screen's copy (PrayerTimingsUi).
     private var loadedTimings: PrayerTimings? = null
 
-    init {
-        viewModelScope.launch {
-            locationHandler.permissionEffects.collect { permissionEffect ->
-                val mapped = when (permissionEffect) {
-                    is LocationPermissionEffect.RequestPermission ->
-                        HomeContract.Effect.RequestLocationPermission
-                    is LocationPermissionEffect.NavigateToAppSettings ->
-                        HomeContract.Effect.NavigateToAppSettings
-                    is LocationPermissionEffect.NavigateToLocationSettings ->
-                        HomeContract.Effect.NavigateToLocationSettings
-                    is LocationPermissionEffect.PermissionResolved -> null
-                }
-                mapped?.let { _effect.send(it) }
-            }
-        }
-
-        viewModelScope.launch {
-            locationHandler.permissionState.collect { ps ->
-                _state.update {
-                    it.copy(
-                        locationUiState = it.locationUiState.copy(
-                            isPermissionGranted = ps.granted,
-                            isPermanentlyDenied = ps.permanentlyDenied,
-                            areServicesDisabled = ps.servicesDisabled,
-                            isPermissionRequired = ps.required
+        init {
+            viewModelScope.launch {
+                locationHandler.permissionState.collect { ps ->
+                    _state.update {
+                        it.copy(
+                            locationUiState = it.locationUiState.copy(
+                                isPermissionGranted = ps.granted,
+                                isPermanentlyDenied = ps.permanentlyDenied
+                            ),
+                            prerequisites = it.prerequisites?.copy(
+                                permissionPermanentlyDenied = ps.permanentlyDenied && !ps.granted
+                            )
                         )
+                    }
+                }
+            }
+
+            // One screen effect per permission effect. Sending a permission request for all of them
+            // is what froze the app and kept the settings from opening.
+            locationHandler.permissionEffects
+                .onEach { permissionEffect ->
+                    _effect.send(
+                        when (permissionEffect) {
+                            LocationPermissionEffect.RequestPermission ->
+                                HomeContract.Effect.RequestLocationPermission
+
+                            LocationPermissionEffect.NavigateToAppSettings ->
+                                HomeContract.Effect.NavigateToAppSettings
+
+                            LocationPermissionEffect.NavigateToLocationSettings ->
+                                HomeContract.Effect.NavigateToLocationSettings
+                        }
                     )
                 }
-            }
-        }
+                .launchIn(viewModelScope)
 
         observeMutedPrayersForCurrentDate()
 
@@ -111,50 +119,65 @@ class HomeViewModel @Inject constructor(
 
     fun onIntent(intent: HomeContract.Intent) {
         when (intent) {
-            is HomeContract.Intent.LoadPrayerTimes -> checkPermissionAndLoad()
+            is HomeContract.Intent.LoadPrayerTimes -> {
+                val current = _state.value
+                when {
+                    current.prerequisites != null -> reevaluatePrerequisites()
+                    current.errorMessage == null -> checkPermissionAndLoad()
+                }
+            }
+
             is HomeContract.Intent.RetryRequested -> {
-                locationHandler.allowPermissionPromptAgain()
                 checkPermissionAndLoad()
             }
+
             is HomeContract.Intent.PreviousDay -> {
                 dayNavigator.previousOrNull(currentDate())?.let { browseDate(it) }
             }
+
             is HomeContract.Intent.NextDay -> browseDate(dayNavigator.next(currentDate()))
             is HomeContract.Intent.TodayRequested -> {
                 if (!dayNavigator.isToday(currentDate())) browseDate(dayNavigator.today())
             }
+
             is HomeContract.Intent.EndOfMonthRequested ->
                 browseDate(dayNavigator.endOfMonth(currentDate()))
+
             is HomeContract.Intent.LocationPermissionGranted -> {
-                viewModelScope.launch { locationHandler.onPermissionGranted() }
-                loadPrayerTimes()
+                locationHandler.onPermissionGranted()
+                reevaluatePrerequisites()
             }
+
             is HomeContract.Intent.LocationPermissionDenied -> {
+                locationHandler.onPermissionDenied(intent.permanentlyDenied)
+                reevaluatePrerequisites()
+            }
+
+            is HomeContract.Intent.LocationPermissionRequested -> {
+                locationHandler.requirePermission()
+            }
+
+            is HomeContract.Intent.AccessAppSettings -> {
+                locationHandler.openAppSettings()
+            }
+
+            is HomeContract.Intent.AccessDeviceLocationSettings -> {
+                locationHandler.openLocationSettings()
+            }
+
+            is HomeContract.Intent.ToggleMute -> {
                 viewModelScope.launch {
-                    locationHandler.onPermissionDenied(intent.permanentlyDenied)
-                }
-                _state.update {
-                    it.copy(
-                        errorMessage = if (intent.permanentlyDenied) {
-                            MessageUi.LOCATION_PERMISSION_PERMANENTLY_DENIED
-                        } else {
-                            MessageUi.LOCATION_PERMISSION_IS_REQUIRED_TO_SHOW_PRAYER_TIMES
-                        }
+                    mutedPrayersHandler.toggle(
+                        currentDate(),
+                        intent.prayerName.toDomain()
                     )
                 }
             }
-            is HomeContract.Intent.AccessAppSettings -> {
-                viewModelScope.launch { locationHandler.openAppSettings() }
-            }
-            is HomeContract.Intent.AccessDeviceLocationSettings -> {
-                viewModelScope.launch { locationHandler.openLocationSettings() }
-            }
-            is HomeContract.Intent.ToggleMute -> {
-                viewModelScope.launch { mutedPrayersHandler.toggle(currentDate(), intent.prayerName.toDomain()) }
-            }
+
             is HomeContract.Intent.RecheckSystemPermissions -> {
                 viewModelScope.launch { recheckAlarmPermissions() }
             }
+
             is HomeContract.Intent.NotificationPermissionResult -> {
                 _state.update {
                     it.copy(
@@ -164,50 +187,51 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
             is HomeContract.Intent.ExactAlarmPermissionRequested -> {
                 viewModelScope.launch {
                     _effect.send(HomeContract.Effect.RequestExactAlarmPermission)
                 }
             }
+
             is HomeContract.Intent.NotificationPermissionRequested -> {
                 viewModelScope.launch {
                     _effect.send(HomeContract.Effect.RequestNotificationPermission)
                 }
             }
+
             is HomeContract.Intent.ScreenResumed -> {
                 viewModelScope.launch {
-                    val currentLocationState = _state.value.locationUiState
-                    if (currentLocationState.isPermanentlyDenied || currentLocationState.areServicesDisabled) {
-                        locationHandler.recheckPermissions()
-                        val freshState = locationHandler.permissionState.value
-                        if (freshState.permanentlyDenied || freshState.servicesDisabled) {
-                            _state.update {
-                                it.copy(
-                                    isLoading = false,
-                                    locationUiState = it.locationUiState.copy(
-                                        isPermanentlyDenied = freshState.permanentlyDenied,
-                                        areServicesDisabled = freshState.servicesDisabled,
-                                        isPermissionRequired = freshState.required
-                                    )
-                                )
-                            }
-                            return@launch
-                        }
-                    }
+                    val current = _state.value
+
+                    // The permission may have been changed in the app settings.
+                    val permissionJustGranted = hasLocationPermissionUseCase() &&
+                            !locationHandler.permissionState.value.granted
+                    if (permissionJustGranted) locationHandler.onPermissionGranted()
+
                     recheckAlarmPermissions()
-                    if (_state.value.prayerTimesUiState.timings == null) {
-                        checkPermissionAndLoad()
+
+                    when {
+                        current.prerequisites != null -> reevaluatePrerequisites()
+                        permissionJustGranted && current.errorMessage != null ->
+                            checkPermissionAndLoad(silent = true)
+
+                        current.prayerTimesUiState.timings == null &&
+                                current.errorMessage == null &&
+                                !current.isLoading -> checkPermissionAndLoad()
                     }
                 }
             }
+
             is HomeContract.Intent.LocationServicesToggled -> {
-                if (intent.enabled && _state.value.locationUiState.areServicesDisabled) {
-                    checkPermissionAndLoad()
-                }
+                if (_state.value.prerequisites != null) reevaluatePrerequisites()
             }
+
             is HomeContract.Intent.ConnectivityChanged -> {
-                if (intent.isConnected && isShowingGenericOfflineError()) {
-                    checkPermissionAndLoad()
+                when {
+                    _state.value.prerequisites != null -> reevaluatePrerequisites()
+                    intent.isConnected && isShowingGenericOfflineError() ->
+                        checkPermissionAndLoad(silent = true)
                 }
             }
         }
@@ -232,37 +256,41 @@ class HomeViewModel @Inject constructor(
 
     // ---------------------------------------------------------------- loading
 
-    private fun isShowingGenericOfflineError(): Boolean {
-        val s = _state.value
-        return s.errorMessage != null &&
-                !s.locationUiState.isPermissionRequired &&
-                !s.locationUiState.isPermanentlyDenied &&
-                !s.locationUiState.areServicesDisabled
+    // A failed fetch (the location screen above is handled by [reevaluatePrerequisites]).
+    private fun isShowingGenericOfflineError(): Boolean =
+        _state.value.errorMessage != null
+
+    private fun checkPermissionAndLoad(silent: Boolean = false) {
+        // A silent re-check keeps the current screen until the new result replaces it.
+        if (!silent) _state.update { it.copy(errorMessage = null) }
+        loadPrayerTimes()
     }
 
-    private fun checkPermissionAndLoad() {
-        val permissionState = locationHandler.permissionState.value
-        if (permissionState.permanentlyDenied) {
-            _state.update {
-                it.copy(
-                    isLoading = false,
-                    errorMessage = MessageUi.LOCATION_PERMISSION_PERMANENTLY_DENIED
-                )
+    /**
+     * Re-checks what the blocked screen is waiting for. The rows update in place, with no loading
+     * state in between; the lookup only restarts once everything is available.
+     */
+    private fun reevaluatePrerequisites() {
+        viewModelScope.launch {
+            val now = locationHandler.checkPrerequisites()
+            if (now.areMet) {
+                checkPermissionAndLoad(silent = true)
+            } else {
+                showBlocked(now)
             }
-            return
         }
-        if (permissionState.servicesDisabled) {
-            _state.update {
-                it.copy(
-                    isLoading = false,
-                    errorMessage = MessageUi.LOCATION_SERVICES_DISABLED
-                )
-            }
-            return
-        }
+    }
 
-        _state.update { it.copy(errorMessage = null) }
-        loadPrayerTimes()
+    private fun showBlocked(prerequisites: LocationPrerequisites) {
+        _state.update {
+            it.copy(
+                isLoading = false,
+                errorMessage = null,
+                prerequisites = prerequisites.toPrerequisitesUi(
+                    permissionPermanentlyDenied = locationHandler.permissionState.value.permanentlyDenied
+                )
+            )
+        }
     }
 
     private fun loadPrayerTimes() {
@@ -271,8 +299,7 @@ class HomeViewModel @Inject constructor(
             try {
                 locationHandler.load().collect { load -> handleLocationLoad(load) }
             } catch (e: SecurityException) {
-                locationHandler.requirePermission()
-                _state.update { it.copy(isLoading = false, errorMessage = null) }
+                reevaluatePrerequisites()
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -286,77 +313,57 @@ class HomeViewModel @Inject constructor(
     private suspend fun handleLocationLoad(load: HomeLocationLoadingHandler) {
         when (load) {
             is HomeLocationLoadingHandler.Located -> showLocationAndLoadPrayerTimes(load)
-            is HomeLocationLoadingHandler.LookingUpCurrentLocation ->
-                _state.update { it.copy(isLoading = true, errorMessage = null) }
-            is HomeLocationLoadingHandler.PermissionPermanentlyDenied ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = MessageUi.LOCATION_PERMISSION_PERMANENTLY_DENIED
-                    )
+
+            is HomeLocationLoadingHandler.LookingUpCurrentLocation -> {
+                // A blocked screen gives way to the spinner; an error screen waits for the result.
+                if (_state.value.errorMessage == null) {
+                    _state.update { it.copy(isLoading = true, prerequisites = null) }
                 }
-            is HomeLocationLoadingHandler.PermissionPrompted ->
-                _state.update { it.copy(isLoading = false) }
-            is HomeLocationLoadingHandler.PermissionRequired ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = MessageUi.LOCATION_PERMISSION_IS_REQUIRED_TO_SHOW_PRAYER_TIMES
-                    )
-                }
-            is HomeLocationLoadingHandler.ServicesDisabled ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = MessageUi.LOCATION_SERVICES_DISABLED,
-                        locationUiState = it.locationUiState.copy(areServicesDisabled = true)
-                    )
-                }
-            is HomeLocationLoadingHandler.NoInternet ->
-                showError(MessageUi.NO_INTERNET_CONNECTION, isOffline = true)
+            }
+
+            is HomeLocationLoadingHandler.Blocked ->
+                showBlocked(load.prerequisites)
+
             is HomeLocationLoadingHandler.GeocodingFailed ->
                 showError(MessageUi.FAILED_TO_GET_LOCATION_NAME, isOffline = false)
+
             is HomeLocationLoadingHandler.Unavailable ->
                 showError(MessageUi.FAILED_TO_GET_LOCATION, isOffline = false)
         }
     }
 
-    // Shows the place right away with the names it already has, then localizes them while the times load.
-    private suspend fun showLocationAndLoadPrayerTimes(located: HomeLocationLoadingHandler.Located) = coroutineScope {
-        val location = located.location
-        _state.update {
-            it.copy(
-                locationUiState = it.locationUiState.copy(
-                    locationName = location.displayName // instant fallback, closes the race window
+    private suspend fun showLocationAndLoadPrayerTimes(located: HomeLocationLoadingHandler.Located) =
+        coroutineScope {
+            val location = located.location
+            _state.update {
+                it.copy(
+                    errorMessage = null,
+                    prerequisites = null,
+                    locationUiState = it.locationUiState.copy(
+                        locationName = location.displayName
+                    )
                 )
-            )
+            }
+
+            val nameDeferred = async { locationHandler.localizedName(located) }
+            val prayerTimesDeferred = async { loadAndApplyPrayerTimes(location.coordinates) }
+
+            val finalName = nameDeferred.await()
+            _state.update {
+                it.copy(locationUiState = it.locationUiState.copy(locationName = finalName))
+            }
+            prayerTimesDeferred.await()
         }
 
-        val nameDeferred = async { locationHandler.localizedName(located) }
-        val prayerTimesDeferred = async { loadAndApplyPrayerTimes(location.coordinates) }
-
-        val finalName = nameDeferred.await()
-        _state.update {
-            it.copy(locationUiState = it.locationUiState.copy(locationName = finalName))
-        }
-        prayerTimesDeferred.await()
-    }
-
-    // While offline the error is only shown inline: no snackbar, and the location flags stay as they were.
     private suspend fun showError(message: MessageUi, isOffline: Boolean) {
         _state.update { current ->
             current.copy(
                 isLoading = false,
+                prerequisites = null,
                 errorMessage = message,
-                locationUiState = if (isOffline) {
-                    current.locationUiState
-                } else {
-                    current.locationUiState.copy(
-                        isPermissionRequired = false,
-                        isPermanentlyDenied = false,
-                        areServicesDisabled = false
-                    )
-                }
+                locationUiState = current.locationUiState.copy(
+                    isPermanentlyDenied = false
+                )
             )
         }
         if (!isOffline) {
@@ -370,23 +377,29 @@ class HomeViewModel @Inject constructor(
         prayerTimesHandler.load(currentDate(), coordinates).collect { load ->
             when (load) {
                 is PrayerTimesLoad.FetchingFromNetwork -> {
-                    val isScreenCompletelyEmpty = _state.value.locationUiState.locationName == null &&
-                            _state.value.prayerTimesUiState.timings == null
+                    val isScreenCompletelyEmpty =
+                        _state.value.locationUiState.locationName == null &&
+                                _state.value.prayerTimesUiState.timings == null
                     if (isScreenCompletelyEmpty) {
                         _state.update { it.copy(isLoading = true) }
                     }
                 }
+
                 is PrayerTimesLoad.Loaded -> applyLoadedPrayerTimes(load, coordinates)
                 is PrayerTimesLoad.Failed -> showPrayerTimesError(load.error)
             }
         }
     }
 
-    private suspend fun applyLoadedPrayerTimes(load: PrayerTimesLoad.Loaded, coordinates: Coordinates) {
+    private suspend fun applyLoadedPrayerTimes(
+        load: PrayerTimesLoad.Loaded,
+        coordinates: Coordinates
+    ) {
         loadedTimings = load.timings
         _state.update {
             it.copy(
                 isLoading = false,
+                errorMessage = null,
                 prayerTimesUiState = it.prayerTimesUiState.copy(
                     timings = load.timings.toUi(),
                     date = load.prayerDate.toUi(),
@@ -413,11 +426,10 @@ class HomeViewModel @Inject constructor(
         _state.update {
             it.copy(
                 isLoading = false,
+                prerequisites = null,
                 errorMessage = message,
                 locationUiState = it.locationUiState.copy(
-                    isPermissionRequired = false,
-                    isPermanentlyDenied = false,
-                    areServicesDisabled = false
+                    isPermanentlyDenied = false
                 )
             )
         }
@@ -434,28 +446,31 @@ class HomeViewModel @Inject constructor(
     ) {
         countdownJob?.cancel()
         countdownJob = viewModelScope.launch {
-            prayerTimesHandler.keepCountingDown(timings, date, coordinates, window).collect { tick ->
-                when (tick) {
-                    is PrayerTimesTick.Countdown -> _state.update {
-                        it.copy(
-                            prayerTimesUiState = it.prayerTimesUiState.copy(
-                                remaining = tick.countdown.remaining,
-                                windowProgress = tick.countdown.progress
+            prayerTimesHandler.keepCountingDown(timings, date, coordinates, window)
+                .collect { tick ->
+                    when (tick) {
+                        is PrayerTimesTick.Countdown -> _state.update {
+                            it.copy(
+                                prayerTimesUiState = it.prayerTimesUiState.copy(
+                                    remaining = tick.countdown.remaining,
+                                    windowProgress = tick.countdown.progress
+                                )
                             )
-                        )
-                    }
-                    is PrayerTimesTick.StatusRefreshed -> _state.update {
-                        it.copy(
-                            prayerTimesUiState = it.prayerTimesUiState.copy(
-                                nextPrayerName = tick.status.window.nextPrayer.toUi(),
-                                currentPrayerName = tick.status.currentPrayer?.toUi(),
-                                pastPrayers = tick.status.pastPrayers.toUiSet()
+                        }
+
+                        is PrayerTimesTick.StatusRefreshed -> _state.update {
+                            it.copy(
+                                prayerTimesUiState = it.prayerTimesUiState.copy(
+                                    nextPrayerName = tick.status.window.nextPrayer.toUi(),
+                                    currentPrayerName = tick.status.currentPrayer?.toUi(),
+                                    pastPrayers = tick.status.pastPrayers.toUiSet()
+                                )
                             )
-                        )
+                        }
+
+                        is PrayerTimesTick.DayRolledOver -> browseDate(tick.date)
                     }
-                    is PrayerTimesTick.DayRolledOver -> browseDate(tick.date)
                 }
-            }
         }
     }
 
@@ -470,7 +485,10 @@ class HomeViewModel @Inject constructor(
         applyAlarmPermissions(permissions, promptIfMissing = false)
     }
 
-    private suspend fun applyAlarmPermissions(permissions: AlarmPermissions, promptIfMissing: Boolean) {
+    private suspend fun applyAlarmPermissions(
+        permissions: AlarmPermissions,
+        promptIfMissing: Boolean
+    ) {
         _state.update {
             it.copy(
                 systemPermissions = it.systemPermissions.copy(

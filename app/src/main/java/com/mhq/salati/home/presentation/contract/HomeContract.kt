@@ -2,6 +2,7 @@ package com.mhq.salati.home.presentation.contract
 
 import com.mhq.salati.home.presentation.model.PrayerDateUi
 import com.mhq.salati.home.presentation.model.PrayerTimingsUi
+import com.mhq.salati.location.presentation.model.PrerequisitesUi
 import com.mhq.salati.settings.presentation.model.TimeFormatUi
 import com.mhq.salati.shared.presentation.model.PrayerNameUi
 import com.mhq.salati.shared.presentation.model.MessageUi
@@ -19,6 +20,7 @@ class HomeContract {
         val dateBrowserUiState: DateBrowserUiState = DateBrowserUiState(),
         val adhanUiState: AdhanUiState = AdhanUiState(),
         val errorMessage: MessageUi? = null,
+        val prerequisites: PrerequisitesUi? = null
     )
 
     data class PrayerTimesUiState(
@@ -35,8 +37,6 @@ class HomeContract {
         val locationName: String? = null,
         val isPermissionGranted: Boolean = false,
         val isPermanentlyDenied: Boolean = false,
-        val areServicesDisabled: Boolean = false,
-        val isPermissionRequired: Boolean = true
     )
 
     data class AdhanUiState(
@@ -67,6 +67,7 @@ class HomeContract {
         data object ExactAlarmPermissionRequested : Intent
         data object NotificationPermissionRequested : Intent
         data object ScreenResumed : Intent
+        data object LocationPermissionRequested : Intent
         data class ToggleMute(val prayerName: PrayerNameUi) : Intent
         data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
         data class NotificationPermissionResult(val granted: Boolean) : Intent

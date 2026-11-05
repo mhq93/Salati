@@ -275,6 +275,20 @@
     <string name="custom_alarm_sound_alert">Alert</string>
     <string name="couldn_t_update_custom_alarm_sound">Couldn\'t update custom alarm sound</string>
 
+
+    <string name="prerequisites_title">Some requirements need your attention</string>
+    <string name="prerequisite_internet">Internet connection</string>
+    <string name="prerequisite_internet_missing">No connection detected.</string>
+    <string name="prerequisite_services">Location services</string>
+    <string name="prerequisite_services_missing">Location services are turned off.</string>
+    <string name="prerequisite_permission">Location permission</string>
+    <string name="prerequisite_permission_missing">The app is not allowed to use your location.</string>
+    <string name="prerequisite_permission_blocked">Blocked. Allow it in the app settings.</string>
+    <string name="prerequisite_action_enable_location">Enable Location</string>
+    <string name="prerequisite_action_allow">Allow</string>
+    <string name="prerequisite_action_open_settings">Open Settings</string>
+
+
     <!-- Streak -->
     <plurals name="day_streak">
         <item quantity="one">%1$d Day streak</item>

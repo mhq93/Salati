@@ -1,9 +1,9 @@
 package com.mhq.salati.qibla.presentation.handlers
 
+import com.mhq.salati.location.domain.model.LocationPrerequisites
 import com.mhq.salati.location.domain.model.SavedLocation
 
 /** The steps of working out where the user is for the Qibla screen, in the order they happen. */
-
 sealed interface QiblaLocationLoad {
 
     /** A place the Qibla bearing can be calculated for. */
@@ -20,16 +20,8 @@ sealed interface QiblaLocationLoad {
     /** The checks passed and the GPS fix is being awaited. */
     data object LookingUpCurrentLocation : QiblaLocationLoad
 
-    data object ServicesDisabled : QiblaLocationLoad
-
-    /** The permission was denied for good, so asking again is pointless. */
-    data object PermissionPermanentlyDenied : QiblaLocationLoad
-
-    /** The system permission prompt was just requested; nothing to show yet. */
-    data object PermissionPrompted : QiblaLocationLoad
-
-    /** The prompt was already shown once and the permission is still missing. */
-    data object PermissionRequired : QiblaLocationLoad
+    /** There is no saved place and something needed to find one is missing. */
+    data class Blocked(val prerequisites: LocationPrerequisites) : QiblaLocationLoad
 
     data object TimedOut : QiblaLocationLoad
     data class Failed(val message: String?) : QiblaLocationLoad

@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.mhq.salati.home.presentation.contract.HomeContract
+import com.mhq.salati.location.ui.components.PrerequisitesError
+import com.mhq.salati.shared.presentation.model.MessageUi
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.asString
 import com.mhq.salati.shared.ui.screens.LoadingContent
@@ -33,19 +35,29 @@ fun HomeContent(
                 .padding(bottom = BottomNavBarDefaults.Height)
         ) {
             when {
+                state.prerequisites != null -> {
+                    PrerequisitesError(
+                        prerequisites = state.prerequisites,
+                        onEnableLocation = { onIntent(HomeContract.Intent.AccessDeviceLocationSettings) },
+                        onAllowPermission = { onIntent(HomeContract.Intent.LocationPermissionRequested) },
+                        onOpenAppSettings = { onIntent(HomeContract.Intent.AccessAppSettings) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
                 state.isLoading -> {
                     LoadingContent(modifier = Modifier.weight(1f))
                 }
+
                 state.errorMessage != null -> {
                     HomeContentError(
                         errorMessage = state.errorMessage.asString(),
-                        isLocationPermissionPermanentlyDenied = state.locationUiState.isPermanentlyDenied,
-                        areLocationServicesDisabled = state.locationUiState.areServicesDisabled,
-                        isLocationPermissionRequired = state.locationUiState.isPermissionRequired,
+                        isNoConnection = state.errorMessage == MessageUi.NO_INTERNET_CONNECTION,
                         onIntent = onIntent,
                         modifier = Modifier.weight(1f)
                     )
                 }
+
                 state.prayerTimesUiState.timings != null
                         && state.prayerTimesUiState.date != null
                         && state.prayerTimesUiState.nextPrayerName != null -> {

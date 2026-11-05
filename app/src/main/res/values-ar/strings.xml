@@ -266,6 +266,21 @@
     <string name="custom_alarm_sound_alert">تنبيه خاص</string>
     <string name="couldn_t_update_custom_alarm_sound">فشل تحديث صوت المنبه الخاص</string>
 
+
+
+    <string name="prerequisites_title">بعض المتطلبات تحتاج إلى انتباهك</string>
+    <string name="prerequisite_internet">الاتصال بالإنترنت</string>
+    <string name="prerequisite_internet_missing">لا يوجد اتصال.</string>
+    <string name="prerequisite_services">خدمات الموقع</string>
+    <string name="prerequisite_services_missing">خدمات الموقع متوقفة.</string>
+    <string name="prerequisite_permission">إذن الموقع</string>
+    <string name="prerequisite_permission_missing">التطبيق غير مسموح له باستخدام موقعك.</string>
+    <string name="prerequisite_permission_blocked">الإذن محظور. اسمح به من إعدادات التطبيق.</string>
+    <string name="prerequisite_action_enable_location">تفعيل الموقع</string>
+    <string name="prerequisite_action_allow">السماح</string>
+    <string name="prerequisite_action_open_settings">فتح الإعدادات</string>
+
+
     <!-- Streak -->
     <plurals name="day_streak">
         <item quantity="zero">%1$d يوم متتالي</item>

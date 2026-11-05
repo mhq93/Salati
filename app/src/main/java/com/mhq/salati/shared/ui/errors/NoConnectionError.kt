@@ -6,23 +6,25 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
-import com.mhq.salati.shared.ui.theme.DarkGreen
-import com.mhq.salati.shared.ui.theme.SalatiTheme
+import com.mhq.salati.connectivity.ui.components.rememberNetworkConnected
 
 @Composable
-fun LocationServicesDisabledError(
+fun NoConnectionError(
     errorMessage: String,
-    onEnableLocationClicked: () -> Unit,
+    onRetryClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDeviceConnected by rememberNetworkConnected()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -30,24 +32,14 @@ fun LocationServicesDisabledError(
     ) {
         Text(
             text = stringResource(R.string.error, errorMessage),
-            color = DarkGreen
+            color = MaterialTheme.colorScheme.primary
         )
-        Spacer(
-            Modifier.height(8.dp)
-        )
-        Button(onClick = onEnableLocationClicked) {
-            Text(stringResource(R.string.enable_location))
-        }
-    }
-}
 
-@Preview
-@Composable
-private fun LocationServicesDisabledErrorPreview() {
-    SalatiTheme() {
-        LocationServicesDisabledError(
-            errorMessage = "Some peculiar error message",
-            onEnableLocationClicked = {}
-        )
+        if (isDeviceConnected) {
+            Spacer(Modifier.height(8.dp))
+            Button(onClick = onRetryClicked) {
+                Text(stringResource(R.string.retry))
+            }
+        }
     }
 }

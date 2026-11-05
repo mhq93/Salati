@@ -1,5 +1,6 @@
 package com.mhq.salati.qibla.presentation.contract
 
+import com.mhq.salati.location.presentation.model.PrerequisitesUi
 import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.shared.presentation.model.MessageUi
 
@@ -14,12 +15,11 @@ class QiblaContract {
         val isCalibrationGuideVisible: Boolean = false,
 
         // FIX: Flattened LocationPermissionState into UI flags
-        val areLocationServicesDisabled: Boolean = false,
-        val isLocationPermissionRequired: Boolean = true,
         val isLocationPermissionGranted: Boolean = false,
         val isLocationPermissionPermanentlyDenied: Boolean = false,
         val locationName: String? = null,
-        val errorMessage: MessageUi? = null
+        val errorMessage: MessageUi? = null,
+        val prerequisites: PrerequisitesUi? = null
     )
 
     sealed interface Intent {
@@ -27,12 +27,14 @@ class QiblaContract {
         data object Retry : Intent
         data object RetryRequested : Intent
         data object LocationPermissionGranted : Intent
+        data object LocationPermissionRequested : Intent
         data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
         data object AccessAppSettings : Intent
         data object AccessDeviceLocationSettings : Intent
         data object LocationPickerRequested : Intent
         data object RecalibrationRequested : Intent
         data object DismissCalibrationGuide : Intent
+        data class ConnectivityChanged(val isConnected: Boolean) : Intent
 
         // NEW: Lifecycle events reported by UI, logic moved from Container
         data object ScreenResumed : Intent
