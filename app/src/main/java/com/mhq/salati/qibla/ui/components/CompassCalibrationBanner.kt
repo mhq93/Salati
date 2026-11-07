@@ -41,7 +41,12 @@ fun CalibrationBanner(
     }
 
     Surface(
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(
+            topStart = 0.dp,
+            topEnd = 0.dp,
+            bottomEnd = 20.dp,
+            bottomStart = 20.dp
+        ),
         color = MaterialTheme.colorScheme.surfaceVariant,
         border = BorderStroke(
             1.dp,
@@ -87,7 +92,7 @@ fun CalibrationBanner(
 @Preview
 @Composable
 private fun CalibrationBannerPreview() {
-    SalatiTheme() {
+    SalatiTheme {
         CalibrationBanner(
             compassAccuracy = CompassAccuracyUi.HIGH,
             onRecalibrateClick = {}

@@ -1,9 +1,11 @@
 package com.mhq.salati.qibla.ui.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,44 +33,46 @@ fun QiblaContentSuccess(
     onRecalibrateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)
-        ),
-
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .fillMaxHeight()
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Card(
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(16.dp)
         ) {
-            Spacer(Modifier.height(16.dp))
-            Text(
-                text = "\uD83D\uDD4B",
-                fontSize = 40.sp
-            )
-            Spacer(Modifier.height(16.dp))
-            RotatingCompassDial(
-                deviceHeading = deviceHeading,
-                qiblaBearing = qiblaBearing,
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth(0.85f)
-                    .aspectRatio(1f)
+                    .fillMaxWidth()
                     .padding(8.dp)
-            )
-            Spacer(Modifier.height(24.dp))
+            ) {
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = "\uD83D\uDD4B",
+                    fontSize = 40.sp
+                )
+                Spacer(Modifier.height(16.dp))
+                RotatingCompassDial(
+                    deviceHeading = deviceHeading,
+                    qiblaBearing = qiblaBearing,
+                    modifier = Modifier
+                        .fillMaxWidth(0.85f)
+                        .aspectRatio(1f)
+                        .padding(8.dp)
+                )
+                Spacer(Modifier.height(24.dp))
+            }
             CalibrationBanner(
                 compassAccuracy = compassAccuracy,
-                onRecalibrateClick = onRecalibrateClick,
-                modifier = Modifier.padding(4.dp)
+                onRecalibrateClick = onRecalibrateClick
             )
         }
     }
