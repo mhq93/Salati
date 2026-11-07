@@ -108,11 +108,10 @@ fun HomeContentSuccess(
                     .padding(bottom = 40.dp)
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
-
                 LocationHeader(
-                    locationName = locationName ?: stringResource(R.string.unknown_location),
+                    locationName = locationName,
+                    onClick = { onIntent(HomeContract.Intent.LocationPickerRequested) }
                 )
-
                 PrayerCountdownRing(
                     nextPrayerName = stringResource(nextPrayer.labelRes),
                     remaining = remaining,

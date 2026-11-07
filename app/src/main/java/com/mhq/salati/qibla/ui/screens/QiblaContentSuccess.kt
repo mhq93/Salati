@@ -20,17 +20,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.qibla.ui.components.CalibrationBanner
-import com.mhq.salati.qibla.ui.components.LocationPill
 import com.mhq.salati.qibla.ui.components.RotatingCompassDial
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
 fun QiblaContentSuccess(
-    locationName: String?,
     deviceHeading: Float,
     qiblaBearing: Float,
     compassAccuracy: CompassAccuracyUi,
-    onLocationPillClick: () -> Unit,
     onRecalibrateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -53,12 +50,7 @@ fun QiblaContentSuccess(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            LocationPill(
-                locationName = locationName,
-                onClick = onLocationPillClick,
-                modifier = Modifier.fillMaxWidth().padding(4.dp)
-            )
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(16.dp))
             Text(
                 text = "\uD83D\uDD4B",
                 fontSize = 40.sp
@@ -85,13 +77,11 @@ fun QiblaContentSuccess(
 @Preview
 @Composable
 private fun QiblaContentSuccessPreview() {
-    SalatiTheme() {
+    SalatiTheme {
         QiblaContentSuccess(
-            locationName = "",
             deviceHeading = 1.0f,
             qiblaBearing = 1.0f,
             compassAccuracy = CompassAccuracyUi.HIGH,
-            onLocationPillClick = {},
             onRecalibrateClick = {}
         )
     }

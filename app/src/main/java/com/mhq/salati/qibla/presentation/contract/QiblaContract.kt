@@ -13,7 +13,6 @@ class QiblaContract {
         val sensorUnavailable: Boolean = false,
         val compassAccuracy: CompassAccuracyUi = CompassAccuracyUi.HIGH,
         val isCalibrationGuideVisible: Boolean = false,
-        val locationName: String? = null,
         val errorMessage: MessageUi? = null,
         val prerequisites: PrerequisitesUi? = null
     )

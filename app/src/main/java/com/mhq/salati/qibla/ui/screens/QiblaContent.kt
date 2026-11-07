@@ -85,11 +85,9 @@ fun QiblaContent(
                         subtitle = stringResource(R.string.face_the_kaaba_wherever_you_are)
                     )
                     QiblaContentSuccess(
-                        locationName = state.locationName,
                         deviceHeading = state.deviceHeading,
                         qiblaBearing = state.qiblaBearing,
                         compassAccuracy = state.compassAccuracy,
-                        onLocationPillClick = { onIntent(QiblaContract.Intent.LocationPickerRequested) },
                         onRecalibrateClick = { onIntent(QiblaContract.Intent.RecalibrationRequested) }
                     )
                 }
@@ -114,7 +112,6 @@ private fun QiblaContentActivePreview() {
                 isLoading = false,
                 qiblaBearing = 135f,
                 deviceHeading = 45f,
-                locationName = "Alexandria, Egypt",
                 compassAccuracy = CompassAccuracyUi.HIGH
             ),
             onIntent = {}

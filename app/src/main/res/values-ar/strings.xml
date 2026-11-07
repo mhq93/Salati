@@ -117,7 +117,6 @@
 
     <!-- Qibla -->
     <string name="face_the_kaaba_wherever_you_are">توجه ناحية القبلة أينما كنت</string>
-    <string name="location_not_found">الموقع غير موجود</string>
     <string name="sensor_accuracy_is_excellent">دقة المستشعر ممتازة</string>
     <string name="sensor_accuracy_is_moderate">دقة المستشعر متوسطة</string>
     <string name="sensor_accuracy_is_poor">دقة المستشعر ضعيفة</string>
@@ -250,7 +249,6 @@
     <string name="cd_search">بحث</string>
     <string name="cd_status_badge">شارة الحالة</string>
     <string name="cd_prayer_location">موقع الصلاة</string>
-    <string name="cd_location_dropdown">قائمة المواقع المنسدلة</string>
     <string name="cd_decrease">إنقاص</string>
     <string name="cd_increase">زيادة</string>
 

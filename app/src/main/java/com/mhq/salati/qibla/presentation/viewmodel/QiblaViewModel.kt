@@ -20,8 +20,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -60,10 +58,6 @@ class QiblaViewModel @Inject constructor(
     private var showLocationRationale = false
 
     init {
-        locationHandler.localizedNameChanges
-            .onEach { name -> _state.update { it.copy(locationName = name) } }
-            .launchIn(viewModelScope)
-
         loadQibla()
     }
 
@@ -117,7 +111,7 @@ class QiblaViewModel @Inject constructor(
             is QiblaContract.Intent.ScreenResumed -> {
                 showLocationRationale = intent.showLocationRationale
                 val current = _state.value
-                val hasValidData = current.qiblaBearing != null && current.locationName != null
+                val hasValidData = current.qiblaBearing != null
 
                 when {
                     hasValidData -> onIntent(QiblaContract.Intent.CompassResumed)
@@ -157,8 +151,7 @@ class QiblaViewModel @Inject constructor(
      */
     private fun loadQibla() {
         val current = _state.value
-        val hasCalculatedData = current.qiblaBearing != null && current.locationName != null
-
+        val hasCalculatedData = current.qiblaBearing != null
         loadQiblaJob?.cancel()
 
         loadQiblaJob = viewModelScope.launch {
@@ -181,7 +174,7 @@ class QiblaViewModel @Inject constructor(
 
     private suspend fun handleLocationLoad(load: QiblaLocationLoad) {
         when (load) {
-            is QiblaLocationLoad.Located -> showLocation(load)
+            is QiblaLocationLoad.Located -> showLocation(load.coordinates)
 
             is QiblaLocationLoad.LookingUpCurrentLocation -> {
                 if (_state.value.qiblaBearing == null) {
@@ -207,26 +200,16 @@ class QiblaViewModel @Inject constructor(
         }
     }
 
-    /** Shows the compass for the place right away, then swaps in the localized name when it arrives. */
-    private fun showLocation(located: QiblaLocationLoad.Located) {
-        val coordinates = located.location.coordinates
-        val bearing = compassHandler.bearing(coordinates)
-
+    /** Shows the compass for the place and starts the live heading. */
+    private fun showLocation(coordinates: Coordinates) {
         _state.update {
             it.copy(
                 isLoading = false,
                 errorMessage = null,
                 prerequisites = null,
-                qiblaBearing = bearing,
-                locationName = located.location.displayName,
+                qiblaBearing = compassHandler.bearing(coordinates),
                 sensorUnavailable = false
             )
-        }
-
-        viewModelScope.launch {
-            locationHandler.localizedName(located)?.let { name ->
-                _state.update { it.copy(locationName = name) }
-            }
         }
         startCompassUpdates(coordinates)
     }

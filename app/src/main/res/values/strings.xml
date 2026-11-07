@@ -117,7 +117,6 @@
 
     <!-- Qibla -->
     <string name="face_the_kaaba_wherever_you_are">Face the Kaaba wherever you are</string>
-    <string name="location_not_found">Location Not Found</string>
     <string name="sensor_accuracy_is_excellent">Sensor accuracy is excellent.</string>
     <string name="sensor_accuracy_is_moderate">Sensor accuracy is moderate.</string>
     <string name="sensor_accuracy_is_poor">Sensor accuracy is poor.</string>
@@ -239,7 +238,6 @@
     <string name="cd_search">Search</string>
     <string name="cd_status_badge">Status badge</string>
     <string name="cd_prayer_location">Prayer location</string>
-    <string name="cd_location_dropdown">Location drop-down</string>
     <string name="cd_decrease">Decrease</string>
     <string name="cd_increase">Increase</string>
 

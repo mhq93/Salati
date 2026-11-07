@@ -1,21 +1,13 @@
 package com.mhq.salati.qibla.presentation.handlers
 
 import com.mhq.salati.location.domain.model.LocationPrerequisites
-import com.mhq.salati.location.domain.model.SavedLocation
+import com.mhq.salati.shared.domain.Coordinates
 
 /** The steps of working out where the user is for the Qibla screen, in the order they happen. */
 sealed interface QiblaLocationLoad {
 
-    /** A place the Qibla bearing can be calculated for. */
-    sealed interface Located : QiblaLocationLoad {
-        val location: SavedLocation
-    }
-
-    /** The place stored from an earlier run or picked by hand. */
-    data class Saved(override val location: SavedLocation) : Located
-
-    /** The place just found through GPS, with its names when they could be looked up. */
-    data class Found(override val location: SavedLocation) : Located
+    /** A place the Qibla bearing can be calculated for (the saved place or a fresh GPS fix). */
+    data class Located(val coordinates: Coordinates) : QiblaLocationLoad
 
     /** The checks passed and the GPS fix is being awaited. */
     data object LookingUpCurrentLocation : QiblaLocationLoad
