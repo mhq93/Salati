@@ -62,7 +62,8 @@
 
         <activity
             android:name="com.mhq.salati.shared.ui.MainActivity"
-            android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection|grammaticalGender"            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout|locale|layoutDirection|grammaticalGender"
+            android:exported="true"
             android:theme="@style/Theme.Salati"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

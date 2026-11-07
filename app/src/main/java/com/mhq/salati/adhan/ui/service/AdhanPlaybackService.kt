@@ -38,7 +38,6 @@ class AdhanPlaybackService : Service() {
     private var audioManager: AudioManager? = null
     private var focusRequest: AudioFocusRequest? = null
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-    private var autoDismissJob: Job? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -80,10 +79,6 @@ class AdhanPlaybackService : Service() {
         adhanPlaybackPresenter.onPlaybackStarted(prayerName)
 
         if (isMuted) {
-            autoDismissJob = serviceScope.launch {
-                delay(MUTED_AUTO_DISMISS_MS.milliseconds)
-                stopPlayback()
-            }
             return
         }
 
@@ -115,8 +110,6 @@ class AdhanPlaybackService : Service() {
     }
 
     private fun releasePlayer() {
-        autoDismissJob?.cancel()
-        autoDismissJob = null
         mediaPlayer?.apply { if (isPlaying) stop(); release() }
         mediaPlayer = null
         focusRequest?.let { audioManager?.abandonAudioFocusRequest(it) }
@@ -124,8 +117,10 @@ class AdhanPlaybackService : Service() {
     }
 
     private fun onPlaybackCompleted() {
-        stopPlayback()
+        releasePlayer()
+        stopForeground(STOP_FOREGROUND_DETACH)
     }
+
 
     private fun stopPlayback() {
         releasePlayer()
@@ -180,8 +175,8 @@ class AdhanPlaybackService : Service() {
             .setContentText(body)
             .setSmallIcon(R.drawable.ic_notification)
             .setSilent(true)
-            .setOngoing(true)
-            .setAutoCancel(false)
+            .setOngoing(false)
+            .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .addAction(R.drawable.ic_stop, getString(R.string.stop), stopPendingIntent)
             .build()
@@ -197,7 +192,6 @@ class AdhanPlaybackService : Service() {
 
     companion object {
         private const val NOTIFICATION_ID = 501
-        private const val MUTED_AUTO_DISMISS_MS = 5_000L
         const val ACTION_START = "com.mhq.salati.action.START_ADHAN"
         const val ACTION_STOP = "com.mhq.salati.action.STOP_ADHAN"
         const val EXTRA_PRAYER_NAME = "extra_prayer_name"
