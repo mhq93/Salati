@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
+import com.mhq.salati.shared.ui.components.IconBadge
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
@@ -37,7 +38,7 @@ fun SettingsStepperRow(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 14.dp),
     ) {
-        SettingsIconBadge(icon)
+        IconBadge(icon)
         Spacer(Modifier.width(14.dp))
 
         Column(Modifier.weight(1f)) {

@@ -1,4 +1,4 @@
-package com.mhq.salati.settings.ui.components
+package com.mhq.salati.shared.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
-fun SettingsIconBadge(
+fun IconBadge(
     icon: ImageVector,
     isEnabled: Boolean = true
 ) {
@@ -50,9 +50,9 @@ fun SettingsIconBadge(
 
 @Preview
 @Composable
-fun SettingsIconBadgePreview() {
+private fun IconBadgePreview() {
     SalatiTheme() {
-        SettingsIconBadge(
+        IconBadge(
             icon = Icons.Filled.CheckCircle,
             isEnabled = true
         )

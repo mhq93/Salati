@@ -13,10 +13,6 @@ class QiblaContract {
         val sensorUnavailable: Boolean = false,
         val compassAccuracy: CompassAccuracyUi = CompassAccuracyUi.HIGH,
         val isCalibrationGuideVisible: Boolean = false,
-
-        // FIX: Flattened LocationPermissionState into UI flags
-        val isLocationPermissionGranted: Boolean = false,
-        val isLocationPermissionPermanentlyDenied: Boolean = false,
         val locationName: String? = null,
         val errorMessage: MessageUi? = null,
         val prerequisites: PrerequisitesUi? = null
@@ -24,30 +20,29 @@ class QiblaContract {
 
     sealed interface Intent {
         data object LoadQibla : Intent
-        data object Retry : Intent
         data object RetryRequested : Intent
-        data object LocationPermissionGranted : Intent
         data object LocationPermissionRequested : Intent
-        data class LocationPermissionDenied(val permanentlyDenied: Boolean) : Intent
-        data object AccessAppSettings : Intent
-        data object AccessDeviceLocationSettings : Intent
+        data object LocationPermissionGranted : Intent
+        data object AppSettingsRequested : Intent
+        data object LocationSettingsRequested : Intent
+        data object InternetSettingsRequested : Intent
         data object LocationPickerRequested : Intent
         data object RecalibrationRequested : Intent
         data object DismissCalibrationGuide : Intent
-        data class ConnectivityChanged(val isConnected: Boolean) : Intent
-
-        // NEW: Lifecycle events reported by UI, logic moved from Container
-        data object ScreenResumed : Intent
         data object ScreenPaused : Intent
         data object CompassResumed : Intent
+        data class LocationPermissionDenied(val showRationale: Boolean) : Intent
+        data class ConnectivityChanged(val isConnected: Boolean) : Intent
+        data class ScreenResumed(val showLocationRationale: Boolean) : Intent
         data class LocationServicesToggled(val enabled: Boolean) : Intent
     }
 
     sealed interface Effect {
         data class ShowError(val message: MessageUi) : Effect
         data object RequestLocationPermission : Effect
-        data object NavigateToLocationSettings : Effect
-        data object NavigateToLocationPicker : Effect
         data object NavigateToAppSettings : Effect
+        data object NavigateToLocationSettings : Effect
+        data object NavigateToInternetSettings : Effect
+        data object NavigateToLocationPicker : Effect
     }
 }

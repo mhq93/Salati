@@ -30,17 +30,23 @@ fun HomeContent(
             .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
-            modifier = Modifier
-                .navigationBarsPadding()
-                .padding(bottom = BottomNavBarDefaults.Height)
+            modifier = if (state.prerequisites == null) {
+                Modifier
+                    .navigationBarsPadding()
+                    .padding(bottom = BottomNavBarDefaults.Height)
+            } else {
+                Modifier.fillMaxSize()
+            }
         ) {
             when {
                 state.prerequisites != null -> {
                     PrerequisitesError(
                         prerequisites = state.prerequisites,
-                        onEnableLocation = { onIntent(HomeContract.Intent.AccessDeviceLocationSettings) },
+                        onOpenInternetSettings = { onIntent(HomeContract.Intent.InternetSettingsRequested) },
+                        onOpenLocationSettings = { onIntent(HomeContract.Intent.LocationSettingsRequested) },
                         onAllowPermission = { onIntent(HomeContract.Intent.LocationPermissionRequested) },
-                        onOpenAppSettings = { onIntent(HomeContract.Intent.AccessAppSettings) },
+                        onOpenAppSettings = { onIntent(HomeContract.Intent.AppSettingsRequested) },
+                        onChooseLocationManually = { onIntent(HomeContract.Intent.LocationPickerRequested) },
                         modifier = Modifier.weight(1f)
                     )
                 }

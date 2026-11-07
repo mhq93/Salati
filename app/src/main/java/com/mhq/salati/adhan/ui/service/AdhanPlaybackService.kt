@@ -79,12 +79,7 @@ class AdhanPlaybackService : Service() {
 
         adhanPlaybackPresenter.onPlaybackStarted(prayerName)
 
-        // NEW — muted prayers have nothing to play and no completion callback
-        // to end them, so the foreground notification would otherwise stay
-        // stuck until the user manually taps Stop. Auto-dismiss shortly instead.
         if (isMuted) {
-            // Muted prayers have nothing to play and no completion callback,
-            // so dismiss the notification shortly instead of leaving it stuck.
             autoDismissJob = serviceScope.launch {
                 delay(MUTED_AUTO_DISMISS_MS.milliseconds)
                 stopPlayback()
@@ -119,9 +114,6 @@ class AdhanPlaybackService : Service() {
         }
     }
 
-    // NEW — shared cleanup for mediaPlayer + audio focus, used by both
-    // onPlaybackCompleted() and stopPlayback() (and now startPlayback()'s guard)
-    // so the two paths can't drift out of sync again.
     private fun releasePlayer() {
         autoDismissJob?.cancel()
         autoDismissJob = null

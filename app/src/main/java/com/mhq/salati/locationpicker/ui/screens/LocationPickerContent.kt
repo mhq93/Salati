@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +21,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
@@ -125,27 +128,6 @@ fun LocationPickerContent(
                             ),
                             modifier = Modifier.fillMaxWidth()
                         )
-                        // Nominatim: Autocomplete search stopped;
-                        // I may stretch the search duration to avoid 1 request per minute limit
-                        //                        TextField(
-                        //                            value = state.query,
-                        //                            onValueChange = { onIntent(Intent.QueryChanged(it)) },
-                        //                            singleLine = true,
-                        //                            textStyle = TextStyle(
-                        //                                fontSize = 16.sp,
-                        //                                color = MaterialTheme.colorScheme.onSurface
-                        //                            ),
-                        //                            colors = TextFieldDefaults.colors(
-                        //                                focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        //                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        //                                disabledContainerColor = MaterialTheme.colorScheme.surface,
-                        //                                focusedIndicatorColor = Color.Transparent,
-                        //                                unfocusedIndicatorColor = Color.Transparent,
-                        //                                disabledIndicatorColor = Color.Transparent,
-                        //                                cursorColor = MaterialTheme.colorScheme.primary
-                        //                            ),
-                        //                            modifier = Modifier.fillMaxWidth()
-                        //                        )
                     }
 
                     IconButton(onClick = { onIntent(Intent.SearchSubmitted) }) {
@@ -155,6 +137,33 @@ fun LocationPickerContent(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Surface(
+                shape = RoundedCornerShape(20.dp),
+                shadowElevation = 4.dp,
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable { onIntent(Intent.CurrentLocationRequested) }
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MyLocation,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.location_picker_use_current_location),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             }
 

@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.StarRate
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,14 +42,14 @@ import com.mhq.salati.settings.presentation.SelectorType
 import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
 import com.mhq.salati.settings.presentation.contract.SettingsContract.State
 import com.mhq.salati.settings.ui.components.SettingsActionRow
-import com.mhq.salati.settings.ui.components.SettingsCard
-import com.mhq.salati.settings.ui.components.SettingsDivider
 import com.mhq.salati.settings.ui.components.SettingsSectionHeader
 import com.mhq.salati.settings.ui.components.SettingsSelectionSheet
-import com.mhq.salati.settings.ui.components.SettingsSelectorRow
+import com.mhq.salati.shared.ui.components.ActionRow
 import com.mhq.salati.settings.ui.components.SettingsStepperRow
 import com.mhq.salati.settings.ui.components.SettingsSwitchRow
 import com.mhq.salati.settings.ui.displayNameRes
+import com.mhq.salati.shared.ui.components.GroupCard
+import com.mhq.salati.shared.ui.components.GroupDivider
 import com.mhq.salati.shared.ui.components.TabHeader
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.theme.SalatiTheme
@@ -84,7 +83,7 @@ fun SettingsContent(
                     Spacer(Modifier.height(24.dp))
 
                     SettingsSectionHeader(stringResource(R.string.notifications))
-                    SettingsCard {
+                    GroupCard {
                         SettingsSwitchRow(
                             icon = Icons.Default.NotificationsActive,
                             title = stringResource(R.string.prayer_notifications),
@@ -92,8 +91,8 @@ fun SettingsContent(
                             isChecked = state.notificationsEnabled && state.hasNotificationPermission,
                             onCheckedChange = { onIntent(Intent.ToggleNotifications(it)) }
                         )
-                        SettingsDivider()
-                        SettingsSelectorRow(
+                        GroupDivider()
+                        ActionRow(
                             icon = Icons.Default.MusicNote,
                             title = stringResource(R.string.adhan_sound),
                             valueLabel = stringResource(state.adhanSound.displayNameRes),
@@ -106,8 +105,8 @@ fun SettingsContent(
                                 )
                             }
                         )
-                        SettingsDivider()
-                        SettingsSelectorRow(
+                        GroupDivider()
+                        ActionRow(
                             icon = Icons.Default.MusicNote,
                             title = stringResource(R.string.custom_alarm_sound),
                             valueLabel = stringResource(state.customAlarmSound.displayNameRes),
@@ -124,8 +123,8 @@ fun SettingsContent(
 
                     Spacer(Modifier.height(28.dp))
                     SettingsSectionHeader(stringResource(R.string.prayer_calculation))
-                    SettingsCard {
-                        SettingsSelectorRow(
+                    GroupCard {
+                        ActionRow(
                             icon = Icons.Default.Explore,
                             title = stringResource(R.string.calculation_method),
                             valueLabel = stringResource(state.calculationMethod.displayNameRes),
@@ -137,8 +136,8 @@ fun SettingsContent(
                                 )
                             }
                         )
-                        SettingsDivider()
-                        SettingsSelectorRow(
+                        GroupDivider()
+                        ActionRow(
                             icon = Icons.Default.School,
                             title = stringResource(R.string.asr_madhab),
                             valueLabel = stringResource(state.madhab.displayNameRes),
@@ -150,8 +149,8 @@ fun SettingsContent(
                                 )
                             }
                         )
-                        SettingsDivider()
-                        SettingsSelectorRow(
+                        GroupDivider()
+                        ActionRow(
                             icon = Icons.Default.Schedule,
                             title = stringResource(R.string.time_format),
                             valueLabel = stringResource(state.timeFormat.displayNameRes),
@@ -163,8 +162,8 @@ fun SettingsContent(
 
                     Spacer(Modifier.height(28.dp))
                     SettingsSectionHeader(stringResource(R.string.appearance))
-                    SettingsCard {
-                        SettingsSelectorRow(
+                    GroupCard {
+                        ActionRow(
                             icon = Icons.Default.DarkMode,
                             title = stringResource(R.string.theme),
                             valueLabel = stringResource(state.themeMode.displayNameRes),
@@ -176,8 +175,8 @@ fun SettingsContent(
                                 )
                             }
                         )
-                        SettingsDivider()
-                        SettingsSelectorRow(
+                        GroupDivider()
+                        ActionRow(
                             icon = Icons.Default.Language,
                             title = stringResource(R.string.language),
                             valueLabel = stringResource(state.language.displayNameRes),
@@ -193,7 +192,7 @@ fun SettingsContent(
 
                     Spacer(Modifier.height(28.dp))
                     SettingsSectionHeader(stringResource(R.string.hijri_calendar))
-                    SettingsCard {
+                    GroupCard {
                         SettingsStepperRow(
                             icon = Icons.Default.CalendarMonth,
                             title = stringResource(R.string.date_adjustment),
@@ -206,25 +205,25 @@ fun SettingsContent(
 
                     Spacer(Modifier.height(28.dp))
                     SettingsSectionHeader(stringResource(R.string.about))
-                    SettingsCard {
+                    GroupCard {
                         SettingsActionRow(
                             icon = Icons.Default.StarRate,
                             title = stringResource(R.string.rate_salati),
                             onClick = { onIntent(Intent.RateApp) }
                         )
-                        SettingsDivider()
+                        GroupDivider()
                         SettingsActionRow(
                             icon = Icons.Default.Share,
                             title = stringResource(R.string.share_with_friends),
                             onClick = { onIntent(Intent.ShareApp) }
                         )
-                        SettingsDivider()
+                        GroupDivider()
                         SettingsActionRow(
                             icon = Icons.Default.Email,
                             title = stringResource(R.string.contact_support),
                             onClick = { onIntent(Intent.ContactSupport) }
                         )
-                        SettingsDivider()
+                        GroupDivider()
                         SettingsActionRow(
                             icon = Icons.Default.Info,
                             title = stringResource(R.string.version),

@@ -1,9 +1,5 @@
 package com.mhq.salati.qibla.ui.screens
 
-import android.Manifest
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,9 +15,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mhq.salati.connectivity.ui.components.rememberNetworkConnected
-import com.mhq.salati.permissions.ui.rememberLocationPermissionLauncher
-import com.mhq.salati.permissions.ui.rememberLocationServicesEnabled
+import com.mhq.salati.location.ui.LocationPrerequisitesObserver
+import com.mhq.salati.location.ui.rememberLocationPrerequisitesActions
+import com.mhq.salati.permissions.ui.shouldShowLocationRationale
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.qibla.presentation.viewmodel.QiblaViewModel
 import com.mhq.salati.qibla.ui.components.CompassCalibrationOverlay
@@ -37,45 +33,31 @@ fun QiblaContainer(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val state by qiblaViewModel.state.collectAsStateWithLifecycle()
-    val locationServicesEnabled by rememberLocationServicesEnabled()
-    val isInternetConnected by rememberNetworkConnected()
     val snackbarHostState = LocalSnackbarHostState.current
     val scope = rememberCoroutineScope()
 
-    val locationPermissionLauncher = rememberLocationPermissionLauncher(
-        onGranted = { qiblaViewModel.onIntent(QiblaContract.Intent.LocationPermissionGranted) },
-        onDenied = { permanentlyDenied ->
-            qiblaViewModel.onIntent(
-                QiblaContract.Intent.LocationPermissionDenied(permanentlyDenied)
-            )
+    val locationActions = rememberLocationPrerequisitesActions(
+        onPermissionGranted = {
+            qiblaViewModel.onIntent(QiblaContract.Intent.LocationPermissionGranted)
+        },
+        onPermissionDenied = { showRationale ->
+            qiblaViewModel.onIntent(QiblaContract.Intent.LocationPermissionDenied(showRationale))
         }
     )
 
     LaunchedEffect(Unit) {
         qiblaViewModel.effect.collect { effect ->
             when (effect) {
-                is QiblaContract.Effect.RequestLocationPermission -> {
-                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                }
-
-                is QiblaContract.Effect.NavigateToAppSettings -> {
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts("package", context.packageName, null)
-                    }
-                    context.startActivity(intent)
-                }
-
-                is QiblaContract.Effect.NavigateToLocationSettings -> {
-                    context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-                }
-
+                is QiblaContract.Effect.RequestLocationPermission -> locationActions.requestPermission()
+                is QiblaContract.Effect.NavigateToAppSettings -> locationActions.openAppSettings()
+                is QiblaContract.Effect.NavigateToLocationSettings -> locationActions.openLocationSettings()
+                is QiblaContract.Effect.NavigateToInternetSettings -> locationActions.openInternetSettings()
+                is QiblaContract.Effect.NavigateToLocationPicker -> onNavigateToLocationPicker()
                 is QiblaContract.Effect.ShowError -> {
                     scope.launch {
                         snackbarHostState.showSnackbar(effect.message.asString(context))
                     }
                 }
-
-                is QiblaContract.Effect.NavigateToLocationPicker -> onNavigateToLocationPicker()
             }
         }
     }
@@ -86,9 +68,13 @@ fun QiblaContainer(
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME ->
-                    qiblaViewModel.onIntent(QiblaContract.Intent.ScreenResumed)
+                    qiblaViewModel.onIntent(
+                        QiblaContract.Intent.ScreenResumed(context.shouldShowLocationRationale())
+                    )
+
                 Lifecycle.Event.ON_PAUSE ->
                     qiblaViewModel.onIntent(QiblaContract.Intent.ScreenPaused)
+
                 else -> Unit
             }
         }
@@ -96,24 +82,22 @@ fun QiblaContainer(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    // NEW — safety net: if this composable is disposed outright (tab switch,
-    // since NavHost only composes the current destination) before isActiveTab
-    // ever recomposes to false, this guarantees the compass still gets stopped.
+    // Safety net: if this composable is disposed outright (tab switch, since NavHost only composes
+    // the current destination) the compass still gets stopped.
     DisposableEffect(Unit) {
         onDispose {
             qiblaViewModel.onIntent(QiblaContract.Intent.ScreenPaused)
         }
     }
 
-    LaunchedEffect(locationServicesEnabled) {
-        qiblaViewModel.onIntent(
-            QiblaContract.Intent.LocationServicesToggled(enabled = locationServicesEnabled)
-        )
-    }
-
-    LaunchedEffect(isInternetConnected) {
-        qiblaViewModel.onIntent(QiblaContract.Intent.ConnectivityChanged(isInternetConnected))
-    }
+    LocationPrerequisitesObserver(
+        onServicesChanged = { enabled ->
+            qiblaViewModel.onIntent(QiblaContract.Intent.LocationServicesToggled(enabled))
+        },
+        onConnectivityChanged = { connected ->
+            qiblaViewModel.onIntent(QiblaContract.Intent.ConnectivityChanged(connected))
+        }
+    )
 
     LaunchedEffect(Unit) {
         qiblaViewModel.onIntent(QiblaContract.Intent.LoadQibla)

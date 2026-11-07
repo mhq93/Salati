@@ -1,5 +1,4 @@
-// SettingsCard.kt
-package com.mhq.salati.settings.ui.components
+package com.mhq.salati.shared.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -15,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
-fun SettingsCard(
+fun GroupCard(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -31,9 +30,9 @@ fun SettingsCard(
 
 @Preview
 @Composable
-private fun SettingsCardPreview() {
+private fun GroupCardPreview() {
     SalatiTheme() {
-        SettingsCard(
+        GroupCard(
             content = {}
         )
     }

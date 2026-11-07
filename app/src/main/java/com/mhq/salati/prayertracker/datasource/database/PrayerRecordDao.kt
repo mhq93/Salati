@@ -16,9 +16,6 @@ interface PrayerRecordDao {
     @Query("SELECT * FROM prayer_records WHERE date = :date")
     fun observeForDate(date: String): Flow<List<PrayerRecordEntity>>
 
-    @Query("SELECT * FROM prayer_records WHERE date = :date")
-    suspend fun getForDate(date: String): List<PrayerRecordEntity>
-
     @Upsert
     suspend fun upsert(record: PrayerRecordEntity)
 }

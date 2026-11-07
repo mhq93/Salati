@@ -29,11 +29,9 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -63,16 +61,18 @@ import com.mhq.salati.onboarding.presentation.contract.OnboardingContract.Intent
 import com.mhq.salati.onboarding.presentation.contract.OnboardingContract.StepUi
 import com.mhq.salati.onboarding.ui.components.OnboardingPageIndicator
 import com.mhq.salati.onboarding.ui.components.OnboardingSelectionSheet
-import com.mhq.salati.onboarding.ui.components.OnboardingStepHeader
+import com.mhq.salati.shared.ui.components.StepHeader
 import com.mhq.salati.onboarding.ui.icon
 import com.mhq.salati.onboarding.ui.labelRes
 import com.mhq.salati.onboarding.ui.subtitleRes
 import com.mhq.salati.onboarding.ui.titleRes
-import com.mhq.salati.settings.ui.components.SettingsCard
-import com.mhq.salati.settings.ui.components.SettingsDivider
-import com.mhq.salati.settings.ui.components.SettingsSelectorRow
+import com.mhq.salati.shared.ui.components.ActionRow
 import com.mhq.salati.settings.ui.components.SettingsSwitchRow
 import com.mhq.salati.settings.ui.displayNameRes
+import com.mhq.salati.shared.ui.components.AppLogo
+import com.mhq.salati.shared.ui.components.GroupCard
+import com.mhq.salati.shared.ui.components.GroupDivider
+import com.mhq.salati.shared.ui.components.StepBadgeIcon
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.shared.ui.theme.prayerGradient
 
@@ -233,11 +233,13 @@ private fun OnboardingStepBody(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 32.dp)
     ) {
-        OnboardingStepHeader(
-            icon = step.icon,
+        StepHeader(
             title = stringResource(step.titleRes),
             subtitle = stringResource(step.subtitleRes)
-        )
+        ) {
+            val icon = step.icon
+            if (icon == null) AppLogo(size = 96.dp) else StepBadgeIcon(icon)
+        }
         Spacer(modifier = Modifier.height(28.dp))
         when (step) {
             StepUi.WELCOME -> Column(
@@ -245,26 +247,19 @@ private fun OnboardingStepBody(
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
             ) {
-                SettingsCard {
-                    SettingsSelectorRow(
+                GroupCard {
+                    ActionRow(
                         icon = Icons.Default.Language,
                         title = stringResource(R.string.language),
                         valueLabel = stringResource(state.language.displayNameRes),
                         onClick = { onOpenSelector(OnboardingContract.SelectorUi.LANGUAGE) }
                     )
-                    SettingsDivider()
-                    SettingsSelectorRow(
+                    GroupDivider()
+                    ActionRow(
                         icon = Icons.Default.DarkMode,
                         title = stringResource(R.string.theme),
                         valueLabel = stringResource(state.themeMode.displayNameRes),
                         onClick = { onOpenSelector(OnboardingContract.SelectorUi.THEME) }
-                    )
-                    SettingsDivider()
-                    SettingsSelectorRow(
-                        icon = Icons.Default.Schedule,
-                        title = stringResource(R.string.time_format),
-                        valueLabel = stringResource(state.timeFormat.displayNameRes),
-                        onClick = { onOpenSelector(OnboardingContract.SelectorUi.TIME_FORMAT) }
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -277,65 +272,31 @@ private fun OnboardingStepBody(
                 )
             }
 
-            StepUi.CONNECT -> Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            ) {
-                SettingsCard {
-                    // ROW 1: Internet Status
-                    SettingsSelectorRow(
-                        icon = Icons.Default.Wifi,
-                        title = stringResource(R.string.onboarding_internet_title),
-                        valueLabel = if (state.isInternetConnected) {
-                            stringResource(R.string.onboarding_internet_connected)
-                        } else {
-                            stringResource(R.string.onboarding_internet_action)
-                        },
-                        isEnabled = !state.isInternetConnected,
-                        onClick = { onIntent(Intent.InternetActionRequested) }
-                    )
-
-                    SettingsDivider()
-
-                    // ROW 2: Location Services & Permissions
-                    SettingsSelectorRow(
-                        icon = Icons.Default.LocationOn,
-                        title = stringResource(R.string.access_location),
-                        valueLabel = when {
-                            state.isLocationReady ->
-                                stringResource(R.string.onboarding_location_ready)
-                            !state.areLocationServicesEnabled ->
-                                stringResource(R.string.onboarding_open_settings)
-                            state.isLocationPermanentlyDenied ->
-                                stringResource(R.string.onboarding_open_settings)
-                            else ->
-                                stringResource(R.string.onboarding_location_action)
-                        },
-                        isEnabled = !state.isLocationReady,
-                        onClick = { onIntent(Intent.LocationActionRequested) }
-                    )
-                }
-            }
-
             StepUi.CALCULATION -> Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
             ) {
-                SettingsCard {
-                    SettingsSelectorRow(
+                GroupCard {
+                    ActionRow(
                         icon = Icons.Default.Explore,
-                        title = stringResource(R.string.onboarding_calculation_method_label),
+                        title = stringResource(R.string.calculation_method),
                         valueLabel = stringResource(state.calculationMethod.displayNameRes),
                         onClick = { onOpenSelector(OnboardingContract.SelectorUi.CALCULATION_METHOD) }
                     )
-                    SettingsDivider()
-                    SettingsSelectorRow(
+                    GroupDivider()
+                    ActionRow(
                         icon = Icons.AutoMirrored.Filled.MenuBook,
                         title = stringResource(R.string.asr_madhab),
                         valueLabel = stringResource(state.madhab.displayNameRes),
                         onClick = { onOpenSelector(OnboardingContract.SelectorUi.MADHAB) }
+                    )
+                    GroupDivider()
+                    ActionRow(
+                        icon = Icons.Default.Schedule,
+                        title = stringResource(R.string.time_format),
+                        valueLabel = stringResource(state.timeFormat.displayNameRes),
+                        onClick = { onOpenSelector(OnboardingContract.SelectorUi.TIME_FORMAT) }
                     )
                 }
             }
@@ -345,7 +306,7 @@ private fun OnboardingStepBody(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                SettingsCard {
+                GroupCard {
                     SettingsSwitchRow(
                         icon = Icons.Default.NotificationsActive,
                         title = stringResource(R.string.onboarding_notifications_toggle_title),
@@ -353,8 +314,8 @@ private fun OnboardingStepBody(
                         isChecked = state.notificationsEnabled && state.isNotificationPermissionGranted,
                         onCheckedChange = { onIntent(Intent.NotificationsToggled(it)) }
                     )
-                    SettingsDivider()
-                    SettingsSelectorRow(
+                    GroupDivider()
+                    ActionRow(
                         icon = Icons.Default.MusicNote,
                         title = stringResource(R.string.adhan_sound),
                         valueLabel = stringResource(state.adhanSound.displayNameRes),
@@ -367,7 +328,7 @@ private fun OnboardingStepBody(
                     state.isNotificationPermissionGranted &&
                     !state.isExactAlarmGranted
                 ) {
-                    //Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = stringResource(R.string.onboarding_exact_alarm_note),
                         style = MaterialTheme.typography.bodySmall,

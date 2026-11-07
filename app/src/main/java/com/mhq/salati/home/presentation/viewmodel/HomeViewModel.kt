@@ -1,9 +1,7 @@
 package com.mhq.salati.home.presentation.viewmodel
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.adhan.domain.model.AlarmPermissions
 import com.mhq.salati.home.domain.model.PrayerTimesError
 import com.mhq.salati.home.domain.model.PrayerTimesLoad
 import com.mhq.salati.home.domain.model.PrayerTimesTick
@@ -12,14 +10,12 @@ import com.mhq.salati.home.domain.service.DayNavigator
 import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.home.presentation.handlers.HomeAlarmsHandler
 import com.mhq.salati.home.presentation.handlers.HomeLocationHandler
-import com.mhq.salati.home.presentation.handlers.HomeLocationLoadingHandler
+import com.mhq.salati.home.presentation.handlers.HomeLocationLoad
 import com.mhq.salati.home.presentation.handlers.MutedPrayersHandler
 import com.mhq.salati.home.presentation.handlers.PrayerTimesHandler
 import com.mhq.salati.home.presentation.mapper.toUi
-import com.mhq.salati.location.domain.model.LocationPrerequisites
-import com.mhq.salati.location.presentation.mapper.toPrerequisitesUi
-import com.mhq.salati.permissions.domain.usecases.HasLocationPermissionUseCase
-import com.mhq.salati.permissions.presentation.LocationPermissionEffect
+import com.mhq.salati.location.presentation.handlers.LocationPrerequisitesHandler
+import com.mhq.salati.location.presentation.model.PrerequisitesUi
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 import com.mhq.salati.settings.domain.usecases.ObserveTimeFormatUseCase
 import com.mhq.salati.settings.presentation.mapper.toUi
@@ -49,11 +45,11 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val dayNavigator: DayNavigator,
     private val locationHandler: HomeLocationHandler,
+    private val prerequisitesHandler: LocationPrerequisitesHandler,
     private val prayerTimesHandler: PrayerTimesHandler,
     private val mutedPrayersHandler: MutedPrayersHandler,
     private val alarmsHandler: HomeAlarmsHandler,
-    private val observeTimeFormatUseCase: ObserveTimeFormatUseCase,
-    private val hasLocationPermissionUseCase: HasLocationPermissionUseCase
+    private val observeTimeFormatUseCase: ObserveTimeFormatUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeContract.State())
@@ -68,42 +64,10 @@ class HomeViewModel @Inject constructor(
 
     private var loadedTimings: PrayerTimings? = null
 
-        init {
-            viewModelScope.launch {
-                locationHandler.permissionState.collect { ps ->
-                    _state.update {
-                        it.copy(
-                            locationUiState = it.locationUiState.copy(
-                                isPermissionGranted = ps.granted,
-                                isPermanentlyDenied = ps.permanentlyDenied
-                            ),
-                            prerequisites = it.prerequisites?.copy(
-                                permissionPermanentlyDenied = ps.permanentlyDenied && !ps.granted
-                            )
-                        )
-                    }
-                }
-            }
+    /** Last value the UI reported: the system would still show its dialog for the location permission. */
+    private var showLocationRationale = false
 
-            // One screen effect per permission effect. Sending a permission request for all of them
-            // is what froze the app and kept the settings from opening.
-            locationHandler.permissionEffects
-                .onEach { permissionEffect ->
-                    _effect.send(
-                        when (permissionEffect) {
-                            LocationPermissionEffect.RequestPermission ->
-                                HomeContract.Effect.RequestLocationPermission
-
-                            LocationPermissionEffect.NavigateToAppSettings ->
-                                HomeContract.Effect.NavigateToAppSettings
-
-                            LocationPermissionEffect.NavigateToLocationSettings ->
-                                HomeContract.Effect.NavigateToLocationSettings
-                        }
-                    )
-                }
-                .launchIn(viewModelScope)
-
+    init {
         observeMutedPrayersForCurrentDate()
 
         locationHandler.localizedNameChanges
@@ -127,9 +91,7 @@ class HomeViewModel @Inject constructor(
                 }
             }
 
-            is HomeContract.Intent.RetryRequested -> {
-                checkPermissionAndLoad()
-            }
+            is HomeContract.Intent.RetryRequested -> checkPermissionAndLoad()
 
             is HomeContract.Intent.PreviousDay -> {
                 dayNavigator.previousOrNull(currentDate())?.let { browseDate(it) }
@@ -143,27 +105,31 @@ class HomeViewModel @Inject constructor(
             is HomeContract.Intent.EndOfMonthRequested ->
                 browseDate(dayNavigator.endOfMonth(currentDate()))
 
-            is HomeContract.Intent.LocationPermissionGranted -> {
-                locationHandler.onPermissionGranted()
-                reevaluatePrerequisites()
+            is HomeContract.Intent.LocationPermissionRequested -> {
+                viewModelScope.launch {
+                    prerequisitesHandler.onPermissionRequested()
+                    _effect.send(HomeContract.Effect.RequestLocationPermission)
+                }
             }
+
+            is HomeContract.Intent.LocationPermissionGranted -> reevaluatePrerequisites()
 
             is HomeContract.Intent.LocationPermissionDenied -> {
-                locationHandler.onPermissionDenied(intent.permanentlyDenied)
+                showLocationRationale = intent.showRationale
                 reevaluatePrerequisites()
             }
 
-            is HomeContract.Intent.LocationPermissionRequested -> {
-                locationHandler.requirePermission()
-            }
+            is HomeContract.Intent.AppSettingsRequested ->
+                sendEffect(HomeContract.Effect.NavigateToAppSettings)
 
-            is HomeContract.Intent.AccessAppSettings -> {
-                locationHandler.openAppSettings()
-            }
+            is HomeContract.Intent.LocationSettingsRequested ->
+                sendEffect(HomeContract.Effect.NavigateToLocationSettings)
 
-            is HomeContract.Intent.AccessDeviceLocationSettings -> {
-                locationHandler.openLocationSettings()
-            }
+            is HomeContract.Intent.InternetSettingsRequested ->
+                sendEffect(HomeContract.Effect.NavigateToInternetSettings)
+
+            is HomeContract.Intent.LocationPickerRequested ->
+                sendEffect(HomeContract.Effect.NavigateToLocationPicker)
 
             is HomeContract.Intent.ToggleMute -> {
                 viewModelScope.launch {
@@ -174,48 +140,15 @@ class HomeViewModel @Inject constructor(
                 }
             }
 
-            is HomeContract.Intent.RecheckSystemPermissions -> {
-                viewModelScope.launch { recheckAlarmPermissions() }
-            }
-
-            is HomeContract.Intent.NotificationPermissionResult -> {
-                _state.update {
-                    it.copy(
-                        systemPermissions = it.systemPermissions.copy(
-                            hasNotification = intent.granted
-                        )
-                    )
-                }
-            }
-
-            is HomeContract.Intent.ExactAlarmPermissionRequested -> {
-                viewModelScope.launch {
-                    _effect.send(HomeContract.Effect.RequestExactAlarmPermission)
-                }
-            }
-
-            is HomeContract.Intent.NotificationPermissionRequested -> {
-                viewModelScope.launch {
-                    _effect.send(HomeContract.Effect.RequestNotificationPermission)
-                }
-            }
-
             is HomeContract.Intent.ScreenResumed -> {
+                showLocationRationale = intent.showLocationRationale
+                val current = _state.value
                 viewModelScope.launch {
-                    val current = _state.value
-
-                    // The permission may have been changed in the app settings.
-                    val permissionJustGranted = hasLocationPermissionUseCase() &&
-                            !locationHandler.permissionState.value.granted
-                    if (permissionJustGranted) locationHandler.onPermissionGranted()
-
-                    recheckAlarmPermissions()
+                    // Exact-alarm access may have been granted in the system settings.
+                    alarmsHandler.recheck(loadedTimings, currentDate())
 
                     when {
                         current.prerequisites != null -> reevaluatePrerequisites()
-                        permissionJustGranted && current.errorMessage != null ->
-                            checkPermissionAndLoad(silent = true)
-
                         current.prayerTimesUiState.timings == null &&
                                 current.errorMessage == null &&
                                 !current.isLoading -> checkPermissionAndLoad()
@@ -237,6 +170,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun sendEffect(effect: HomeContract.Effect) {
+        viewModelScope.launch { _effect.send(effect) }
+    }
+
     // ---------------------------------------------------------------- date browsing
 
     private fun currentDate(): LocalDate = _state.value.dateBrowserUiState.currentDate
@@ -256,7 +193,7 @@ class HomeViewModel @Inject constructor(
 
     // ---------------------------------------------------------------- loading
 
-    // A failed fetch (the location screen above is handled by [reevaluatePrerequisites]).
+    // A failed fetch (the blocked screen is handled by [reevaluatePrerequisites]).
     private fun isShowingGenericOfflineError(): Boolean =
         _state.value.errorMessage != null
 
@@ -268,27 +205,21 @@ class HomeViewModel @Inject constructor(
 
     /**
      * Re-checks what the blocked screen is waiting for. The rows update in place, with no loading
-     * state in between; the lookup only restarts once everything is available.
+     * state in between; the lookup only restarts once nothing is missing (or a place was picked).
      */
     private fun reevaluatePrerequisites() {
         viewModelScope.launch {
-            val now = locationHandler.checkPrerequisites()
-            if (now.areMet) {
-                checkPermissionAndLoad(silent = true)
-            } else {
-                showBlocked(now)
-            }
+            val blocked = prerequisitesHandler.blocked(showLocationRationale)
+            if (blocked == null) checkPermissionAndLoad(silent = true) else showBlocked(blocked)
         }
     }
 
-    private fun showBlocked(prerequisites: LocationPrerequisites) {
+    private fun showBlocked(prerequisites: PrerequisitesUi) {
         _state.update {
             it.copy(
                 isLoading = false,
                 errorMessage = null,
-                prerequisites = prerequisites.toPrerequisitesUi(
-                    permissionPermanentlyDenied = locationHandler.permissionState.value.permanentlyDenied
-                )
+                prerequisites = prerequisites
             )
         }
     }
@@ -310,29 +241,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private suspend fun handleLocationLoad(load: HomeLocationLoadingHandler) {
+    private suspend fun handleLocationLoad(load: HomeLocationLoad) {
         when (load) {
-            is HomeLocationLoadingHandler.Located -> showLocationAndLoadPrayerTimes(load)
+            is HomeLocationLoad.Located -> showLocationAndLoadPrayerTimes(load)
 
-            is HomeLocationLoadingHandler.LookingUpCurrentLocation -> {
+            is HomeLocationLoad.LookingUpCurrentLocation -> {
                 // A blocked screen gives way to the spinner; an error screen waits for the result.
                 if (_state.value.errorMessage == null) {
                     _state.update { it.copy(isLoading = true, prerequisites = null) }
                 }
             }
 
-            is HomeLocationLoadingHandler.Blocked ->
-                showBlocked(load.prerequisites)
+            is HomeLocationLoad.Blocked ->
+                showBlocked(prerequisitesHandler.toUi(load.prerequisites, showLocationRationale))
 
-            is HomeLocationLoadingHandler.GeocodingFailed ->
+            is HomeLocationLoad.GeocodingFailed ->
                 showError(MessageUi.FAILED_TO_GET_LOCATION_NAME, isOffline = false)
 
-            is HomeLocationLoadingHandler.Unavailable ->
+            is HomeLocationLoad.Unavailable ->
                 showError(MessageUi.FAILED_TO_GET_LOCATION, isOffline = false)
         }
     }
 
-    private suspend fun showLocationAndLoadPrayerTimes(located: HomeLocationLoadingHandler.Located) =
+    private suspend fun showLocationAndLoadPrayerTimes(located: HomeLocationLoad.Located) =
         coroutineScope {
             val location = located.location
             _state.update {
@@ -356,14 +287,11 @@ class HomeViewModel @Inject constructor(
         }
 
     private suspend fun showError(message: MessageUi, isOffline: Boolean) {
-        _state.update { current ->
-            current.copy(
+        _state.update {
+            it.copy(
                 isLoading = false,
                 prerequisites = null,
-                errorMessage = message,
-                locationUiState = current.locationUiState.copy(
-                    isPermanentlyDenied = false
-                )
+                errorMessage = message
             )
         }
         if (!isOffline) {
@@ -411,9 +339,6 @@ class HomeViewModel @Inject constructor(
         }
         startCountdown(load.timings, currentDate(), coordinates, load.status.window)
         rescheduleAlarms()
-        alarmsHandler.checkPermissionsOnFirstLoad()?.let { permissions ->
-            applyAlarmPermissions(permissions, promptIfMissing = true)
-        }
     }
 
     private suspend fun showPrayerTimesError(error: PrayerTimesError) {
@@ -427,10 +352,7 @@ class HomeViewModel @Inject constructor(
             it.copy(
                 isLoading = false,
                 prerequisites = null,
-                errorMessage = message,
-                locationUiState = it.locationUiState.copy(
-                    isPermanentlyDenied = false
-                )
+                errorMessage = message
             )
         }
         if (!isOffline) {
@@ -480,28 +402,6 @@ class HomeViewModel @Inject constructor(
         alarmsHandler.schedule(loadedTimings, currentDate())
     }
 
-    private suspend fun recheckAlarmPermissions() {
-        val permissions = alarmsHandler.recheck(loadedTimings, currentDate())
-        applyAlarmPermissions(permissions, promptIfMissing = false)
-    }
-
-    private suspend fun applyAlarmPermissions(
-        permissions: AlarmPermissions,
-        promptIfMissing: Boolean
-    ) {
-        _state.update {
-            it.copy(
-                systemPermissions = it.systemPermissions.copy(
-                    hasExactAlarm = permissions.hasExactAlarm,
-                    hasNotification = permissions.hasNotification
-                )
-            )
-        }
-        if (!promptIfMissing) return
-        if (!permissions.hasExactAlarm) _effect.send(HomeContract.Effect.RequestExactAlarmPermission)
-        if (!permissions.hasNotification) _effect.send(HomeContract.Effect.RequestNotificationPermission)
-    }
-
     // ---------------------------------------------------------------- muted prayers
 
     private fun observeMutedPrayersForCurrentDate() {
@@ -516,7 +416,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    @SuppressLint("EmptySuperCall")
     override fun onCleared() {
         countdownJob?.cancel()
         super.onCleared()

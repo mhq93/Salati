@@ -11,7 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.State
-import androidx.core.content.ContextCompat // NEW
+import androidx.core.content.ContextCompat
 
 @Composable
 fun rememberLocationServicesEnabled(): State<Boolean> {

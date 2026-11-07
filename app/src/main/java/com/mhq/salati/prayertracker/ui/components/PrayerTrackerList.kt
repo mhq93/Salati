@@ -30,7 +30,6 @@ fun PrayerStatusList(
     records: Map<PrayerNameUi, PrayerStatusUi>,
     onPrayerTapped: (PrayerNameUi) -> Unit
 ) {
-    //val locked = selectedDate.isAfter(today)
     val isFutureDate = selectedDate.isAfter(today)
     val hasUnduePrayers = selectedDate == today && PrayerNameUi.majorEntries.any { it !in duePrayers }
 

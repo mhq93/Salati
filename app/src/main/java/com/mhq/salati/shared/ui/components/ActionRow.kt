@@ -1,4 +1,4 @@
-package com.mhq.salati.settings.ui.components
+package com.mhq.salati.shared.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
-fun SettingsSelectorRow(
+fun ActionRow(
     icon: ImageVector,
     title: String,
     valueLabel: String,
@@ -48,7 +48,7 @@ fun SettingsSelectorRow(
             .clickable(enabled = isEnabled, onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 14.dp),
     ) {
-        SettingsIconBadge(icon, isEnabled)
+        IconBadge(icon, isEnabled)
         Spacer(Modifier.width(14.dp))
 
         Text(
@@ -87,10 +87,10 @@ fun SettingsSelectorRow(
 @Preview(name = "Light Mode", showBackground = true)
 @Preview(name = "Dark Mode", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun SettingsSelectorRowPreview() {
+private fun ActionRowPreview() {
     SalatiTheme {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
-            SettingsSelectorRow(
+            ActionRow(
                 icon = Icons.Default.Language,
                 title = "App Language",
                 valueLabel = "English",

@@ -41,16 +41,25 @@ fun QiblaContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .navigationBarsPadding()
-                .padding(bottom = BottomNavBarDefaults.Height)
+                .then(
+                    if (state.prerequisites == null) {
+                        Modifier
+                            .navigationBarsPadding()
+                            .padding(bottom = BottomNavBarDefaults.Height)
+                    } else {
+                        Modifier
+                    }
+                )
         ) {
             when {
                 state.prerequisites != null -> {
                     PrerequisitesError(
                         prerequisites = state.prerequisites,
-                        onEnableLocation = { onIntent(QiblaContract.Intent.AccessDeviceLocationSettings) },
+                        onOpenInternetSettings = { onIntent(QiblaContract.Intent.InternetSettingsRequested) },
+                        onOpenLocationSettings = { onIntent(QiblaContract.Intent.LocationSettingsRequested) },
                         onAllowPermission = { onIntent(QiblaContract.Intent.LocationPermissionRequested) },
-                        onOpenAppSettings = { onIntent(QiblaContract.Intent.AccessAppSettings) },
+                        onOpenAppSettings = { onIntent(QiblaContract.Intent.AppSettingsRequested) },
+                        onChooseLocationManually = { onIntent(QiblaContract.Intent.LocationPickerRequested) },
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -92,7 +101,11 @@ fun QiblaContent(
 }
 
 @Preview(name = "Light Mode - Active Compass", showSystemUi = true)
-@Preview(name = "Dark Mode - Active Compass", showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    name = "Dark Mode - Active Compass",
+    showSystemUi = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 private fun QiblaContentActivePreview() {
     SalatiTheme {

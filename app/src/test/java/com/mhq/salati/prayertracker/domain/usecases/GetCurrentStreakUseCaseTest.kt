@@ -7,9 +7,7 @@ import com.mhq.salati.shared.domain.PrayerName
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 
 class GetCurrentStreakUseCaseTest {
 
@@ -37,8 +35,6 @@ class GetCurrentStreakUseCaseTest {
             throw UnsupportedOperationException()
 
         override fun observeRecordsForDate(date: LocalDate) = throw UnsupportedOperationException()
-        override suspend fun getRecordsForDate(date: LocalDate) =
-            throw UnsupportedOperationException()
 
         override suspend fun setStatus(date: LocalDate, prayer: PrayerName, status: PrayerStatus) =
             Unit
@@ -46,7 +42,10 @@ class GetCurrentStreakUseCaseTest {
 
     private val majorPrayers = PrayerName.majorEntries
 
-    private fun allPrayed() = majorPrayers.associateWith { PrayerStatus.PRAYED }
+    private fun allPrayed() = majorPrayers.associateWith {
+        PrayerStatus.PRAYED
+    }
+
     private fun hasMissed() = majorPrayers.associateWith {
         if (it == PrayerName.FAJR) PrayerStatus.MISSED else PrayerStatus.PRAYED
     }

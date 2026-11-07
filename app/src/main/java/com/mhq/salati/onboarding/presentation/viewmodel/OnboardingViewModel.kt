@@ -60,9 +60,6 @@ class OnboardingViewModel @Inject constructor(
     val effect = _effect.receiveAsFlow()
 
     init {
-        // Seeding from settings keeps the defaults honest (e.g. a theme chosen
-        // before a process death), and echoes every live change back idempotently:
-        // the flow re-emits exactly the value the user just picked.
         observeSettingsUseCase()
             .onEach { settings -> applySettingsToState(settings) }
             .launchIn(viewModelScope)
@@ -73,16 +70,6 @@ class OnboardingViewModel @Inject constructor(
     fun onIntent(intent: Intent) {
         when (intent) {
             is Intent.ScreenResumed -> refreshPermissions()
-            is Intent.InternetStatusChanged ->
-                _state.update { it.copy(isInternetConnected = intent.connected) }
-            is Intent.LocationServicesStatusChanged ->
-                _state.update { it.copy(areLocationServicesEnabled = intent.enabled) }
-            is Intent.LocationPermissionResult -> _state.update {
-                it.copy(
-                    isLocationPermissionGranted = intent.granted,
-                    isLocationPermanentlyDenied = intent.permanentlyDenied
-                )
-            }
             is Intent.LanguageSelected -> selectLanguage(intent.language)
             is Intent.ThemeSelected -> selectTheme(intent.mode)
             is Intent.TimeFormatSelected -> selectTimeFormat(intent.format)
@@ -91,8 +78,6 @@ class OnboardingViewModel @Inject constructor(
             is Intent.AdhanSoundSelected -> selectAdhanSound(intent.sound)
             is Intent.NotificationsToggled -> toggleNotifications(intent.enabled)
             is Intent.NotificationPermissionResult -> onNotificationPermissionResult(intent.granted, intent.permanentlyDenied)
-            is Intent.InternetActionRequested -> onInternetActionRequested()
-            is Intent.LocationActionRequested -> onLocationActionRequested()
             is Intent.PrimaryActionRequested -> performPrimaryAction()
             is Intent.Skipped -> skipStep()
             is Intent.BackRequested -> goBack()
@@ -121,9 +106,6 @@ class OnboardingViewModel @Inject constructor(
             try {
                 val domainLanguage = language.toDomain()
                 updateLanguageUseCase(domainLanguage)
-                // Applying the locale recreates the Activity. This ViewModel —
-                // and with it the whole onboarding state — survives recreation,
-                // so the flow resumes exactly where the user left off.
                 _effect.send(Effect.ApplyLanguage(domainLanguage.code))
             } catch (e: CancellationException) {
                 throw e
@@ -175,33 +157,12 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    // ---- Connect row actions (each row owns its button) ---------------------
-
-    private fun onInternetActionRequested() {
-        if (!_state.value.isInternetConnected) {
-            emitEffect(Effect.OpenInternetSettings)
-        }
-    }
-
-    private fun onLocationActionRequested() {
-        val current = _state.value
-        val effect = when {
-            current.isLocationReady -> null
-            !current.areLocationServicesEnabled -> Effect.OpenLocationSettings
-            current.isLocationPermanentlyDenied -> Effect.OpenAppSettings
-            else -> Effect.RequestLocationPermission
-        }
-        effect?.let { emitEffect(it) }
-    }
-
     // ---- Permissions --------------------------------------------------------
 
     private fun refreshPermissions() {
         val permissions = checkOnboardingPermissionsUseCase()
         _state.update {
             it.copy(
-                isLocationPermissionGranted = permissions.hasLocation,
-                isLocationPermanentlyDenied = it.isLocationPermanentlyDenied && !permissions.hasLocation,
                 isNotificationPermissionGranted = permissions.hasNotification,
                 isNotificationPermanentlyDenied = it.isNotificationPermanentlyDenied && !permissions.hasNotification,
                 isExactAlarmGranted = permissions.hasExactAlarm
@@ -304,9 +265,5 @@ class OnboardingViewModel @Inject constructor(
                 _effect.send(Effect.ShowError(MessageUi.SOMETHING_WENT_WRONG))
             }
         }
-    }
-
-    private fun emitEffect(effect: Effect) {
-        viewModelScope.launch { _effect.send(effect) }
     }
 }

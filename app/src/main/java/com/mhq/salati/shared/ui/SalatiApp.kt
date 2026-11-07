@@ -155,10 +155,16 @@ private fun SalatiNavHost(
                 }
             )
         }
-        composable(NavigationScreen.Home.route) { HomeContainer() }
+        composable(NavigationScreen.Home.route) {
+            HomeContainer(
+                onNavigateToLocationPicker = {
+                    navController.navigate(NavigationScreen.LocationPicker.route)
+                }
+            )
+        }
         composable(NavigationScreen.LocationPicker.route) {
             LocationPickerContainer(
-                onLocationSaved = { navController.popBackStack() },
+                onLocationChosen = { navController.popBackStack() },
                 onBackClicked = { navController.popBackStack() }
             )
         }

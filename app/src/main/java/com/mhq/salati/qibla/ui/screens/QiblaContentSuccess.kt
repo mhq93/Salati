@@ -22,7 +22,6 @@ import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.qibla.ui.components.CalibrationBanner
 import com.mhq.salati.qibla.ui.components.LocationPill
 import com.mhq.salati.qibla.ui.components.RotatingCompassDial
-import com.mhq.salati.shared.ui.theme.CardBackground
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable

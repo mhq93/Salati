@@ -70,10 +70,8 @@ fun DayCell(
             text = gregorianDay.toString(),
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
-            // [FIX 3]: Native alpha blending for out-of-month days
             color = when {
                 isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-                //!isCurrentMonth -> baseTextColor.copy(alpha = 0.38f)
                 !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
                 else -> baseTextColor
             }
@@ -85,7 +83,6 @@ fun DayCell(
             fontWeight = FontWeight.Light,
             color = when {
                 isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                //!isCurrentMonth -> baseTextColor.copy(alpha = 0.24f)
                 !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
                 else -> MaterialTheme.colorScheme.onSurfaceVariant
             }

@@ -62,12 +62,6 @@ fun CompassCalibrationOverlay(
         label = "figure8Progress"
     )
 
-    //    // Extract colors BEFORE Canvas/DrawScope
-    //    val scrimColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.85f)
-    //    val textColor = MaterialTheme.colorScheme.onSurface
-    //    val textSecondaryColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
-    //    val buttonBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-
     // Extract colors BEFORE Canvas/DrawScope
     val scrimColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
     val textColor = MaterialTheme.colorScheme.onSurface

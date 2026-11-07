@@ -34,9 +34,6 @@ class PrayerTrackerRepoImpl @Inject constructor(
             .map { it.toStatusMap() }
             .flowOn(Dispatchers.IO)
 
-    override suspend fun getRecordsForDate(date: LocalDate): Map<PrayerName, PrayerStatus> =
-        prayerRecordDao.getForDate(date.format(formatter)).toStatusMap()
-
     override suspend fun setStatus(date: LocalDate, prayer: PrayerName, status: PrayerStatus) {
         prayerRecordDao.upsert(
             PrayerRecordEntity(
@@ -49,7 +46,6 @@ class PrayerTrackerRepoImpl @Inject constructor(
 
     private fun List<PrayerRecordEntity>.toStatusMap(): Map<PrayerName, PrayerStatus> =
         mapNotNull { entity ->
-            // Skip rows we can't read instead of crashing the whole flow.
             val prayerName = PrayerName.fromStorageKey(entity.prayer) ?: return@mapNotNull null
             val status = runCatching { PrayerStatus.valueOf(entity.status) }.getOrNull()
                 ?: return@mapNotNull null

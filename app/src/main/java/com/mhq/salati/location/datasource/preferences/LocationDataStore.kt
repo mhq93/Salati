@@ -52,4 +52,13 @@ class LocationDataStore @Inject constructor(
                 prefs.remove(Keys.COUNTRY)
         }
     }
+
+    suspend fun clear() {
+        dataStore.edit { prefs ->
+            prefs.remove(Keys.LAT)
+            prefs.remove(Keys.LON)
+            prefs.remove(Keys.CITY)
+            prefs.remove(Keys.COUNTRY)
+        }
+    }
 }

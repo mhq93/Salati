@@ -1,12 +1,9 @@
 package com.mhq.salati.qibla.presentation.viewmodel
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mhq.salati.location.domain.model.LocationPrerequisites
-import com.mhq.salati.location.presentation.mapper.toPrerequisitesUi
-import com.mhq.salati.permissions.domain.usecases.HasLocationPermissionUseCase
-import com.mhq.salati.permissions.presentation.LocationPermissionEffect
+import com.mhq.salati.location.presentation.handlers.LocationPrerequisitesHandler
+import com.mhq.salati.location.presentation.model.PrerequisitesUi
 import com.mhq.salati.qibla.domain.model.CompassUnavailableException
 import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.qibla.presentation.handlers.QiblaCompassHandler
@@ -42,12 +39,11 @@ import javax.inject.Inject
  * ViewModel surviving a bottom-nav tab switch would otherwise keep the sensor listener alive
  * (and draining battery) while the user is on a different tab.
  */
-
 @HiltViewModel
 class QiblaViewModel @Inject constructor(
     private val locationHandler: QiblaLocationHandler,
     private val compassHandler: QiblaCompassHandler,
-    private val hasLocationPermissionUseCase: HasLocationPermissionUseCase
+    private val prerequisitesHandler: LocationPrerequisitesHandler
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(QiblaContract.State())
@@ -60,38 +56,10 @@ class QiblaViewModel @Inject constructor(
     private var compassJob: Job? = null
     private var compassLocation: Coordinates? = null
 
+    /** Last value the UI reported: the system would still show its dialog for the location permission. */
+    private var showLocationRationale = false
+
     init {
-        viewModelScope.launch {
-            locationHandler.permissionEffects.collect { permissionEffect ->
-                _effect.send(
-                    when (permissionEffect) {
-                        is LocationPermissionEffect.RequestPermission ->
-                            QiblaContract.Effect.RequestLocationPermission
-
-                        is LocationPermissionEffect.NavigateToAppSettings ->
-                            QiblaContract.Effect.NavigateToAppSettings
-
-                        is LocationPermissionEffect.NavigateToLocationSettings ->
-                            QiblaContract.Effect.NavigateToLocationSettings
-                    }
-                )
-            }
-        }
-
-        viewModelScope.launch {
-            locationHandler.permissionState.collect { ps ->
-                _state.update {
-                    it.copy(
-                        isLocationPermissionGranted = ps.granted,
-                        isLocationPermissionPermanentlyDenied = ps.permanentlyDenied,
-                        prerequisites = it.prerequisites?.copy(
-                            permissionPermanentlyDenied = ps.permanentlyDenied && !ps.granted
-                        )
-                    )
-                }
-            }
-        }
-
         locationHandler.localizedNameChanges
             .onEach { name -> _state.update { it.copy(locationName = name) } }
             .launchIn(viewModelScope)
@@ -110,39 +78,33 @@ class QiblaViewModel @Inject constructor(
                 }
             }
 
-            is QiblaContract.Intent.Retry -> loadQibla()
-
-            is QiblaContract.Intent.RetryRequested -> {
-                loadQibla()
-            }
-
-            is QiblaContract.Intent.LocationPermissionGranted -> {
-                locationHandler.onPermissionGranted()
-                reevaluatePrerequisites()
-            }
-
-            is QiblaContract.Intent.LocationPermissionDenied -> {
-                locationHandler.onPermissionDenied(intent.permanentlyDenied)
-                reevaluatePrerequisites()
-            }
+            is QiblaContract.Intent.RetryRequested -> loadQibla()
 
             is QiblaContract.Intent.LocationPermissionRequested -> {
-                locationHandler.requirePermission()
-            }
-
-            is QiblaContract.Intent.AccessAppSettings -> {
-                locationHandler.openAppSettings()
-            }
-
-            is QiblaContract.Intent.AccessDeviceLocationSettings -> {
-                locationHandler.openLocationSettings()
-            }
-
-            is QiblaContract.Intent.LocationPickerRequested -> {
                 viewModelScope.launch {
-                    _effect.send(QiblaContract.Effect.NavigateToLocationPicker)
+                    prerequisitesHandler.onPermissionRequested()
+                    _effect.send(QiblaContract.Effect.RequestLocationPermission)
                 }
             }
+
+            is QiblaContract.Intent.LocationPermissionGranted -> reevaluatePrerequisites()
+
+            is QiblaContract.Intent.LocationPermissionDenied -> {
+                showLocationRationale = intent.showRationale
+                reevaluatePrerequisites()
+            }
+
+            is QiblaContract.Intent.AppSettingsRequested ->
+                sendEffect(QiblaContract.Effect.NavigateToAppSettings)
+
+            is QiblaContract.Intent.LocationSettingsRequested ->
+                sendEffect(QiblaContract.Effect.NavigateToLocationSettings)
+
+            is QiblaContract.Intent.InternetSettingsRequested ->
+                sendEffect(QiblaContract.Effect.NavigateToInternetSettings)
+
+            is QiblaContract.Intent.LocationPickerRequested ->
+                sendEffect(QiblaContract.Effect.NavigateToLocationPicker)
 
             is QiblaContract.Intent.RecalibrationRequested -> {
                 _state.update { it.copy(isCalibrationGuideVisible = true) }
@@ -153,20 +115,13 @@ class QiblaViewModel @Inject constructor(
             }
 
             is QiblaContract.Intent.ScreenResumed -> {
+                showLocationRationale = intent.showLocationRationale
                 val current = _state.value
                 val hasValidData = current.qiblaBearing != null && current.locationName != null
-
-                // The permission may have been changed in the app settings.
-                val permissionJustGranted = !hasValidData &&
-                        hasLocationPermissionUseCase() &&
-                        !locationHandler.permissionState.value.granted
-
-                if (permissionJustGranted) locationHandler.onPermissionGranted()
 
                 when {
                     hasValidData -> onIntent(QiblaContract.Intent.CompassResumed)
                     current.prerequisites != null -> reevaluatePrerequisites()
-                    permissionJustGranted && current.errorMessage != null -> loadQibla()
                     current.errorMessage == null && !current.isLoading -> loadQibla()
                 }
             }
@@ -179,9 +134,7 @@ class QiblaViewModel @Inject constructor(
                 if (_state.value.prerequisites != null) reevaluatePrerequisites()
             }
 
-            is QiblaContract.Intent.ScreenPaused -> {
-                stopCompassUpdates()
-            }
+            is QiblaContract.Intent.ScreenPaused -> stopCompassUpdates()
 
             is QiblaContract.Intent.CompassResumed -> {
                 compassLocation?.let { startCompassUpdates(it) }
@@ -189,14 +142,18 @@ class QiblaViewModel @Inject constructor(
         }
     }
 
+    private fun sendEffect(effect: QiblaContract.Effect) {
+        viewModelScope.launch { _effect.send(effect) }
+    }
+
     /**
      * Loads (or reloads) the Qibla screen: prefers a saved manual location, otherwise resolves a
      * fresh GPS fix. Cancels any in-flight load so rapid re-triggers (tab switches, retries)
      * can't race each other.
      *
-     * If a bearing + location name are already held in memory, the loading spinner and the
-     * permission reset are skipped — this keeps re-entering the tab from flashing back
-     * to a loading state when we already have something valid to show.
+     * If a bearing + location name are already held in memory, the loading spinner is skipped,
+     * which keeps re-entering the tab from flashing back to a loading state when we already have
+     * something valid to show.
      */
     private fun loadQibla() {
         val current = _state.value
@@ -207,9 +164,8 @@ class QiblaViewModel @Inject constructor(
         loadQiblaJob = viewModelScope.launch {
             try {
                 if (!hasCalculatedData) {
-                    locationHandler.recheckPermissions()
-                    val current = _state.value
-                    if (current.errorMessage == null && current.prerequisites == null) {
+                    val latest = _state.value
+                    if (latest.errorMessage == null && latest.prerequisites == null) {
                         _state.update { it.copy(isLoading = true) }
                     }
                 }
@@ -240,7 +196,8 @@ class QiblaViewModel @Inject constructor(
                 }
             }
 
-            is QiblaLocationLoad.Blocked -> showBlocked(load.prerequisites)
+            is QiblaLocationLoad.Blocked ->
+                showBlocked(prerequisitesHandler.toUi(load.prerequisites, showLocationRationale))
 
             is QiblaLocationLoad.TimedOut ->
                 showError(MessageUi.FAILED_TO_GET_LOCATION)
@@ -251,8 +208,7 @@ class QiblaViewModel @Inject constructor(
     }
 
     /** Shows the compass for the place right away, then swaps in the localized name when it arrives. */
-    private fun showLocation(located: QiblaLocationLoad.Located) { // removed suspend
-        locationHandler.recheckPermissions()
+    private fun showLocation(located: QiblaLocationLoad.Located) {
         val coordinates = located.location.coordinates
         val bearing = compassHandler.bearing(coordinates)
 
@@ -263,8 +219,7 @@ class QiblaViewModel @Inject constructor(
                 prerequisites = null,
                 qiblaBearing = bearing,
                 locationName = located.location.displayName,
-                sensorUnavailable = false,
-                isLocationPermissionPermanentlyDenied = false
+                sensorUnavailable = false
             )
         }
 
@@ -278,24 +233,22 @@ class QiblaViewModel @Inject constructor(
 
     /**
      * Re-checks what the blocked screen is waiting for. The rows update in place, with no loading
-     * state in between; the lookup only restarts once everything is available.
+     * state in between; the lookup only restarts once nothing is missing (or a place was picked).
      */
     private fun reevaluatePrerequisites() {
         viewModelScope.launch {
-            val now = locationHandler.checkPrerequisites()
-            if (now.areMet) loadQibla() else showBlocked(now)
+            val blocked = prerequisitesHandler.blocked(showLocationRationale)
+            if (blocked == null) loadQibla() else showBlocked(blocked)
         }
     }
 
-    private fun showBlocked(prerequisites: LocationPrerequisites) {
+    private fun showBlocked(prerequisites: PrerequisitesUi) {
         _state.update {
             it.copy(
                 isLoading = false,
                 errorMessage = null,
                 sensorUnavailable = false,
-                prerequisites = prerequisites.toPrerequisitesUi(
-                    permissionPermanentlyDenied = locationHandler.permissionState.value.permanentlyDenied
-                )
+                prerequisites = prerequisites
             )
         }
     }
@@ -353,7 +306,6 @@ class QiblaViewModel @Inject constructor(
         compassJob = null
     }
 
-    @SuppressLint("EmptySuperCall")
     override fun onCleared() {
         compassJob?.cancel()
         super.onCleared()

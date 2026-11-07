@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.mhq.salati.location.domain.model.GeocodeResult
 import com.mhq.salati.location.domain.model.LocationSearchResult
 import com.mhq.salati.location.domain.model.SavedLocation
+import com.mhq.salati.location.domain.usecases.ClearSavedLocationUseCase
 import com.mhq.salati.location.domain.usecases.ReverseGeocodeLocationUseCase
 import com.mhq.salati.location.domain.usecases.SaveManualLocationUseCase
 import com.mhq.salati.location.domain.usecases.SearchLocationByNameUseCase
@@ -41,10 +42,11 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class LocationPickerViewModel @Inject constructor(
-    private val searchLocationByName: SearchLocationByNameUseCase,
-    private val reverseGeocodeLocation: ReverseGeocodeLocationUseCase,
-    private val saveManualLocation: SaveManualLocationUseCase,
-    private val observeSettings: ObserveSettingsUseCase,
+    private val searchLocationByNameUseCase: SearchLocationByNameUseCase,
+    private val reverseGeocodeLocationUseCase: ReverseGeocodeLocationUseCase,
+    private val saveManualLocationUseCase: SaveManualLocationUseCase,
+    private val observeSettingsUseCase: ObserveSettingsUseCase,
+    private val clearSavedLocation: ClearSavedLocationUseCase,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -69,12 +71,9 @@ class LocationPickerViewModel @Inject constructor(
             is LocationPickerContract.Intent.QueryChanged -> onQueryChanged(intent.query)
             is LocationPickerContract.Intent.SearchSubmitted -> executeManualSearch(_state.value.query)
             is LocationPickerContract.Intent.SearchResultSelected -> selectResult(intent.result)
-            is LocationPickerContract.Intent.MapPointSelected -> selectMapPoint(
-                intent.latitude,
-                intent.longitude
-            )
-
+            is LocationPickerContract.Intent.MapPointSelected -> selectMapPoint(intent.latitude, intent.longitude)
             is LocationPickerContract.Intent.LocationConfirmed -> confirmSelection()
+            is LocationPickerContract.Intent.CurrentLocationRequested -> useCurrentLocation()
         }
     }
 
@@ -95,7 +94,7 @@ class LocationPickerViewModel @Inject constructor(
             .flatMapLatest { query ->
                 flow {
                     val lang = currentLanguageCode()
-                    emit(Result.success(searchLocationByName(query, lang)))
+                    emit(Result.success(searchLocationByNameUseCase(query, lang)))
                 }.catch { e ->
                     if (e is CancellationException) throw e
                     emit(Result.failure(e))
@@ -269,7 +268,7 @@ class LocationPickerViewModel @Inject constructor(
                 )
             }
             val lang = currentLanguageCode()
-            when (val result = reverseGeocodeLocation(Coordinates(latitude, normalizeLongitude(longitude)), lang)) {
+            when (val result = reverseGeocodeLocationUseCase(Coordinates(latitude, normalizeLongitude(longitude)), lang)) {
                 is GeocodeResult.Found -> {
                     val name = listOfNotNull(result.cityName, result.countryName)
                         .joinToString(", ")
@@ -316,7 +315,7 @@ class LocationPickerViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val (city, country) = parseDisplayName(selected.displayName)
-                saveManualLocation(
+                saveManualLocationUseCase(
                     SavedLocation(
                         coordinates = Coordinates(selected.latitude, normalizeLongitude(selected.longitude)),
                         cityName = city,
@@ -336,6 +335,14 @@ class LocationPickerViewModel @Inject constructor(
         }
     }
 
+    /** Forgets the saved place; the screen we return to looks the device location up again. */
+    private fun useCurrentLocation() {
+        viewModelScope.launch {
+            clearSavedLocation()
+            _effect.send(LocationPickerContract.Effect.CurrentLocationChosen)
+        }
+    }
+
     // Panning the map around the world can push longitude past ±180°; Coordinates only accepts values inside that range.
     private fun normalizeLongitude(longitude: Double): Double = ((longitude + 540.0) % 360.0) - 180.0
 
@@ -350,7 +357,7 @@ class LocationPickerViewModel @Inject constructor(
     }
 
     private suspend fun currentLanguageCode(): String {
-        return observeSettings().first().language.code
+        return observeSettingsUseCase().first().language.code
     }
 
     private fun List<LocationSearchResult>.toContractResults(): List<LocationPickerContract.LocationSearchResult> =

@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface LocationRepository {
     val savedLocation: Flow<SavedLocation?>
     suspend fun saveManualLocation(location: SavedLocation)
+    suspend fun clearSavedLocation()
 }

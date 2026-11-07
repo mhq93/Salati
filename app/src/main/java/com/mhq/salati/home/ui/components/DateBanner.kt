@@ -66,14 +66,12 @@ fun DateBanner(
 ) {
     val hijriMonthLabel = stringResource(prayerDate.hijriDate.month.labelRes)
 
-    // Display formatter: intentionally follows the current app locale (re-created when the date changes).
     val gregorianLine = remember(prayerDate.gregorianDate) {
         prayerDate.gregorianDate.format(
             DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.getDefault())
         )
     }
 
-    // The double chevrons point outwards, so they swap sides in RTL.
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val todayIcon = if (isRtl) Icons.Default.KeyboardDoubleArrowRight else Icons.Default.KeyboardDoubleArrowLeft
     val endOfMonthIcon = if (isRtl) Icons.Default.KeyboardDoubleArrowLeft else Icons.Default.KeyboardDoubleArrowRight
@@ -198,7 +196,7 @@ private fun BannerChevron(
 
 @Preview(showBackground = true)
 @Composable
-fun DateBannerPreview() {
+private fun DateBannerPreview() {
     SalatiTheme {
         DateBanner(
             prayerDate = PrayerDateUi(

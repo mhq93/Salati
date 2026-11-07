@@ -135,13 +135,6 @@ fun CalendarMonthView(
                     tint = MaterialTheme.colorScheme.onSurface.copy(alpha = if (canGoForward) 1f else 0.38f)
                 )
             }
-            //            IconButton(onClick = { onMonthChanged(1) }) {
-            //                Icon(
-            //                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            //                    contentDescription = stringResource(R.string.next_month),
-            //                    tint = MaterialTheme.colorScheme.onSurface
-            //                )
-            //            }
         }
         Spacer(modifier = Modifier.height(8.dp))
 

@@ -20,10 +20,6 @@ import com.mhq.salati.shared.ui.labelRes
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-// CHANGED — no longer a fixed constant; the channel ID is now derived per
-// sound choice, since a notification channel's sound is locked forever once
-// created. Switching sounds in Settings must produce a *new* channel rather
-// than trying to mutate the old one.
 private const val CHANNEL_ID_PREFIX = "custom_alarms_channel"
 
 class CustomAlarmNotifier @Inject constructor(
@@ -54,8 +50,6 @@ class CustomAlarmNotifier @Inject constructor(
             )
         }
 
-        // NEW — "5 minutes before Fajr" instead of a generic body, reusing the
-        // same plural strings CustomAlarmCard already uses for the list row.
         val body = buildOffsetBody(
             localizedPrayerName,
             offsetMinutes,
@@ -69,8 +63,7 @@ class CustomAlarmNotifier @Inject constructor(
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setAutoCancel(true)
-            .build() // no .setSound() — channel owns the sound on O+, and this
-        // app's minSdk already requires channels, so no pre-O path needed
+            .build()
 
         NotificationManagerCompat.from(context).notify(alarmId.toInt(), notification)
     }
@@ -97,9 +90,6 @@ class CustomAlarmNotifier @Inject constructor(
     private fun channelIdFor(sound: CustomAlarmSoundUi): String =
         "${CHANNEL_ID_PREFIX}_${sound.name.lowercase()}"
 
-    // NEW — replaces the old init-block createChannelIfNeeded(); now takes the
-    // resolved sound so it can pick the right channel ID and Uri, and only
-    // creates it once per sound (existing channels are left alone).
     private fun ensureChannelExists(channelId: String, sound: CustomAlarmSoundUi) {
         val manager = context.getSystemService(NotificationManager::class.java) ?: return
         if (manager.getNotificationChannel(channelId) != null) return

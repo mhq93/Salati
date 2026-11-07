@@ -10,7 +10,7 @@ import com.mhq.salati.shared.presentation.model.MessageUi
 
 object OnboardingContract {
 
-    enum class StepUi { WELCOME, CONNECT, CALCULATION, ALERTS }
+    enum class StepUi { WELCOME, CALCULATION, ALERTS }
     enum class SelectorUi { LANGUAGE, THEME, TIME_FORMAT, CALCULATION_METHOD, MADHAB, ADHAN_SOUND }
 
     /** What the main button of the current step does. */
@@ -30,11 +30,6 @@ object OnboardingContract {
         val language: AppLanguageUi = AppLanguageUi.ENGLISH,
         val themeMode: ThemeModeUi = ThemeModeUi.SYSTEM,
         val timeFormat: TimeFormatUi = TimeFormatUi.FORMAT_24_HOUR,
-        // Connect statuses.
-        val isInternetConnected: Boolean = false,
-        val areLocationServicesEnabled: Boolean = false,
-        val isLocationPermissionGranted: Boolean = false,
-        val isLocationPermanentlyDenied: Boolean = false,
         // Calculation choices.
         val calculationMethod: CalculationMethodUi = CalculationMethodUi.EGYPTIAN_GENERAL_AUTHORITY,
         val madhab: MadhabUi = MadhabUi.SHAFI,
@@ -46,17 +41,12 @@ object OnboardingContract {
         val isExactAlarmGranted: Boolean = false,
         val isLoading: Boolean = false
     ) {
-        val isLocationReady: Boolean
-            get() = isLocationPermissionGranted && areLocationServicesEnabled
-
         val isAlarmAccessMissing: Boolean
             get() = notificationsEnabled && (!isNotificationPermissionGranted || !isExactAlarmGranted)
 
         val primaryAction: PrimaryActionUi
             get() = when (step) {
-                // Connect rows each carry their own action button, so the main
-                // button on WELCOME / CONNECT / CALCULATION is always Continue.
-                StepUi.WELCOME, StepUi.CONNECT, StepUi.CALCULATION -> PrimaryActionUi.CONTINUE
+                StepUi.WELCOME, StepUi.CALCULATION -> PrimaryActionUi.CONTINUE
                 StepUi.ALERTS -> when {
                     notificationsEnabled && !isNotificationPermissionGranted ->
                         if (isNotificationPermanentlyDenied) {
@@ -75,7 +65,6 @@ object OnboardingContract {
         /** Steps whose requirement is still unmet can be skipped. */
         val canSkip: Boolean
             get() = when (step) {
-                StepUi.CONNECT -> !isInternetConnected || !isLocationReady
                 StepUi.ALERTS -> isAlarmAccessMissing
                 else -> false
             }
@@ -83,12 +72,6 @@ object OnboardingContract {
 
     sealed interface Intent {
         data object ScreenResumed : Intent
-        data class InternetStatusChanged(val connected: Boolean) : Intent
-        data class LocationServicesStatusChanged(val enabled: Boolean) : Intent
-        data class LocationPermissionResult(
-            val granted: Boolean,
-            val permanentlyDenied: Boolean
-        ) : Intent
 
         // Welcome choices — each applies live, one intent per selector.
         data class LanguageSelected(val language: AppLanguageUi) : Intent
@@ -107,20 +90,13 @@ object OnboardingContract {
             val permanentlyDenied: Boolean = false
         ) : Intent
 
-        // The Connect rows each own their action button.
-        data object InternetActionRequested : Intent
-        data object LocationActionRequested : Intent
-
         data object PrimaryActionRequested : Intent
         data object Skipped : Intent
         data object BackRequested : Intent
     }
 
     sealed interface Effect {
-        data object OpenInternetSettings : Effect
-        data object OpenLocationSettings : Effect
         data object OpenAppSettings : Effect
-        data object RequestLocationPermission : Effect
         data object RequestNotificationPermission : Effect
         data object RequestExactAlarmPermission : Effect
 

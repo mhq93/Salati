@@ -34,10 +34,12 @@ object LocationPickerContract {
         data class SearchResultSelected(val result: LocationSearchResult) : Intent
         data class MapPointSelected(val latitude: Double, val longitude: Double) : Intent
         data object LocationConfirmed : Intent
+        data object CurrentLocationRequested : Intent
     }
 
     sealed interface Effect {
         data class ShowError(val message: MessageUi) : Effect
         data object LocationSaved : Effect
+        data object CurrentLocationChosen : Effect
     }
 }

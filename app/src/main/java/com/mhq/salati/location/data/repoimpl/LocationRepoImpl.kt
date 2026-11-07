@@ -19,4 +19,8 @@ class LocationRepoImpl @Inject constructor(
     override suspend fun saveManualLocation(location: SavedLocation) {
         locationDataStore.save(location.toStored())
     }
+
+    override suspend fun clearSavedLocation() {
+        locationDataStore.clear()
+    }
 }

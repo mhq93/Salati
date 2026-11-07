@@ -1,144 +1,164 @@
 package com.mhq.salati.location.ui.components
 
-import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.LocationOff
-import androidx.compose.material.icons.filled.WifiOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
 import com.mhq.salati.location.presentation.model.PrerequisitesUi
+import com.mhq.salati.shared.ui.components.GroupCard
+import com.mhq.salati.shared.ui.components.StepBadgeIcon
+import com.mhq.salati.shared.ui.components.StepHeader
+import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
+import com.mhq.salati.shared.ui.theme.SalatiTheme
+import com.mhq.salati.shared.ui.theme.prayerGradient
 
-/** Everything still missing, in one place. Rows leave by themselves as each one is fixed. */
+/**
+ * Everything still missing, in one place; rows leave by themselves as each one is fixed.
+ * The user can always skip it by picking a place by hand.
+ *
+ * Fills the whole tab, behind the floating bottom bar; the content clears the bar itself.
+ */
 @Composable
 fun PrerequisitesError(
     prerequisites: PrerequisitesUi,
-    onEnableLocation: () -> Unit,
+    onOpenInternetSettings: () -> Unit,
+    onOpenLocationSettings: () -> Unit,
     onAllowPermission: () -> Unit,
     onOpenAppSettings: () -> Unit,
+    onChooseLocationManually: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isPermissionBlocked = prerequisites.permissionPermanentlyDenied
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
+            .background(MaterialTheme.colorScheme.prayerGradient)
     ) {
-        Text(
-            text = stringResource(R.string.prerequisites_title),
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.Center
-        )
-        Spacer(Modifier.height(16.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .navigationBarsPadding()
+                .padding(bottom = BottomNavBarDefaults.Height)
+                .padding(horizontal = 32.dp)
+        ) {
+            StepHeader(
+                title = stringResource(R.string.prerequisites_title),
+                subtitle = stringResource(R.string.prerequisites_subtitle)
+            ) {
+                StepBadgeIcon(Icons.Default.LocationOn)
+            }
+            Spacer(Modifier.height(28.dp))
 
-        PrerequisiteRow(
-            isMissing = !prerequisites.hasInternet,
-            icon = Icons.Default.WifiOff,
-            titleRes = R.string.prerequisite_internet,
-            messageRes = R.string.prerequisite_internet_missing
-        )
-        PrerequisiteRow(
-            isMissing = !prerequisites.servicesEnabled,
-            icon = Icons.Default.LocationOff,
-            titleRes = R.string.prerequisite_services,
-            messageRes = R.string.prerequisite_services_missing,
-            actionRes = R.string.prerequisite_action_enable_location,
-            onAction = onEnableLocation
-        )
-        PrerequisiteRow(
-            isMissing = !prerequisites.permissionGranted,
-            icon = Icons.Default.Lock,
-            titleRes = R.string.prerequisite_permission,
-            messageRes = if (isPermissionBlocked) {
-                R.string.prerequisite_permission_blocked
-            } else {
-                R.string.prerequisite_permission_missing
-            },
-            actionRes = if (isPermissionBlocked) {
-                R.string.prerequisite_action_open_settings
-            } else {
-                R.string.prerequisite_action_allow
-            },
-            onAction = if (isPermissionBlocked) onOpenAppSettings else onAllowPermission
+            GroupCard {
+                PrerequisiteRow(
+                    icon = Icons.Default.Wifi,
+                    title = stringResource(R.string.prerequisite_internet),
+                    actionLabel = stringResource(R.string.prerequisite_internet_action),
+                    isMissing = !prerequisites.hasInternet,
+                    showDivider = !prerequisites.servicesEnabled || !prerequisites.permissionGranted,
+                    onClick = onOpenInternetSettings
+                )
+                PrerequisiteRow(
+                    icon = Icons.Default.MyLocation,
+                    title = stringResource(R.string.prerequisite_services),
+                    actionLabel = stringResource(R.string.action_open_settings),
+                    isMissing = !prerequisites.servicesEnabled,
+                    showDivider = !prerequisites.permissionGranted,
+                    onClick = onOpenLocationSettings
+                )
+                PrerequisiteRow(
+                    icon = Icons.Default.Lock,
+                    title = stringResource(R.string.prerequisite_permission),
+                    actionLabel = stringResource(
+                        if (isPermissionBlocked) {
+                            R.string.action_open_settings
+                        } else {
+                            R.string.prerequisite_action_allow
+                        }
+                    ),
+                    isMissing = !prerequisites.permissionGranted,
+                    showDivider = false,
+                    onClick = if (isPermissionBlocked) onOpenAppSettings else onAllowPermission
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            TextButton(
+                onClick = onChooseLocationManually,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.tertiary
+                )
+            ) {
+                Text(text = stringResource(R.string.prerequisite_action_choose_manually))
+            }
+        }
+    }
+}
+
+@Preview(name = "All Missing", showBackground = true)
+@Composable
+private fun PrerequisitesErrorPreview() {
+    SalatiTheme {
+        PrerequisitesError(
+            prerequisites = PrerequisitesUi(
+                hasInternet = false,
+                servicesEnabled = false,
+                permissionGranted = false,
+                permissionPermanentlyDenied = false
+            ),
+            onOpenInternetSettings = {},
+            onOpenLocationSettings = {},
+            onAllowPermission = {},
+            onOpenAppSettings = {},
+            onChooseLocationManually = {}
         )
     }
 }
 
+@Preview(name = "Blocked Permission", showBackground = true)
 @Composable
-private fun PrerequisiteRow(
-    isMissing: Boolean,
-    icon: ImageVector,
-    @StringRes titleRes: Int,
-    @StringRes messageRes: Int,
-    @StringRes actionRes: Int? = null,
-    onAction: (() -> Unit)? = null
-) {
-    AnimatedVisibility(
-        visible = isMissing,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically()
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(28.dp)
-            )
-            Spacer(Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(titleRes),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = stringResource(messageRes),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-            if (actionRes != null && onAction != null) {
-                Spacer(Modifier.width(8.dp))
-                Button(onClick = onAction) {
-                    Text(stringResource(actionRes))
-                }
-            }
-        }
+private fun PrerequisitesErrorBlockedPreview() {
+    SalatiTheme {
+        PrerequisitesError(
+            prerequisites = PrerequisitesUi(
+                hasInternet = true,
+                servicesEnabled = true,
+                permissionGranted = false,
+                permissionPermanentlyDenied = true
+            ),
+            onOpenInternetSettings = {},
+            onOpenLocationSettings = {},
+            onAllowPermission = {},
+            onOpenAppSettings = {},
+            onChooseLocationManually = {}
+        )
     }
 }

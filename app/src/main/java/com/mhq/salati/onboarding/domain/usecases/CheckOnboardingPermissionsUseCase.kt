@@ -8,7 +8,6 @@ class CheckOnboardingPermissionsUseCase @Inject constructor(
     private val permissionChecker: PermissionChecker
 ) {
     operator fun invoke(): OnboardingPermissions = OnboardingPermissions(
-        hasLocation = permissionChecker.hasLocationPermission(),
         hasNotification = permissionChecker.hasNotificationPermission(),
         hasExactAlarm = permissionChecker.canScheduleExactAlarms()
     )

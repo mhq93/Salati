@@ -1,4 +1,4 @@
-package com.mhq.salati.settings.ui.components
+package com.mhq.salati.shared.ui.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
-fun SettingsDivider(
+fun GroupDivider(
     modifier: Modifier = Modifier
 ) {
     HorizontalDivider(
@@ -21,8 +21,8 @@ fun SettingsDivider(
 
 @Preview
 @Composable
-private fun SettingsDividerPreview() {
+private fun GroupDividerPreview() {
     SalatiTheme() {
-        SettingsDivider()
+        GroupDivider()
     }
 }

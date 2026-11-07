@@ -1,75 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- App -->
     <string name="app_name">Salati</string>
+    <string name="app_motto">Never Miss a Prayer</string>
 
-    <!-- Splash -->
-    <string name="language">Language</string>
-    <string name="language_english">English</string>
-    <string name="language_arabic">العربية</string>
+    <!-- Common actions -->
+    <string name="retry">Retry</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="stop">Stop</string>
+    <string name="action_open_settings">Open settings</string>
+    <string name="please_wait">Please, wait</string>
+    <string name="is_selected">Selected</string>
 
-    <!-- Onboarding -->
-    <string name="get_started">Get Started</string>
-    <string name="skip">Skip</string>
-    <string name="next">Next</string>
-    <string name="never_miss_a_prayer">Never Miss a Prayer</string>
-    <string name="never_miss_a_prayer_subtitle">Accurate and automatically-updated prayer times based on your exact location</string>
-    <string name="access_location">Location</string>
-    <string name="access_location_subtitle">Enable your network and GPS only once per every new location</string>
-    <string name="find_qibla">Find your Qibla</string>
-    <string name="find_qibla_subtitle">A precise live compass pointing towards the Kaaba wherever you are</string>
-    <!--    <string name="custom_alarms">Custom Alarms</string>-->
-    <string name="custom_alarms_subtitle">Custom Adhan alerts for every prayer, fully in your control.</string>
-    <string name="customize_your_app">Customize your App</string>
-    <string name="customize_your_app_subtitle">Check Settings out to customize your own app experience.</string>
-
-
-    <string name="onboarding_continue">Continue</string>
-    <string name="onboarding_not_now">Not now</string>
-    <string name="onboarding_open_settings">Open settings</string>
-
-    <string name="onboarding_internet_title">Connectivity</string>
-    <string name="onboarding_internet_subtitle">Salati needs the internet once to download your prayer times. After that they work offline.</string>
-    <string name="onboarding_internet_action">Enable</string>
-    <string name="onboarding_internet_connected">Connected</string>
-
-    <string name="onboarding_location_action">Grant location permission</string>
-    <string name="onboarding_location_ready">Enabled</string>
-
-    <string name="onboarding_madhab_subtitle">School of thought. It sets the Asr time.</string>
-    <string name="onboarding_madhab_shafi_group">Shafi\'i, Maliki, Hanbali</string>
-
-    <string name="onboarding_notifications_title">Notifications</string>
-    <string name="onboarding_notifications_subtitle">Get the adhan and prayer reminders on time.</string>
-    <string name="onboarding_notifications_toggle_title">Enable notifications</string>
-    <string name="onboarding_notifications_toggle_subtitle">Adhan and prayer alerts</string>
-    <string name="onboarding_notifications_action">Allow notifications</string>
-    <string name="onboarding_exact_alarm_note">Prayer alarms also need permission to set exact alarms.</string>
-    <string name="onboarding_exact_alarm_action">Allow exact alarms</string>
-
-
-    <!-- Onboarding: Welcome page -->
-    <string name="onboarding_language_label">Language</string>
-    <string name="onboarding_theme_label">Theme</string>
-    <string name="onboarding_time_format_label">Time format</string>
-    <string name="onboarding_change_later_hint">You can change all of this later in Settings.</string>
-
-    <!-- Onboarding: Connect page -->
-    <string name="onboarding_connect_title">Get connected</string>
-    <string name="onboarding_connect_subtitle">Connect to the internet and share your location to get accurate prayer times.</string>
-
-    <!-- Onboarding: Calculation page -->
-    <string name="onboarding_calculation_title">Prayer calculation</string>
-    <string name="onboarding_calculation_subtitle">Choose how prayer times are calculated for your location.</string>
-    <string name="onboarding_calculation_method_label">Method</string>
-
-    <!-- Onboarding: Alerts page -->
-    <string name="onboarding_adhan_sound_label">Adhan sound</string>
-
-
-    <!-- Bottom Nav Bar -->
+    <!-- Bottom navigation -->
     <string name="home">Home</string>
     <string name="qibla">Qibla</string>
     <string name="tracker">Tracker</string>
     <string name="alarms">Alarms</string>
+    <string name="settings">Settings</string>
+
+    <!-- Onboarding: Welcome page -->
+    <string name="language">Language</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="theme">Theme</string>
+    <string name="theme_system_default">System Default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="onboarding_change_later_hint">You can change all of this later in Settings.</string>
+    <string name="onboarding_continue">Continue</string>
+    <string name="get_started">Get started</string>
+
+    <!-- Onboarding: Prayer times page -->
+    <string name="onboarding_times_title">Prayer times</string>
+    <string name="onboarding_calculation_subtitle">Choose how prayer times are calculated and shown.</string>
+    <string name="prayer_calculation">Prayer Calculation</string>
+    <string name="calculation_method">Method</string>
+    <string name="calc_method_egyptian_general_authority">Egyptian General Authority</string>
+    <string name="calc_method_umm_al_qura">Umm Al-Qura, Makkah</string>
+    <string name="calc_method_muslim_world_league">Muslim World League</string>
+    <string name="calc_method_isna">Islamic Society of North America</string>
+    <string name="calc_method_karachi">University of Islamic Sciences, Karachi</string>
+    <string name="asr_madhab">Asr Madhab</string>
+    <string name="madhab_shafi">Shafi\'i (Standard)</string>
+    <string name="madhab_hanafi">Hanafi</string>
+    <string name="time_format">Time format</string>
+    <string name="time_format_12_hour">12-hour</string>
+    <string name="time_format_24_hour">24-hour</string>
+
+    <!-- Onboarding: Notifications page -->
+    <string name="notifications">Notifications</string>
+    <string name="onboarding_notifications_subtitle">Get the adhan and prayer reminders on time.</string>
+    <string name="onboarding_notifications_toggle_title">Enable notifications</string>
+    <string name="onboarding_notifications_toggle_subtitle">Adhan and prayer alerts</string>
+    <string name="adhan_sound">Adhan Sound</string>
+    <string name="adhan_sound_default">Default Beep</string>
+    <string name="adhan_sound_egypt">Egypt Adhan</string>
+    <string name="adhan_sound_makkah">Makkah Adhan</string>
+    <string name="adhan_sound_madinah">Madinah Adhan</string>
+    <string name="adhan_sound_silent">Silent (Notification Only)</string>
+    <string name="onboarding_notifications_action">Allow notifications</string>
+    <string name="onboarding_exact_alarm_note">Prayer alarms also need permission to set exact alarms.</string>
+    <string name="onboarding_exact_alarm_action">Allow exact alarms</string>
+    <string name="onboarding_not_now">Not now</string>
+
+    <!-- Location prerequisites (Home and Qibla blocked screen) -->
+    <string name="prerequisites_title">Salati needs a few adjustments</string>
+    <string name="prerequisites_subtitle">Prayer times and Qibla need your location. Fix what\'s missing, or pick your city yourself.</string>
+    <string name="prerequisite_internet">Internet connection</string>
+    <string name="prerequisite_internet_action">Connect</string>
+    <string name="prerequisite_services">Location services</string>
+    <string name="prerequisite_permission">Location permission</string>
+    <string name="prerequisite_action_allow">Allow</string>
+    <string name="prerequisite_action_choose_manually">Choose location manually</string>
 
     <!-- Home -->
     <string name="next_prayer">Next Prayer: %1$s</string>
@@ -87,7 +93,9 @@
     <string name="next_day">Next day</string>
     <string name="back_to_today">Back to today</string>
     <string name="end_of_month">End of month</string>
+    <string name="unknown_location">Unknown Location</string>
 
+    <!-- Hijri months -->
     <string name="hijri_muharram">Muharram</string>
     <string name="hijri_safar">Safar</string>
     <string name="hijri_rabi_al_awwal">Rabi\' al-Awwal</string>
@@ -101,23 +109,23 @@
     <string name="hijri_dhu_al_qidah">Dhu al-Qi\'dah</string>
     <string name="hijri_dhu_al_hijjah">Dhu al-Hijjah</string>
 
-    <!-- Notifications -->
+    <!-- Adhan notification -->
     <string name="adhan_playing_title">Prayer time is due</string>
-    <string name="adhan_playing_body">It\'s time for Al-%1$s prayer</string>    <string name="stop">Stop</string>
+    <string name="adhan_playing_body">It\'s time for Al-%1$s prayer</string>
     <string name="minor_timing_playing_title">%1$s</string>
     <string name="minor_timing_playing_body">It\'s time for %1$s</string>
 
     <!-- Qibla -->
-    <!--    <string name="qibla">Qibla</string>-->
     <string name="face_the_kaaba_wherever_you_are">Face the Kaaba wherever you are</string>
-    <string name="unknown_location">Unknown Location</string>
     <string name="location_not_found">Location Not Found</string>
     <string name="sensor_accuracy_is_excellent">Sensor accuracy is excellent.</string>
     <string name="sensor_accuracy_is_moderate">Sensor accuracy is moderate.</string>
     <string name="sensor_accuracy_is_poor">Sensor accuracy is poor.</string>
     <string name="recalibrate">Recalibrate</string>
+    <string name="qibla_direction_can_t_be_shown_here">Qibla direction can\'t be shown here.</string>
+    <string name="this_device_doesn_t_have_the_sensors_needed_for_a_compass">This device does not have the sensors needed for a compass.</string>
 
-    <!-- Qibla Overlay -->
+    <!-- Qibla: Calibration overlay -->
     <string name="compass_calibrate_title">Calibrate your compass</string>
     <string name="compass_calibrate_body">Move your phone in a figure-8 motion to improve accuracy.</string>
     <string name="compass_calibrate_done">Done</string>
@@ -126,29 +134,7 @@
     <string name="accuracy_poor">Accuracy: Poor — Keep moving in a figure-8 to recalibrate</string>
     <string name="accuracy_unreliable">Accuracy: Unreliable — Move away from metal or magnets then recalibrate</string>
 
-    <!-- Home & Qibla Errors-->
-    <string name="error">Error: %1$s</string>
-    <string name="please_wait">Please, wait</string>
-    <string name="something_went_wrong">Something went wrong.</string>
-    <string name="open_settings">Enable</string>
-    <string name="enable_location">Enable Location</string>
-    <string name="failed_to_get_location_name">Failed to get Location name</string>
-    <string name="retry">Retry</string>
-
-    <string name="no_internet_connection">No internet connection.</string>
-    <string name="location_services_disabled">Location services are turned off. Please, enable them.</string>
-    <string name="location_permission_required">Location permission is required to show Qibla direction.</string>
-    <string name="location_permission_is_required_to_show_prayer_times">Location permission is required to show prayer times.</string>
-    <string name="location_permission_permanently_denied">Location permission permanently denied. Please, enable it via Settings.</string>
-    <string name="failed_to_get_location">Failed to get location</string>
-    <string name="failed_to_load_qibla_direction">Failed to load Qibla direction</string>
-    <string name="qibla_direction_can_t_be_shown_here">Qibla direction can\'t be shown here.</string>
-    <string name="this_device_doesn_t_have_the_sensors_needed_for_a_compass">This device does not have the sensors needed for a compass.</string>
-    <string name="notifications_are_disabled_you_won_t_see_prayer_reminders">Notifications are disabled — you won\'t see prayer reminders.</string>
-    <string name="exact_alarms_are_disabled_prayer_alerts_may_not_ring_on_time">Exact alarms are disabled — prayer alerts may not ring on time.</string>
-
-    <!-- Tracker -->
-    <!--    <string name="tracker">Tracker</string>-->
+    <!-- Prayer tracker -->
     <string name="track_your_prayers">Track your prayers</string>
     <string name="track_your_five_daily_prayers">Track your five daily prayers</string>
     <string name="did_you_pray_x">Did you pray %1$s today?</string>
@@ -157,111 +143,88 @@
     <string name="next_month">Next month</string>
     <string name="prayed">Prayed</string>
     <string name="missed">Missed</string>
-    <string name="failed_to_update_prayer_status">Failed to update prayer status</string>
     <string name="prayer_marking_opens_at_prayer_time">You can mark each prayer once its time arrives</string>
+    <plurals name="day_streak">
+        <item quantity="one">%1$d Day streak</item>
+        <item quantity="other">%1$d Days streak</item>
+    </plurals>
 
-    <!-- Alarms -->
+    <!-- Custom alarms -->
     <string name="custom_alarms">Custom Alarms</string>
     <string name="create_custom_alarms_before_or_after_prayers">Create custom alarms before or after prayers</string>
     <string name="no_custom_alarms_title">There are no set custom alarms</string>
     <string name="no_custom_alarms_body">Click the button \u002B below to add a new custom alarm.</string>
-    <string name="alarm_saved">Alarm saved</string>
+    <string name="add_custom_alarm">Add custom alarm</string>
+    <string name="custom_alarm_default_title">Custom Alarm</string>
     <string name="minutes_short">min</string>
-    <string name="custom_alarm_label_fallback">Custom Alarm</string>
     <string name="alarm_offset_before">before %1$s</string>
     <string name="alarm_offset_after">after %1$s</string>
-    <string name="alarm_minutes_field_label">Minutes</string>
+    <string name="at_prayer_time">At %1$s time</string>
+    <string name="repeat_every_day">Repeat everyday</string>
+    <plurals name="minutes_before_prayer">
+        <item quantity="one">%1$d minute before %2$s</item>
+        <item quantity="other">%1$d minutes before %2$s</item>
+    </plurals>
+    <plurals name="minutes_after_prayer">
+        <item quantity="one">%1$d minute after %2$s</item>
+        <item quantity="other">%1$d minutes after %2$s</item>
+    </plurals>
 
-    <!-- Alarm Editor sheet -->
+    <!-- Custom alarms: Editor sheet -->
     <string name="new_custom_alarm">Customize an alarm</string>
-    <string name="alarm_label_optional">Label (Optional)</string>
     <string name="edit_custom_alarm">Edit custom alarm</string>
-    <string name="custom_alarm_default_title">Custom Alarm</string>
-    <string name="add_custom_alarm">Add custom alarm</string>
-    <string name="custom_alarm_body">Custom alarm body</string>
-    <string name="custom_alarms_channel_name" translatable="false">Custom alarms channel name</string>
+    <string name="alarm_label_optional">Label (Optional)</string>
+    <string name="alarm_minutes_field_label">Minutes</string>
     <string name="prayer">Prayer</string>
     <string name="timing">Timing</string>
     <string name="before">Before prayer time</string>
     <string name="after">After prayer time</string>
-    <string name="minutes_value">%1$d min</string>
-    <string name="repeat_every_day">Repeat everyday</string>
-    <string name="repeats_every_day">Every day</string>
-    <string name="repeats_once">Once</string>
-    <string name="at_prayer_time">At %s time</string>
-    <string name="save">Save</string>
-    <string name="edit">Edit</string>
-    <string name="delete">Delete</string>
-    <string name="duplicate_alarm_exists">Same alarm exists</string>
+
+    <!-- Custom alarms: Notification channel -->
+    <string name="custom_alarms_channel_name" translatable="false">Custom alarms channel name</string>
 
     <!-- Settings -->
-    <string name="settings">Settings</string>
     <string name="customize_your_app_experience">Customize your app experience</string>
-    <string name="notifications">Notifications</string>
     <string name="prayer_notifications">Prayer Notifications</string>
     <string name="get_alerted_and_notified_at_each_prayer_time">Get alerted and notified at each prayer time</string>
-    <string name="time_format">Time format</string>
-    <string name="time_format_12_hour">12-hour</string>
-    <string name="time_format_24_hour">24-hour</string>
-    <string name="couldn_t_update_time_format">Couldn\'t update time format</string>
-
-    <string name="adhan_sound">Adhan Sound</string>
-    <string name="adhan_sound_default">Default Beep</string>
-    <string name="adhan_sound_egypt">Egypt Adhan</string>
-    <string name="adhan_sound_makkah">Makkah Adhan</string>
-    <string name="adhan_sound_madinah">Madinah Adhan</string>
-    <string name="adhan_sound_silent">Silent (Notification Only)</string>
-
-    <string name="prayer_calculation">Prayer Calculation</string>
-    <string name="calculation_method">Method</string>
-    <string name="calc_method_egyptian_general_authority">Egyptian General Authority</string>
-    <string name="calc_method_umm_al_qura">Umm Al-Qura, Makkah</string>
-    <string name="calc_method_muslim_world_league">Muslim World League</string>
-    <string name="calc_method_isna">Islamic Society of North America</string>
-    <string name="calc_method_karachi">University of Islamic Sciences, Karachi</string>
-    <string name="asr_madhab">Asr Madhab</string>
-    <string name="madhab_shafi">Shafi\'i (Standard)</string>
-    <string name="madhab_hanafi">Hanafi</string>
-
     <string name="appearance">Appearance</string>
-    <string name="theme">Theme</string>
-    <string name="theme_system_default">System Default</string>
-    <string name="theme_light">Light</string>
-    <string name="theme_dark">Dark</string>
-
-    <string name="is_selected">Selected</string>
-
     <string name="hijri_calendar">Hijri Calendar</string>
     <string name="date_adjustment">Date Adjustment</string>
     <string name="correct_for_local_moon_sighting">Correct for local moon sighting</string>
-
+    <string name="custom_alarm_sound">Custom alarm sound</string>
+    <string name="custom_alarm_sound_default">Device default</string>
+    <string name="custom_alarm_sound_alert">Alert</string>
     <string name="about">About</string>
     <string name="rate_salati">Rate Salati</string>
     <string name="share_with_friends">Share with Friends</string>
     <string name="contact_support">Contact Support</string>
     <string name="version">Version</string>
 
-    <!--To be sorted-->
+    <!-- Location picker -->
+    <string name="location_picker_search_hint">Search a city or place</string>
+    <string name="location_picker_resolving">Resolving location…</string>
+    <string name="location_picker_confirm">Confirm location</string>
+    <string name="location_picker_use_current_location">Use my current location</string>
+
+    <!-- Messages: errors and results -->
+    <string name="error">Error: %1$s</string>
+    <string name="something_went_wrong">Something went wrong.</string>
+    <string name="no_internet_connection">No internet connection.</string>
+    <string name="request_timed_out_check_connection">Request timed out. Check your connection.</string>
+    <string name="failed_to_get_location">Failed to get location</string>
+    <string name="failed_to_get_location_name">Failed to get Location name</string>
+    <string name="couldn_t_determine_location_name">Couldn\'t determine location name. Check your connection.</string>
+    <string name="couldn_t_save_location">Couldn\'t save location. Try again.</string>
+    <string name="search_failed_check_connection">Search failed. Check your connection.</string>
+    <string name="failed_to_load_qibla_direction">Failed to load Qibla direction</string>
+    <string name="failed_to_update_prayer_status">Failed to update prayer status</string>
+    <string name="alarm_saved">Alarm saved</string>
+    <string name="duplicate_alarm_exists">Same alarm exists</string>
     <string name="couldn_t_load_alarms">Couldn\'t load alarms</string>
     <string name="couldn_t_save_alarm">Couldn\'t save alarm</string>
     <string name="couldn_t_delete_alarm">Couldn\'t delete alarm</string>
     <string name="couldn_t_update_alarm">Couldn\'t update alarm</string>
-    <string name="search_failed_check_connection">Search failed. Check your connection.</string>
-    <string name="couldn_t_determine_location_name">Couldn\'t determine location name. Check your connection.</string>
-    <string name="couldn_t_save_location">Couldn\'t save location. Try again.</string>
-    <string name="request_timed_out_check_connection">Request timed out. Check your connection.</string>
-    <string name="cd_back">Back</string>
-    <string name="cd_search">Search</string>
-    <string name="location_picker_search_hint">Search a city or place</string>
-    <string name="location_picker_resolving">Resolving location…</string>
-    <string name="location_picker_confirm">Confirm location</string>
-    <string name="cd_status_badge">Status badge</string>
-    <string name="cd_prayer_location">Prayer location</string>
-    <string name="cd_location_dropdown">Location drop-down</string>
-    <string name="cd_decrease">Decrease</string>
-    <string name="cd_increase">Increase</string>
-
-
+    <string name="couldn_t_update_time_format">Couldn\'t update time format</string>
     <string name="couldn_t_update_notification_settings">Couldn\'t update notification settings</string>
     <string name="couldn_t_update_calculation_method">Couldn\'t update calculation method</string>
     <string name="couldn_t_update_madhab">Couldn\'t update madhab</string>
@@ -269,41 +232,15 @@
     <string name="couldn_t_update_language">Couldn\'t update language</string>
     <string name="couldn_t_update_adhan_sound">Couldn\'t update adhan sound</string>
     <string name="couldn_t_update_hijri_offset">Couldn\'t update Hijri offset</string>
-
-    <string name="custom_alarm_sound">Custom alarm sound</string>
-    <string name="custom_alarm_sound_default">Device default</string>
-    <string name="custom_alarm_sound_alert">Alert</string>
     <string name="couldn_t_update_custom_alarm_sound">Couldn\'t update custom alarm sound</string>
 
-
-    <string name="prerequisites_title">Some requirements need your attention</string>
-    <string name="prerequisite_internet">Internet connection</string>
-    <string name="prerequisite_internet_missing">No connection detected.</string>
-    <string name="prerequisite_services">Location services</string>
-    <string name="prerequisite_services_missing">Location services are turned off.</string>
-    <string name="prerequisite_permission">Location permission</string>
-    <string name="prerequisite_permission_missing">The app is not allowed to use your location.</string>
-    <string name="prerequisite_permission_blocked">Blocked. Allow it in the app settings.</string>
-    <string name="prerequisite_action_enable_location">Enable Location</string>
-    <string name="prerequisite_action_allow">Allow</string>
-    <string name="prerequisite_action_open_settings">Open Settings</string>
-
-
-    <!-- Streak -->
-    <plurals name="day_streak">
-        <item quantity="one">%1$d Day streak</item>
-        <item quantity="other">%1$d Days streak</item>
-    </plurals>
-
-    <!-- Alarm offset descriptions -->
-    <plurals name="minutes_before_prayer">
-        <item quantity="one">%1$d minute before %2$s</item>
-        <item quantity="other">%1$d minutes before %2$s</item>
-    </plurals>
-
-    <plurals name="minutes_after_prayer">
-        <item quantity="one">%1$d minute after %2$s</item>
-        <item quantity="other">%1$d minutes after %2$s</item>
-    </plurals>
+    <!-- Accessibility: content descriptions -->
+    <string name="cd_back">Back</string>
+    <string name="cd_search">Search</string>
+    <string name="cd_status_badge">Status badge</string>
+    <string name="cd_prayer_location">Prayer location</string>
+    <string name="cd_location_dropdown">Location drop-down</string>
+    <string name="cd_decrease">Decrease</string>
+    <string name="cd_increase">Increase</string>
 
 </resources>

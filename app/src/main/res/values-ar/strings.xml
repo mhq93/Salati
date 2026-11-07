@@ -1,67 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- App -->
     <string name="app_name">صلاتي</string>
+    <string name="app_motto">إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَوْقُوتاً</string>
 
-    <!-- Splash -->
-    <string name="language">اللغة</string>
-    <string name="language_english">English</string>
-    <string name="language_arabic">العربية</string>
+    <!-- Common actions -->
+    <string name="retry">حاول مرةً أخرى</string>
+    <string name="save">حفظ</string>
+    <string name="edit">تعديل</string>
+    <string name="delete">حذف</string>
+    <string name="stop">إيقاف</string>
+    <string name="action_open_settings">فتح الإعدادات</string>
+    <string name="please_wait">يرجى الانتظار</string>
+    <string name="is_selected">مختارة</string>
 
-    <!-- Onboarding -->
-    <string name="get_started">بدء</string>
-    <string name="skip">تخطي</string>
-    <string name="next">التالي</string>
-    <string name="never_miss_a_prayer">لا تفوت صلاة أبداً</string>
-    <string name="never_miss_a_prayer_subtitle">مواقيت صلاة دقيقة ومحدثة تلقائيًا وفقًا لـِموقعك الجغرافي</string>
-    <string name="access_location">تفقد موقعك</string>
-    <string name="access_location_subtitle">اتصل بالإنترنت ونظام GPS مرة واحدة فقط لكل موقع جديد تود تفقده</string>
-    <string name="find_qibla">حدد اتجاه القبلة</string>
-    <string name="find_qibla_subtitle">بوصلة دقيقة تفاعلية لتحديد اتجاه القبلة أينما كنت</string>
-    <!--    <string name="custom_alarms">المنبهات</string>-->
-    <string name="custom_alarms_subtitle">تنبيهات خاصة بالآذان لكل صلاة، تحت تحكمك الكامل</string>
-    <string name="customize_your_app">تحكم بالتطبيق كيفما تريد</string>
-    <string name="customize_your_app_subtitle">تحقق من إعدادات التطبيق لتجربة استخدام أكثر خصوصية.</string>
-
-    <string name="onboarding_continue">متابعة</string>
-    <string name="onboarding_not_now">ليس الآن</string>
-    <string name="onboarding_open_settings">فتح الإعدادات</string>
-
-    <string name="onboarding_internet_title">الاتصال بالإنترنت</string>
-    <string name="onboarding_internet_subtitle">يحتاج التطبيق إلى الإنترنت مرة واحدة لتحميل مواقيت الصلاة، ثم تعمل بدون اتصال.</string>
-    <string name="onboarding_internet_action">تشغيل الإنترنت</string>
-    <string name="onboarding_internet_connected">متصل</string>
-
-    <string name="onboarding_location_action">السماح بالوصول إلى الموقع</string>
-    <string name="onboarding_location_ready">تم تفعيل الموقع</string>
-
-    <string name="onboarding_madhab_subtitle">المذهب الفقهي، ويحدد وقت صلاة العصر.</string>
-    <string name="onboarding_madhab_shafi_group">الشافعي والمالكي والحنبلي</string>
-
-    <string name="onboarding_notifications_title">الإشعارات</string>
-    <string name="onboarding_notifications_subtitle">احصل على الأذان وتنبيهات الصلاة في وقتها.</string>
-    <string name="onboarding_notifications_toggle_title">تفعيل الإشعارات</string>
-    <string name="onboarding_notifications_toggle_subtitle">الأذان وتنبيهات الصلاة</string>
-    <string name="onboarding_notifications_action">السماح بالإشعارات</string>
-    <string name="onboarding_exact_alarm_note">تحتاج تنبيهات الصلاة أيضاً إلى إذن المنبهات الدقيقة.</string>
-    <string name="onboarding_exact_alarm_action">السماح بالمنبهات الدقيقة</string>
-
-
-    <string name="onboarding_language_label">اللغة</string>
-    <string name="onboarding_theme_label">المظهر</string>
-    <string name="onboarding_time_format_label">تنسيق الوقت</string>
-    <string name="onboarding_change_later_hint">يمكنك تغيير كل ذلك لاحقًا من الإعدادات.</string>
-    <string name="onboarding_connect_title">الاتصال بالإنترنت والموقع</string>
-    <string name="onboarding_connect_subtitle">اتصل بالإنترنت واسمح بالوصول إلى موقعك للحصول على مواقيت صلاة دقيقة.</string>
-    <string name="onboarding_calculation_title">حساب مواقيت الصلاة</string>
-    <string name="onboarding_calculation_subtitle">اختر طريقة حساب مواقيت الصلاة حسب موقعك.</string>
-    <string name="onboarding_calculation_method_label">طريقة الحساب</string>
-    <string name="onboarding_adhan_sound_label">صوت الأذان</string>
-
-    <!-- Bottom Nav Bar -->
+    <!-- Bottom navigation -->
     <string name="home">الرئيسية</string>
     <string name="qibla">القبلة</string>
     <string name="tracker">المتتبع</string>
     <string name="alarms">المنبهات</string>
+    <string name="settings">الإعدادات</string>
+
+    <!-- Onboarding: Welcome page -->
+    <string name="language">اللغة</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="theme">المظهر</string>
+    <string name="theme_system_default">نظام الهاتف (الافتراضي)</string>
+    <string name="theme_light">ساطع</string>
+    <string name="theme_dark">داكن</string>
+    <string name="onboarding_change_later_hint">يمكنك تغيير كل ذلك لاحقًا من الإعدادات.</string>
+    <string name="onboarding_continue">متابعة</string>
+    <string name="get_started">ابدأ</string>
+
+    <!-- Onboarding: Prayer times page -->
+    <string name="onboarding_times_title">مواقيت الصلاة</string>
+    <string name="onboarding_calculation_subtitle">اختر طريقة حساب مواقيت الصلاة وكيفية عرضها.</string>
+    <string name="prayer_calculation">حساب مواقيت الصلاة</string>
+    <string name="calculation_method">مرجعية الحساب</string>
+    <string name="calc_method_egyptian_general_authority">الهيئة العامة المصرية</string>
+    <string name="calc_method_umm_al_qura">أم القرى، مكة</string>
+    <string name="calc_method_muslim_world_league">رابطة العالم الإسلامي</string>
+    <string name="calc_method_isna">الجمعية الإسلامية لأميركا الشمالية</string>
+    <string name="calc_method_karachi">جامعة العلوم الإسلامية بكاراتشي، باكستان</string>
+    <string name="asr_madhab">مذهب حساب ميقات العصر</string>
+    <string name="madhab_shafi">المذهب الشافعي (افتراضي)</string>
+    <string name="madhab_hanafi">المذهب الحنفي</string>
+    <string name="time_format">تنسيق الوقت</string>
+    <string name="time_format_12_hour">12 ساعة</string>
+    <string name="time_format_24_hour">24 ساعة</string>
+
+    <!-- Onboarding: Notifications page -->
+    <string name="notifications">الإشعارات</string>
+    <string name="onboarding_notifications_subtitle">احصل على الأذان وتنبيهات الصلاة في وقتها.</string>
+    <string name="onboarding_notifications_toggle_title">تفعيل الإشعارات</string>
+    <string name="onboarding_notifications_toggle_subtitle">الأذان وتنبيهات الصلاة</string>
+    <string name="adhan_sound">نغمة الآذان</string>
+    <string name="adhan_sound_default">النغمة الافتراضية</string>
+    <string name="adhan_sound_egypt">آذان مصر</string>
+    <string name="adhan_sound_makkah">آذان مكة</string>
+    <string name="adhan_sound_madinah">آذان المدينة</string>
+    <string name="adhan_sound_silent">صامت (إشعارات فقط)</string>
+    <string name="onboarding_notifications_action">السماح بالإشعارات</string>
+    <string name="onboarding_exact_alarm_note">تحتاج تنبيهات الصلاة أيضاً إلى إذن المنبهات الدقيقة.</string>
+    <string name="onboarding_exact_alarm_action">السماح بالمنبهات الدقيقة</string>
+    <string name="onboarding_not_now">ليس الآن</string>
+
+    <!-- Location prerequisites (Home and Qibla blocked screen) -->
+    <string name="prerequisites_title">يحتاج تطبيق صلاتي إلى ضبط بعض الإعدادات</string>
+    <string name="prerequisites_subtitle">تحتاج مواقيت الصلاة والقبلة إلى موقعك. أصلح ما ينقص، أو اختر مدينتك بنفسك.</string>
+    <string name="prerequisite_internet">الاتصال بالإنترنت</string>
+    <string name="prerequisite_internet_action">اتصال</string>
+    <string name="prerequisite_services">خدمات الموقع</string>
+    <string name="prerequisite_permission">إذن الموقع</string>
+    <string name="prerequisite_action_allow">السماح</string>
+    <string name="prerequisite_action_choose_manually">اختيار الموقع يدويًا</string>
 
     <!-- Home -->
     <string name="next_prayer">الصلاة التالية: %1$s</string>
@@ -79,7 +93,9 @@
     <string name="next_day">اليوم التالي</string>
     <string name="back_to_today">العودة إلى اليوم</string>
     <string name="end_of_month">نهاية الشهر</string>
+    <string name="unknown_location">موقع غير معروف</string>
 
+    <!-- Hijri months -->
     <string name="hijri_muharram">المحرم</string>
     <string name="hijri_safar">صفر</string>
     <string name="hijri_rabi_al_awwal">ربيع الأول</string>
@@ -93,24 +109,23 @@
     <string name="hijri_dhu_al_qidah">ذو القعدة</string>
     <string name="hijri_dhu_al_hijjah">ذو الحجة</string>
 
-    <!-- Notifications -->
+    <!-- Adhan notification -->
     <string name="adhan_playing_title">حان موعد الصلاة</string>
     <string name="adhan_playing_body">حان الآن موعد صلاة %1$s</string>
-    <string name="stop">إيقاف</string>
     <string name="minor_timing_playing_title">%1$s</string>
     <string name="minor_timing_playing_body">حان الآن وقت %1$s</string>
 
     <!-- Qibla -->
-    <!--    <string name="qibla">القبلة</string>-->
     <string name="face_the_kaaba_wherever_you_are">توجه ناحية القبلة أينما كنت</string>
     <string name="location_not_found">الموقع غير موجود</string>
-    <string name="unknown_location">موقع غير معروف</string>
-    <string name="recalibrate">أعد الضبط</string>
     <string name="sensor_accuracy_is_excellent">دقة المستشعر ممتازة</string>
     <string name="sensor_accuracy_is_moderate">دقة المستشعر متوسطة</string>
     <string name="sensor_accuracy_is_poor">دقة المستشعر ضعيفة</string>
+    <string name="recalibrate">أعد الضبط</string>
+    <string name="qibla_direction_can_t_be_shown_here">لا يمكن إظهار اتجاه القبلة هنا</string>
+    <string name="this_device_doesn_t_have_the_sensors_needed_for_a_compass">يفتقد هاتفك المستشعرات اللازمة لتفقد البوصلة</string>
 
-    <!-- Qibla Overlay -->
+    <!-- Qibla: Calibration overlay -->
     <string name="compass_calibrate_title">معايرة البوصلة</string>
     <string name="compass_calibrate_body">حرّك هاتفك بحركة رقم 8 لتحسين الدقة.</string>
     <string name="compass_calibrate_done">تم</string>
@@ -119,29 +134,7 @@
     <string name="accuracy_poor"> دقة المستشعر: ضعيفة، واصل تحريك الهاتف على شكل رقم 8 لإعادة المعايرة</string>
     <string name="accuracy_unreliable">دقة المستشعر: منعدمة، ابتعد عن الأسطح المعدنية والممغنطة ثم أعد المعايرة</string>
 
-    <!-- Home & Qibla Errors-->
-    <string name="error">خطأ: %1$s</string>
-    <string name="please_wait">يرجى الانتظار</string>
-    <string name="something_went_wrong">يوجد ثمة خطأ</string>
-    <string name="open_settings">تفقد إعدادات هاتفك</string>
-    <string name="enable_location">يرجي تفعيل موقع هاتفك</string>
-    <string name="failed_to_get_location_name">لم نتمكن من العثور على اسم الموقع</string>
-    <string name="retry">حاول مرةً أخرى</string>
-
-    <string name="no_internet_connection">لا يوجد اتصال بالإنترنت</string>
-    <string name="location_services_disabled">خدمات تحديد الموقع معطلة - من فضلك، قم بتفعيلها</string>
-    <string name="location_permission_required">يلزم تحديد الموقع لإظهار اتجاه القبلة</string>
-    <string name="location_permission_is_required_to_show_prayer_times">يلزم تحديث موقع هاتفك لإظهار مواقيت الصلاة</string>
-    <string name="location_permission_permanently_denied">لا يمكننا تحديد موقع هاتفك بدقة. يرجي التفعيل من إعدادات الهاتف.</string>
-    <string name="failed_to_get_location">فشل العثور على موقع الهاتف</string>
-    <string name="failed_to_load_qibla_direction">فشل تحديد اتجاه القبلة</string>
-    <string name="qibla_direction_can_t_be_shown_here">لا يمكن إظهار اتجاه القبلة هنا</string>
-    <string name="this_device_doesn_t_have_the_sensors_needed_for_a_compass">يفتقد هاتفك المستشعرات اللازمة لتفقد البوصلة</string>
-    <string name="notifications_are_disabled_you_won_t_see_prayer_reminders">تم تعطيل الإشعارات - لن ترى تنبيهات بمواعيد الصلاة</string>
-    <string name="exact_alarms_are_disabled_prayer_alerts_may_not_ring_on_time">تم إيقاف منبهات الآذان - قد لا يرن الجرس فى الوقت المحدد</string>
-
-    <!-- Tracker -->
-    <!--    <string name="tracker">المتتبع</string>-->
+    <!-- Prayer tracker -->
     <string name="track_your_prayers">تتبع صلواتك الخمس</string>
     <string name="track_your_five_daily_prayers">تتبع صلواتك الخمس كل يوم</string>
     <string name="did_you_pray_x">هل صليت %1$s اليوم؟</string>
@@ -150,138 +143,7 @@
     <string name="next_month">الشهر التالي</string>
     <string name="prayed">مقضية</string>
     <string name="missed">منسية</string>
-    <string name="failed_to_update_prayer_status">خطأ أثناء تحديث الصلاة</string>
     <string name="prayer_marking_opens_at_prayer_time">يمكنك تسجيل كل صلاة عند حلول وقتها</string>
-
-    <!-- Alarms -->
-    <string name="custom_alarms">المنبهات</string>
-    <string name="create_custom_alarms_before_or_after_prayers">أنشئ منبهاً خاصاً قبل أو بعد الصلوات المفروضة</string>
-    <string name="no_custom_alarms_title">لا توجد منبهات خاصة بك</string>
-    <string name="no_custom_alarms_body">اضغط الزر \u002B أدناه لإنشاء منبه جديد</string>
-    <string name="alarm_saved">تم حفظ المنبه</string>
-    <string name="minutes_short">min</string>
-    <string name="custom_alarm_label_fallback">تنبيه مخصص</string>
-    <string name="alarm_offset_before">قبل %1$s</string>
-    <string name="alarm_offset_after">بعد %1$s</string>
-    <string name="alarm_minutes_field_label">الدقائق</string>
-
-    <!-- Alarm Editor sheet -->
-    <string name="new_custom_alarm">منبه خاص جديد</string>
-    <string name="alarm_label_optional">اسم المنبه (اختياري)</string>
-    <string name="edit_custom_alarm">تعديل المنبه</string>
-    <string name="custom_alarm_default_title">منبه خاص</string>
-    <string name="custom_alarm_body">اضغط هنا لإيقاف المنبه</string>
-    <string name="add_custom_alarm">أنشئ منبهاً</string>
-    <string name="prayer">الصلاة</string>
-    <string name="timing">التوقيت</string>
-    <string name="before">قبل الآذان</string>
-    <string name="after">بعد الآذان</string>
-    <string name="minutes_value">%1$d دقيقة</string>
-    <string name="repeat_every_day">تكرار يومي</string>
-    <string name="repeats_every_day">يومي</string>
-    <string name="repeats_once">مرة واحدة</string>
-    <string name="at_prayer_time">%s في وقت</string>
-    <string name="save">حفظ</string>
-    <string name="edit">تعديل</string>
-    <string name="delete">حذف</string>
-    <string name="duplicate_alarm_exists">لديك منبه مماثل</string>
-
-    <!-- Settings -->
-    <string name="settings">الإعدادات</string>
-    <string name="customize_your_app_experience">تحكم بمظهر التطبيق حسب رغبتك</string>
-    <string name="notifications">الإشعارات</string>
-    <string name="prayer_notifications">إشعارات الصلاة</string>
-    <string name="get_alerted_and_notified_at_each_prayer_time">احصل على تنبيهات لكل صلاة</string>
-    <string name="time_format">تنسيق الوقت</string>
-    <string name="time_format_12_hour">12 ساعة</string>
-    <string name="time_format_24_hour">24 ساعة</string>
-    <string name="couldn_t_update_time_format">تعذّر تحديث تنسيق الوقت</string>
-
-    <string name="adhan_sound">نغمة الآذان</string>
-    <string name="adhan_sound_default">النغمة الافتراضية</string>
-    <string name="adhan_sound_egypt">آذان مصر</string>
-    <string name="adhan_sound_makkah">آذان مكة</string>
-    <string name="adhan_sound_madinah">آذان المدينة</string>
-    <string name="adhan_sound_silent">صامت (إشعارات فقط)</string>
-
-    <string name="prayer_calculation">حساب مواقيت الصلاة</string>
-    <string name="calculation_method">مرجعية الحساب</string>
-    <string name="calc_method_egyptian_general_authority">الهيئة العامة المصرية</string>
-    <string name="calc_method_umm_al_qura">أم القرى، مكة</string>
-    <string name="calc_method_muslim_world_league">رابطة العالم الإسلامي</string>
-    <string name="calc_method_isna">الجمعية الإسلامية لأميركا الشمالية</string>
-    <string name="calc_method_karachi">جامعة العلوم الإسلامية بكاراتشي، باكستان</string>
-    <string name="asr_madhab">مذهب حساب ميقات العصر</string>
-    <string name="madhab_shafi">المذهب الشافعي (افتراضي)</string>
-    <string name="madhab_hanafi">المذهب الحنفي</string>
-
-    <string name="appearance">الهيئة</string>
-    <string name="theme">المظهر</string>
-    <string name="theme_system_default">نظام الهاتف (الافتراضي)</string>
-    <string name="theme_light">ساطع</string>
-    <string name="theme_dark">داكن</string>
-    <string name="is_selected">مختارة</string>
-
-    <string name="hijri_calendar">التقويم الهجري</string>
-    <string name="date_adjustment">ضبط التاريخ</string>
-    <string name="correct_for_local_moon_sighting">تصحيح التاريخ بناءً على رؤية الهلال</string>
-
-    <string name="about">المزيد</string>
-    <string name="rate_salati">قيم تطبيق صلاتي</string>
-    <string name="share_with_friends">شارك مع الأصدقاء</string>
-    <string name="contact_support">الاتصال بالدعم الفني</string>
-    <string name="version">النسخة</string>
-
-    <!--To be sorted-->
-    <string name="couldn_t_load_alarms">تعذّر تحميل المنبهات</string>
-    <string name="couldn_t_save_alarm">تعذّر حفظ المنبه</string>
-    <string name="couldn_t_delete_alarm">تعذّر حذف المنبه</string>
-    <string name="couldn_t_update_alarm">تعذّر تحديث المنبه</string>
-    <string name="search_failed_check_connection">فشل البحث. تحقق من اتصالك بالإنترنت.</string>
-    <string name="couldn_t_determine_location_name">تعذّر تحديد اسم الموقع. تحقق من اتصالك بالإنترنت.</string>
-    <string name="couldn_t_save_location">تعذّر حفظ الموقع. حاول مرة أخرى.</string>
-    <string name="request_timed_out_check_connection">انتهت مهلة الطلب. تحقق من اتصالك بالإنترنت.</string>
-    <string name="cd_back">رجوع</string>
-    <string name="cd_search">بحث</string>
-    <string name="location_picker_search_hint">ابحث عن مدينة أو مكان</string>
-    <string name="location_picker_resolving">جارٍ تحديد الموقع…</string>
-    <string name="location_picker_confirm">تأكيد الموقع</string>
-    <string name="cd_status_badge">شارة الحالة</string>
-    <string name="cd_prayer_location">موقع الصلاة</string>
-    <string name="cd_location_dropdown">قائمة المواقع المنسدلة</string>
-    <string name="cd_decrease">إنقاص</string>
-    <string name="cd_increase">زيادة</string>
-
-
-    <string name="couldn_t_update_notification_settings">لم نتمكن من تحديث إعدادات الإشعارات</string>
-    <string name="couldn_t_update_calculation_method">لم نتمكن من تحديث وسيلة حساب مواقيت الصلاة</string>
-    <string name="couldn_t_update_madhab">لم نتمكن من تغيير مذهب ميقات العصر</string>
-    <string name="couldn_t_update_theme">لم نتمكن من تحديث ثيمة التطبيق</string>
-    <string name="couldn_t_update_language">لم نتمكن من تحديث لغة التطبيق</string>
-    <string name="couldn_t_update_adhan_sound">لم نتمكن من تحديث نغمة الآذان</string>
-    <string name="couldn_t_update_hijri_offset">لم نتمكن من ضبط التاريخ الهجري</string>
-
-    <string name="custom_alarm_sound">صوت المنبه الخاص</string>
-    <string name="custom_alarm_sound_default">نغمة المنبه الخاص الافتراضية</string>
-    <string name="custom_alarm_sound_alert">تنبيه خاص</string>
-    <string name="couldn_t_update_custom_alarm_sound">فشل تحديث صوت المنبه الخاص</string>
-
-
-
-    <string name="prerequisites_title">بعض المتطلبات تحتاج إلى انتباهك</string>
-    <string name="prerequisite_internet">الاتصال بالإنترنت</string>
-    <string name="prerequisite_internet_missing">لا يوجد اتصال.</string>
-    <string name="prerequisite_services">خدمات الموقع</string>
-    <string name="prerequisite_services_missing">خدمات الموقع متوقفة.</string>
-    <string name="prerequisite_permission">إذن الموقع</string>
-    <string name="prerequisite_permission_missing">التطبيق غير مسموح له باستخدام موقعك.</string>
-    <string name="prerequisite_permission_blocked">الإذن محظور. اسمح به من إعدادات التطبيق.</string>
-    <string name="prerequisite_action_enable_location">تفعيل الموقع</string>
-    <string name="prerequisite_action_allow">السماح</string>
-    <string name="prerequisite_action_open_settings">فتح الإعدادات</string>
-
-
-    <!-- Streak -->
     <plurals name="day_streak">
         <item quantity="zero">%1$d يوم متتالي</item>
         <item quantity="one">يوم واحد متتالي</item>
@@ -291,7 +153,18 @@
         <item quantity="other">%1$d يوم متتالي</item>
     </plurals>
 
-    <!-- Alarm offset descriptions -->
+    <!-- Custom alarms -->
+    <string name="custom_alarms">المنبهات المخصصة</string>
+    <string name="create_custom_alarms_before_or_after_prayers">أنشئ منبهاً خاصاً قبل أو بعد الصلوات المفروضة</string>
+    <string name="no_custom_alarms_title">لا توجد منبهات خاصة بك</string>
+    <string name="no_custom_alarms_body">اضغط الزر \u002B أدناه لإنشاء منبه جديد</string>
+    <string name="add_custom_alarm">أنشئ منبهاً</string>
+    <string name="custom_alarm_default_title">منبه خاص</string>
+    <string name="minutes_short">min</string>
+    <string name="alarm_offset_before">قبل %1$s</string>
+    <string name="alarm_offset_after">بعد %1$s</string>
+    <string name="at_prayer_time">%1$s في وقت</string>
+    <string name="repeat_every_day">تكرار يومي</string>
     <plurals name="minutes_before_prayer">
         <item quantity="zero">%1$d لدى %2$s</item>
         <item quantity="one">%1$d دقيقة واحدة قبل %2$s</item>
@@ -300,7 +173,6 @@
         <item quantity="many">%1$d دقيقة قبل %2$s</item>
         <item quantity="other">%1$d دقائق قبل %2$s</item>
     </plurals>
-
     <plurals name="minutes_after_prayer">
         <item quantity="zero">%1$d لدى %2$s</item>
         <item quantity="one">%1$d دقيقة واحدة بعد %2$s</item>
@@ -309,4 +181,77 @@
         <item quantity="many">%1$d دقيقة بعد %2$s</item>
         <item quantity="other">%1$d دقائق بعد %2$s</item>
     </plurals>
+
+    <!-- Custom alarms: Editor sheet -->
+    <string name="new_custom_alarm">منبه خاص جديد</string>
+    <string name="edit_custom_alarm">تعديل المنبه</string>
+    <string name="alarm_label_optional">اسم المنبه (اختياري)</string>
+    <string name="alarm_minutes_field_label">الدقائق</string>
+    <string name="prayer">الصلاة</string>
+    <string name="timing">التوقيت</string>
+    <string name="before">قبل الآذان</string>
+    <string name="after">بعد الآذان</string>
+
+    <!-- Custom alarms: Notification channel -->
+
+    <!-- Settings -->
+    <string name="customize_your_app_experience">تحكم بمظهر التطبيق حسب رغبتك</string>
+    <string name="prayer_notifications">إشعارات الصلاة</string>
+    <string name="get_alerted_and_notified_at_each_prayer_time">احصل على تنبيهات لكل صلاة</string>
+    <string name="appearance">الهيئة</string>
+    <string name="hijri_calendar">التقويم الهجري</string>
+    <string name="date_adjustment">ضبط التاريخ</string>
+    <string name="correct_for_local_moon_sighting">تصحيح التاريخ بناءً على رؤية الهلال</string>
+    <string name="custom_alarm_sound">صوت المنبه الخاص</string>
+    <string name="custom_alarm_sound_default">نغمة المنبه الخاص الافتراضية</string>
+    <string name="custom_alarm_sound_alert">تنبيه خاص</string>
+    <string name="about">المزيد</string>
+    <string name="rate_salati">قيم تطبيق صلاتي</string>
+    <string name="share_with_friends">شارك مع الأصدقاء</string>
+    <string name="contact_support">الاتصال بالدعم الفني</string>
+    <string name="version">النسخة</string>
+
+    <!-- Location picker -->
+    <string name="location_picker_search_hint">ابحث عن مدينة أو مكان</string>
+    <string name="location_picker_resolving">جارٍ تحديد الموقع…</string>
+    <string name="location_picker_confirm">تأكيد الموقع</string>
+    <string name="location_picker_use_current_location">استخدام موقعي الحالي</string>
+
+    <!-- Messages: errors and results -->
+    <string name="error">خطأ: %1$s</string>
+    <string name="something_went_wrong">يوجد ثمة خطأ</string>
+    <string name="no_internet_connection">لا يوجد اتصال بالإنترنت</string>
+    <string name="request_timed_out_check_connection">انتهت مهلة الطلب. تحقق من اتصالك بالإنترنت.</string>
+    <string name="failed_to_get_location">فشل العثور على موقع الهاتف</string>
+    <string name="failed_to_get_location_name">لم نتمكن من العثور على اسم الموقع</string>
+    <string name="couldn_t_determine_location_name">تعذّر تحديد اسم الموقع. تحقق من اتصالك بالإنترنت.</string>
+    <string name="couldn_t_save_location">تعذّر حفظ الموقع. حاول مرة أخرى.</string>
+    <string name="search_failed_check_connection">فشل البحث. تحقق من اتصالك بالإنترنت.</string>
+    <string name="failed_to_load_qibla_direction">فشل تحديد اتجاه القبلة</string>
+    <string name="failed_to_update_prayer_status">خطأ أثناء تحديث الصلاة</string>
+    <string name="alarm_saved">تم حفظ المنبه</string>
+    <string name="duplicate_alarm_exists">لديك منبه مماثل</string>
+    <string name="couldn_t_load_alarms">تعذّر تحميل المنبهات</string>
+    <string name="couldn_t_save_alarm">تعذّر حفظ المنبه</string>
+    <string name="couldn_t_delete_alarm">تعذّر حذف المنبه</string>
+    <string name="couldn_t_update_alarm">تعذّر تحديث المنبه</string>
+    <string name="couldn_t_update_time_format">تعذّر تحديث تنسيق الوقت</string>
+    <string name="couldn_t_update_notification_settings">لم نتمكن من تحديث إعدادات الإشعارات</string>
+    <string name="couldn_t_update_calculation_method">لم نتمكن من تحديث وسيلة حساب مواقيت الصلاة</string>
+    <string name="couldn_t_update_madhab">لم نتمكن من تغيير مذهب ميقات العصر</string>
+    <string name="couldn_t_update_theme">لم نتمكن من تحديث ثيمة التطبيق</string>
+    <string name="couldn_t_update_language">لم نتمكن من تحديث لغة التطبيق</string>
+    <string name="couldn_t_update_adhan_sound">لم نتمكن من تحديث نغمة الآذان</string>
+    <string name="couldn_t_update_hijri_offset">لم نتمكن من ضبط التاريخ الهجري</string>
+    <string name="couldn_t_update_custom_alarm_sound">فشل تحديث صوت المنبه الخاص</string>
+
+    <!-- Accessibility: content descriptions -->
+    <string name="cd_back">رجوع</string>
+    <string name="cd_search">بحث</string>
+    <string name="cd_status_badge">شارة الحالة</string>
+    <string name="cd_prayer_location">موقع الصلاة</string>
+    <string name="cd_location_dropdown">قائمة المواقع المنسدلة</string>
+    <string name="cd_decrease">إنقاص</string>
+    <string name="cd_increase">زيادة</string>
+
 </resources>
