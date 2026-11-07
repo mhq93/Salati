@@ -69,4 +69,13 @@ class MainActivity : AppCompatActivity() {
         super.onConfigurationChanged(newConfiguration)
         configurationVersion.intValue++
     }
+
+    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+        overrideConfiguration?.let {
+            val uiMode = it.uiMode
+            it.setTo(baseContext.resources.configuration)
+            it.uiMode = uiMode
+        }
+        super.applyOverrideConfiguration(overrideConfiguration)
+    }
 }
