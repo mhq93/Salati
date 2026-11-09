@@ -94,6 +94,8 @@
     <string name="back_to_today">العودة إلى اليوم</string>
     <string name="end_of_month">نهاية الشهر</string>
     <string name="unknown_location">موقع غير معروف</string>
+    <string name="muted">صامت</string>
+    <string name="enabled">مفعل</string>
 
     <!-- Hijri months -->
     <string name="hijri_muharram">المحرم</string>

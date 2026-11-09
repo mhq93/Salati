@@ -19,6 +19,7 @@ import com.mhq.salati.settings.ui.rawRes
 import com.mhq.salati.shared.ui.labelRes
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import androidx.core.graphics.toColorInt
 
 private const val CHANNEL_ID_PREFIX = "custom_alarms_channel"
 
@@ -57,7 +58,7 @@ class CustomAlarmNotifier @Inject constructor(
         )
 
         val notification = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_notification)
+            .setSmallIcon(R.drawable.ic_salati_colored)
             .setContentTitle(title)
             .setContentText(body)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

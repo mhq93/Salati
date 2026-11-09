@@ -19,26 +19,42 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
 import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
+/**
+ * The sensor-accuracy sentence and the colour of its status dot. Shared by the portrait banner and
+ * the landscape card so both always say the same thing.
+ */
+@Composable
+internal fun CompassAccuracyUi.sensorStatus(): Pair<String, Color> = when (this) {
+    CompassAccuracyUi.HIGH ->
+        stringResource(R.string.sensor_accuracy_is_excellent) to MaterialTheme.colorScheme.primary
+
+    CompassAccuracyUi.MEDIUM ->
+        stringResource(R.string.sensor_accuracy_is_moderate) to MaterialTheme.colorScheme.onSurfaceVariant
+
+    else ->
+        stringResource(R.string.sensor_accuracy_is_poor) to MaterialTheme.colorScheme.error
+}
+
+/**
+ * Text styles come from the theme typography (not hard-coded sizes) so the Arabic-safe line
+ * heights in Type.kt apply here too.
+ */
 @Composable
 fun CalibrationBanner(
     compassAccuracy: CompassAccuracyUi,
     onRecalibrateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val (label, dotColor) = when (compassAccuracy) {
-        CompassAccuracyUi.HIGH -> stringResource(R.string.sensor_accuracy_is_excellent) to MaterialTheme.colorScheme.primary
-        CompassAccuracyUi.MEDIUM -> stringResource(R.string.sensor_accuracy_is_moderate) to MaterialTheme.colorScheme.tertiary
-        else -> stringResource(R.string.sensor_accuracy_is_poor) to MaterialTheme.colorScheme.error
-    }
+    val (label, dotColor) = compassAccuracy.sensorStatus()
 
     Surface(
         shape = RoundedCornerShape(
@@ -67,7 +83,7 @@ fun CalibrationBanner(
             Text(
                 text = label,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 13.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(1f)
             )
             Spacer(Modifier.width(8.dp))
@@ -81,8 +97,8 @@ fun CalibrationBanner(
             ) {
                 Text(
                     text = stringResource(R.string.recalibrate),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 13.sp
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }
@@ -95,6 +111,17 @@ private fun CalibrationBannerPreview() {
     SalatiTheme {
         CalibrationBanner(
             compassAccuracy = CompassAccuracyUi.HIGH,
+            onRecalibrateClick = {}
+        )
+    }
+}
+
+@Preview(locale = "ar", fontScale = 1.5f)
+@Composable
+private fun CalibrationBannerArabicLargeFontPreview() {
+    SalatiTheme {
+        CalibrationBanner(
+            compassAccuracy = CompassAccuracyUi.MEDIUM,
             onRecalibrateClick = {}
         )
     }

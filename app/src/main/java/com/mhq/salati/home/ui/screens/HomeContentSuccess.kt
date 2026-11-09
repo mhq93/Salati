@@ -1,16 +1,29 @@
 package com.mhq.salati.home.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,12 +36,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.mhq.salati.R
 import com.mhq.salati.home.presentation.contract.HomeContract
-import com.mhq.salati.home.presentation.model.HijriDateUi
 import com.mhq.salati.home.presentation.model.PrayerDateUi
 import com.mhq.salati.home.presentation.model.PrayerTimingsUi
 import com.mhq.salati.home.ui.components.DateBanner
@@ -36,18 +46,12 @@ import com.mhq.salati.home.ui.components.LocationHeader
 import com.mhq.salati.home.ui.components.PrayerCountdownRing
 import com.mhq.salati.home.ui.components.PrayersList
 import com.mhq.salati.settings.presentation.model.TimeFormatUi
-import com.mhq.salati.shared.presentation.model.HijriMonthUi
 import com.mhq.salati.shared.presentation.model.PrayerNameUi
 import com.mhq.salati.shared.ui.formatForDisplay
+import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.labelRes
-import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.shared.ui.theme.prayerGradient
 import java.time.Duration
-import java.time.LocalDate
-import java.time.LocalTime
-
-/** Prayer times are shown as plain 24h "HH:mm" with ASCII digits (same as the raw API string was).
-private val PrayerTimeDisplayFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.US) */
 
 @Composable
 fun HomeContentSuccess(
@@ -65,7 +69,9 @@ fun HomeContentSuccess(
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val locale = LocalConfiguration.current.locales[0]
+    val configuration = LocalConfiguration.current
+    val locale = configuration.locales[0]
+    val isLandscape = isWideLayout()
 
     val prayers = remember(prayerTimings, timeFormat, locale) {
         listOf(
@@ -87,122 +93,132 @@ fun HomeContentSuccess(
         ).map { name -> name to prayerTimings[name].formatForDisplay(timeFormat, locale) }
     }
 
-    var headerHeightPx by remember { mutableIntStateOf(0) }
+    var headerSizingPx by remember { mutableIntStateOf(0) }
     var bannerHeightPx by remember { mutableIntStateOf(0) }
 
     Box(modifier = modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .onGloballyPositioned { headerHeightPx = it.size.height }
-                    .background(
-                        brush = MaterialTheme.colorScheme.prayerGradient,
-                        shape = RoundedCornerShape(
-                            bottomStart = 32.dp,
-                            bottomEnd = 32.dp
-                        )
+        if (isLandscape) {
+            Row(modifier = Modifier.fillMaxSize()) {
+                /** Left Column: even 50% split with straight line boundary */
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(brush = MaterialTheme.colorScheme.prayerGradient)
+                        .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Start))
+                        .statusBarsPadding()
+                        .padding(vertical = 16.dp, horizontal = 16.dp)
+                ) {
+                    LocationHeader(
+                        locationName = locationName,
+                        onClick = { onIntent(HomeContract.Intent.LocationPickerRequested) }
                     )
-                    .statusBarsPadding()
-                    .padding(bottom = 40.dp)
-            ) {
-                Spacer(modifier = Modifier.height(16.dp))
-                LocationHeader(
-                    locationName = locationName,
-                    onClick = { onIntent(HomeContract.Intent.LocationPickerRequested) }
-                )
-                PrayerCountdownRing(
-                    nextPrayerName = stringResource(nextPrayer.labelRes),
-                    remaining = remaining,
-                    progress = windowProgress,
-                    modifier = Modifier.padding(top = 12.dp)
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 32.dp,
-                            topEnd = 32.dp
-                        )
+                    PrayerCountdownRing(
+                        nextPrayerName = stringResource(nextPrayer.labelRes),
+                        remaining = remaining,
+                        progress = windowProgress,
+                        modifier = Modifier
+                            .weight(1f, fill = false)
+                            .padding(vertical = 16.dp)
+                            .aspectRatio(1f)
                     )
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                Spacer(modifier = Modifier.height(16.dp))
-                PrayersList(
-                    prayers = prayers,
-                    minorTimings = minorTimings,
-                    currentTimingName = currentPrayerName,
-                    mutedTimings = mutedPrayers,
-                    pastTimings = pastPrayers,
-                    onIntent = onIntent,
-                    modifier = modifier
-                )
-            }
-        }
-        DateBanner(
-            prayerDate = prayerDate,
-            isBrowsingToday = isToday,
-            onToday = { onIntent(HomeContract.Intent.TodayRequested) },
-            onPreviousDay = { onIntent(HomeContract.Intent.PreviousDay) },
-            onNextDay = { onIntent(HomeContract.Intent.NextDay) },
-            onEndOfMonth = { onIntent(HomeContract.Intent.EndOfMonthRequested) },
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .onGloballyPositioned { bannerHeightPx = it.size.height }
-                .offset {
-                    IntOffset(
-                        x = 0,
-                        y = headerHeightPx - bannerHeightPx / 2
+                    DateBanner(
+                        prayerDate = prayerDate,
+                        isBrowsingToday = isToday,
+                        onToday = { onIntent(HomeContract.Intent.TodayRequested) },
+                        onPreviousDay = { onIntent(HomeContract.Intent.PreviousDay) },
+                        onNextDay = { onIntent(HomeContract.Intent.NextDay) },
+                        onEndOfMonth = { onIntent(HomeContract.Intent.EndOfMonthRequested) },
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
-        )
-    }
-}
 
-@Preview(name = "Light Mode - Success", showSystemUi = true)
-@Preview(
-    name = "Dark Mode - Success",
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES,
-    showSystemUi = true
-)
-@Composable
-private fun HomeContentSuccessPreview() {
-    SalatiTheme {
-        HomeContent(
-            state = HomeContract.State(
-                isLoading = false,
-                errorMessage = null,
-                locationUiState = HomeContract.LocationUiState(locationName = "Cairo, Egypt"),
-                dateBrowserUiState = HomeContract.DateBrowserUiState(isBrowsingToday = true),
-                prayerTimesUiState = HomeContract.PrayerTimesUiState(
-                    date = PrayerDateUi(
-                        gregorianDate = LocalDate.of(2026, 8, 17),
-                        hijriDate = HijriDateUi(4, HijriMonthUi.SHAWWAL, 1448)
-                    ),
-                    timings = PrayerTimingsUi(
-                        mapOf(
-                            PrayerNameUi.IMSAK to LocalTime.of(4, 15),
-                            PrayerNameUi.FAJR to LocalTime.of(4, 30),
-                            PrayerNameUi.SHOROUQ to LocalTime.of(5, 45),
-                            PrayerNameUi.DHUHR to LocalTime.of(12, 0),
-                            PrayerNameUi.ASR to LocalTime.of(15, 30),
-                            PrayerNameUi.MAGHRIB to LocalTime.of(18, 45),
-                            PrayerNameUi.ISHA to LocalTime.of(20, 15),
-                            PrayerNameUi.MIDNIGHT to LocalTime.of(23, 30),
-                            PrayerNameUi.FIRST_THIRD to LocalTime.of(22, 0),
-                            PrayerNameUi.LAST_THIRD to LocalTime.of(2, 0)
+                /** Right Column: even 50% split, scrolls when the screen is too short */
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.End))
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    PrayersList(
+                        prayers = prayers,
+                        minorTimings = minorTimings,
+                        currentTimingName = currentPrayerName,
+                        mutedTimings = mutedPrayers,
+                        pastTimings = pastPrayers,
+                        onIntent = onIntent,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        } else {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onGloballyPositioned { headerSizingPx = it.size.height }
+                        .background(
+                            brush = MaterialTheme.colorScheme.prayerGradient,
+                            shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp)
                         )
-                    ),
-                    nextPrayerName = PrayerNameUi.FAJR,
-                    remaining = Duration.ofMinutes(45),
-                    windowProgress = 0.6f
-                )
-            ),
-            onIntent = {}
-        )
+                        .statusBarsPadding()
+                        .padding(bottom = 40.dp)
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    LocationHeader(
+                        locationName = locationName,
+                        onClick = { onIntent(HomeContract.Intent.LocationPickerRequested) }
+                    )
+                    PrayerCountdownRing(
+                        nextPrayerName = stringResource(nextPrayer.labelRes),
+                        remaining = remaining,
+                        progress = windowProgress,
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .size(220.dp)
+                    )
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(horizontal = 16.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    PrayersList(
+                        prayers = prayers,
+                        minorTimings = minorTimings,
+                        currentTimingName = currentPrayerName,
+                        mutedTimings = mutedPrayers,
+                        pastTimings = pastPrayers,
+                        onIntent = onIntent,
+                        modifier = Modifier.widthIn(max = 560.dp).fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+            }
+
+            DateBanner(
+                prayerDate = prayerDate,
+                isBrowsingToday = isToday,
+                onToday = { onIntent(HomeContract.Intent.TodayRequested) },
+                onPreviousDay = { onIntent(HomeContract.Intent.PreviousDay) },
+                onNextDay = { onIntent(HomeContract.Intent.NextDay) },
+                onEndOfMonth = { onIntent(HomeContract.Intent.EndOfMonthRequested) },
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .onGloballyPositioned { bannerHeightPx = it.size.height }
+                    .offset { IntOffset(x = 0, y = headerSizingPx - bannerHeightPx / 2) }
+            )
+        }
     }
 }

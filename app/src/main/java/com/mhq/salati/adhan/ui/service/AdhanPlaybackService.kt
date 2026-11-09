@@ -28,6 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
+import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class AdhanPlaybackService : Service() {
@@ -173,7 +174,7 @@ class AdhanPlaybackService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(body)
-            .setSmallIcon(R.drawable.ic_notification)
+            .setSmallIcon(R.drawable.ic_salati_colored)
             .setSilent(true)
             .setOngoing(false)
             .setAutoCancel(true)

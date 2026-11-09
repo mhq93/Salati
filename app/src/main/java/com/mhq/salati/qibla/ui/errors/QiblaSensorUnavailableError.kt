@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,23 +26,23 @@ fun QiblaSensorUnavailableError(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp)
     ) {
         Text(
             text = stringResource(R.string.error, errorMessage),
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center
         )
-        Spacer(
-            Modifier.height(8.dp)
-        )
+        Spacer(Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.this_device_doesn_t_have_the_sensors_needed_for_a_compass),
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center
         )
-        Spacer(
-            Modifier.height(4.dp)
-        )
+        Spacer(Modifier.height(4.dp))
         Text(
             text = stringResource(R.string.qibla_direction_can_t_be_shown_here),
             style = MaterialTheme.typography.bodySmall,

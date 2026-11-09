@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -79,17 +80,25 @@ fun QiblaContent(
                 }
 
                 state.qiblaBearing != null -> {
-                    TabHeader(
-                        icon = Icons.Default.Explore,
-                        title = stringResource(R.string.qibla),
-                        subtitle = stringResource(R.string.face_the_kaaba_wherever_you_are)
-                    )
-                    QiblaContentSuccess(
-                        deviceHeading = state.deviceHeading,
-                        qiblaBearing = state.qiblaBearing,
-                        compassAccuracy = state.compassAccuracy,
-                        onRecalibrateClick = { onIntent(QiblaContract.Intent.RecalibrationRequested) }
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    ) {
+                        TabHeader(
+                            icon = Icons.Default.Explore,
+                            title = stringResource(R.string.qibla),
+                            subtitle = stringResource(R.string.face_the_kaaba_wherever_you_are)
+                        )
+                        QiblaContentSuccess(
+                            deviceHeading = state.deviceHeading,
+                            qiblaBearing = state.qiblaBearing,
+                            compassAccuracy = state.compassAccuracy,
+                            onRecalibrateClick = { onIntent(QiblaContract.Intent.RecalibrationRequested) },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
 
                 else -> Box(modifier = Modifier.weight(1f))
@@ -104,6 +113,8 @@ fun QiblaContent(
     showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
+@Preview(name = "Landscape - Active Compass", widthDp = 800, heightDp = 360)
+@Preview(name = "Arabic Large Font - Active Compass", locale = "ar", fontScale = 1.5f, showSystemUi = true)
 @Composable
 private fun QiblaContentActivePreview() {
     SalatiTheme {

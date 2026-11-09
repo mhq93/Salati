@@ -1,5 +1,6 @@
 package com.mhq.salati.shared.ui.navigation
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -40,9 +41,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
@@ -54,25 +58,15 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 private val NotchRadius = 32.dp
 private val BubbleSize = 60.dp
 private val CornerRadius = 28.dp
-
-/** Smallest gap between the first/last tab group and the bar's edge. */
 private val MinHorizontalEdgePadding = 16.dp
-
-/** Half the notch's opening, as a multiple of [NotchRadius]. */
 private const val NotchHalfWidthFactor = 1.35f
 
-/**
- * Floating bottom navigation bar with an animated notch and selection bubble.
- *
- * Animated values (notch position, bubble scale, icon alpha/scale) are only read in layout/draw
- * lambdas, so animating never recomposes this function. The bar width is known during the first
- * composition, so the notch starts at the selected tab instead of sliding in from the left.
- */
 @Composable
 fun BottomNavBar(
     items: List<BottomNavBarItem>,
@@ -80,10 +74,15 @@ fun BottomNavBar(
     onItemSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val unselectedContentColor = MaterialTheme.colorScheme.secondary
-    val selectedContentColor = MaterialTheme.colorScheme.tertiary
+    val isLandscape = isWideLayout()
+
+    val bubbleIconColor = MaterialTheme.colorScheme.primary
     val barBackgroundColor = MaterialTheme.colorScheme.primaryContainer
-    val bubbleIconColor = MaterialTheme.colorScheme.onTertiary
+    val selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+    val unselectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+
+    val leftGradientEndColor = MaterialTheme.colorScheme.primary
+    val rightSurfaceColor = MaterialTheme.colorScheme.background
 
     val itemCount = items.size
     val density = LocalDensity.current
@@ -97,7 +96,9 @@ fun BottomNavBar(
     val cornerRadiusPx = with(density) { CornerRadius.toPx() }
     val notchHalfWidthPx = notchRadiusPx * NotchHalfWidthFactor
     val bubbleSizePx = with(density) { BubbleSize.roundToPx() }
-    val bubbleOffsetYPx = -(with(density) { (BubbleSize / 2.2f).roundToPx() })
+
+    val notchDepthPx = notchRadiusPx * 1.15f
+    val bubbleOffsetYPx = (notchDepthPx / 2f - (bubbleSizePx / 2f)).toInt()
 
     BoxWithConstraints(
         modifier = modifier
@@ -106,9 +107,6 @@ fun BottomNavBar(
     ) {
         val barWidthPx = constraints.maxWidth
 
-        // The first and last tab centers must sit at least (corner radius + notch half-width) from the
-        // edge, otherwise the notch collides with the rounded corners and leaves a sliver. Solve for the
-        // smallest edge padding that guarantees it, so tabs only squeeze inward as much as needed.
         val minEdgeCenterPx = cornerRadiusPx + notchHalfWidthPx
         val edgePaddingPx = if (itemCount > 1) {
             val solved = (minEdgeCenterPx - barWidthPx / (2f * itemCount)) / (1f - 1f / itemCount)
@@ -128,7 +126,6 @@ fun BottomNavBar(
             label = "notchCenter"
         )
 
-        // Pop animation on selection change only (not on first show).
         val bubbleScale = remember { Animatable(1f) }
         var previousIndex by remember { mutableIntStateOf(selectedIndex) }
         LaunchedEffect(selectedIndex) {
@@ -145,7 +142,6 @@ fun BottomNavBar(
             }
         }
 
-        // --- BACKGROUND NOTCH CANVAS ---
         val notchPath = remember { Path() }
         Canvas(
             modifier = Modifier
@@ -154,30 +150,45 @@ fun BottomNavBar(
         ) {
             val w = size.width
             val h = size.height
-            // Clamped so the notch can never reach into the rounded corners (even while the spring overshoots).
-            val cx = animatedCenterPx.coerceIn(minEdgeCenterPx, maxOf(minEdgeCenterPx, w - minEdgeCenterPx))
+            val cx = animatedCenterPx.coerceIn(
+                minEdgeCenterPx,
+                maxOf(minEdgeCenterPx, w - minEdgeCenterPx)
+            )
             val notchStart = cx - notchHalfWidthPx
             val notchEnd = cx + notchHalfWidthPx
-            val notchDepth = notchRadiusPx * 1.15f
+
+            // ONLY apply split backdrop treatment if on Home screen in landscape
+            if (isLandscape && selectedRoute == NavigationScreen.Home.route) {
+                drawRect(
+                    color = if (isRtl) rightSurfaceColor else leftGradientEndColor,
+                    topLeft = Offset(0f, 0f),
+                    size = Size(w / 2f, h)
+                )
+                drawRect(
+                    color = if (isRtl) leftGradientEndColor else rightSurfaceColor,
+                    topLeft = Offset(w / 2f, 0f),
+                    size = Size(w / 2f, h)
+                )
+            } else if (isLandscape) {
+                // For Qibla and all other views, fill the standard full width surface color behind the notch curves
+                drawRect(color = rightSurfaceColor, topLeft = Offset(0f, 0f), size = Size(w, h))
+            }
 
             notchPath.rewind()
             notchPath.apply {
-                // Top-left corner, then flat top edge up to the notch
                 moveTo(0f, cornerRadiusPx)
                 quadraticTo(0f, 0f, cornerRadiusPx, 0f)
                 lineTo(notchStart, 0f)
-                // Notch: down to the bottom point and back up
                 cubicTo(
                     cx - notchHalfWidthPx * 0.56f, 0f,
-                    cx - notchHalfWidthPx * 0.53f, notchDepth,
-                    cx, notchDepth
+                    cx - notchHalfWidthPx * 0.53f, notchDepthPx,
+                    cx, notchDepthPx
                 )
                 cubicTo(
-                    cx + notchHalfWidthPx * 0.53f, notchDepth,
+                    cx + notchHalfWidthPx * 0.53f, notchDepthPx,
                     cx + notchHalfWidthPx * 0.56f, 0f,
                     notchEnd, 0f
                 )
-                // Flat top edge, top-right corner, and the rest of the bar
                 lineTo(w - cornerRadiusPx, 0f)
                 quadraticTo(w, 0f, w, cornerRadiusPx)
                 lineTo(w, h)
@@ -187,8 +198,6 @@ fun BottomNavBar(
             drawPath(path = notchPath, color = barBackgroundColor)
         }
 
-        // --- FLOATING SELECTION BUBBLE ---
-        // The bubble is decorative: the selected tab's label already announces the selection.
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
@@ -235,11 +244,6 @@ fun BottomNavBar(
         }
     }
 }
-
-/**
- * One tab. Recomposes on its own when its selection changes; the icon fade/scale and the press
- * feedback are read in graphicsLayer lambdas, so they never trigger recomposition.
- */
 @Composable
 private fun RowScope.BottomNavItem(
     item: BottomNavBarItem,
@@ -251,7 +255,6 @@ private fun RowScope.BottomNavItem(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-
     val pressScale by animateFloatAsState(
         targetValue = if (isPressed) 0.92f else 1f,
         animationSpec = tween(80),
@@ -265,7 +268,6 @@ private fun RowScope.BottomNavItem(
         targetValue = if (isSelected) 0.5f else 1f,
         label = "navIconScale"
     )
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom,
@@ -283,7 +285,6 @@ private fun RowScope.BottomNavItem(
                 onClick = onClick
             )
     ) {
-        // The icon fades out under the bubble when selected; the item keeps the same height either way.
         Box(modifier = Modifier.size(28.dp), contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = item.icon,
@@ -299,7 +300,6 @@ private fun RowScope.BottomNavItem(
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
-
         Text(
             text = item.label,
             color = if (isSelected) selectedColor else unselectedColor.copy(alpha = 0.8f),
@@ -311,7 +311,6 @@ private fun RowScope.BottomNavItem(
         )
     }
 }
-
 @Preview
 @Composable
 private fun BottomNavBarPreview() {

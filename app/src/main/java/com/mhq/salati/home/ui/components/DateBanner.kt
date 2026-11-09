@@ -64,6 +64,7 @@ fun DateBanner(
     onEndOfMonth: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val hijriMonthLabel = stringResource(prayerDate.hijriDate.month.labelRes)
 
     val gregorianLine = remember(prayerDate.gregorianDate) {
@@ -72,9 +73,17 @@ fun DateBanner(
         )
     }
 
-    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val todayIcon = if (isRtl) Icons.Default.KeyboardDoubleArrowRight else Icons.Default.KeyboardDoubleArrowLeft
-    val endOfMonthIcon = if (isRtl) Icons.Default.KeyboardDoubleArrowLeft else Icons.Default.KeyboardDoubleArrowRight
+    val todayIcon =
+        if (isRtl)
+            Icons.Default.KeyboardDoubleArrowRight
+        else
+            Icons.Default.KeyboardDoubleArrowLeft
+
+    val endOfMonthIcon =
+        if (isRtl)
+            Icons.Default.KeyboardDoubleArrowLeft
+        else
+            Icons.Default.KeyboardDoubleArrowRight
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -87,8 +96,9 @@ fun DateBanner(
                 MaterialTheme.colorScheme.tertiary.copy(alpha = 0.3f),
                 RoundedCornerShape(50)
             )
-            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .padding(horizontal = 12.dp)
             .fillMaxWidth(0.85f)
+            .height(54.dp)
     ) {
         BannerChevron(
             icon = todayIcon,
@@ -106,7 +116,7 @@ fun DateBanner(
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 8.dp)
@@ -116,36 +126,33 @@ fun DateBanner(
                 color = MaterialTheme.colorScheme.tertiary,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
-                overflow = TextOverflow.Clip,
+                overflow = TextOverflow.Ellipsis,
                 autoSize = TextAutoSize.StepBased(
                     minFontSize = 12.sp,
-                    maxFontSize = 20.sp,
+                    maxFontSize = 18.sp,
                     stepSize = 1.sp
                 ),
                 style = TextStyle(
-                    lineHeight = 22.sp,
                     lineHeightStyle = LineHeightStyle(
                         alignment = LineHeightStyle.Alignment.Center,
-                        trim = LineHeightStyle.Trim.Both
+                        trim = LineHeightStyle.Trim.None
                     )
-                ),
-                modifier = Modifier.height(22.dp)
+                )
             )
+            Spacer(modifier = Modifier.height(1.dp))
             Text(
                 text = gregorianLine,
                 color = MaterialTheme.colorScheme.tertiary,
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
-                overflow = TextOverflow.Clip,
+                overflow = TextOverflow.Ellipsis,
                 style = TextStyle(
-                    lineHeight = 18.sp,
                     lineHeightStyle = LineHeightStyle(
                         alignment = LineHeightStyle.Alignment.Center,
-                        trim = LineHeightStyle.Trim.Both
+                        trim = LineHeightStyle.Trim.None
                     )
-                ),
-                modifier = Modifier.height(18.dp)
+                )
             )
         }
 

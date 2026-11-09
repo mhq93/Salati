@@ -16,10 +16,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -40,17 +45,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
 import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
+import com.mhq.salati.shared.ui.isWideLayout
+import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
+/**
+ * Full-screen calibration guide.
+ *
+ * The scrim covers the whole screen, but the content is kept inside the safe drawing area (status
+ * bar, display cutout, navigation bar) and above the floating bottom bar, which is drawn on top of
+ * this overlay. Both layouts scroll when the window is too short (landscape, split-screen, large
+ * font, Arabic).
+ */
 @Composable
 fun CompassCalibrationOverlay(
     accuracy: CompassAccuracyUi,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isWide = isWideLayout()
+
     val infiniteTransition = rememberInfiniteTransition(label = "figure8")
     val progress by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -62,7 +79,6 @@ fun CompassCalibrationOverlay(
         label = "figure8Progress"
     )
 
-    // Extract colors BEFORE Canvas/DrawScope
     val scrimColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
     val textColor = MaterialTheme.colorScheme.onSurface
     val textSecondaryColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -81,48 +97,113 @@ fun CompassCalibrationOverlay(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
-            ) { /* absorb clicks */ },
+            ) { /* absorb clicks */ }
+            .safeDrawingPadding()
+            .padding(bottom = BottomNavBarDefaults.Height),
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            modifier = Modifier.padding(32.dp)
-        ) {
-            Canvas(modifier = Modifier.size(160.dp)) {
-                drawFigure8Path(
-                    progress = progress,
-                    pathColor = textColor.copy(alpha = 0.25f),
-                    dotColor = textColor
-                )
-            }
-
-            Text(
-                text = stringResource(R.string.compass_calibrate_title),
-                color = textColor,
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            Text(
-                text = stringResource(R.string.compass_calibrate_body),
-                color = textSecondaryColor,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center
-            )
-
-            AccuracyStatus(
-                accuracy = accuracy,
-                highLabel = highLabel, highColor = highColor,
-                mediumLabel = mediumLabel, mediumColor = mediumColor,
-                lowLabel = lowLabel, lowColor = lowColor,
-                unreliableLabel = unreliableLabel, unreliableColor = unreliableColor
-            )
-
-            OutlinedButton(
-                onClick = onDismiss,
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = textColor),
-                border = BorderStroke(1.dp, buttonBorderColor)
+        if (isWide) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(CompassWideLayout.Padding),
+                horizontalArrangement = Arrangement.spacedBy(CompassWideLayout.Spacing),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(stringResource(R.string.compass_calibrate_done))
+                Box(
+                    modifier = Modifier.weight(CompassWideLayout.DialPaneWeight),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Canvas(modifier = Modifier.size(130.dp)) {
+                        drawFigure8Path(
+                            progress = progress,
+                            pathColor = textColor.copy(alpha = 0.25f),
+                            dotColor = textColor
+                        )
+                    }
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .weight(CompassWideLayout.SidePaneWeight)
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(
+                        text = stringResource(R.string.compass_calibrate_title),
+                        color = textColor,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = stringResource(R.string.compass_calibrate_body),
+                        color = textSecondaryColor,
+                        style = MaterialTheme.typography.bodySmall,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    AccuracyStatus(
+                        accuracy = accuracy,
+                        highLabel = highLabel, highColor = highColor,
+                        mediumLabel = mediumLabel, mediumColor = mediumColor,
+                        lowLabel = lowLabel, lowColor = lowColor,
+                        unreliableLabel = unreliableLabel, unreliableColor = unreliableColor
+                    )
+                    OutlinedButton(
+                        onClick = onDismiss,
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = textColor),
+                        border = BorderStroke(1.dp, buttonBorderColor),
+                        modifier = Modifier.padding(top = 16.dp)
+                    ) {
+                        Text(stringResource(R.string.compass_calibrate_done))
+                    }
+                }
+            }
+        } else {
+            /** Centered by the parent Box when it fits; scrolls when it does not. */
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                modifier = Modifier
+                    .widthIn(max = 480.dp)
+                    .verticalScroll(rememberScrollState())
+                    .padding(32.dp)
+            ) {
+                Canvas(modifier = Modifier.size(160.dp)) {
+                    drawFigure8Path(
+                        progress = progress,
+                        pathColor = textColor.copy(alpha = 0.25f),
+                        dotColor = textColor
+                    )
+                }
+
+                Text(
+                    text = stringResource(R.string.compass_calibrate_title),
+                    color = textColor,
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Text(
+                    text = stringResource(R.string.compass_calibrate_body),
+                    color = textSecondaryColor,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
+                )
+
+                AccuracyStatus(
+                    accuracy = accuracy,
+                    highLabel = highLabel, highColor = highColor,
+                    mediumLabel = mediumLabel, mediumColor = mediumColor,
+                    lowLabel = lowLabel, lowColor = lowColor,
+                    unreliableLabel = unreliableLabel, unreliableColor = unreliableColor
+                )
+
+                OutlinedButton(
+                    onClick = onDismiss,
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = textColor),
+                    border = BorderStroke(1.dp, buttonBorderColor)
+                ) {
+                    Text(stringResource(R.string.compass_calibrate_done))
+                }
             }
         }
     }
@@ -178,7 +259,6 @@ private fun AccuracyStatus(
         CompassAccuracyUi.LOW -> lowLabel to lowColor
         CompassAccuracyUi.UNRELIABLE -> unreliableLabel to unreliableColor
     }
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -198,6 +278,8 @@ private fun AccuracyStatus(
 
 @Preview(name = "Light Mode Overlay", showSystemUi = true)
 @Preview(name = "Dark Mode Overlay", showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Landscape Overlay", widthDp = 800, heightDp = 360)
+@Preview(name = "Arabic Large Font", locale = "ar", fontScale = 1.5f, showSystemUi = true)
 @Composable
 private fun CompassCalibrationOverlayPreview() {
     SalatiTheme {

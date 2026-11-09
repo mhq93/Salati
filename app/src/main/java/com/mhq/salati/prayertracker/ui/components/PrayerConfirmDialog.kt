@@ -32,6 +32,7 @@ import com.mhq.salati.shared.presentation.model.PrayerNameUi
 import com.mhq.salati.shared.ui.labelRes
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
+
 @Composable
 fun PrayerConfirmDialog(
     prayer: PrayerNameUi,

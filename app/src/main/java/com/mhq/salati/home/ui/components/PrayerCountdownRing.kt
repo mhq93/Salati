@@ -2,7 +2,7 @@ package com.mhq.salati.home.ui.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,25 +40,26 @@ fun PrayerCountdownRing(
     val countdownLabel = remaining.toCountdownLabel()
     val progressFraction = progress.coerceIn(0f, 1f)
 
-    // Get colors and brush BEFORE entering Canvas (since Canvas is not @Composable context)
     val trackColor = MaterialTheme.colorScheme.countdownTrack
     val progressBrush = MaterialTheme.colorScheme.countdownSweep
     val markerOuterColor = MaterialTheme.colorScheme.surface
     val markerInnerColor = MaterialTheme.colorScheme.tertiary
-    val textColor = MaterialTheme.colorScheme.tertiary
+    val textColor = MaterialTheme.colorScheme.onSurface
 
-    Box(
+    BoxWithConstraints(
         contentAlignment = Alignment.Center,
-        modifier = modifier.size(220.dp)
+        modifier = modifier
     ) {
+        /** 1f at the original 220dp design size, shrinks only when space is tighter */
+        val scale = (minOf(maxWidth, maxHeight) / 220.dp).coerceIn(0.5f, 1f)
+
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val strokeWidth = 16.dp.toPx()
+            val strokeWidth = (16 * scale).dp.toPx()
             val radius = (minOf(size.width, size.height) - strokeWidth) / 2f
             val center = Offset(size.width / 2f, size.height / 2f)
             val topLeft = Offset(center.x - radius, center.y - radius)
             val arcSize = Size(radius * 2, radius * 2)
 
-            // Dim full track — the entire prayer-to-prayer span
             drawArc(
                 color = trackColor,
                 startAngle = -90f,
@@ -69,7 +70,6 @@ fun PrayerCountdownRing(
                 style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
             )
 
-            // Bright progress arc — elapsed portion since the previous prayer
             drawArc(
                 brush = progressBrush,
                 startAngle = -90f,
@@ -80,7 +80,6 @@ fun PrayerCountdownRing(
                 style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
             )
 
-            // Marker dot at current position
             val markerAngleRad = Math.toRadians((-90 + 360 * progressFraction).toDouble())
             val markerPoint = Offset(
                 center.x + radius * cos(markerAngleRad).toFloat(),
@@ -88,30 +87,28 @@ fun PrayerCountdownRing(
             )
             drawCircle(
                 color = markerOuterColor,
-                radius = strokeWidth / 2.4f,
+                radius = strokeWidth / 2f,
                 center = markerPoint
             )
             drawCircle(
                 color = markerInnerColor,
-                radius = strokeWidth / 3.6f,
+                radius = strokeWidth / 3.2f,
                 center = markerPoint
             )
         }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = stringResource(R.string.next_prayer, nextPrayerName),
                 color = textColor,
-                fontSize = 16.sp,
+                fontSize = (16 * scale).sp,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height((8 * scale).dp))
             Text(
                 text = countdownLabel,
                 color = textColor,
-                fontSize = 34.sp,
+                fontSize = (34 * scale).sp,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -133,8 +130,9 @@ private fun PrayerCountdownRingPreview() {
     SalatiTheme {
         PrayerCountdownRing(
             nextPrayerName = "Fajr",
-            remaining = Duration.ofSeconds(1),
-            progress = 0.4f
+            remaining = Duration.ofSeconds(3600),
+            progress = 0.4f,
+            modifier = Modifier.size(220.dp)
         )
     }
 }

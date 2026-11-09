@@ -6,6 +6,9 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.hardware.display.DisplayManager
+import android.view.Display
+import android.view.Surface
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +16,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 class AndroidRotationSensorDataSource @Inject constructor(
-    @ApplicationContext context: Context
+    @ApplicationContext private val context: Context
 ) : RotationSensorDataSource {
 
     private val sensorManager =
@@ -25,6 +28,9 @@ class AndroidRotationSensorDataSource @Inject constructor(
     private val magneticFieldSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
 
+    private val displayManager =
+        context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+
     override fun headings(latitude: Double, longitude: Double): Flow<CompassSample> = callbackFlow {
         if (rotationSensor == null) {
             close(RotationSensorUnavailableException())
@@ -32,10 +38,10 @@ class AndroidRotationSensorDataSource @Inject constructor(
         }
 
         val rotationMatrix = FloatArray(9)
+        val adjustedMatrix = FloatArray(9)
         val orientationAngles = FloatArray(3)
         var currentAccuracy = SensorAccuracy.HIGH
 
-        // Declination depends only on place and date, so compute it once per compass session.
         val declination = GeomagneticField(
             latitude.toFloat(),
             longitude.toFloat(),
@@ -46,7 +52,42 @@ class AndroidRotationSensorDataSource @Inject constructor(
         val rotationListener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent) {
                 SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
-                SensorManager.getOrientation(rotationMatrix, orientationAngles)
+
+                /** The remap must follow the display's current rotation (0/90/180/270). */
+                val rotation = displayManager.getDisplay(Display.DEFAULT_DISPLAY)?.rotation
+                    ?: Surface.ROTATION_0
+
+                when (rotation) {
+                    Surface.ROTATION_90 -> {
+                        SensorManager.remapCoordinateSystem(
+                            rotationMatrix,
+                            SensorManager.AXIS_Y,
+                            SensorManager.AXIS_MINUS_X,
+                            adjustedMatrix
+                        )
+                    }
+                    Surface.ROTATION_180 -> {
+                        SensorManager.remapCoordinateSystem(
+                            rotationMatrix,
+                            SensorManager.AXIS_MINUS_X,
+                            SensorManager.AXIS_MINUS_Y,
+                            adjustedMatrix
+                        )
+                    }
+                    Surface.ROTATION_270 -> {
+                        SensorManager.remapCoordinateSystem(
+                            rotationMatrix,
+                            SensorManager.AXIS_MINUS_Y,
+                            SensorManager.AXIS_X,
+                            adjustedMatrix
+                        )
+                    }
+                    else -> {
+                        System.arraycopy(rotationMatrix, 0, adjustedMatrix, 0, rotationMatrix.size)
+                    }
+                }
+
+                SensorManager.getOrientation(adjustedMatrix, orientationAngles)
 
                 val azimuthRadians = orientationAngles[0]
                 var magneticAzimuth = Math.toDegrees(azimuthRadians.toDouble()).toFloat()
@@ -59,13 +100,11 @@ class AndroidRotationSensorDataSource @Inject constructor(
                 trySend(CompassSample(trueAzimuth, currentAccuracy))
             }
 
-            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-            }
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }
 
         val magneticFieldListener = object : SensorEventListener {
-            override fun onSensorChanged(event: SensorEvent) {
-            }
+            override fun onSensorChanged(event: SensorEvent) {}
 
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
                 currentAccuracy = when (accuracy) {
@@ -77,17 +116,9 @@ class AndroidRotationSensorDataSource @Inject constructor(
             }
         }
 
-        sensorManager.registerListener(
-            rotationListener,
-            rotationSensor,
-            SensorManager.SENSOR_DELAY_UI
-        )
+        sensorManager.registerListener(rotationListener, rotationSensor, SensorManager.SENSOR_DELAY_UI)
         magneticFieldSensor?.let {
-            sensorManager.registerListener(
-                magneticFieldListener,
-                it,
-                SensorManager.SENSOR_DELAY_UI
-            )
+            sensorManager.registerListener(magneticFieldListener, it, SensorManager.SENSOR_DELAY_UI)
         }
 
         awaitClose {

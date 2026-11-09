@@ -3,21 +3,36 @@ package com.mhq.salati.home.ui.components
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.NotificationsOff
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
@@ -53,27 +68,37 @@ fun PrayerGridItem(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp, horizontal = 16.dp)
+                .heightIn(min = 56.dp)
+                .padding(horizontal = 14.dp)
         ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(2.dp),
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
                     text = prayerName,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 18.sp,
-                    color = if (isPrayerHighlighted) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface,
+                    color =
+                        if (isPrayerHighlighted)
+                            MaterialTheme.colorScheme.tertiary
+                        else
+                            MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
-                    overflow = TextOverflow.Clip
+                    overflow = TextOverflow.Ellipsis
                 )
+                Spacer(modifier = Modifier.height(1.dp))
                 Text(
                     text = prayerTime,
-                    fontSize = 14.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
-                    color = if (isPrayerHighlighted) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    color =
+                        if (isPrayerHighlighted)
+                            MaterialTheme.colorScheme.tertiary
+                        else
+                            MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
-                    overflow = TextOverflow.Clip
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
@@ -85,7 +110,10 @@ fun PrayerGridItem(
                     .background(
                         color = when {
                             isPrayerHighlighted -> MaterialTheme.colorScheme.tertiary
-                            isPrayerAdhanMuted -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12f)
+                            isPrayerAdhanMuted -> MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                alpha = 0.12f
+                            )
+
                             else -> MaterialTheme.colorScheme.secondaryContainer
                         },
                         shape = CircleShape
@@ -102,7 +130,11 @@ fun PrayerGridItem(
                         isPrayerAdhanMuted -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = if (isPrayerPassed) 0.4f else 1f)
                         else -> MaterialTheme.colorScheme.secondary.copy(alpha = if (isPrayerPassed) 0.4f else 1f)
                     },
-                    contentDescription = if (isPrayerAdhanMuted) "Muted" else "Enabled",
+                    contentDescription =
+                        if (isPrayerAdhanMuted)
+                            stringResource(R.string.muted)
+                        else
+                            stringResource(R.string.enabled),
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -111,7 +143,11 @@ fun PrayerGridItem(
 }
 
 @Preview(name = "Light Mode - Active", showBackground = true)
-@Preview(name = "Dark Mode - Active", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    name = "Dark Mode - Active",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 private fun PrayerGridItemActivePreview() {
     SalatiTheme {
@@ -129,7 +165,11 @@ private fun PrayerGridItemActivePreview() {
 }
 
 @Preview(name = "Light Mode - Passed & Muted", showBackground = true)
-@Preview(name = "Dark Mode - Passed & Muted", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    name = "Dark Mode - Passed & Muted",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 private fun PrayerGridItemMutedPreview() {
     SalatiTheme {
