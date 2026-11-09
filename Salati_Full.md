@@ -1,8 +1,8 @@
 # Salati project export
 
-- Generated: 2026-11-09 12:05
+- Generated: 2026-11-09 17:36
 - PowerShell: 5.1.19041.6456
-- Files embedded: 399
+- Files embedded: 400
 - Files listed only (binary / too large / sensitive): 29
 - Secrets: local.properties, google-services.json, keystores and .env files are skipped; key/secret/password/token string literals are replaced with <REDACTED>.
 
@@ -10,9 +10,10 @@
 
 ```text
 branch: dev
-last commit: 33831c0 2026-11-08 fix: cancelled notification auto-dismiss
+last commit: 4c4a5cf 2026-11-09 wip: modified Type.kt to handle vertical expansion in UI elements upon switching app language to Arabic, redesigned Home and Qibla to handle different screen sizes and device rotation. Qibla is confirmed done, pending: rest of the screens
 
 recent commits:
+  4c4a5cf 2026-11-09 wip: modified Type.kt to handle vertical expansion in UI elements upon switching app language to Arabic, redesigned Home and Qibla to handle different screen sizes and device rotation. Qibla is confirmed done, pending: rest of the screens
   33831c0 2026-11-08 fix: cancelled notification auto-dismiss
   b3980b3 2026-11-07 fix: fixed the black blinking upon language change by changing ConfigChanges and overriding applyOverrideConfiguration in main activity
   f842990 2026-11-07 redesign: reworked QiblaContentSuccess
@@ -27,44 +28,9 @@ recent commits:
   2cbd0d0 2026-11-01 refactor: removed UiText and R.string references to make UI depend only on Presentation
   39371da 2026-10-31 refactor: make the UI layer depend only on Presentation
   d321a57 2026-10-31 Add AGENTS.md and architecture doc
-  dbee26d 2026-10-31 refactor: removed the unused imports in LocationPickerViewModel and SplashViewModel and ensured CancellationException consistency with other viewmodels
 
 working tree changes (git status --short, first 80):
-   M .idea/deploymentTargetSelector.xml
-  D  app/src/main/java/GetNamedLocationUseCase.kt
-  D  app/src/main/java/LocationPill.kt
-   M app/src/main/java/com/mhq/salati/adhan/ui/service/AdhanPlaybackService.kt
-   M app/src/main/java/com/mhq/salati/alarms/ui/components/CustomAlarmCard.kt
-   M app/src/main/java/com/mhq/salati/alarms/ui/components/CustomAlarmSheet.kt
-   M app/src/main/java/com/mhq/salati/alarms/ui/notification/CustomAlarmNotifier.kt
-   M app/src/main/java/com/mhq/salati/alarms/ui/screens/CustomAlarmsContent.kt
-   M app/src/main/java/com/mhq/salati/home/ui/components/DateBanner.kt
-   M app/src/main/java/com/mhq/salati/home/ui/components/PrayerCountdownRing.kt
-   M app/src/main/java/com/mhq/salati/home/ui/components/PrayerGridItem.kt
-   M app/src/main/java/com/mhq/salati/home/ui/screens/HomeContentSuccess.kt
-  D  app/src/main/java/com/mhq/salati/prayertracker/ui/components/CalendarCell.kt
-  AM app/src/main/java/com/mhq/salati/prayertracker/ui/components/CalendarDayCell.kt
-  AM app/src/main/java/com/mhq/salati/prayertracker/ui/components/CalendarMonthView.kt
-  D  app/src/main/java/com/mhq/salati/prayertracker/ui/components/CalendarView.kt
-   M app/src/main/java/com/mhq/salati/prayertracker/ui/components/PrayerConfirmDialog.kt
-   M app/src/main/java/com/mhq/salati/prayertracker/ui/screens/PrayerTrackerContent.kt
-   M app/src/main/java/com/mhq/salati/qibla/datasource/device/AndroidRotationSensorDataSource.kt
-   M app/src/main/java/com/mhq/salati/qibla/ui/components/CompassCalibrationBanner.kt
-   M app/src/main/java/com/mhq/salati/qibla/ui/components/CompassCalibrationOverlay.kt
-   M app/src/main/java/com/mhq/salati/qibla/ui/screens/QiblaContent.kt
-   M app/src/main/java/com/mhq/salati/qibla/ui/screens/QiblaContentSuccess.kt
-   M app/src/main/java/com/mhq/salati/shared/ui/components/TabHeader.kt
-   M app/src/main/java/com/mhq/salati/shared/ui/navigation/BottomNavBar.kt
-   M app/src/main/java/com/mhq/salati/shared/ui/theme/Color.kt
-   M app/src/main/java/com/mhq/salati/shared/ui/theme/Type.kt
-  D  app/src/main/res/drawable/ic_launcher_background.xml
-  D  app/src/main/res/drawable/ic_launcher_foreground.xml
-  D  app/src/main/res/drawable/ic_notification.xml
-  D  app/src/main/res/drawable/ic_stop.xml
-   M app/src/main/res/values-ar/strings.xml
-   M app/src/main/res/values/strings.xml
-  ?? app/src/main/java/com/mhq/salati/shared/ui/ScreenLayout.kt
-  ?? app/src/main/res/drawable/
+  (clean)
 ```
 
 ## Project tree
@@ -323,7 +289,7 @@ app\src\main\java\com\mhq\salati\prayertracker\ui\components\TrackerBadge.kt  (1
 app\src\main\java\com\mhq\salati\prayertracker\ui\screens\PrayerTrackerContainer.kt  (2.3 KB)
 app\src\main\java\com\mhq\salati\prayertracker\ui\screens\PrayerTrackerContent.kt  (11.0 KB)
 app\src\main\java\com\mhq\salati\qibla\data\repoimpl\CompassRepoImpl.kt  (1.7 KB)
-app\src\main\java\com\mhq\salati\qibla\datasource\device\AndroidRotationSensorDataSource.kt  (9.2 KB)
+app\src\main\java\com\mhq\salati\qibla\datasource\device\AndroidRotationSensorDataSource.kt  (5.2 KB)
 app\src\main\java\com\mhq\salati\qibla\datasource\device\CompassSample.kt  (0.2 KB)
 app\src\main\java\com\mhq\salati\qibla\datasource\device\RotationSensorDatasource.kt  (0.3 KB)
 app\src\main\java\com\mhq\salati\qibla\datasource\device\RotationSensorUnavailableException.kt  (0.2 KB)
@@ -341,14 +307,15 @@ app\src\main\java\com\mhq\salati\qibla\presentation\handlers\QiblaLocationLoad.k
 app\src\main\java\com\mhq\salati\qibla\presentation\mapper\QiblaUiMapper.kt  (0.5 KB)
 app\src\main\java\com\mhq\salati\qibla\presentation\model\CompassAccuracyUi.kt  (0.1 KB)
 app\src\main\java\com\mhq\salati\qibla\presentation\viewmodel\QiblaViewModel.kt  (11.4 KB)
-app\src\main\java\com\mhq\salati\qibla\ui\components\CompassCalibrationBanner.kt  (3.8 KB)
-app\src\main\java\com\mhq\salati\qibla\ui\components\CompassCalibrationOverlay.kt  (10.6 KB)
-app\src\main\java\com\mhq\salati\qibla\ui\components\RotatingCompassDial.kt  (14.8 KB)
-app\src\main\java\com\mhq\salati\qibla\ui\errors\QiblaSensorUnavailableError.kt  (1.6 KB)
+app\src\main\java\com\mhq\salati\qibla\ui\components\CompassCalibrationBanner.kt  (4.5 KB)
+app\src\main\java\com\mhq\salati\qibla\ui\components\CompassCalibrationOverlay.kt  (11.7 KB)
+app\src\main\java\com\mhq\salati\qibla\ui\components\CompassWideLayout.kt  (0.8 KB)
+app\src\main\java\com\mhq\salati\qibla\ui\components\RotatingCompassDial.kt  (17.3 KB)
+app\src\main\java\com\mhq\salati\qibla\ui\errors\QiblaSensorUnavailableError.kt  (1.9 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContainer.kt  (5.0 KB)
-app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContent.kt  (5.1 KB)
+app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContent.kt  (5.4 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContentError.kt  (1.6 KB)
-app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContentSuccess.kt  (7.9 KB)
+app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContentSuccess.kt  (10.6 KB)
 app\src\main\java\com\mhq\salati\settings\data\mapper\SettingsMapper.kt  (1.1 KB)
 app\src\main\java\com\mhq\salati\settings\data\repoimpl\SettingsRepoImpl.kt  (2.1 KB)
 app\src\main\java\com\mhq\salati\settings\datasource\preferences\SettingsDataStore.kt  (3.2 KB)
@@ -427,9 +394,9 @@ app\src\main\java\com\mhq\salati\shared\ui\components\LocalSnackbarHostState.kt 
 app\src\main\java\com\mhq\salati\shared\ui\components\SelectionSheet.kt  (3.1 KB)
 app\src\main\java\com\mhq\salati\shared\ui\components\StepBadgeIcon.kt  (0.7 KB)
 app\src\main\java\com\mhq\salati\shared\ui\components\StepHeader.kt  (2.3 KB)
-app\src\main\java\com\mhq\salati\shared\ui\components\TabHeader.kt  (5.1 KB)
-app\src\main\java\com\mhq\salati\shared\ui\errors\CatchAllError.kt  (1.7 KB)
-app\src\main\java\com\mhq\salati\shared\ui\errors\NoConnectionError.kt  (1.5 KB)
+app\src\main\java\com\mhq\salati\shared\ui\components\TabHeader.kt  (5.9 KB)
+app\src\main\java\com\mhq\salati\shared\ui\errors\CatchAllError.kt  (2.2 KB)
+app\src\main\java\com\mhq\salati\shared\ui\errors\NoConnectionError.kt  (1.8 KB)
 app\src\main\java\com\mhq\salati\shared\ui\HijriMonthLabels.kt  (1.0 KB)
 app\src\main\java\com\mhq\salati\shared\ui\MainActivity.kt  (2.9 KB)
 app\src\main\java\com\mhq\salati\shared\ui\MessageLabels.kt  (2.6 KB)
@@ -15432,8 +15399,9 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.hardware.display.DisplayManager
+import android.view.Display
 import android.view.Surface
-import android.view.WindowManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -15453,7 +15421,8 @@ class AndroidRotationSensorDataSource @Inject constructor(
     private val magneticFieldSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
 
-    private val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    private val displayManager =
+        context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
 
     override fun headings(latitude: Double, longitude: Double): Flow<CompassSample> = callbackFlow {
         if (rotationSensor == null) {
@@ -15477,14 +15446,9 @@ class AndroidRotationSensorDataSource @Inject constructor(
             override fun onSensorChanged(event: SensorEvent) {
                 SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
 
-                // Safe fallback pattern to fetch configuration rotation values
-                @Suppress("DEPRECATION")
-                val rotation = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-                    runCatching { context.display.rotation }.getOrNull()
-                        ?: windowManager.defaultDisplay.rotation
-                } else {
-                    windowManager.defaultDisplay.rotation
-                }
+                /** The remap must follow the display's current rotation (0/90/180/270). */
+                val rotation = displayManager.getDisplay(Display.DEFAULT_DISPLAY)?.rotation
+                    ?: Surface.ROTATION_0
 
                 when (rotation) {
                     Surface.ROTATION_90 -> {
@@ -15556,108 +15520,6 @@ class AndroidRotationSensorDataSource @Inject constructor(
         }
     }
 }
-
-
-
-//package com.mhq.salati.qibla.datasource.device
-//
-//import android.content.Context
-//import android.hardware.GeomagneticField
-//import android.hardware.Sensor
-//import android.hardware.SensorEvent
-//import android.hardware.SensorEventListener
-//import android.hardware.SensorManager
-//import dagger.hilt.android.qualifiers.ApplicationContext
-//import kotlinx.coroutines.channels.awaitClose
-//import kotlinx.coroutines.flow.Flow
-//import kotlinx.coroutines.flow.callbackFlow
-//import javax.inject.Inject
-//
-////Original
-//class AndroidRotationSensorDataSource @Inject constructor(
-//    @ApplicationContext context: Context
-//) : RotationSensorDataSource {
-//
-//    private val sensorManager =
-//        context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-//
-//    private val rotationSensor: Sensor? =
-//        sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
-//
-//    private val magneticFieldSensor: Sensor? =
-//        sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
-//
-//    override fun headings(latitude: Double, longitude: Double): Flow<CompassSample> = callbackFlow {
-//        if (rotationSensor == null) {
-//            close(RotationSensorUnavailableException())
-//            return@callbackFlow
-//        }
-//
-//        val rotationMatrix = FloatArray(9)
-//        val orientationAngles = FloatArray(3)
-//        var currentAccuracy = SensorAccuracy.HIGH
-//
-//        // Declination depends only on place and date, so compute it once per compass session.
-//        val declination = GeomagneticField(
-//            latitude.toFloat(),
-//            longitude.toFloat(),
-//            0f,
-//            System.currentTimeMillis()
-//        ).declination
-//
-//        val rotationListener = object : SensorEventListener {
-//            override fun onSensorChanged(event: SensorEvent) {
-//                SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
-//                SensorManager.getOrientation(rotationMatrix, orientationAngles)
-//
-//                val azimuthRadians = orientationAngles[0]
-//                var magneticAzimuth = Math.toDegrees(azimuthRadians.toDouble()).toFloat()
-//                if (magneticAzimuth < 0) magneticAzimuth += 360f
-//
-//                var trueAzimuth = magneticAzimuth + declination
-//                if (trueAzimuth < 0) trueAzimuth += 360f
-//                if (trueAzimuth >= 360) trueAzimuth -= 360f
-//
-//                trySend(CompassSample(trueAzimuth, currentAccuracy))
-//            }
-//
-//            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-//            }
-//        }
-//
-//        val magneticFieldListener = object : SensorEventListener {
-//            override fun onSensorChanged(event: SensorEvent) {
-//            }
-//
-//            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-//                currentAccuracy = when (accuracy) {
-//                    SensorManager.SENSOR_STATUS_ACCURACY_HIGH -> SensorAccuracy.HIGH
-//                    SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM -> SensorAccuracy.MEDIUM
-//                    SensorManager.SENSOR_STATUS_ACCURACY_LOW -> SensorAccuracy.LOW
-//                    else -> SensorAccuracy.UNRELIABLE
-//                }
-//            }
-//        }
-//
-//        sensorManager.registerListener(
-//            rotationListener,
-//            rotationSensor,
-//            SensorManager.SENSOR_DELAY_UI
-//        )
-//        magneticFieldSensor?.let {
-//            sensorManager.registerListener(
-//                magneticFieldListener,
-//                it,
-//                SensorManager.SENSOR_DELAY_UI
-//            )
-//        }
-//
-//        awaitClose {
-//            sensorManager.unregisterListener(rotationListener)
-//            sensorManager.unregisterListener(magneticFieldListener)
-//        }
-//    }
-//}
 ```
 
 ## app\src\main\java\com\mhq\salati\qibla\datasource\device\CompassSample.kt
@@ -16319,26 +16181,42 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
 import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
+/**
+ * The sensor-accuracy sentence and the colour of its status dot. Shared by the portrait banner and
+ * the landscape card so both always say the same thing.
+ */
+@Composable
+internal fun CompassAccuracyUi.sensorStatus(): Pair<String, Color> = when (this) {
+    CompassAccuracyUi.HIGH ->
+        stringResource(R.string.sensor_accuracy_is_excellent) to MaterialTheme.colorScheme.primary
+
+    CompassAccuracyUi.MEDIUM ->
+        stringResource(R.string.sensor_accuracy_is_moderate) to MaterialTheme.colorScheme.onSurfaceVariant
+
+    else ->
+        stringResource(R.string.sensor_accuracy_is_poor) to MaterialTheme.colorScheme.error
+}
+
+/**
+ * Text styles come from the theme typography (not hard-coded sizes) so the Arabic-safe line
+ * heights in Type.kt apply here too.
+ */
 @Composable
 fun CalibrationBanner(
     compassAccuracy: CompassAccuracyUi,
     onRecalibrateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val (label, dotColor) = when (compassAccuracy) {
-        CompassAccuracyUi.HIGH -> stringResource(R.string.sensor_accuracy_is_excellent) to MaterialTheme.colorScheme.primary
-        CompassAccuracyUi.MEDIUM -> stringResource(R.string.sensor_accuracy_is_moderate) to MaterialTheme.colorScheme.onSurfaceVariant
-        else -> stringResource(R.string.sensor_accuracy_is_poor) to MaterialTheme.colorScheme.error
-    }
+    val (label, dotColor) = compassAccuracy.sensorStatus()
 
     Surface(
         shape = RoundedCornerShape(
@@ -16367,7 +16245,7 @@ fun CalibrationBanner(
             Text(
                 text = label,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 13.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(1f)
             )
             Spacer(Modifier.width(8.dp))
@@ -16381,8 +16259,8 @@ fun CalibrationBanner(
             ) {
                 Text(
                     text = stringResource(R.string.recalibrate),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 13.sp
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }
@@ -16395,6 +16273,17 @@ private fun CalibrationBannerPreview() {
     SalatiTheme {
         CalibrationBanner(
             compassAccuracy = CompassAccuracyUi.HIGH,
+            onRecalibrateClick = {}
+        )
+    }
+}
+
+@Preview(locale = "ar", fontScale = 1.5f)
+@Composable
+private fun CalibrationBannerArabicLargeFontPreview() {
+    SalatiTheme {
+        CalibrationBanner(
+            compassAccuracy = CompassAccuracyUi.MEDIUM,
             onRecalibrateClick = {}
         )
     }
@@ -16425,7 +16314,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -16450,18 +16341,27 @@ import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
 import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.shared.ui.isWideLayout
+import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
+/**
+ * Full-screen calibration guide.
+ *
+ * The scrim covers the whole screen, but the content is kept inside the safe drawing area (status
+ * bar, display cutout, navigation bar) and above the floating bottom bar, which is drawn on top of
+ * this overlay. Both layouts scroll when the window is too short (landscape, split-screen, large
+ * font, Arabic).
+ */
 @Composable
 fun CompassCalibrationOverlay(
     accuracy: CompassAccuracyUi,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isLandscape = isWideLayout()
+    val isWide = isWideLayout()
 
     val infiniteTransition = rememberInfiniteTransition(label = "figure8")
     val progress by infiniteTransition.animateFloat(
@@ -16492,18 +16392,20 @@ fun CompassCalibrationOverlay(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
-            ) { /* absorb clicks */ },
+            ) { /* absorb clicks */ }
+            .safeDrawingPadding()
+            .padding(bottom = BottomNavBarDefaults.Height),
     ) {
-        if (isLandscape) {
+        if (isWide) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(32.dp),
-                horizontalArrangement = Arrangement.spacedBy(32.dp),
+                    .padding(CompassWideLayout.Padding),
+                horizontalArrangement = Arrangement.spacedBy(CompassWideLayout.Spacing),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(CompassWideLayout.DialPaneWeight),
                     contentAlignment = Alignment.Center
                 ) {
                     Canvas(modifier = Modifier.size(130.dp)) {
@@ -16518,7 +16420,7 @@ fun CompassCalibrationOverlay(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .weight(1.2f)
+                        .weight(CompassWideLayout.SidePaneWeight)
                         .fillMaxHeight()
                         .verticalScroll(rememberScrollState())
                 ) {
@@ -16552,10 +16454,14 @@ fun CompassCalibrationOverlay(
                 }
             }
         } else {
+            /** Centered by the parent Box when it fits; scrolls when it does not. */
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(24.dp),
-                modifier = Modifier.padding(32.dp)
+                modifier = Modifier
+                    .widthIn(max = 480.dp)
+                    .verticalScroll(rememberScrollState())
+                    .padding(32.dp)
             ) {
                 Canvas(modifier = Modifier.size(160.dp)) {
                     drawFigure8Path(
@@ -16667,6 +16573,8 @@ private fun AccuracyStatus(
 
 @Preview(name = "Light Mode Overlay", showSystemUi = true)
 @Preview(name = "Dark Mode Overlay", showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Landscape Overlay", widthDp = 800, heightDp = 360)
+@Preview(name = "Arabic Large Font", locale = "ar", fontScale = 1.5f, showSystemUi = true)
 @Composable
 private fun CompassCalibrationOverlayPreview() {
     SalatiTheme {
@@ -16675,6 +16583,33 @@ private fun CompassCalibrationOverlayPreview() {
             onDismiss = {}
         )
     }
+}
+```
+
+## app\src\main\java\com\mhq\salati\qibla\ui\components\CompassWideLayout.kt
+
+```kotlin
+package com.mhq.salati.qibla.ui.components
+
+import androidx.compose.ui.unit.dp
+
+/**
+ * Geometry shared by the wide (landscape) Qibla screen and the calibration overlay.
+ *
+ * Both lay out two panes with the SAME outer padding, spacing and weights, so each pane has the
+ * same width and position in both. Content centered inside a pane therefore sits on the same
+ * vertical line in both: the compass dial and the figure-8, and the Recalibrate and Done buttons.
+ * Change a value here and both screens move together.
+ */
+internal object CompassWideLayout {
+    val Padding = 16.dp
+    val Spacing = 16.dp
+
+    /** Start pane: compass dial / figure-8 animation. */
+    const val DialPaneWeight = 1.2f
+
+    /** End pane: status card / calibration text. */
+    const val SidePaneWeight = 1f
 }
 ```
 
@@ -16688,6 +16623,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -16706,12 +16642,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.ui.theme.SalatiTheme
@@ -16719,14 +16657,54 @@ import kotlin.math.cos
 import kotlin.math.sin
 import android.graphics.Paint as AndroidPaint
 
+/** Every measurement in the drawing code below is authored for a dial of this size. */
+private val DialReferenceSize = 300.dp
+
+/** Labels shrink with the dial but never below these sizes, so small dials stay readable. */
+private const val MinDegreeLabelSp = 7f
+private const val MinCardinalLabelSp = 13f
+
+/**
+ * Square compass dial that fills the largest square inside whatever bounded size the caller gives
+ * it (`Modifier.size(...)`, or `fillMaxSize()` inside a bounded parent). It must NOT be placed in
+ * an unbounded (scrolling) parent without a size.
+ *
+ * Everything drawn is authored for [DialReferenceSize] and scaled by `dialSize / DialReferenceSize`,
+ * so ticks, labels and the needle keep their proportions on a phone, in landscape or on a tablet.
+ */
 @Composable
 fun RotatingCompassDial(
     deviceHeading: Float,
     qiblaBearing: Float,
     modifier: Modifier = Modifier
 ) {
+    BoxWithConstraints(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+    ) {
+        val dialSize = minOf(maxWidth, maxHeight)
+        CompassDial(
+            deviceHeading = deviceHeading,
+            qiblaBearing = qiblaBearing,
+            scale = dialSize / DialReferenceSize,
+            modifier = Modifier.size(dialSize)
+        )
+    }
+}
+
+@Composable
+private fun CompassDial(
+    deviceHeading: Float,
+    qiblaBearing: Float,
+    scale: Float,
+    modifier: Modifier = Modifier
+) {
     val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
     val shadowColor = MaterialTheme.colorScheme.scrim.toArgb()
+
+    /** The dial is an instrument face: its labels follow the dial size, not the user's font scale. */
+    val fixedFontDensity = remember(density.density) { Density(density.density, fontScale = 1f) }
 
     val smoothedHeading by animateFloatAsState(
         targetValue = deviceHeading,
@@ -16742,11 +16720,9 @@ fun RotatingCompassDial(
         colors = listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surface)
     )
 
-    // Clean, normal Compose structural alphas
     val baseContentColor = MaterialTheme.colorScheme.onSurface
     val outerRingStrokeColor = baseContentColor.copy(alpha = 0.25f)
     val centerGlassOverlayColor = baseContentColor.copy(alpha = 0.02f)
-    val tickColor = baseContentColor
 
     val pointerColor = MaterialTheme.colorScheme.onSurface
     val pointerSpineColor = MaterialTheme.colorScheme.secondary
@@ -16761,37 +16737,47 @@ fun RotatingCompassDial(
         )
     )
 
-    val chassisShadowPaint = remember {
+    /** Keyed on color, size and density so a theme switch or a resize rebuilds the blur. */
+    val chassisShadowPaint = remember(shadowColor, scale, density) {
         AndroidPaint().apply {
             color = shadowColor
             alpha = 100
-            maskFilter = BlurMaskFilter(24f, BlurMaskFilter.Blur.OUTER)
+            maskFilter = BlurMaskFilter(
+                with(density) { (8.dp.toPx() * scale).coerceAtLeast(1f) },
+                BlurMaskFilter.Blur.OUTER
+            )
         }
     }
 
-    val pointerShadowPaint = remember {
+    val pointerShadowPaint = remember(shadowColor, scale, density) {
         AndroidPaint().apply {
             color = shadowColor
             alpha = 140
-            maskFilter = BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL)
+            maskFilter = BlurMaskFilter(
+                with(density) { (2.dp.toPx() * scale).coerceAtLeast(1f) },
+                BlurMaskFilter.Blur.NORMAL
+            )
         }
     }
 
-    val degreeLabels = remember(textMeasurer, degreeLabelColor) {
+    val degreeLabels = remember(textMeasurer, degreeLabelColor, scale, fixedFontDensity) {
         (0 until 360 step 30).associateWith { angle ->
             textMeasurer.measure(
                 text = angle.toString().padStart(3, '0'),
                 style = TextStyle(
                     color = degreeLabelColor,
-                    fontSize = 9.sp,
+                    fontSize = (9f * scale).coerceAtLeast(MinDegreeLabelSp).sp,
                     fontWeight = FontWeight.Medium,
                     fontFamily = FontFamily.Monospace
-                )
+                ),
+                density = fixedFontDensity
             )
         }
     }
 
-    val cardinalLabels = remember(textMeasurer, cardinalLabelColor, northLabelColor) {
+    val cardinalLabels = remember(
+        textMeasurer, cardinalLabelColor, northLabelColor, scale, fixedFontDensity
+    ) {
         listOf("N" to 0f, "E" to 90f, "S" to 180f, "W" to 270f).map { (label, angleDeg) ->
             Triple(
                 label, angleDeg,
@@ -16799,25 +16785,26 @@ fun RotatingCompassDial(
                     text = label,
                     style = TextStyle(
                         color = if (label == "N") northLabelColor else cardinalLabelColor,
-                        fontSize = 18.sp,
+                        fontSize = (18f * scale).coerceAtLeast(MinCardinalLabelSp).sp,
                         fontWeight = FontWeight.Black,
                         fontFamily = FontFamily.Default
-                    )
+                    ),
+                    density = fixedFontDensity
                 )
             )
         }
     }
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier.size(300.dp)
-    ) {
-        // LAYER 1: ROTATING DIAL FACE
+    Box(modifier = modifier) {
+        /** LAYER 1: ROTATING DIAL FACE */
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer { rotationZ = -smoothedHeading }
                 .drawWithCache {
+                    /** [value] dp of the reference dial, scaled to the real dial size. */
+                    fun px(value: Float) = value.dp.toPx() * scale
+
                     val radius = size.minDimension / 2f
                     val center = Offset(size.width / 2f, size.height / 2f)
                     onDrawBehind {
@@ -16833,36 +16820,37 @@ fun RotatingCompassDial(
                             color = baseContentColor.copy(alpha = 0.02f),
                             radius = radius,
                             center = center,
-                            style = Stroke(2.dp.toPx())
+                            style = Stroke(px(2f))
                         )
                         drawCircle(
                             color = outerRingStrokeColor,
-                            radius = radius - 4.dp.toPx(),
+                            radius = radius - px(4f),
                             center = center,
-                            style = Stroke(1.dp.toPx())
+                            style = Stroke(px(1f))
                         )
                     }
                 }
         ) {
+            fun px(value: Float) = value.dp.toPx() * scale
+
             val radius = size.minDimension / 2f
             val center = Offset(size.width / 2f, size.height / 2f)
 
-            // Inner Dashboard Details
+            /** Inner dashboard details */
             val centerLensRadius = radius * 0.45f
             val intermediateRingRadius = radius * 0.68f
 
-            // Fine Concentric Instrument Tracks using explicit explicit alpha levels
             drawCircle(
                 color = baseContentColor.copy(alpha = 0.10f),
                 radius = intermediateRingRadius,
                 center = center,
-                style = Stroke(1.dp.toPx())
+                style = Stroke(px(1f))
             )
             drawCircle(
                 color = baseContentColor.copy(alpha = 0.16f),
                 radius = centerLensRadius,
                 center = center,
-                style = Stroke(1.5.dp.toPx())
+                style = Stroke(px(1.5f))
             )
             drawCircle(
                 color = centerGlassOverlayColor,
@@ -16870,19 +16858,17 @@ fun RotatingCompassDial(
                 center = center
             )
 
-            // Precise Inner Crosshairs
-            val crosshairStartOffset = 18.dp.toPx()
-            val verticalLength = centerLensRadius - 4.dp.toPx()
+            /** Inner crosshairs */
+            val crosshairStartOffset = px(18f)
+            val verticalLength = centerLensRadius - px(4f)
             val crosshairColor = baseContentColor.copy(alpha = 0.10f)
 
-            // Vertical segments
-            drawLine(color = crosshairColor, start = Offset(center.x, center.y - crosshairStartOffset), end = Offset(center.x, center.y - verticalLength), strokeWidth = 1.dp.toPx())
-            drawLine(color = crosshairColor, start = Offset(center.x, center.y + crosshairStartOffset), end = Offset(center.x, center.y + verticalLength), strokeWidth = 1.dp.toPx())
-            // Horizontal segments
-            drawLine(color = crosshairColor, start = Offset(center.x - crosshairStartOffset, center.y), end = Offset(center.x - verticalLength, center.y), strokeWidth = 1.dp.toPx())
-            drawLine(color = crosshairColor, start = Offset(center.x + crosshairStartOffset, center.y), end = Offset(center.x + verticalLength, center.y), strokeWidth = 1.dp.toPx())
+            drawLine(color = crosshairColor, start = Offset(center.x, center.y - crosshairStartOffset), end = Offset(center.x, center.y - verticalLength), strokeWidth = px(1f))
+            drawLine(color = crosshairColor, start = Offset(center.x, center.y + crosshairStartOffset), end = Offset(center.x, center.y + verticalLength), strokeWidth = px(1f))
+            drawLine(color = crosshairColor, start = Offset(center.x - crosshairStartOffset, center.y), end = Offset(center.x - verticalLength, center.y), strokeWidth = px(1f))
+            drawLine(color = crosshairColor, start = Offset(center.x + crosshairStartOffset, center.y), end = Offset(center.x + verticalLength, center.y), strokeWidth = px(1f))
 
-            // High-Density Scale Loop
+            /** Tick scale */
             for (angle in 0 until 360 step 2) {
                 val angleRad = Math.toRadians((angle - 90).toDouble())
                 val isMajor = angle % 30 == 0
@@ -16890,43 +16876,43 @@ fun RotatingCompassDial(
                 val isMinor = !isMajor && !isMedium && angle % 5 == 0
 
                 val tickLength = when {
-                    isMajor -> 12.dp.toPx()
-                    isMedium -> 8.dp.toPx()
-                    isMinor -> 6.dp.toPx()
-                    else -> 4.dp.toPx()
+                    isMajor -> px(12f)
+                    isMedium -> px(8f)
+                    isMinor -> px(6f)
+                    else -> px(4f)
                 }
-                val strokeWidth = if (isMajor) 2.dp.toPx() else if (isMedium) 1.5.dp.toPx() else 1.dp.toPx()
+                val strokeWidth = if (isMajor) px(2f) else if (isMedium) px(1.5f) else px(1f)
                 val alphaFactor = if (isMajor) 0.9f else if (isMedium) 0.6f else if (isMinor) 0.4f else 0.2f
 
-                val outerBound = radius - 5.dp.toPx()
+                val outerBound = radius - px(5f)
                 val innerBound = outerBound - tickLength
 
                 drawLine(
-                    color = tickColor.copy(alpha = alphaFactor),
+                    color = baseContentColor.copy(alpha = alphaFactor),
                     start = Offset(center.x + outerBound * cos(angleRad).toFloat(), center.y + outerBound * sin(angleRad).toFloat()),
                     end = Offset(center.x + innerBound * cos(angleRad).toFloat(), center.y + innerBound * sin(angleRad).toFloat()),
                     strokeWidth = strokeWidth,
                     cap = StrokeCap.Round
                 )
 
-                // Secondary Inner Technical Ring Notches
+                /** Secondary notches on the inner ring */
                 if (isMedium || isMajor) {
-                    val innerRingTickLength = if (isMajor) 5.dp.toPx() else 3.dp.toPx()
-                    val innerTickStart = centerLensRadius
+                    val innerRingTickLength = if (isMajor) px(5f) else px(3f)
                     val innerTickEnd = centerLensRadius + innerRingTickLength
 
                     drawLine(
-                        color = tickColor.copy(alpha = if (isMajor) 0.4f else 0.2f),
-                        start = Offset(center.x + innerTickStart * cos(angleRad).toFloat(), center.y + innerTickStart * sin(angleRad).toFloat()),
+                        color = baseContentColor.copy(alpha = if (isMajor) 0.4f else 0.2f),
+                        start = Offset(center.x + centerLensRadius * cos(angleRad).toFloat(), center.y + centerLensRadius * sin(angleRad).toFloat()),
                         end = Offset(center.x + innerTickEnd * cos(angleRad).toFloat(), center.y + innerTickEnd * sin(angleRad).toFloat()),
-                        strokeWidth = 1.dp.toPx()
+                        strokeWidth = px(1f)
                     )
                 }
             }
-            // Render Degree Text Coordinates
+
+            /** Degree labels */
             degreeLabels.forEach { (angle, textLayoutResult) ->
                 val angleRad = Math.toRadians((angle - 90).toDouble())
-                val textRadius = radius - 26.dp.toPx()
+                val textRadius = radius - px(26f)
                 val x = center.x + textRadius * cos(angleRad).toFloat()
                 val y = center.y + textRadius * sin(angleRad).toFloat()
                 drawText(
@@ -16937,10 +16923,11 @@ fun RotatingCompassDial(
                     )
                 )
             }
-            // Render Cardinal Headings
+
+            /** Cardinal headings */
             cardinalLabels.forEach { (_, angleDeg, textLayoutResult) ->
                 val angleRad = Math.toRadians((angleDeg - 90).toDouble())
-                val textRadius = radius - 46.dp.toPx()
+                val textRadius = radius - px(46f)
                 val x = center.x + textRadius * cos(angleRad).toFloat()
                 val y = center.y + textRadius * sin(angleRad).toFloat()
                 drawText(
@@ -16952,21 +16939,22 @@ fun RotatingCompassDial(
                 )
             }
         }
-        // LAYER 2: ROTATING QIBLA NEEDLE
+
+        /** LAYER 2: ROTATING QIBLA NEEDLE */
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer { rotationZ = qiblaBearing - smoothedHeading }
         ) {
+            fun px(value: Float) = value.dp.toPx() * scale
+
             val radius = size.minDimension / 2f
             val center = Offset(size.width / 2f, size.height / 2f)
-            val outerTrackRadius = radius - 8.dp.toPx()
+            val outerTrackRadius = radius - px(8f)
             val tip = Offset(center.x, center.y - outerTrackRadius)
-            val baseLeft =
-                Offset(center.x - 14.dp.toPx(), center.y - outerTrackRadius + 22.dp.toPx())
-            val baseRight =
-                Offset(center.x + 14.dp.toPx(), center.y - outerTrackRadius + 22.dp.toPx())
-            val spineBase = Offset(center.x, center.y - outerTrackRadius + 16.dp.toPx())
+            val baseLeft = Offset(center.x - px(14f), center.y - outerTrackRadius + px(22f))
+            val baseRight = Offset(center.x + px(14f), center.y - outerTrackRadius + px(22f))
+            val spineBase = Offset(center.x, center.y - outerTrackRadius + px(16f))
             val arrowPath = Path().apply {
                 moveTo(tip.x, tip.y)
                 lineTo(baseLeft.x, baseLeft.y)
@@ -16980,49 +16968,68 @@ fun RotatingCompassDial(
                 color = pointerSpineColor,
                 start = tip,
                 end = spineBase,
-                strokeWidth = 1.5.dp.toPx(),
+                strokeWidth = px(1.5f),
                 cap = StrokeCap.Round
             )
         }
-        // LAYER 3: STATIC HARDWARE GUIDELINE & BEZEL SPINDLE
+
+        /** LAYER 3: STATIC TOP INDICATOR AND CENTER SPINDLE */
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
                 .drawWithCache {
+                    fun px(value: Float) = value.dp.toPx() * scale
+
                     val radius = size.minDimension / 2f
                     val center = Offset(size.width / 2f, size.height / 2f)
                     onDrawBehind {
                         drawLine(
                             color = topIndicatorColor,
                             start = Offset(center.x, center.y - radius),
-                            end = Offset(center.x, center.y - radius + 20.dp.toPx()),
-                            strokeWidth = 2.dp.toPx()
+                            end = Offset(center.x, center.y - radius + px(20f)),
+                            strokeWidth = px(2f)
                         )
                         drawCircle(
                             color = spindleShadowColor,
-                            radius = 10.dp.toPx(),
+                            radius = px(10f),
                             center = center
                         )
                         drawCircle(
                             brush = spindleGradient,
-                            radius = 6.dp.toPx(), center = center
+                            radius = px(6f),
+                            center = center
                         )
                         drawCircle(
                             color = spindleHighlightColor,
-                            radius = 2.dp.toPx(),
-                            center = center - Offset(1.5.dp.toPx(), 1.5.dp.toPx())
+                            radius = px(2f),
+                            center = center - Offset(px(1.5f), px(1.5f))
                         )
                     }
-                }) {}
+                }
+        ) {}
     }
 }
-@Preview
+
+@Preview(name = "Reference size", showBackground = true)
 @Composable
 private fun RotatingCompassDialPreview() {
     SalatiTheme {
         RotatingCompassDial(
             deviceHeading = 0f,
-            qiblaBearing = 45f
+            qiblaBearing = 45f,
+            modifier = Modifier.size(300.dp)
+        )
+    }
+}
+
+@Preview(name = "Small dial", showBackground = true)
+@Composable
+private fun RotatingCompassDialSmallPreview() {
+    SalatiTheme {
+        RotatingCompassDial(
+            deviceHeading = 0f,
+            qiblaBearing = 45f,
+            modifier = Modifier.size(170.dp)
         )
     }
 }
@@ -17038,6 +17045,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17056,23 +17066,23 @@ fun QiblaSensorUnavailableError(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp)
     ) {
         Text(
             text = stringResource(R.string.error, errorMessage),
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center
         )
-        Spacer(
-            Modifier.height(8.dp)
-        )
+        Spacer(Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.this_device_doesn_t_have_the_sensors_needed_for_a_compass),
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center
         )
-        Spacer(
-            Modifier.height(4.dp)
-        )
+        Spacer(Modifier.height(4.dp))
         Text(
             text = stringResource(R.string.qibla_direction_can_t_be_shown_here),
             style = MaterialTheme.typography.bodySmall,
@@ -17219,6 +17229,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -17296,7 +17307,8 @@ fun QiblaContent(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .fillMaxSize()
+                            .weight(1f)
+                            .fillMaxWidth()
                     ) {
                         TabHeader(
                             icon = Icons.Default.Explore,
@@ -17325,6 +17337,8 @@ fun QiblaContent(
     showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
+@Preview(name = "Landscape - Active Compass", widthDp = 800, heightDp = 360)
+@Preview(name = "Arabic Large Font - Active Compass", locale = "ar", fontScale = 1.5f, showSystemUi = true)
 @Composable
 private fun QiblaContentActivePreview() {
     SalatiTheme {
@@ -17413,19 +17427,28 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -17435,7 +17458,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -17444,10 +17466,33 @@ import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
 import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.qibla.ui.components.CalibrationBanner
+import com.mhq.salati.qibla.ui.components.CompassWideLayout
 import com.mhq.salati.qibla.ui.components.RotatingCompassDial
+import com.mhq.salati.qibla.ui.components.sensorStatus
 import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
+private val NarrowCardMargin = 16.dp
+private val NarrowCardMaxWidth = 560.dp
+
+/**
+ * Height of everything in the narrow card except the dial (emoji, spacings, banner, margins).
+ * Only used to decide how big the dial may be so the card fits without scrolling when it can.
+ */
+private val NarrowChromeHeight = 200.dp
+
+private val MinDialSize = 180.dp
+private val MaxDialSize = 400.dp
+
+/**
+ * Compass content for a loaded Qibla bearing.
+ *
+ * - Wide windows (landscape, tablets, foldables): dial on the start side, status card on the end.
+ * - Narrow windows: one centered card; the dial is sized from the space actually available, and
+ *   the column scrolls if a very short window or a large font still does not fit.
+ *
+ * Horizontal display-cutout insets are applied here so nothing sits under a notch in landscape.
+ */
 @Composable
 fun QiblaContentSuccess(
     deviceHeading: Float,
@@ -17456,98 +17501,133 @@ fun QiblaContentSuccess(
     onRecalibrateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isLandscape = isWideLayout()
+    val contentModifier = modifier
+        .fillMaxSize()
+        .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier.fillMaxSize()
+    if (isWideLayout()) {
+        QiblaWideContent(
+            deviceHeading = deviceHeading,
+            qiblaBearing = qiblaBearing,
+            compassAccuracy = compassAccuracy,
+            onRecalibrateClick = onRecalibrateClick,
+            modifier = contentModifier
+        )
+    } else {
+        QiblaNarrowContent(
+            deviceHeading = deviceHeading,
+            qiblaBearing = qiblaBearing,
+            compassAccuracy = compassAccuracy,
+            onRecalibrateClick = onRecalibrateClick,
+            modifier = contentModifier
+        )
+    }
+}
+
+@Composable
+private fun QiblaWideContent(
+    deviceHeading: Float,
+    qiblaBearing: Float,
+    compassAccuracy: CompassAccuracyUi,
+    onRecalibrateClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(CompassWideLayout.Spacing),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.padding(CompassWideLayout.Padding)
     ) {
-        if (isLandscape) {
-            Row(
+        // The dial takes the largest square that fits this pane (5% left for its shadow).
+        BoxWithConstraints(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .weight(CompassWideLayout.DialPaneWeight)
+                .fillMaxHeight()
+        ) {
+            RotatingCompassDial(
+                deviceHeading = deviceHeading,
+                qiblaBearing = qiblaBearing,
+                modifier = Modifier.size(minOf(maxWidth, maxHeight) * 0.95f)
+            )
+        }
+
+        QiblaCard(
+            modifier = Modifier
+                .weight(CompassWideLayout.SidePaneWeight)
+                .fillMaxHeight()
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .verticalScroll(rememberScrollState())
+                    .padding(24.dp)
             ) {
-                // Left Column: Compass Dial maximized dynamically
-                Box(
-                    modifier = Modifier
-                        .weight(1.2f)
-                        .fillMaxHeight(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    RotatingCompassDial(
-                        deviceHeading = deviceHeading,
-                        qiblaBearing = qiblaBearing,
+                val (label, dotColor) = compassAccuracy.sensorStatus()
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
                         modifier = Modifier
-                            .fillMaxHeight(0.95f)
-                            .aspectRatio(1f)
+                            .size(8.dp)
+                            .background(dotColor, CircleShape)
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        text = label,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.labelLarge
                     )
                 }
 
-                // Right Column: Symmetrical calibration block cards
-                Card(
-                    shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)),
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
+                Spacer(Modifier.height(24.dp))
+
+                TextButton(
+                    onClick = onRecalibrateClick,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
+                    colors = ButtonDefaults.textButtonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    ),
+                    modifier = Modifier.fillMaxWidth(0.8f)
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(24.dp)
-                    ) {
-                        val (label, dotColor) = when (compassAccuracy) {
-                            CompassAccuracyUi.HIGH -> stringResource(R.string.sensor_accuracy_is_excellent) to MaterialTheme.colorScheme.primary
-                            CompassAccuracyUi.MEDIUM -> stringResource(R.string.sensor_accuracy_is_moderate) to MaterialTheme.colorScheme.onSurfaceVariant
-                            else -> stringResource(R.string.sensor_accuracy_is_poor) to MaterialTheme.colorScheme.error
-                        }
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(modifier = Modifier.size(8.dp).background(dotColor, CircleShape))
-                            Spacer(Modifier.width(10.dp))
-                            Text(
-                                text = label,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-
-                        Spacer(Modifier.height(24.dp))
-
-                        TextButton(
-                            onClick = onRecalibrateClick,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-                            colors = ButtonDefaults.textButtonColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                            ),
-                            modifier = Modifier.fillMaxWidth(0.8f)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.recalibrate),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                        }
-                    }
+                    Text(
+                        text = stringResource(R.string.recalibrate),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
-        } else {
-            Card(
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)),
+        }
+    }
+}
+
+@Composable
+private fun QiblaNarrowContent(
+    deviceHeading: Float,
+    qiblaBearing: Float,
+    compassAccuracy: CompassAccuracyUi,
+    onRecalibrateClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    BoxWithConstraints(modifier = modifier) {
+        val cardWidth = minOf(maxWidth - NarrowCardMargin * 2, NarrowCardMaxWidth)
+        // Limited by width first (as before), then by the height that is really left.
+        val dialSize = minOf(cardWidth * 0.85f - 16.dp, maxHeight - NarrowChromeHeight)
+            .coerceIn(MinDialSize, MaxDialSize)
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(NarrowCardMargin)
+        ) {
+            QiblaCard(
                 modifier = Modifier
+                    .widthIn(max = NarrowCardMaxWidth)
                     .fillMaxWidth()
-                    .padding(16.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -17557,15 +17637,18 @@ fun QiblaContentSuccess(
                         .padding(8.dp)
                 ) {
                     Spacer(Modifier.height(16.dp))
-                    Text(text = "\uD83D\uDD4B", fontSize = 40.sp)
-                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        text = "\uD83D\uDD4B",
+                        style = MaterialTheme.typography.displaySmall.copy(
+                            fontSize = 40.sp,
+                            lineHeight = 48.sp
+                        )
+                    )
+                    Spacer(Modifier.height(8.dp))
                     RotatingCompassDial(
                         deviceHeading = deviceHeading,
                         qiblaBearing = qiblaBearing,
-                        modifier = Modifier
-                            .fillMaxWidth(0.85f)
-                            .aspectRatio(1f)
-                            .padding(8.dp)
+                        modifier = Modifier.size(dialSize)
                     )
                     Spacer(Modifier.height(24.dp))
                 }
@@ -17578,7 +17661,28 @@ fun QiblaContentSuccess(
     }
 }
 
-@Preview
+/** The one card style used by both layouts. */
+@Composable
+private fun QiblaCard(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)),
+        modifier = modifier,
+        content = content
+    )
+}
+
+@Preview(name = "Portrait", showSystemUi = true)
+@Preview(name = "Portrait short", widthDp = 360, heightDp = 480)
+@Preview(name = "Landscape", widthDp = 800, heightDp = 360)
+@Preview(name = "Tablet", widthDp = 1024, heightDp = 768)
+@Preview(name = "Arabic Large Font", locale = "ar", fontScale = 1.5f, showSystemUi = true)
+@Preview(name = "Dark", showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun QiblaContentSuccessPreview() {
     SalatiTheme {
@@ -20629,11 +20733,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
@@ -20656,6 +20766,13 @@ import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.shared.ui.theme.tabHeaderGradient
 
+/**
+ * Header shared by the tab screens.
+ *
+ * The height is a MINIMUM ([heightIn]), never a fixed value, so a larger font scale or Arabic
+ * line heights grow the header instead of clipping it. The gradient runs edge to edge (behind the
+ * status bar and any display cutout); only the content is pushed clear of them.
+ */
 @Composable
 fun TabHeader(
     icon: ImageVector,
@@ -20664,15 +20781,17 @@ fun TabHeader(
     trailingContent: @Composable () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val isLandscape = isWideLayout()
+    val isWide = isWideLayout()
 
     Box(
+        contentAlignment = Alignment.CenterStart,
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.tabHeaderGradient)
             .statusBarsPadding()
-            .height(if (isLandscape) 64.dp else 112.dp)
-            .padding(vertical = if (isLandscape) 8.dp else 28.dp, horizontal = 24.dp)
+            .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
+            .heightIn(min = if (isWide) 64.dp else 112.dp)
+            .padding(vertical = if (isWide) 8.dp else 24.dp, horizontal = 24.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -20686,34 +20805,34 @@ fun TabHeader(
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .size(if (isLandscape) 40.dp else 56.dp)
-                        .clip(RoundedCornerShape(if (isLandscape) 10.dp else 16.dp))
+                        .size(if (isWide) 40.dp else 56.dp)
+                        .clip(RoundedCornerShape(if (isWide) 10.dp else 16.dp))
                         .background(MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.12f)),
                 ) {
                     Icon(
                         imageVector = icon,
                         tint = MaterialTheme.colorScheme.tertiary,
                         contentDescription = null,
-                        modifier = Modifier.size(if (isLandscape) 20.dp else 28.dp)
+                        modifier = Modifier.size(if (isWide) 20.dp else 28.dp)
                     )
                 }
                 Column(modifier = Modifier.padding(start = 16.dp)) {
                     Text(
                         text = title,
                         color = MaterialTheme.colorScheme.tertiary,
-                        fontSize = if (isLandscape) 20.sp else 26.sp,
+                        fontSize = if (isWide) 20.sp else 26.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = TextStyle(
-                            lineHeight = if (isLandscape) 24.sp else 32.sp,
+                            lineHeight = if (isWide) 24.sp else 32.sp,
                             lineHeightStyle = LineHeightStyle(
                                 alignment = LineHeightStyle.Alignment.Center,
-                                trim = LineHeightStyle.Trim.Both
+                                trim = LineHeightStyle.Trim.None
                             )
                         )
                     )
-                    if (!isLandscape) {
+                    if (!isWide) {
                         Spacer(Modifier.height(4.dp))
                         Text(
                             text = subtitle,
@@ -20725,7 +20844,7 @@ fun TabHeader(
                                 lineHeight = 18.sp,
                                 lineHeightStyle = LineHeightStyle(
                                     alignment = LineHeightStyle.Alignment.Center,
-                                    trim = LineHeightStyle.Trim.Both
+                                    trim = LineHeightStyle.Trim.None
                                 )
                             )
                         )
@@ -20756,7 +20875,14 @@ private fun TabHeaderPreview() {
 package com.mhq.salati.shared.ui.errors
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -20765,6 +20891,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
@@ -20779,11 +20906,15 @@ fun CatchAllError(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp)
     ) {
         Text(
             text = stringResource(R.string.error, errorMessage),
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(8.dp))
         Button(onClick = onRetryClicked) {
@@ -20817,6 +20948,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20825,6 +20959,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
 import com.mhq.salati.connectivity.ui.components.rememberNetworkConnected
@@ -20840,11 +20975,15 @@ fun NoConnectionError(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp)
     ) {
         Text(
             text = stringResource(R.string.error, errorMessage),
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center
         )
 
         if (isDeviceConnected) {

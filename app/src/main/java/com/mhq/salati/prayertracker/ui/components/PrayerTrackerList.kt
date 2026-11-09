@@ -19,21 +19,30 @@ import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
 import com.mhq.salati.prayertracker.presentation.model.PrayerStatusUi
 import com.mhq.salati.shared.presentation.model.PrayerNameUi
+import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import java.time.LocalDate
 
+/**
+ * Title + the five prayer status cards in one row.
+ * On wide screens the pane is narrower, so the gap between cards is tighter to leave room for labels.
+ */
 @Composable
 fun PrayerStatusList(
     selectedDate: LocalDate,
     today: LocalDate,
     duePrayers: Set<PrayerNameUi>,
     records: Map<PrayerNameUi, PrayerStatusUi>,
-    onPrayerTapped: (PrayerNameUi) -> Unit
+    onPrayerTapped: (PrayerNameUi) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val isFutureDate = selectedDate.isAfter(today)
     val hasUnduePrayers = selectedDate == today && PrayerNameUi.majorEntries.any { it !in duePrayers }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
         Text(
             text = stringResource(R.string.track_your_prayers),
             color = MaterialTheme.colorScheme.onSurface,
@@ -43,7 +52,7 @@ fun PrayerStatusList(
             modifier = Modifier.padding(bottom = 12.dp)
         )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(if (isWideLayout()) 6.dp else 10.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             PrayerNameUi.majorEntries.forEach { prayer ->

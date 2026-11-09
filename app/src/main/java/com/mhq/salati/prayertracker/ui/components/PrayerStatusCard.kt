@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.prayertracker.presentation.model.PrayerStatusUi
 import com.mhq.salati.shared.presentation.model.PrayerNameUi
+import com.mhq.salati.shared.ui.components.ShrinkToFitText
 import com.mhq.salati.shared.ui.labelRes
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
@@ -89,16 +89,16 @@ fun PrayerStatusCard(
             )
             .padding(horizontal = 6.dp, vertical = 14.dp)
     ) {
-        Text(
+        ShrinkToFitText(
             text = stringResource(prayer.labelRes),
             fontSize = 14.sp,
+            minFontSize = 10.sp,
             fontWeight = FontWeight.SemiBold,
             color =
                 if (locked)
                     MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 else
-                    MaterialTheme.colorScheme.onSurface,
-            maxLines = 1
+                    MaterialTheme.colorScheme.onSurface
         )
 
         AnimatedContent(

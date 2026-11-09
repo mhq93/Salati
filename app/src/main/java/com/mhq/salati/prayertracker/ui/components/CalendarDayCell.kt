@@ -1,10 +1,20 @@
 package com.mhq.salati.prayertracker.ui.components
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -13,15 +23,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.prayertracker.presentation.model.DayStatusUi
+import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
-//Different Sizes and Device Rotation
+/**
+ * One day of the month grid.
+ *
+ * Font sizes are DERIVED from the cell's own size (not fixed sp values) and use a tight line height
+ * with trimmed font padding, so the two numbers always fit inside the cell: narrow phones, large
+ * screens, landscape and Arabic digits can no longer push the content out of the cell.
+ *
+ * - Portrait / tall screens: square cell, Gregorian over Hijri, status dot at the bottom.
+ * - Wide screens (landscape, tablets): the cell fills the row height; Gregorian and Hijri share one line.
+ */
 @Composable
 fun CalendarDayCell(
     gregorianDay: Int,
@@ -33,8 +54,7 @@ fun CalendarDayCell(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isWide = isWideLayout()
 
     val dotIndicatorColor = when (status) {
         DayStatusUi.ALL_PRAYED -> MaterialTheme.colorScheme.primary
@@ -51,75 +71,77 @@ fun CalendarDayCell(
 
     val baseTextColor = MaterialTheme.colorScheme.onSurface
 
+    val gregorianColor = when {
+        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
+        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
+        else -> baseTextColor
+    }
+    val hijriColor = when {
+        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
     val cellBorderColor = if (isCurrentMonth && !isFuture) {
         MaterialTheme.colorScheme.outlineVariant
     } else {
         MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f)
     }
 
-    Box(
+    BoxWithConstraints(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .then(if (isLandscape) Modifier.fillMaxSize() else Modifier.aspectRatio(1f))
+            .then(if (isWide) Modifier.fillMaxSize() else Modifier.aspectRatio(1f))
             .clip(RoundedCornerShape(8.dp))
             .background(cellBackgroundColor)
-            .border(
-                1.dp,
-                cellBorderColor,
-                RoundedCornerShape(8.dp)
-            )
+            .border(1.dp, cellBorderColor, RoundedCornerShape(8.dp))
             .clickable(enabled = isCurrentMonth && !isFuture, onClick = onClick)
-            .padding(vertical = 2.dp, horizontal = 2.dp)
+            .padding(2.dp)
     ) {
-        if (isLandscape) {
-            // Landscape: Gregorian day then Hijri day, centered as a group
+        if (isWide) {
+            /** Single line: size follows the row height, capped by the width so both numbers fit side by side */
+            val gregorianSp = minOf(maxHeight.value * 0.70f, maxWidth.value * 0.32f).coerceIn(9f, 14f)
+            val hijriSp = minOf(maxHeight.value * 0.58f, maxWidth.value * 0.26f).coerceIn(8f, 12f)
+
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = gregorianDay.toString(),
-                    fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
-                    color = when {
-                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-                        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
-                        else -> baseTextColor
-                    }
+                    color = gregorianColor,
+                    style = dayTextStyle(gregorianSp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = hijriDay.toString(),
-                    fontSize = 11.sp,
                     fontWeight = FontWeight.Light,
-                    color = when {
-                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
-                        else -> MaterialTheme.colorScheme.onSurfaceVariant
-                    }
+                    color = hijriColor,
+                    style = dayTextStyle(hijriSp)
                 )
             }
 
-            // Status dot pinned to the bottom center of the cell
-            Box(
+            /** Status dot pinned to the bottom center of the cell */
+            StatusDot(
+                color = dotIndicatorColor,
+                size = 3.dp,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 3.dp)
-                    .size(3.dp)
-                    .then(
-                        if (dotIndicatorColor != null)
-                            Modifier.background(dotIndicatorColor, CircleShape)
-                        else
-                            Modifier
-                    )
             )
         } else {
+            /** Both numbers scale with the smaller cell side, so the stack + dot always fit */
+            val side = minOf(maxWidth, maxHeight).value
+            val gregorianSp = (side * 0.40f).coerceIn(10f, 20f)
+            val hijriSp = (side * 0.29f).coerceIn(8f, 14f)
+
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Number stack centered in the space above the dot, so the
-                // Hijri number always sits high with clear room below it
+                /** Number stack centered in the space above the dot,
+                 * so the Hijri number always sits high with clear room below it */
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -129,42 +151,54 @@ fun CalendarDayCell(
                 ) {
                     Text(
                         text = gregorianDay.toString(),
-                        fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
-                        color = when {
-                            isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-                            !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
-                            else -> baseTextColor
-                        }
+                        color = gregorianColor,
+                        style = dayTextStyle(gregorianSp)
                     )
                     Spacer(modifier = Modifier.height(1.dp))
                     Text(
                         text = hijriDay.toString(),
-                        fontSize = 13.sp,
                         fontWeight = FontWeight.Light,
-                        color = when {
-                            isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                            !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
-                            else -> MaterialTheme.colorScheme.onSurfaceVariant
-                        }
+                        color = hijriColor,
+                        style = dayTextStyle(hijriSp)
                     )
                 }
 
-                // Status dot pinned to the bottom center of the cell
-                Box(
-                    modifier = Modifier
-                        .padding(bottom = 2.dp)
-                        .size(4.dp)
-                        .then(
-                            if (dotIndicatorColor != null)
-                                Modifier.background(dotIndicatorColor, CircleShape)
-                            else
-                                Modifier
-                        )
+                StatusDot(
+                    color = dotIndicatorColor,
+                    size = 4.dp,
+                    modifier = Modifier.padding(bottom = 2.dp)
                 )
             }
         }
     }
+}
+
+/**
+ * Tight text style for day numbers: line height is ~1.15x the font size and the extra font
+ * padding is trimmed on both sides, so Arabic digits / fonts with tall metrics can't add height.
+ */
+private fun dayTextStyle(sizeSp: Float) = TextStyle(
+    fontSize = sizeSp.sp,
+    lineHeight = (sizeSp * 1.15f).sp,
+    lineHeightStyle = LineHeightStyle(
+        alignment = LineHeightStyle.Alignment.Center,
+        trim = LineHeightStyle.Trim.Both
+    )
+)
+
+/** Reserves its space even when [color] is null so cells without a status keep the same layout. */
+@Composable
+private fun StatusDot(
+    color: androidx.compose.ui.graphics.Color?,
+    size: androidx.compose.ui.unit.Dp,
+    modifier: Modifier = Modifier
+) {
+    androidx.compose.foundation.layout.Box(
+        modifier = modifier
+            .size(size)
+            .then(if (color != null) Modifier.background(color, CircleShape) else Modifier)
+    )
 }
 
 @Preview
@@ -181,298 +215,3 @@ private fun CalendarDayCellPreview() {
         )
     }
 }
-
-//package com.mhq.salati.prayertracker.ui.components
-//
-//import android.content.res.Configuration
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.border
-//import androidx.compose.foundation.clickable
-//import androidx.compose.foundation.layout.*
-//import androidx.compose.foundation.shape.CircleShape
-//import androidx.compose.foundation.shape.RoundedCornerShape
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.Text
-//import androidx.compose.runtime.Composable
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.draw.clip
-//import androidx.compose.ui.platform.LocalConfiguration
-//import androidx.compose.ui.text.font.FontWeight
-//import androidx.compose.ui.tooling.preview.Preview
-//import androidx.compose.ui.unit.dp
-//import androidx.compose.ui.unit.sp
-//import com.mhq.salati.prayertracker.presentation.model.DayStatusUi
-//import com.mhq.salati.shared.ui.theme.SalatiTheme
-//
-////Different Sizes and Device Rotation
-//@Composable
-//fun CalendarDayCell(
-//    gregorianDay: Int,
-//    hijriDay: Int,
-//    isCurrentMonth: Boolean,
-//    isFuture: Boolean = false,
-//    isSelected: Boolean,
-//    status: DayStatusUi?,
-//    onClick: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    val configuration = LocalConfiguration.current
-//    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-//
-//    val dotIndicatorColor = when (status) {
-//        DayStatusUi.ALL_PRAYED -> MaterialTheme.colorScheme.primary
-//        DayStatusUi.HAS_MISSED -> MaterialTheme.colorScheme.error
-//        DayStatusUi.IN_PROGRESS -> MaterialTheme.colorScheme.secondary
-//        else -> null
-//    }
-//
-//    val cellBackgroundColor = when {
-//        isSelected -> MaterialTheme.colorScheme.primaryContainer
-//        !isCurrentMonth -> MaterialTheme.colorScheme.surfaceVariant
-//        else -> MaterialTheme.colorScheme.surface
-//    }
-//
-//    val baseTextColor = MaterialTheme.colorScheme.onSurface
-//
-//    val cellBorderColor = if (isCurrentMonth && !isFuture) {
-//        MaterialTheme.colorScheme.outlineVariant
-//    } else {
-//        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f)
-//    }
-//
-//    Box(
-//        contentAlignment = Alignment.Center,
-//        modifier = modifier
-//            .then(if (isLandscape) Modifier.fillMaxSize() else Modifier.aspectRatio(1f))
-//            .clip(RoundedCornerShape(8.dp))
-//            .background(cellBackgroundColor)
-//            .border(
-//                1.dp,
-//                cellBorderColor,
-//                RoundedCornerShape(8.dp)
-//            )
-//            .clickable(enabled = isCurrentMonth && !isFuture, onClick = onClick)
-//            .padding(vertical = if (isLandscape) 2.dp else 4.dp, horizontal = 2.dp)
-//    ) {
-//        if (isLandscape) {
-//            // Landscape: Gregorian day then Hijri day, centered as a group
-//            Row(
-//                horizontalArrangement = Arrangement.Center,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Text(
-//                    text = gregorianDay.toString(),
-//                    fontSize = 13.sp,
-//                    fontWeight = FontWeight.Medium,
-//                    color = when {
-//                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-//                        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
-//                        else -> baseTextColor
-//                    }
-//                )
-//                Spacer(modifier = Modifier.width(6.dp))
-//                Text(
-//                    text = hijriDay.toString(),
-//                    fontSize = 11.sp,
-//                    fontWeight = FontWeight.Light,
-//                    color = when {
-//                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-//                        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
-//                        else -> MaterialTheme.colorScheme.onSurfaceVariant
-//                    }
-//                )
-//            }
-//
-//            // Status dot pinned to the bottom center of the cell
-//            Box(
-//                modifier = Modifier
-//                    .align(Alignment.BottomCenter)
-//                    .padding(bottom = 3.dp)
-//                    .size(3.dp)
-//                    .then(
-//                        if (dotIndicatorColor != null)
-//                            Modifier.background(dotIndicatorColor, CircleShape)
-//                        else
-//                            Modifier
-//                    )
-//            )
-//        } else {
-//            Column(
-//                horizontalAlignment = Alignment.CenterHorizontally,
-//                verticalArrangement = Arrangement.Center
-//            ) {
-//                Text(
-//                    text = gregorianDay.toString(),
-//                    fontSize = 18.sp,
-//                    fontWeight = FontWeight.Medium,
-//                    color = when {
-//                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-//                        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
-//                        else -> baseTextColor
-//                    }
-//                )
-//                Spacer(modifier = Modifier.height(2.dp))
-//                Text(
-//                    text = hijriDay.toString(),
-//                    fontSize = 13.sp,
-//                    fontWeight = FontWeight.Light,
-//                    color = when {
-//                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-//                        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
-//                        else -> MaterialTheme.colorScheme.onSurfaceVariant
-//                    }
-//                )
-//                Spacer(modifier = Modifier.height(2.dp))
-//                Box(
-//                    modifier = Modifier
-//                        .size(4.dp)
-//                        .then(
-//                            if (dotIndicatorColor != null)
-//                                Modifier.background(dotIndicatorColor, CircleShape)
-//                            else
-//                                Modifier
-//                        )
-//                )
-//            }
-//        }
-//    }
-//}
-//
-//@Preview
-//@Composable
-//private fun CalendarDayCellPreview() {
-//    SalatiTheme {
-//        CalendarDayCell(
-//            gregorianDay = 1,
-//            hijriDay = 1,
-//            isSelected = true,
-//            isCurrentMonth = true,
-//            status = DayStatusUi.ALL_PRAYED,
-//            onClick = {}
-//        )
-//    }
-//}
-
-
-
-
-
-//package com.mhq.salati.prayertracker.ui.components
-//
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.border
-//import androidx.compose.foundation.clickable
-//import androidx.compose.foundation.layout.*
-//import androidx.compose.foundation.shape.CircleShape
-//import androidx.compose.foundation.shape.RoundedCornerShape
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.Text
-//import androidx.compose.runtime.Composable
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.draw.clip
-//import androidx.compose.ui.text.font.FontWeight
-//import androidx.compose.ui.tooling.preview.Preview
-//import androidx.compose.ui.unit.dp
-//import androidx.compose.ui.unit.sp
-//import com.mhq.salati.prayertracker.presentation.model.DayStatusUi
-//import com.mhq.salati.shared.ui.theme.SalatiTheme
-//
-////Original
-//@Composable
-//fun CalendarDayCell(
-//    gregorianDay: Int,
-//    hijriDay: Int,
-//    isCurrentMonth: Boolean,
-//    isFuture: Boolean = false,
-//    isSelected: Boolean,
-//    status: DayStatusUi?,
-//    onClick: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    val dotIndicatorColor = when (status) {
-//        DayStatusUi.ALL_PRAYED -> MaterialTheme.colorScheme.primary
-//        DayStatusUi.HAS_MISSED -> MaterialTheme.colorScheme.error
-//        DayStatusUi.IN_PROGRESS -> MaterialTheme.colorScheme.secondary
-//        else -> null
-//    }
-//
-//    val cellBackgroundColor = when {
-//        isSelected -> MaterialTheme.colorScheme.primaryContainer
-//        !isCurrentMonth -> MaterialTheme.colorScheme.surfaceVariant
-//        else -> MaterialTheme.colorScheme.surface
-//    }
-//
-//    val baseTextColor = MaterialTheme.colorScheme.onSurface
-//
-//    val cellBorderColor = if (isCurrentMonth && !isFuture) {
-//        MaterialTheme.colorScheme.outlineVariant
-//    } else {
-//        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f)
-//    }
-//
-//    Column(
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Center,
-//        modifier = modifier
-//            .aspectRatio(1f)
-//            .clip(RoundedCornerShape(8.dp))
-//            .background(cellBackgroundColor)
-//            .border(
-//                1.dp,
-//                cellBorderColor,
-//                RoundedCornerShape(8.dp)
-//            )
-//            .clickable(enabled = isCurrentMonth && !isFuture, onClick = onClick)
-//            .padding(4.dp)
-//    ) {
-//        Text(
-//            text = gregorianDay.toString(),
-//            fontSize = 18.sp,
-//            fontWeight = FontWeight.Medium,
-//            color = when {
-//                isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-//                !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
-//                else -> baseTextColor
-//            }
-//        )
-//        Spacer(modifier = Modifier.height(2.dp))
-//        Text(
-//            text = hijriDay.toString(),
-//            fontSize = 13.sp,
-//            fontWeight = FontWeight.Light,
-//            color = when {
-//                isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-//                !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
-//                else -> MaterialTheme.colorScheme.onSurfaceVariant
-//            }
-//        )
-//        Spacer(modifier = Modifier.height(2.dp))
-//        Box(
-//            modifier = Modifier
-//                .size(4.dp)
-//                .then(
-//                    if (dotIndicatorColor != null)
-//                        Modifier.background(dotIndicatorColor, CircleShape)
-//                    else
-//                        Modifier
-//                )
-//        )
-//    }
-//}
-//
-//@Preview
-//@Composable
-//private fun CalendarDayCellPreview() {
-//    SalatiTheme {
-//        CalendarDayCell(
-//            gregorianDay = 1,
-//            hijriDay = 1,
-//            isSelected = true,
-//            isCurrentMonth = true,
-//            status = DayStatusUi.ALL_PRAYED,
-//            onClick = {}
-//        )
-//    }
-//}
