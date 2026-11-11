@@ -8,6 +8,7 @@ import com.mhq.salati.splash.domain.usecases.GetStartDestinationUseCase
 import com.mhq.salati.splash.presentation.contract.SplashContract
 import com.mhq.salati.splash.presentation.mapper.toUi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -27,10 +28,6 @@ class SplashViewModel @Inject constructor(
 
     init {
         onIntent(SplashContract.Intent.CheckStartDestination)
-
-        // The theme is observed here so MainActivity can theme the very first frame.
-        // First-run language selection moved to onboarding's Welcome page,
-        // so this ViewModel no longer carries any language flow.
         observeSettingsUseCase()
             .onEach { settings ->
                 _state.update {
@@ -52,13 +49,19 @@ class SplashViewModel @Inject constructor(
 
     private fun checkStartDestination() {
         viewModelScope.launch {
-            val destination = getStartDestinationUseCase()
-            _state.update {
-                it.copy(
-                    startDestination = destination.toUi(),
-                    isDestinationReady = true,
-                    isLoading = !it.isSettingsReady
-                )
+            try {
+                val destination = getStartDestinationUseCase()
+                _state.update {
+                    it.copy(
+                        startDestination = destination.toUi(),
+                        isDestinationReady = true,
+                        isLoading = !it.isSettingsReady
+                    )
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _state.update { it.copy(isDestinationReady = true, isLoading = !it.isSettingsReady) }
             }
         }
     }

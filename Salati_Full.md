@@ -1,8 +1,8 @@
 # Salati project export
 
-- Generated: 2026-11-09 17:36
+- Generated: 2026-11-11 07:07
 - PowerShell: 5.1.19041.6456
-- Files embedded: 400
+- Files embedded: 421
 - Files listed only (binary / too large / sensitive): 29
 - Secrets: local.properties, google-services.json, keystores and .env files are skipped; key/secret/password/token string literals are replaced with <REDACTED>.
 
@@ -10,9 +10,10 @@
 
 ```text
 branch: dev
-last commit: 4c4a5cf 2026-11-09 wip: modified Type.kt to handle vertical expansion in UI elements upon switching app language to Arabic, redesigned Home and Qibla to handle different screen sizes and device rotation. Qibla is confirmed done, pending: rest of the screens
+last commit: 54af52c 2026-11-09 redesign: redesigned Tracker Screen to handle different screen sizes and device rotation
 
 recent commits:
+  54af52c 2026-11-09 redesign: redesigned Tracker Screen to handle different screen sizes and device rotation
   4c4a5cf 2026-11-09 wip: modified Type.kt to handle vertical expansion in UI elements upon switching app language to Arabic, redesigned Home and Qibla to handle different screen sizes and device rotation. Qibla is confirmed done, pending: rest of the screens
   33831c0 2026-11-08 fix: cancelled notification auto-dismiss
   b3980b3 2026-11-07 fix: fixed the black blinking upon language change by changing ConfigChanges and overriding applyOverrideConfiguration in main activity
@@ -27,10 +28,41 @@ recent commits:
   da49d62 2026-11-01 refactor: stop Presentation from holding state and logic that belongs in Domain
   2cbd0d0 2026-11-01 refactor: removed UiText and R.string references to make UI depend only on Presentation
   39371da 2026-10-31 refactor: make the UI layer depend only on Presentation
-  d321a57 2026-10-31 Add AGENTS.md and architecture doc
 
 working tree changes (git status --short, first 80):
-  (clean)
+   M Salati_Full.md
+   M app/src/main/java/com/mhq/salati/adhan/ui/service/AdhanPlaybackService.kt
+   M app/src/main/java/com/mhq/salati/alarms/presentation/mapper/CustomAlarmUiMapper.kt
+   M app/src/main/java/com/mhq/salati/alarms/ui/components/CustomAlarmCard.kt
+   M app/src/main/java/com/mhq/salati/alarms/ui/components/CustomAlarmSheet.kt
+   M app/src/main/java/com/mhq/salati/alarms/ui/notification/CustomAlarmNotifier.kt
+   M app/src/main/java/com/mhq/salati/alarms/ui/screens/CustomAlarmsContent.kt
+   M app/src/main/java/com/mhq/salati/locationpicker/presentation/viewmodel/LocationPickerViewModel.kt
+   M app/src/main/java/com/mhq/salati/onboarding/ui/screens/OnboardingContent.kt
+   M app/src/main/java/com/mhq/salati/qibla/presentation/handlers/QiblaLocationHandler.kt
+   M app/src/main/java/com/mhq/salati/qibla/presentation/handlers/QiblaLocationLoad.kt
+   M app/src/main/java/com/mhq/salati/settings/ui/screens/SettingsContent.kt
+   M app/src/main/java/com/mhq/salati/shared/ui/SalatiApp.kt
+   M app/src/main/java/com/mhq/salati/shared/ui/components/ActionRow.kt
+   M app/src/main/java/com/mhq/salati/shared/ui/components/TabHeader.kt
+   M app/src/main/java/com/mhq/salati/shared/ui/navigation/BottomNavBar.kt
+   M app/src/main/java/com/mhq/salati/splash/presentation/viewmodel/SplashViewModel.kt
+   M app/src/main/res/values-ar/strings.xml
+   M app/src/main/res/values/strings.xml
+   M app/src/test/java/com/mhq/salati/prayertracker/domain/usecases/GetCurrentStreakUseCaseTest.kt
+  ?? app/src/main/java/com/mhq/salati/alarms/presentation/mapper/OffsetDirectionUiMapper.kt
+  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/AddEditAlarmFormContent.kt
+  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/AlarmTitleEditor.kt
+  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/DayBadge.kt
+  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/DayCircle.kt
+  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/OffsetDirectionSegment.kt
+  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/OffsetInlineHeadline.kt
+  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/RepeatTag.kt
+  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/WeekDays.kt
+  ?? app/src/main/java/com/mhq/salati/alarms/ui/state/
+  ?? app/src/test/java/com/mhq/salati/home/
+  ?? app/src/test/java/com/mhq/salati/location/
+  ?? app/src/test/java/com/mhq/salati/testutil/
 ```
 
 ## Project tree
@@ -77,7 +109,7 @@ app\src\main\java\com\mhq\salati\adhan\presentation\presenter\PrayerAlarmPresent
 app\src\main\java\com\mhq\salati\adhan\ui\notification\NotificationHelper.kt  (1.7 KB)
 app\src\main\java\com\mhq\salati\adhan\ui\receiver\BootReceiver.kt  (1.3 KB)
 app\src\main\java\com\mhq\salati\adhan\ui\receiver\PrayerAlarmReceiver.kt  (1.3 KB)
-app\src\main\java\com\mhq\salati\adhan\ui\service\AdhanPlaybackService.kt  (7.2 KB)
+app\src\main\java\com\mhq\salati\adhan\ui\service\AdhanPlaybackService.kt  (6.8 KB)
 app\src\main\java\com\mhq\salati\alarms\data\mapper\CustomAlarmMapper.kt  (1.3 KB)
 app\src\main\java\com\mhq\salati\alarms\data\repoimpl\CustomAlarmRepoImpl.kt  (1.4 KB)
 app\src\main\java\com\mhq\salati\alarms\data\repoimpl\CustomAlarmSchedulerImpl.kt  (1.1 KB)
@@ -105,19 +137,29 @@ app\src\main\java\com\mhq\salati\alarms\domain\usecases\ToggleCustomAlarmDayUseC
 app\src\main\java\com\mhq\salati\alarms\domain\usecases\ToggleCustomAlarmUseCase.kt  (0.7 KB)
 app\src\main\java\com\mhq\salati\alarms\domain\usecases\UpdateCustomAlarmUseCase.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\alarms\presentation\contract\AlarmsContract.kt  (3.5 KB)
-app\src\main\java\com\mhq\salati\alarms\presentation\mapper\CustomAlarmUiMapper.kt  (2.0 KB)
+app\src\main\java\com\mhq\salati\alarms\presentation\mapper\CustomAlarmUiMapper.kt  (1.2 KB)
+app\src\main\java\com\mhq\salati\alarms\presentation\mapper\OffsetDirectionUiMapper.kt  (0.9 KB)
 app\src\main\java\com\mhq\salati\alarms\presentation\model\CustomAlarmUi.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\alarms\presentation\model\OffsetDirectionUi.kt  (0.1 KB)
 app\src\main\java\com\mhq\salati\alarms\presentation\presenter\CustomAlarmNotificationPresenter.kt  (1.5 KB)
 app\src\main\java\com\mhq\salati\alarms\presentation\viewmodel\AlarmsViewModel.kt  (5.6 KB)
-app\src\main\java\com\mhq\salati\alarms\ui\components\CustomAlarmCard.kt  (30.4 KB)
-app\src\main\java\com\mhq\salati\alarms\ui\components\CustomAlarmSheet.kt  (34.6 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\components\AddEditAlarmFormContent.kt  (14.9 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\components\AlarmTitleEditor.kt  (3.5 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\components\CustomAlarmCard.kt  (8.1 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\components\CustomAlarmSheet.kt  (1.8 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\components\DayBadge.kt  (0.2 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\components\DayCircle.kt  (2.1 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\components\OffsetDirectionSegment.kt  (1.5 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\components\OffsetInlineHeadline.kt  (2.1 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\components\RepeatTag.kt  (1.8 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\components\WeekDays.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\notification\CustomAlarmNotifier.kt  (4.3 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\receiver\CustomAlarmIntentKeys.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\receiver\CustomAlarmReceiver.kt  (1.8 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContainer.kt  (1.7 KB)
-app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContent.kt  (14.4 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContent.kt  (9.4 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContentBlank.kt  (1.2 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\state\AlarmFormState.kt  (0.9 KB)
 app\src\main\java\com\mhq\salati\connectivity\data\repoimpl\ConnectivityCheckerImpl.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\connectivity\datasource\device\AndroidConnectivityDataSource.kt  (0.8 KB)
 app\src\main\java\com\mhq\salati\connectivity\datasource\device\ConnectivityDataSource.kt  (0.1 KB)
@@ -205,7 +247,7 @@ app\src\main\java\com\mhq\salati\location\ui\components\PrerequisitesError.kt  (
 app\src\main\java\com\mhq\salati\location\ui\LocationPrerequisitesActions.kt  (2.3 KB)
 app\src\main\java\com\mhq\salati\location\ui\LocationPrerequisitesObserver.kt  (0.8 KB)
 app\src\main\java\com\mhq\salati\locationpicker\presentation\contract\LocationPickerContract.kt  (1.5 KB)
-app\src\main\java\com\mhq\salati\locationpicker\presentation\viewmodel\LocationPickerViewModel.kt  (14.8 KB)
+app\src\main\java\com\mhq\salati\locationpicker\presentation\viewmodel\LocationPickerViewModel.kt  (11.0 KB)
 app\src\main\java\com\mhq\salati\locationpicker\ui\screens\LocationPickerContainer.kt  (2.0 KB)
 app\src\main\java\com\mhq\salati\locationpicker\ui\screens\LocationPickerContent.kt  (10.8 KB)
 app\src\main\java\com\mhq\salati\locationpicker\ui\screens\LocationPickerMap.kt  (4.9 KB)
@@ -222,7 +264,7 @@ app\src\main\java\com\mhq\salati\onboarding\ui\components\OnboardingPageIndicato
 app\src\main\java\com\mhq\salati\onboarding\ui\components\OnboardingSelectionSheet.kt  (2.6 KB)
 app\src\main\java\com\mhq\salati\onboarding\ui\OnboardingLabels.kt  (1.7 KB)
 app\src\main\java\com\mhq\salati\onboarding\ui\screens\OnboardingContainer.kt  (4.2 KB)
-app\src\main\java\com\mhq\salati\onboarding\ui\screens\OnboardingContent.kt  (15.4 KB)
+app\src\main\java\com\mhq\salati\onboarding\ui\screens\OnboardingContent.kt  (25.3 KB)
 app\src\main\java\com\mhq\salati\permissions\data\repoimpl\LocationPermissionRepoImpl.kt  (0.5 KB)
 app\src\main\java\com\mhq\salati\permissions\data\repoimpl\PermissionCheckerImpl.kt  (0.7 KB)
 app\src\main\java\com\mhq\salati\permissions\datasource\device\AndroidPermissionDataSource.kt  (1.3 KB)
@@ -278,16 +320,16 @@ app\src\main\java\com\mhq\salati\prayertracker\presentation\mapper\PrayerTracker
 app\src\main\java\com\mhq\salati\prayertracker\presentation\model\DayStatusUi.kt  (0.1 KB)
 app\src\main\java\com\mhq\salati\prayertracker\presentation\model\PrayerStatusUi.kt  (0.1 KB)
 app\src\main\java\com\mhq\salati\prayertracker\presentation\viewmodel\PrayerTrackerViewModel.kt  (6.9 KB)
-app\src\main\java\com\mhq\salati\prayertracker\ui\components\CalendarDayCell.kt  (18.1 KB)
-app\src\main\java\com\mhq\salati\prayertracker\ui\components\CalendarMonthView.kt  (19.5 KB)
-app\src\main\java\com\mhq\salati\prayertracker\ui\components\DialogChoiceButton.kt  (2.7 KB)
-app\src\main\java\com\mhq\salati\prayertracker\ui\components\PrayerConfirmDialog.kt  (3.9 KB)
-app\src\main\java\com\mhq\salati\prayertracker\ui\components\PrayerTrackerCard.kt  (6.3 KB)
-app\src\main\java\com\mhq\salati\prayertracker\ui\components\PrayerTrackerList.kt  (3.1 KB)
+app\src\main\java\com\mhq\salati\prayertracker\ui\components\CalendarDayCell.kt  (8.4 KB)
+app\src\main\java\com\mhq\salati\prayertracker\ui\components\CalendarMonthView.kt  (10.7 KB)
+app\src\main\java\com\mhq\salati\prayertracker\ui\components\DialogChoiceButton.kt  (2.9 KB)
+app\src\main\java\com\mhq\salati\prayertracker\ui\components\PrayerConfirmDialog.kt  (4.1 KB)
+app\src\main\java\com\mhq\salati\prayertracker\ui\components\PrayerStatusCard.kt  (6.3 KB)
+app\src\main\java\com\mhq\salati\prayertracker\ui\components\PrayerTrackerList.kt  (3.4 KB)
 app\src\main\java\com\mhq\salati\prayertracker\ui\components\StreakBanner.kt  (2.4 KB)
 app\src\main\java\com\mhq\salati\prayertracker\ui\components\TrackerBadge.kt  (1.5 KB)
 app\src\main\java\com\mhq\salati\prayertracker\ui\screens\PrayerTrackerContainer.kt  (2.3 KB)
-app\src\main\java\com\mhq\salati\prayertracker\ui\screens\PrayerTrackerContent.kt  (11.0 KB)
+app\src\main\java\com\mhq\salati\prayertracker\ui\screens\PrayerTrackerContent.kt  (9.3 KB)
 app\src\main\java\com\mhq\salati\qibla\data\repoimpl\CompassRepoImpl.kt  (1.7 KB)
 app\src\main\java\com\mhq\salati\qibla\datasource\device\AndroidRotationSensorDataSource.kt  (5.2 KB)
 app\src\main\java\com\mhq\salati\qibla\datasource\device\CompassSample.kt  (0.2 KB)
@@ -359,7 +401,7 @@ app\src\main\java\com\mhq\salati\settings\ui\components\SettingsSelectionSheet.k
 app\src\main\java\com\mhq\salati\settings\ui\components\SettingsStepperRow.kt  (3.1 KB)
 app\src\main\java\com\mhq\salati\settings\ui\components\SettingsSwitchRow.kt  (3.1 KB)
 app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsContainer.kt  (6.2 KB)
-app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsContent.kt  (12.4 KB)
+app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsContent.kt  (15.5 KB)
 app\src\main\java\com\mhq\salati\settings\ui\SettingsLabels.kt  (2.8 KB)
 app\src\main\java\com\mhq\salati\shared\app\SalatiApplication.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\shared\data\mapper\PrayerNameMapper.kt  (1.0 KB)
@@ -385,22 +427,23 @@ app\src\main\java\com\mhq\salati\shared\presentation\mapper\PrayerNameUiMapper.k
 app\src\main\java\com\mhq\salati\shared\presentation\model\HijriMonthUi.kt  (0.3 KB)
 app\src\main\java\com\mhq\salati\shared\presentation\model\MessageUi.kt  (1.0 KB)
 app\src\main\java\com\mhq\salati\shared\presentation\model\PrayerNameUi.kt  (0.6 KB)
-app\src\main\java\com\mhq\salati\shared\ui\components\ActionRow.kt  (3.5 KB)
+app\src\main\java\com\mhq\salati\shared\ui\components\ActionRow.kt  (4.8 KB)
 app\src\main\java\com\mhq\salati\shared\ui\components\AppLogo.kt  (1.3 KB)
 app\src\main\java\com\mhq\salati\shared\ui\components\GroupCard.kt  (1.2 KB)
 app\src\main\java\com\mhq\salati\shared\ui\components\GroupDivider.kt  (0.7 KB)
 app\src\main\java\com\mhq\salati\shared\ui\components\IconBadge.kt  (1.8 KB)
 app\src\main\java\com\mhq\salati\shared\ui\components\LocalSnackbarHostState.kt  (0.3 KB)
 app\src\main\java\com\mhq\salati\shared\ui\components\SelectionSheet.kt  (3.1 KB)
+app\src\main\java\com\mhq\salati\shared\ui\components\ShrinkToFitText.kt  (2.4 KB)
 app\src\main\java\com\mhq\salati\shared\ui\components\StepBadgeIcon.kt  (0.7 KB)
 app\src\main\java\com\mhq\salati\shared\ui\components\StepHeader.kt  (2.3 KB)
-app\src\main\java\com\mhq\salati\shared\ui\components\TabHeader.kt  (5.9 KB)
+app\src\main\java\com\mhq\salati\shared\ui\components\TabHeader.kt  (6.0 KB)
 app\src\main\java\com\mhq\salati\shared\ui\errors\CatchAllError.kt  (2.2 KB)
 app\src\main\java\com\mhq\salati\shared\ui\errors\NoConnectionError.kt  (1.8 KB)
 app\src\main\java\com\mhq\salati\shared\ui\HijriMonthLabels.kt  (1.0 KB)
 app\src\main\java\com\mhq\salati\shared\ui\MainActivity.kt  (2.9 KB)
 app\src\main\java\com\mhq\salati\shared\ui\MessageLabels.kt  (2.6 KB)
-app\src\main\java\com\mhq\salati\shared\ui\navigation\BottomNavBar.kt  (12.8 KB)
+app\src\main\java\com\mhq\salati\shared\ui\navigation\BottomNavBar.kt  (12.7 KB)
 app\src\main\java\com\mhq\salati\shared\ui\navigation\BottomNavBarDefaults.kt  (0.1 KB)
 app\src\main\java\com\mhq\salati\shared\ui\navigation\BottomNavBarItem.kt  (0.2 KB)
 app\src\main\java\com\mhq\salati\shared\ui\navigation\NavigationScreen.kt  (0.7 KB)
@@ -418,7 +461,7 @@ app\src\main\java\com\mhq\salati\splash\domain\usecases\GetStartDestinationUseCa
 app\src\main\java\com\mhq\salati\splash\presentation\contract\SplashContract.kt  (0.6 KB)
 app\src\main\java\com\mhq\salati\splash\presentation\mapper\SplashUiMapper.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\splash\presentation\model\StartDestinationUi.kt  (0.1 KB)
-app\src\main\java\com\mhq\salati\splash\presentation\viewmodel\SplashViewModel.kt  (2.3 KB)
+app\src\main\java\com\mhq\salati\splash\presentation\viewmodel\SplashViewModel.kt  (2.4 KB)
 app\src\main\res\drawable\ic_salati_colored.xml  (1.1 KB)
 app\src\main\res\drawable\ic_stop.xml  (0.3 KB)
 app\src\main\res\mipmap-anydpi-v26\ic_launcher.xml  (0.3 KB)
@@ -445,14 +488,24 @@ app\src\main\res\raw\default_beep.mp3  (38.4 KB)  [binary]
 app\src\main\res\raw\minor_timing_alert.mp3  (55.8 KB)  [binary]
 app\src\main\res\values\colors.xml  (0.1 KB)
 app\src\main\res\values\ic_launcher_background.xml  (0.1 KB)
-app\src\main\res\values\strings.xml  (13.8 KB)
+app\src\main\res\values\strings.xml  (13.6 KB)
 app\src\main\res\values\themes.xml  (0.1 KB)
-app\src\main\res\values-ar\strings.xml  (17.0 KB)
+app\src\main\res\values-ar\strings.xml  (16.8 KB)
 app\src\main\res\xml\backup_rules.xml  (0.5 KB)
 app\src\main\res\xml\data_extraction_rules.xml  (0.5 KB)
 app\src\main\ic_launcher-playstore.png  (20.0 KB)  [binary]
 app\src\main\keepRules\rules.keep  (0.4 KB)  [binary]
-app\src\test\java\com\mhq\salati\prayertracker\domain\usecases\GetCurrentStreakUseCaseTest.kt  (6.0 KB)
+app\src\test\java\com\mhq\salati\home\domain\service\DayNavigatorTest.kt  (4.0 KB)
+app\src\test\java\com\mhq\salati\home\domain\usecases\LoadPrayerTimesUseCaseTest.kt  (7.0 KB)
+app\src\test\java\com\mhq\salati\home\domain\usecases\ResolvePrayerWindowForDisplayUseCaseTest.kt  (7.5 KB)
+app\src\test\java\com\mhq\salati\location\domain\usecases\CheckLocationPrerequisitesUseCaseTest.kt  (3.0 KB)
+app\src\test\java\com\mhq\salati\location\domain\usecases\ResolveLocationUseCaseTest.kt  (8.7 KB)
+app\src\test\java\com\mhq\salati\prayertracker\domain\usecases\GetCurrentStreakUseCaseTest.kt  (5.2 KB)
+app\src\test\java\com\mhq\salati\testutil\FakeClock.kt  (0.6 KB)
+app\src\test\java\com\mhq\salati\testutil\FakeConnectivityChecker.kt  (0.2 KB)
+app\src\test\java\com\mhq\salati\testutil\FakePermissionChecker.kt  (0.3 KB)
+app\src\test\java\com\mhq\salati\testutil\FakePrayerTimesRepository.kt  (1.2 KB)
+app\src\test\java\com\mhq\salati\testutil\FakeSettingsRepository.kt  (1.4 KB)
 .gitignore  (0.2 KB)
 AGENTS.md  (0.8 KB)
 app\.gitignore  (0.0 KB)
@@ -1911,16 +1964,7 @@ import com.mhq.salati.adhan.presentation.presenter.AdhanPlaybackPresenter
 import com.mhq.salati.settings.presentation.model.AdhanSoundUi
 import com.mhq.salati.shared.ui.labelRes
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class AdhanPlaybackService : Service() {
@@ -1930,7 +1974,6 @@ class AdhanPlaybackService : Service() {
     private var mediaPlayer: MediaPlayer? = null
     private var audioManager: AudioManager? = null
     private var focusRequest: AudioFocusRequest? = null
-    private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -2079,7 +2122,6 @@ class AdhanPlaybackService : Service() {
         mediaPlayer?.release()
         mediaPlayer = null
         focusRequest?.let { audioManager?.abandonAudioFocusRequest(it) }
-        serviceScope.cancel()
         super.onDestroy()
     }
 
@@ -2995,30 +3037,10 @@ object AlarmsContract {
 package com.mhq.salati.alarms.presentation.mapper
 
 import com.mhq.salati.alarms.domain.model.CustomAlarm
-import com.mhq.salati.alarms.domain.model.OffsetDirection
-import com.mhq.salati.alarms.domain.model.conflictsWith as domainConflictsWith
 import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
-import com.mhq.salati.alarms.presentation.model.OffsetDirectionUi
 import com.mhq.salati.shared.presentation.mapper.toDomain
 import com.mhq.salati.shared.presentation.mapper.toUi
-
-fun OffsetDirection.toUi(): OffsetDirectionUi = when (this) {
-    OffsetDirection.BEFORE -> OffsetDirectionUi.BEFORE
-    OffsetDirection.AFTER -> OffsetDirectionUi.AFTER
-}
-
-fun OffsetDirectionUi.toDomain(): OffsetDirection = when (this) {
-    OffsetDirectionUi.BEFORE -> OffsetDirection.BEFORE
-    OffsetDirectionUi.AFTER -> OffsetDirection.AFTER
-}
-
-/**
- * Reads the direction key the custom alarm receiver gets in its Intent.
- * CustomAlarmSchedulerImpl writes it as `OffsetDirection.name`.
- * A missing or unknown key gives null.
- */
-fun String?.toOffsetDirectionUiOrNull(): OffsetDirectionUi? =
-    this?.let { key -> runCatching { OffsetDirection.valueOf(key) }.getOrNull() }?.toUi()
+import com.mhq.salati.alarms.domain.model.conflictsWith as domainConflictsWith
 
 fun CustomAlarm.toUi(): CustomAlarmUi = CustomAlarmUi(
     id = id,
@@ -3048,6 +3070,33 @@ fun CustomAlarmUi.toDomain(): CustomAlarm = CustomAlarm(
  */
 fun CustomAlarmUi.conflictsWith(other: CustomAlarmUi): Boolean =
     toDomain().domainConflictsWith(other.toDomain())
+```
+
+## app\src\main\java\com\mhq\salati\alarms\presentation\mapper\OffsetDirectionUiMapper.kt
+
+```kotlin
+package com.mhq.salati.alarms.presentation.mapper
+
+import com.mhq.salati.alarms.domain.model.OffsetDirection
+import com.mhq.salati.alarms.presentation.model.OffsetDirectionUi
+
+fun OffsetDirection.toUi(): OffsetDirectionUi = when (this) {
+    OffsetDirection.BEFORE -> OffsetDirectionUi.BEFORE
+    OffsetDirection.AFTER -> OffsetDirectionUi.AFTER
+}
+
+fun OffsetDirectionUi.toDomain(): OffsetDirection = when (this) {
+    OffsetDirectionUi.BEFORE -> OffsetDirection.BEFORE
+    OffsetDirectionUi.AFTER -> OffsetDirection.AFTER
+}
+
+/**
+ * Reads the direction key the custom alarm receiver gets in its Intent.
+ * CustomAlarmSchedulerImpl writes it as `OffsetDirection.name`.
+ * A missing or unknown key gives null.
+ */
+fun String?.toOffsetDirectionUiOrNull(): OffsetDirectionUi? =
+    this?.let { key -> runCatching { OffsetDirection.valueOf(key) }.getOrNull() }?.toUi()
 ```
 
 ## app\src\main\java\com\mhq\salati\alarms\presentation\model\CustomAlarmUi.kt
@@ -3255,18 +3304,16 @@ class AlarmsViewModel @Inject constructor(
 }
 ```
 
-## app\src\main\java\com\mhq\salati\alarms\ui\components\CustomAlarmCard.kt
+## app\src\main\java\com\mhq\salati\alarms\ui\components\AddEditAlarmFormContent.kt
 
 ```kotlin
 package com.mhq.salati.alarms.ui.components
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -3274,15 +3321,460 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.mhq.salati.R
+import com.mhq.salati.alarms.presentation.mapper.conflictsWith
+import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
+import com.mhq.salati.alarms.presentation.model.OffsetDirectionUi
+import com.mhq.salati.alarms.ui.state.AlarmFormState
+import com.mhq.salati.shared.presentation.model.PrayerNameUi
+import com.mhq.salati.shared.ui.isWideLayout
+import com.mhq.salati.shared.ui.labelRes
+import com.mhq.salati.shared.ui.theme.SalatiTheme
+import java.time.format.TextStyle as DayNameStyle
+
+private const val MAX_OFFSET_MINUTES = 180
+private const val MAX_OFFSET_DIGITS = 3
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddEditAlarmFormContent(
+    formState: AlarmFormState,
+    existingAlarm: CustomAlarmUi?,
+    existingAlarms: List<CustomAlarmUi>,
+    onSave: (CustomAlarmUi) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var prayerName by formState.prayerName
+    var label by formState.label
+    var minutesText by formState.minutesText
+    var offsetDirection by formState.offsetDirection
+    var activeDays by formState.activeDays
+    var hasSaved by remember { mutableStateOf(false) }
+    var isPrayerMenuExpanded by remember { mutableStateOf(false) }
+
+    val offsetMinutes = minutesText.toIntOrNull()
+    val fullWeekSelected = activeDays.size == 7
+    val draft = offsetMinutes?.let {
+        CustomAlarmUi(
+            id = existingAlarm?.id ?: 0L,
+            prayerName = prayerName,
+            label = label.trim(),
+            offsetMinutes = it,
+            offsetDirection = offsetDirection,
+            everyDay = fullWeekSelected,
+            activeDays = if (fullWeekSelected) emptySet() else activeDays,
+            isEnabled = existingAlarm?.isEnabled ?: true
+        )
+    }
+    val hasConflict = !hasSaved && draft != null && existingAlarms.any {
+        it.id != draft.id && it.conflictsWith(draft)
+    }
+    val canSave = draft != null && activeDays.isNotEmpty() && !hasConflict
+
+    val configuration = LocalConfiguration.current
+    val primaryLocale = configuration.locales
+    val isLandscape = isWideLayout()
+    val minutesUnit = stringResource(R.string.minutes_short)
+
+    Column(
+        modifier = Modifier
+            .then(if (isLandscape) Modifier.fillMaxHeight() else Modifier.wrapContentHeight())
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        AlarmTitleEditor(
+            label = label,
+            onLabelChange = { label = it }
+        )
+
+        // ROW 1: [Minutes Input] (Left) | [Before/After Vertical Stack] (Center) | [Prayer Dropdown] (Right)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            // Left Element: Minutes Input
+            OutlinedTextField(
+                value = minutesText,
+                onValueChange = { input ->
+                    val digits = input.filter { it.isDigit() }.take(MAX_OFFSET_DIGITS)
+                    val value = digits.toIntOrNull()
+                    minutesText = if (value != null && value > MAX_OFFSET_MINUTES) {
+                        MAX_OFFSET_MINUTES.toString()
+                    } else {
+                        digits
+                    }
+                },
+                label = { Text(stringResource(R.string.alarm_minutes_field_label)) },
+                suffix = { Text(minutesUnit) },
+                singleLine = true,
+                isError = hasConflict,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier.weight(1f),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    focusedLabelColor = MaterialTheme.colorScheme.primary
+                )
+            )
+            Column(
+                modifier = Modifier
+                    .weight(0.4f)
+                    .height(OutlinedTextFieldDefaults.MinHeight)
+                    .clip(RoundedCornerShape(8.dp))
+                    .border(
+                        1.dp,
+                        MaterialTheme.colorScheme.outlineVariant,
+                        RoundedCornerShape(8.dp)
+                    )
+                    .selectableGroup()
+            ) {
+                OffsetDirectionSegment(
+                    text = stringResource(R.string.before),
+                    selected = offsetDirection == OffsetDirectionUi.BEFORE,
+                    onClick = { offsetDirection = OffsetDirectionUi.BEFORE },
+                    modifier = Modifier.weight(1f)
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                OffsetDirectionSegment(
+                    text = stringResource(R.string.after),
+                    selected = offsetDirection == OffsetDirectionUi.AFTER,
+                    onClick = { offsetDirection = OffsetDirectionUi.AFTER },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            // Right Element: Prayer Dropdown Selection
+            ExposedDropdownMenuBox(
+                expanded = isPrayerMenuExpanded,
+                onExpandedChange = { isPrayerMenuExpanded = it },
+                modifier = Modifier.weight(1f)
+            ) {
+                OutlinedTextField(
+                    value = stringResource(prayerName.labelRes),
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text(stringResource(R.string.prayer)) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isPrayerMenuExpanded) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        focusedLabelColor = MaterialTheme.colorScheme.primary
+                    )
+                )
+                ExposedDropdownMenu(
+                    expanded = isPrayerMenuExpanded,
+                    onDismissRequest = { isPrayerMenuExpanded = false }
+                ) {
+                    PrayerNameUi.entries.forEach { name ->
+                        DropdownMenuItem(
+                            text = { Text(stringResource(name.labelRes)) },
+                            onClick = { prayerName = name; isPrayerMenuExpanded = false }
+                        )
+                    }
+                }
+            }
+        }
+
+        if (hasConflict) {
+            Text(
+                text = stringResource(R.string.duplicate_alarm_exists),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+
+        // ROW 2: Balanced 7-day circles line
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = stringResource(R.string.repeat_every_day),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 6.dp)
+            )
+            val primaryLocaleInstance =
+                primaryLocale[0] // Extracts a single stable Locale from the list container
+
+            val badges = remember(primaryLocaleInstance) {
+                WeekDays.map { (calendarDay, dayOfWeek) ->
+                    DayBadge(
+                        calendarDay = calendarDay,
+                        initial = dayOfWeek.getDisplayName(
+                            DayNameStyle.NARROW,
+                            primaryLocaleInstance
+                        ),
+                        fullName = dayOfWeek.getDisplayName(
+                            DayNameStyle.FULL,
+                            primaryLocaleInstance
+                        )
+                    )
+                }
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth(if (isLandscape) 0.6f else 1f) // Keep compact in landscape splits
+            ) {
+                badges.forEach { badge ->
+                    val isDayActive = activeDays.contains(badge.calendarDay)
+                    val bgCircleColor = if (isDayActive) {
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                    } else {
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)
+                    }
+                    val txtCircleColor = if (isDayActive) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                    }
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f)
+                            .clip(CircleShape)
+                            .background(bgCircleColor)
+                            .toggleable(
+                                value = isDayActive,
+                                role = Role.Checkbox,
+                                onValueChange = {
+                                    activeDays = if (isDayActive) {
+                                        activeDays - badge.calendarDay
+                                    } else {
+                                        activeDays + badge.calendarDay
+                                    }
+                                }
+                            )
+                            .semantics { contentDescription = badge.fullName }
+                    ) {
+                        Text(
+                            text = badge.initial,
+                            fontSize = 13.sp,
+                            fontWeight = if (isDayActive) FontWeight.Bold else FontWeight.Normal,
+                            color = txtCircleColor,
+                            modifier = Modifier.clearAndSetSemantics { }
+                        )
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        // Actions Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (isLandscape) {
+                OutlinedButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(stringResource(R.string.cd_back))
+                }
+            }
+            Button(
+                onClick = { hasSaved = true; draft?.let(onSave) },
+                enabled = canSave && !hasSaved,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                modifier = Modifier.weight(if (isLandscape) 1f else 2f)
+            ) {
+                Text(stringResource(R.string.save))
+            }
+        }
+    }
+}
+
+@Preview(name = "Form - Portrait", showBackground = true)
+@Preview(
+    name = "Form - Landscape",
+    device = "spec:width=800dp,height=400dp,dpi=440",
+    showBackground = true
+)
+@Composable
+private fun AddEditAlarmFormContentPreview() {
+    SalatiTheme {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
+        ) {
+            AddEditAlarmFormContent(
+                formState = remember { AlarmFormState(null) },
+                existingAlarm = null,
+                existingAlarms = emptyList(),
+                onSave = {},
+                onDismiss = {}
+            )
+        }
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\alarms\ui\components\AlarmTitleEditor.kt
+
+```kotlin
+package com.mhq.salati.alarms.ui.components
+
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
+import com.mhq.salati.R
+
+private const val MAX_LABEL_LENGTH = 30
+
+@Composable
+internal fun AlarmTitleEditor(
+    label: String,
+    onLabelChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val defaultTitle = stringResource(R.string.custom_alarm_default_title)
+    var isEditing by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(isEditing) {
+        if (isEditing) focusRequester.requestFocus()
+    }
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (isEditing) {
+            OutlinedTextField(
+                value = label,
+                onValueChange = { onLabelChange(it.take(MAX_LABEL_LENGTH)) },
+                placeholder = { Text(defaultTitle) },
+                singleLine = true,
+                textStyle = MaterialTheme.typography.titleMedium,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { isEditing = false }),
+                modifier = Modifier
+                    .weight(1f)
+                    .focusRequester(focusRequester)
+            )
+        } else {
+            Text(
+                text = label.trim().ifBlank { defaultTitle },
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    .pointerInput(Unit) {
+                        detectTapGestures(onDoubleTap = { isEditing = true })
+                    }
+            )
+        }
+        IconButton(onClick = { isEditing = !isEditing }) {
+            Icon(
+                imageVector = if (isEditing) Icons.Default.Check else Icons.Default.Edit,
+                contentDescription = stringResource(if (isEditing) R.string.save else R.string.edit),
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\alarms\ui\components\CustomAlarmCard.kt
+
+```kotlin
+package com.mhq.salati.alarms.ui.components
+
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -3299,37 +3791,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
 import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
-import com.mhq.salati.alarms.presentation.model.OffsetDirectionUi
 import com.mhq.salati.shared.ui.labelRes
-import java.text.NumberFormat
-import java.time.DayOfWeek
-import java.util.Calendar
 import java.time.format.TextStyle as DayNameStyle
-
-private val WeekDays = listOf(
-    Calendar.MONDAY to DayOfWeek.MONDAY,
-    Calendar.TUESDAY to DayOfWeek.TUESDAY,
-    Calendar.WEDNESDAY to DayOfWeek.WEDNESDAY,
-    Calendar.THURSDAY to DayOfWeek.THURSDAY,
-    Calendar.FRIDAY to DayOfWeek.FRIDAY,
-    Calendar.SATURDAY to DayOfWeek.SATURDAY,
-    Calendar.SUNDAY to DayOfWeek.SUNDAY
-)
-
-private data class DayBadge(val calendarDay: Int, val initial: String, val fullName: String)
 
 @Composable
 fun CustomAlarmCard(
@@ -3486,9 +3954,210 @@ fun CustomAlarmCard(
         }
     }
 }
+```
+
+## app\src\main\java\com\mhq\salati\alarms\ui\components\CustomAlarmSheet.kt
+
+```kotlin
+package com.mhq.salati.alarms.ui.components
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
+import com.mhq.salati.alarms.ui.state.AlarmFormState
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddEditAlarmSheet(
+    formState: AlarmFormState,
+    existingAlarm: CustomAlarmUi?,
+    existingAlarms: List<CustomAlarmUi>,
+    onSave: (CustomAlarmUi) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = Modifier.wrapContentHeight()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .imePadding()
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 24.dp)
+        ) {
+            AddEditAlarmFormContent(
+                formState = formState,
+                existingAlarm = existingAlarm,
+                existingAlarms = existingAlarms,
+                onSave = onSave,
+                onDismiss = onDismiss
+            )
+        }
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\alarms\ui\components\DayBadge.kt
+
+```kotlin
+package com.mhq.salati.alarms.ui.components
+
+internal data class DayBadge(
+    val calendarDay: Int,
+    val initial: String,
+    val fullName: String
+)
+```
+
+## app\src\main\java\com\mhq\salati\alarms\ui\components\DayCircle.kt
+
+```kotlin
+package com.mhq.salati.alarms.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 @Composable
-private fun OffsetInlineHeadline(
+internal fun DayCircle(
+    badge: DayBadge,
+    isActive: Boolean,
+    isAlarmEnabled: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val colors = MaterialTheme.colorScheme
+    val backgroundColor = when {
+        !isActive -> colors.onSurface.copy(alpha = 0.05f)
+        isAlarmEnabled -> colors.primary.copy(alpha = 0.12f)
+        else -> colors.onSurfaceVariant.copy(alpha = 0.1f)
+    }
+    val textColor = when {
+        !isActive -> colors.onSurfaceVariant.copy(alpha = 0.35f)
+        isAlarmEnabled -> colors.primary
+        else -> colors.onSurfaceVariant.copy(alpha = 0.7f)
+    }
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .aspectRatio(1f)
+            .clip(CircleShape)
+            .background(backgroundColor)
+            .toggleable(value = isActive, role = Role.Checkbox, onValueChange = { onClick() })
+            .semantics { contentDescription = badge.fullName }
+    ) {
+        Text(
+            text = badge.initial,
+            fontSize = 13.sp,
+            fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
+            color = textColor,
+            modifier = Modifier.clearAndSetSemantics { }
+        )
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\alarms\ui\components\OffsetDirectionSegment.kt
+
+```kotlin
+package com.mhq.salati.alarms.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.mhq.salati.shared.ui.components.ShrinkToFitText
+
+@Composable
+internal fun OffsetDirectionSegment(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(if (selected) MaterialTheme.colorScheme.primary else Color.Transparent)
+            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
+    ) {
+        ShrinkToFitText(
+            text = text,
+            fontSize = 11.sp,
+            minFontSize = 8.sp,
+            fontWeight = FontWeight.Medium,
+            color = if (selected) MaterialTheme.colorScheme.onPrimary
+            else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 4.dp)
+        )
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\alarms\ui\components\OffsetInlineHeadline.kt
+
+```kotlin
+package com.mhq.salati.alarms.ui.components
+
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import com.mhq.salati.R
+import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
+import com.mhq.salati.alarms.presentation.model.OffsetDirectionUi
+import java.text.NumberFormat
+
+@Composable
+internal fun OffsetInlineHeadline(
     customAlarm: CustomAlarmUi,
     prayerName: String,
     contentAlpha: Float
@@ -3527,8 +4196,35 @@ private fun OffsetInlineHeadline(
         )
     }
 }
+```
+
+## app\src\main\java\com\mhq\salati\alarms\ui\components\RepeatTag.kt
+
+```kotlin
+package com.mhq.salati.alarms.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.mhq.salati.R
+
 @Composable
-private fun RepeatTag(isEnabled: Boolean) {
+internal fun RepeatTag(isEnabled: Boolean) {
     val colors = MaterialTheme.colorScheme
     val tint = if (isEnabled) colors.primary else colors.onSurfaceVariant.copy(alpha = 0.6f)
     Row(
@@ -3554,550 +4250,17 @@ private fun RepeatTag(isEnabled: Boolean) {
         )
     }
 }
-@Composable
-private fun DayCircle(
-    badge: DayBadge,
-    isActive: Boolean,
-    isAlarmEnabled: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val colors = MaterialTheme.colorScheme
-    val backgroundColor = when {
-        !isActive -> colors.onSurface.copy(alpha = 0.05f)
-        isAlarmEnabled -> colors.primary.copy(alpha = 0.12f)
-        else -> colors.onSurfaceVariant.copy(alpha = 0.1f)
-    }
-    val textColor = when {
-        !isActive -> colors.onSurfaceVariant.copy(alpha = 0.35f)
-        isAlarmEnabled -> colors.primary
-        else -> colors.onSurfaceVariant.copy(alpha = 0.7f)
-    }
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .aspectRatio(1f)
-            .clip(CircleShape)
-            .background(backgroundColor)
-            .toggleable(value = isActive, role = Role.Checkbox, onValueChange = { onClick() })
-            .semantics { contentDescription = badge.fullName }
-    ) {
-        Text(
-            text = badge.initial,
-            fontSize = 13.sp,
-            fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
-            color = textColor,
-            modifier = Modifier.clearAndSetSemantics { }
-        )
-    }
-}
-
-
-//package com.mhq.salati.alarms.ui.components
-//
-//import android.content.res.Configuration
-//import androidx.compose.animation.animateColorAsState
-//import androidx.compose.animation.core.animateDpAsState
-//import androidx.compose.foundation.BorderStroke
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.layout.Arrangement
-//import androidx.compose.foundation.layout.Box
-//import androidx.compose.foundation.layout.Column
-//import androidx.compose.foundation.layout.IntrinsicSize
-//import androidx.compose.foundation.layout.Row
-//import androidx.compose.foundation.layout.Spacer
-//import androidx.compose.foundation.layout.aspectRatio
-//import androidx.compose.foundation.layout.fillMaxHeight
-//import androidx.compose.foundation.layout.fillMaxWidth
-//import androidx.compose.foundation.layout.height
-//import androidx.compose.foundation.layout.offset
-//import androidx.compose.foundation.layout.padding
-//import androidx.compose.foundation.layout.size
-//import androidx.compose.foundation.layout.width
-//import androidx.compose.foundation.selection.toggleable
-//import androidx.compose.foundation.shape.CircleShape
-//import androidx.compose.foundation.shape.RoundedCornerShape
-//import androidx.compose.material.icons.Icons
-//import androidx.compose.material.icons.filled.Delete
-//import androidx.compose.material.icons.filled.Edit
-//import androidx.compose.material.icons.filled.Repeat
-//import androidx.compose.material3.ButtonDefaults
-//import androidx.compose.material3.Card
-//import androidx.compose.material3.CardDefaults
-//import androidx.compose.material3.HorizontalDivider
-//import androidx.compose.material3.VerticalDivider
-//import androidx.compose.material3.Icon
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.Text
-//import androidx.compose.material3.TextButton
-//import androidx.compose.material3.minimumInteractiveComponentSize
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.getValue
-//import androidx.compose.runtime.remember
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.draw.clip
-//import androidx.compose.ui.platform.LocalConfiguration
-//import androidx.compose.ui.res.stringResource
-//import androidx.compose.ui.semantics.Role
-//import androidx.compose.ui.semantics.clearAndSetSemantics
-//import androidx.compose.ui.semantics.contentDescription
-//import androidx.compose.ui.semantics.semantics
-//import androidx.compose.ui.text.font.FontWeight
-//import androidx.compose.ui.text.style.TextOverflow
-//import androidx.compose.ui.tooling.preview.Preview
-//import androidx.compose.ui.unit.dp
-//import androidx.compose.ui.unit.sp
-//import com.mhq.salati.R
-//import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
-//import com.mhq.salati.alarms.presentation.model.OffsetDirectionUi
-//import com.mhq.salati.shared.presentation.model.PrayerNameUi
-//import com.mhq.salati.shared.ui.labelRes
-//import com.mhq.salati.shared.ui.theme.SalatiTheme
-//import java.text.NumberFormat
-//import java.time.DayOfWeek
-//import java.util.Calendar
-//import java.time.format.TextStyle as DayNameStyle
-//
-//private val WeekDays = listOf(
-//    Calendar.MONDAY to DayOfWeek.MONDAY,
-//    Calendar.TUESDAY to DayOfWeek.TUESDAY,
-//    Calendar.WEDNESDAY to DayOfWeek.WEDNESDAY,
-//    Calendar.THURSDAY to DayOfWeek.THURSDAY,
-//    Calendar.FRIDAY to DayOfWeek.FRIDAY,
-//    Calendar.SATURDAY to DayOfWeek.SATURDAY,
-//    Calendar.SUNDAY to DayOfWeek.SUNDAY
-//)
-//
-//private val SwitchTrackWidth = 56.dp
-//private val SwitchTrackHeight = 24.dp
-//private val SwitchThumbSize = 18.dp
-//private val SwitchThumbPadding = 3.dp
-//
-//private data class DayBadge(val calendarDay: Int, val initial: String, val fullName: String)
-//
-////Original
-//@Composable
-//fun CustomAlarmCard(
-//    customAlarm: CustomAlarmUi,
-//    onToggle: (Boolean) -> Unit,
-//    onEdit: () -> Unit,
-//    onDelete: () -> Unit,
-//    onDayToggle: (Int) -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    val colors = MaterialTheme.colorScheme
-//    val isEnabled = customAlarm.isEnabled
-//    val contentAlpha = if (isEnabled) 1f else 0.45f
-//
-//    val containerColor by animateColorAsState(
-//        targetValue = if (isEnabled) colors.surfaceVariant.copy(alpha = 0.4f) else colors.surface,
-//        label = "cardContainerColor"
-//    )
-//    val borderColor = colors.outline.copy(alpha = if (isEnabled) 0.15f else 0.08f)
-//    val dividerColor = colors.outline.copy(alpha = 0.12f)
-//
-//    val prayerName = stringResource(customAlarm.prayerName.labelRes)
-//    val repeatsEveryDay = customAlarm.everyDay ||
-//            WeekDays.all { (calendarDay, _) -> calendarDay in customAlarm.activeDays }
-//
-//    Card(
-//        shape = RoundedCornerShape(24.dp),
-//        border = BorderStroke(1.dp, borderColor),
-//        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-//        colors = CardDefaults.cardColors(containerColor = containerColor),
-//        modifier = modifier.fillMaxWidth()
-//    ) {
-//        Column(modifier = Modifier.fillMaxWidth()) {
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(start = 20.dp, top = 8.dp, end = 20.dp)
-//            ) {
-//                // ROW 1: Pill on the upper left, Toggle switch on the upper right
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.SpaceBetween,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Box(modifier = Modifier.weight(1f, fill = false)) {
-//                        if (repeatsEveryDay) {
-//                            RepeatTag(isEnabled = isEnabled)
-//                        } else {
-//                            // Empty box placeholder to balance structure if you want,
-//                            // or leave blank since SpaceBetween handles alignment
-//                            Spacer(modifier = Modifier.size(1.dp))
-//                        }
-//                    }
-//                    SlimSwitch(
-//                        checked = isEnabled,
-//                        onCheckedChange = onToggle
-//                    )
-//                }
-//
-//                Spacer(modifier = Modifier.height(10.dp))
-//
-//                // ROW 2: CustomAlarmName · 10 min before Fajr
-//                OffsetInlineHeadline(
-//                    customAlarm = customAlarm,
-//                    prayerName = prayerName,
-//                    contentAlpha = contentAlpha
-//                )
-//
-//                Spacer(modifier = Modifier.height(14.dp))
-//
-//                // ROW 3: Weekday badging blocks
-//                val locale = LocalConfiguration.current.locales[0]
-//                val badges = remember(locale) {
-//                    WeekDays.map { (calendarDay, dayOfWeek) ->
-//                        DayBadge(
-//                            calendarDay = calendarDay,
-//                            initial = dayOfWeek.getDisplayName(DayNameStyle.NARROW, locale),
-//                            fullName = dayOfWeek.getDisplayName(DayNameStyle.FULL, locale)
-//                        )
-//                    }
-//                }
-//                Row(
-//                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    badges.forEach { badge ->
-//                        DayCircle(
-//                            badge = badge,
-//                            isActive = customAlarm.everyDay || badge.calendarDay in customAlarm.activeDays,
-//                            isAlarmEnabled = isEnabled,
-//                            onClick = { onDayToggle(badge.calendarDay) },
-//                            modifier = Modifier.weight(1f)
-//                        )
-//                    }
-//                }
-//
-//                Spacer(modifier = Modifier.height(16.dp))
-//            }
-//
-//            HorizontalDivider(color = dividerColor)
-//
-//            // ROW 4: Action Footer Buttons with matching Vertical Divider
-//            Row(
-//                horizontalArrangement = Arrangement.Center,
-//                verticalAlignment = Alignment.CenterVertically,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(IntrinsicSize.Min)
-//                    .padding(vertical = 2.dp)
-//            ) {
-//                TextButton(
-//                    onClick = onEdit,
-//                    modifier = Modifier.weight(1f)
-//                ) {
-//                    Row(
-//                        horizontalArrangement = Arrangement.Center,
-//                        verticalAlignment = Alignment.CenterVertically
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Default.Edit,
-//                            contentDescription = null,
-//                            modifier = Modifier.size(18.dp)
-//                        )
-//                        Spacer(modifier = Modifier.width(8.dp))
-//                        Text(text = stringResource(R.string.edit))
-//                    }
-//                }
-//
-//                VerticalDivider(
-//                    color = dividerColor,
-//                    modifier = Modifier.fillMaxHeight().padding(vertical = 8.dp)
-//                )
-//
-//                TextButton(
-//                    onClick = onDelete,
-//                    colors = ButtonDefaults.textButtonColors(contentColor = colors.error),
-//                    modifier = Modifier.weight(1f)
-//                ) {
-//                    Row(
-//                        horizontalArrangement = Arrangement.Center,
-//                        verticalAlignment = Alignment.CenterVertically
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Default.Delete,
-//                            contentDescription = null,
-//                            modifier = Modifier.size(18.dp)
-//                        )
-//                        Spacer(modifier = Modifier.width(8.dp))
-//                        Text(text = stringResource(R.string.delete))
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-///** New design displaying: CustomAlarmName · 10 min before Fajr inline format */
-//@Composable
-//private fun OffsetInlineHeadline(
-//    customAlarm: CustomAlarmUi,
-//    prayerName: String,
-//    contentAlpha: Float
-//) {
-//    val colors = MaterialTheme.colorScheme
-//    val alarmLabel = customAlarm.label.trim()
-//        .ifBlank { stringResource(R.string.custom_alarm_default_title) }
-//    val timingDetails = if (customAlarm.offsetMinutes == 0) {
-//        stringResource(R.string.at_prayer_time, prayerName)
-//    } else {
-//        val offsetText = remember(customAlarm.offsetMinutes) {
-//            NumberFormat.getInstance().format(customAlarm.offsetMinutes)
-//        }
-//        val unitText = stringResource(R.string.minutes_short)
-//        val directionText = stringResource(
-//            if (customAlarm.offsetDirection == OffsetDirectionUi.BEFORE) {
-//                R.string.alarm_offset_before
-//            } else {
-//                R.string.alarm_offset_after
-//            },
-//            prayerName
-//        )
-//        "$offsetText $unitText $directionText"
-//    }
-//    Row(
-//        verticalAlignment = Alignment.CenterVertically,
-//        modifier = Modifier.fillMaxWidth()
-//    ) {
-//        Text(
-//            text = "$alarmLabel  ·  $timingDetails",
-//            style = MaterialTheme.typography.titleMedium,
-//            fontWeight = FontWeight.Bold,
-//            color = colors.onSurface.copy(alpha = contentAlpha),
-//            maxLines = 2,
-//            overflow = TextOverflow.Ellipsis
-//        )
-//    }
-//}
-//@Composable
-//private fun RepeatTag(isEnabled: Boolean) {
-//    val colors = MaterialTheme.colorScheme
-//    val tint = if (isEnabled) colors.primary else colors.onSurfaceVariant.copy(alpha = 0.6f)
-//    Row(
-//        verticalAlignment = Alignment.CenterVertically,
-//        horizontalArrangement = Arrangement.spacedBy(4.dp),
-//        modifier = Modifier
-//            .clip(CircleShape)
-//            .background(tint.copy(alpha = 0.12f))
-//            .padding(horizontal = 10.dp, vertical = 5.dp)
-//    ) {
-//        Icon(
-//            imageVector = Icons.Default.Repeat,
-//            contentDescription = null,
-//            tint = tint,
-//            modifier = Modifier.size(12.dp)
-//        )
-//        Text(
-//            text = stringResource(R.string.repeat_every_day),
-//            style = MaterialTheme.typography.labelSmall,
-//            fontWeight = FontWeight.SemiBold,
-//            color = tint,
-//            maxLines = 1
-//        )
-//    }
-//}
-//@Composable
-//private fun SlimSwitch(
-//    checked: Boolean,
-//    onCheckedChange: (Boolean) -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    val colors = MaterialTheme.colorScheme
-//    val trackColor by animateColorAsState(
-//        targetValue = if (checked) colors.primary else colors.onSurface.copy(alpha = 0.12f),
-//        label = "switchTrackColor"
-//    )
-//    val thumbColor by animateColorAsState(
-//        targetValue = if (checked) colors.onPrimary else colors.outline,
-//        label = "switchThumbColor"
-//    )
-//    val thumbOffset by animateDpAsState(
-//        targetValue = if (checked) {
-//            SwitchTrackWidth - SwitchThumbSize - SwitchThumbPadding
-//        } else {
-//            SwitchThumbPadding
-//        },
-//        label = "switchThumbOffset"
-//    )
-//    Box(
-//        contentAlignment = Alignment.Center,
-//        modifier = modifier
-//            .minimumInteractiveComponentSize()
-//            .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
-//    ) {
-//        Box(
-//            modifier = Modifier
-//                .size(width = SwitchTrackWidth, height = SwitchTrackHeight)
-//                .clip(CircleShape)
-//                .background(trackColor)
-//        ) {
-//            Box(
-//                modifier = Modifier
-//                    .align(Alignment.CenterStart)
-//                    .offset(x = thumbOffset)
-//                    .size(SwitchThumbSize)
-//                    .clip(CircleShape)
-//                    .background(thumbColor)
-//            )
-//        }
-//    }
-//}
-//@Composable
-//private fun DayCircle(
-//    badge: DayBadge,
-//    isActive: Boolean,
-//    isAlarmEnabled: Boolean,
-//    onClick: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    val colors = MaterialTheme.colorScheme
-//    val backgroundColor = when {
-//        !isActive -> colors.onSurface.copy(alpha = 0.05f)
-//        isAlarmEnabled -> colors.primary.copy(alpha = 0.12f)
-//        else -> colors.onSurfaceVariant.copy(alpha = 0.1f)
-//    }
-//    val textColor = when {
-//        !isActive -> colors.onSurfaceVariant.copy(alpha = 0.35f)
-//        isAlarmEnabled -> colors.primary
-//        else -> colors.onSurfaceVariant.copy(alpha = 0.7f)
-//    }
-//    Box(
-//        contentAlignment = Alignment.Center,
-//        modifier = modifier
-//            .aspectRatio(1f)
-//            .clip(CircleShape)
-//            .background(backgroundColor)
-//            .toggleable(value = isActive, role = Role.Checkbox, onValueChange = { onClick() })
-//            .semantics { contentDescription = badge.fullName }
-//    ) {
-//        Text(
-//            text = badge.initial,
-//            fontSize = 13.sp,
-//            fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
-//            color = textColor,
-//            modifier = Modifier.clearAndSetSemantics { }
-//        )
-//    }
-//}
-//@Preview(name = "Light", showBackground = true)
-//@Preview(name = "Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-//@Composable
-//private fun CustomAlarmCardPreview() {
-//    SalatiTheme {
-//        Column(
-//            verticalArrangement = Arrangement.spacedBy(12.dp),
-//            modifier = Modifier
-//                .background(MaterialTheme.colorScheme.background)
-//                .padding(16.dp)
-//        ) {
-//            CustomAlarmCard(
-//                customAlarm = CustomAlarmUi(
-//                    id = 1L,
-//                    prayerName = PrayerNameUi.FAJR,
-//                    label = "Morning Devotion",
-//                    offsetMinutes = 30,
-//                    offsetDirection = OffsetDirectionUi.BEFORE,
-//                    everyDay = false,
-//                    activeDays = setOf(Calendar.MONDAY, Calendar.WEDNESDAY, Calendar.FRIDAY),
-//                    isEnabled = true
-//                ),
-//                onToggle = {}, onEdit = {}, onDelete = {}, onDayToggle = {}
-//            )
-//            CustomAlarmCard(
-//                customAlarm = CustomAlarmUi(
-//                    id = 2L,
-//                    prayerName = PrayerNameUi.MAGHRIB,
-//                    label = "",
-//                    offsetMinutes = 10,
-//                    offsetDirection = OffsetDirectionUi.AFTER,
-//                    everyDay = true,
-//                    activeDays = emptySet(),
-//                    isEnabled = true
-//                ),
-//                onToggle = {}, onEdit = {}, onDelete = {}, onDayToggle = {}
-//            )
-//        }
-//    }
-//}
 ```
 
-## app\src\main\java\com\mhq\salati\alarms\ui\components\CustomAlarmSheet.kt
+## app\src\main\java\com\mhq\salati\alarms\ui\components\WeekDays.kt
 
 ```kotlin
 package com.mhq.salati.alarms.ui.components
 
-import android.content.res.Configuration
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.mhq.salati.R
-import com.mhq.salati.alarms.presentation.mapper.conflictsWith
-import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
-import com.mhq.salati.alarms.presentation.model.OffsetDirectionUi
-import com.mhq.salati.shared.presentation.model.PrayerNameUi
-import com.mhq.salati.shared.ui.labelRes
-import com.mhq.salati.shared.ui.theme.SalatiTheme
 import java.time.DayOfWeek
 import java.util.Calendar
-import java.time.format.TextStyle as DayNameStyle
 
-private val WEEK_DAYS = listOf(
+val WeekDays = listOf(
     Calendar.MONDAY to DayOfWeek.MONDAY,
     Calendar.TUESDAY to DayOfWeek.TUESDAY,
     Calendar.WEDNESDAY to DayOfWeek.WEDNESDAY,
@@ -4106,697 +4269,6 @@ private val WEEK_DAYS = listOf(
     Calendar.SATURDAY to DayOfWeek.SATURDAY,
     Calendar.SUNDAY to DayOfWeek.SUNDAY
 )
-private const val MAX_OFFSET_MINUTES = 180
-private const val MAX_OFFSET_DIGITS = 3
-
-private data class SheetDayBadge(val calendarDay: Int, val initial: String, val fullName: String)
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AddEditAlarmSheet(
-    existingAlarm: CustomAlarmUi?,
-    existingAlarms: List<CustomAlarmUi>,
-    onSave: (CustomAlarmUi) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
-
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.background,
-        modifier = Modifier.wrapContentHeight()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .imePadding()
-                .padding(horizontal = 20.dp)
-                .padding(bottom = 24.dp)
-        ) {
-            AddEditAlarmFormContent(
-                existingAlarm = existingAlarm,
-                existingAlarms = existingAlarms,
-                onSave = onSave,
-                onDismiss = onDismiss
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AddEditAlarmFormContent(
-    existingAlarm: CustomAlarmUi?,
-    existingAlarms: List<CustomAlarmUi>,
-    onSave: (CustomAlarmUi) -> Unit,
-    onDismiss: () -> Unit
-) {
-    var prayerName by remember(existingAlarm) {
-        mutableStateOf(existingAlarm?.prayerName ?: PrayerNameUi.entries.first())
-    }
-    var label by remember(existingAlarm) {
-        mutableStateOf(existingAlarm?.label ?: "")
-    }
-    var minutesText by remember(existingAlarm) {
-        mutableStateOf((existingAlarm?.offsetMinutes ?: 5).toString())
-    }
-    var offsetDirection by remember(existingAlarm) {
-        mutableStateOf(existingAlarm?.offsetDirection ?: OffsetDirectionUi.BEFORE)
-    }
-    // Highlighting all days by default if creating a new alarm
-    var activeDays by remember(existingAlarm) {
-        mutableStateOf(existingAlarm?.activeDays ?: WEEK_DAYS.map { it.first }.toSet())
-    }
-    var isPrayerMenuExpanded by remember { mutableStateOf(false) }
-
-    val offsetMinutes = minutesText.toIntOrNull()
-    val fullWeekSelected = activeDays.size == 7
-    val draft = offsetMinutes?.let {
-        CustomAlarmUi(
-            id = existingAlarm?.id ?: 0L,
-            prayerName = prayerName,
-            label = label.trim(),
-            offsetMinutes = it,
-            offsetDirection = offsetDirection,
-            everyDay = fullWeekSelected,
-            activeDays = if (fullWeekSelected) emptySet() else activeDays,
-            isEnabled = existingAlarm?.isEnabled ?: true
-        )
-    }
-    val hasConflict = draft != null && existingAlarms.any {
-        it.id != draft.id && it.conflictsWith(draft)
-    }
-    val canSave = draft != null && activeDays.isNotEmpty() && !hasConflict
-
-    val configuration = LocalConfiguration.current
-    val primaryLocale = configuration.locales
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val minutesUnit = stringResource(R.string.minutes_short)
-
-    Column(
-        modifier = Modifier
-            .then(if (isLandscape) Modifier.fillMaxHeight() else Modifier.wrapContentHeight())
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Text(
-            text = stringResource(if (existingAlarm == null) R.string.new_custom_alarm else R.string.edit_custom_alarm),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        OutlinedTextField(
-            value = label,
-            onValueChange = { label = it },
-            label = { Text(stringResource(R.string.alarm_label_optional)) },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                focusedLabelColor = MaterialTheme.colorScheme.primary
-            )
-        )
-
-        // ROW 1: [Minutes Input] (Left) | [Before/After Vertical Stack] (Center) | [Prayer Dropdown] (Right)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Min), // 1. Measures the text fields and forces the row to match their height
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Left Element: Minutes Input
-            OutlinedTextField(
-                value = minutesText,
-                onValueChange = { input ->
-                    val digits = input.filter { it.isDigit() }.take(MAX_OFFSET_DIGITS)
-                    val value = digits.toIntOrNull()
-                    minutesText = if (value != null && value > MAX_OFFSET_MINUTES) {
-                        MAX_OFFSET_MINUTES.toString()
-                    } else {
-                        digits
-                    }
-                },
-                label = { Text(stringResource(R.string.alarm_minutes_field_label)) },
-                suffix = { Text(minutesUnit) },
-                singleLine = true,
-                isError = hasConflict,
-                supportingText = {
-                    if (hasConflict) Text(stringResource(R.string.duplicate_alarm_exists))
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-                modifier = Modifier.weight(1.2f),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    focusedLabelColor = MaterialTheme.colorScheme.primary
-                )
-            )
-
-            // Center Element: Stacked vertical Before/After container matching text field heights exactly
-            Column(
-                modifier = Modifier
-                    .weight(0.9f)
-                    .fillMaxHeight() // 2. Tells the column to stretch completely to the measured height of the row
-                    .padding(bottom = if (hasConflict) 16.dp else 0.dp) // Accounts for supporting text displacement
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
-                    .clip(RoundedCornerShape(8.dp)),
-                verticalArrangement = Arrangement.Center
-            ) {
-                val activeBg = MaterialTheme.colorScheme.primary
-                val activeTxt = MaterialTheme.colorScheme.onPrimary
-                val inactiveTxt = MaterialTheme.colorScheme.onSurfaceVariant
-
-                // Before Button (Top Half)
-                androidx.compose.material3.TextButton(
-                    onClick = { offsetDirection = OffsetDirectionUi.BEFORE },
-                    shape = RoundedCornerShape(0.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        containerColor = if (offsetDirection == OffsetDirectionUi.BEFORE) activeBg else androidx.compose.ui.graphics.Color.Transparent,
-                        contentColor = if (offsetDirection == OffsetDirectionUi.BEFORE) activeTxt else inactiveTxt
-                    ),
-                    modifier = Modifier.fillMaxWidth().weight(1f).padding(0.dp)
-                ) {
-                    Text(stringResource(R.string.before), fontSize = 11.sp, fontWeight = FontWeight.Medium, maxLines = 1)
-                }
-
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
-
-                // After Button (Bottom Half)
-                androidx.compose.material3.TextButton(
-                    onClick = { offsetDirection = OffsetDirectionUi.AFTER },
-                    shape = RoundedCornerShape(0.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        containerColor = if (offsetDirection == OffsetDirectionUi.AFTER) activeBg else androidx.compose.ui.graphics.Color.Transparent,
-                        contentColor = if (offsetDirection == OffsetDirectionUi.AFTER) activeTxt else inactiveTxt
-                    ),
-                    modifier = Modifier.fillMaxWidth().weight(1f).padding(0.dp)
-                ) {
-                    Text(stringResource(R.string.after), fontSize = 11.sp, fontWeight = FontWeight.Medium, maxLines = 1)
-                }
-            }
-
-            // Right Element: Prayer Dropdown Selection
-            ExposedDropdownMenuBox(
-                expanded = isPrayerMenuExpanded,
-                onExpandedChange = { isPrayerMenuExpanded = it },
-                modifier = Modifier
-                    .weight(1.3f)
-                    .padding(bottom = if (hasConflict) 16.dp else 0.dp)
-            ) {
-                OutlinedTextField(
-                    value = stringResource(prayerName.labelRes),
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text(stringResource(R.string.prayer)) },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isPrayerMenuExpanded) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        focusedLabelColor = MaterialTheme.colorScheme.primary
-                    )
-                )
-                ExposedDropdownMenu(
-                    expanded = isPrayerMenuExpanded,
-                    onDismissRequest = { isPrayerMenuExpanded = false }
-                ) {
-                    PrayerNameUi.entries.forEach { name ->
-                        DropdownMenuItem(
-                            text = { Text(stringResource(name.labelRes)) },
-                            onClick = { prayerName = name; isPrayerMenuExpanded = false }
-                        )
-                    }
-                }
-            }
-        }
-
-// ROW 2: Balanced 7 day circles line
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = stringResource(R.string.repeat_every_day),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = 6.dp)
-            )
-            val primaryLocaleInstance = primaryLocale[0] // Extracts a single stable Locale from the list container
-
-            val badges = remember(primaryLocaleInstance) {
-                WEEK_DAYS.map { (calendarDay, dayOfWeek) ->
-                    SheetDayBadge(
-                        calendarDay = calendarDay,
-                        initial = dayOfWeek.getDisplayName(DayNameStyle.NARROW, primaryLocaleInstance),
-                        fullName = dayOfWeek.getDisplayName(DayNameStyle.FULL, primaryLocaleInstance)
-                    )
-                }
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth(if (isLandscape) 0.6f else 1f) // Keep compact in landscape splits
-            ) {
-                badges.forEach { badge ->
-                    val isDayActive = activeDays.contains(badge.calendarDay)
-                    val bgCircleColor = if (isDayActive) {
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
-                    } else {
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)
-                    }
-                    val txtCircleColor = if (isDayActive) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
-                    }
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .weight(1f)
-                            .aspectRatio(1f)
-                            .clip(CircleShape)
-                            .background(bgCircleColor)
-                            .toggleable(
-                                value = isDayActive,
-                                role = Role.Checkbox,
-                                onValueChange = {
-                                    activeDays = if (isDayActive) {
-                                        activeDays - badge.calendarDay
-                                    } else {
-                                        activeDays + badge.calendarDay
-                                    }
-                                }
-                            )
-                            .semantics { contentDescription = badge.fullName }
-                    ) {
-                        Text(
-                            text = badge.initial,
-                            fontSize = 13.sp,
-                            fontWeight = if (isDayActive) FontWeight.Bold else FontWeight.Normal,
-                            color = txtCircleColor,
-                            modifier = Modifier.clearAndSetSemantics { }
-                        )
-                    }
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-// Actions Row
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (isLandscape) {
-                OutlinedButton(
-                    onClick = onDismiss,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(stringResource(R.string.cd_back))
-                }
-            }
-            Button(
-                onClick = { draft?.let(onSave) },
-                enabled = canSave,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ),
-                modifier = Modifier.weight(if (isLandscape) 1f else 2f)
-            ) {
-                Text(stringResource(R.string.save))
-            }
-        }
-    }
-}
-
-@Preview(name = "Form - Portrait", showBackground = true)
-@Preview(
-    name = "Form - Landscape",
-    device = "spec:width=800dp,height=400dp,dpi=440",
-    showBackground = true
-)
-@Composable
-private fun AddEditAlarmFormContentPreview() {
-    SalatiTheme {
-        Box(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .padding(16.dp)
-        ) {
-            AddEditAlarmFormContent(
-                existingAlarm = null,
-                existingAlarms = emptyList(),
-                onSave = {},
-                onDismiss = {}
-            )
-        }
-    }
-}
-
-//package com.mhq.salati.alarms.ui.components
-//
-//import androidx.compose.foundation.layout.Arrangement
-//import androidx.compose.foundation.layout.Column
-//import androidx.compose.foundation.layout.Row
-//import androidx.compose.foundation.layout.Spacer
-//import androidx.compose.foundation.layout.fillMaxWidth
-//import androidx.compose.foundation.layout.height
-//import androidx.compose.foundation.layout.imePadding
-//import androidx.compose.foundation.layout.padding
-//import androidx.compose.foundation.lazy.LazyRow
-//import androidx.compose.foundation.lazy.items
-//import androidx.compose.foundation.rememberScrollState
-//import androidx.compose.foundation.text.KeyboardOptions
-//import androidx.compose.foundation.verticalScroll
-//import androidx.compose.material3.Button
-//import androidx.compose.material3.ButtonDefaults
-//import androidx.compose.material3.DropdownMenuItem
-//import androidx.compose.material3.ExperimentalMaterial3Api
-//import androidx.compose.material3.ExposedDropdownMenuBox
-//import androidx.compose.material3.ExposedDropdownMenuDefaults
-//import androidx.compose.material3.FilterChip
-//import androidx.compose.material3.FilterChipDefaults
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.ModalBottomSheet
-//import androidx.compose.material3.OutlinedTextField
-//import androidx.compose.material3.OutlinedTextFieldDefaults
-//import androidx.compose.material3.SegmentedButton
-//import androidx.compose.material3.SegmentedButtonDefaults
-//import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-//import androidx.compose.material3.Switch
-//import androidx.compose.material3.SwitchDefaults
-//import androidx.compose.material3.Text
-//import androidx.compose.material3.rememberModalBottomSheetState
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.getValue
-//import androidx.compose.runtime.mutableStateOf
-//import androidx.compose.runtime.remember
-//import androidx.compose.runtime.setValue
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.platform.LocalConfiguration
-//import androidx.compose.ui.res.stringResource
-//import androidx.compose.ui.text.input.ImeAction
-//import androidx.compose.ui.text.input.KeyboardType
-//import androidx.compose.ui.unit.dp
-//import com.mhq.salati.R
-//import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
-//import com.mhq.salati.alarms.presentation.model.OffsetDirectionUi
-//import com.mhq.salati.alarms.presentation.mapper.conflictsWith
-//import com.mhq.salati.shared.presentation.model.PrayerNameUi
-//import com.mhq.salati.shared.ui.labelRes
-//import java.text.NumberFormat
-//import java.time.DayOfWeek
-//import java.time.format.TextStyle as DayNameStyle
-//import java.util.Calendar
-//import java.util.Locale
-//
-//private val WEEK_DAYS = listOf(
-//    Calendar.SUNDAY,
-//    Calendar.MONDAY,
-//    Calendar.TUESDAY,
-//    Calendar.WEDNESDAY,
-//    Calendar.THURSDAY,
-//    Calendar.FRIDAY,
-//    Calendar.SATURDAY
-//)
-//
-///** Quick-pick offsets shown under the minutes field. */
-//private val MINUTE_PRESETS = listOf(5, 10, 15, 20, 30, 45, 60)
-//
-//private const val MAX_OFFSET_MINUTES = 180
-//private const val MAX_OFFSET_DIGITS = 3
-//
-///**
-// * Bottom sheet for creating or editing a custom alarm.
-// *
-// * @param existingAlarms every saved alarm, used to warn live when the draft would fire at the same
-// * time as another alarm (the alarm being edited is ignored).
-// */
-//@OptIn(ExperimentalMaterial3Api::class)
-////Original
-//@Composable
-//fun AddEditAlarmSheet(
-//    existingAlarm: CustomAlarmUi?,
-//    existingAlarms: List<CustomAlarmUi>,
-//    onSave: (CustomAlarmUi) -> Unit,
-//    onDismiss: () -> Unit
-//) {
-//    var prayerName by remember(existingAlarm) {
-//        mutableStateOf(existingAlarm?.prayerName ?: PrayerNameUi.entries.first())
-//    }
-//    var label by remember(existingAlarm) {
-//        mutableStateOf(existingAlarm?.label ?: "")
-//    }
-//    // Held as text so the field can be cleared while typing; parsed on demand.
-//    var minutesText by remember(existingAlarm) {
-//        mutableStateOf((existingAlarm?.offsetMinutes ?: 5).toString())
-//    }
-//    var offsetDirection by remember(existingAlarm) {
-//        mutableStateOf(existingAlarm?.offsetDirection ?: OffsetDirectionUi.BEFORE)
-//    }
-//    var everyDay by remember(existingAlarm) {
-//        mutableStateOf(existingAlarm?.everyDay ?: true)
-//    }
-//    var activeDays by remember(existingAlarm) {
-//        mutableStateOf(existingAlarm?.activeDays ?: emptySet())
-//    }
-//    var isPrayerMenuExpanded by remember { mutableStateOf(false) }
-//
-//    val offsetMinutes = minutesText.toIntOrNull()
-//    val hasDays = everyDay || activeDays.isNotEmpty()
-//    val draft = offsetMinutes?.let {
-//        CustomAlarmUi(
-//            id = existingAlarm?.id ?: 0L,
-//            prayerName = prayerName,
-//            label = label.trim(),
-//            offsetMinutes = it,
-//            offsetDirection = offsetDirection,
-//            everyDay = everyDay,
-//            activeDays = if (everyDay) emptySet() else activeDays,
-//            isEnabled = existingAlarm?.isEnabled ?: true
-//        )
-//    }
-//    val hasConflict = draft != null && existingAlarms.any {
-//        it.id != draft.id && it.conflictsWith(draft)
-//    }
-//    val canSave = draft != null && hasDays && !hasConflict
-//
-//    val locale = LocalConfiguration.current.locales[0]
-//    val numberFormat = remember(locale) { NumberFormat.getInstance(locale) }
-//    val minutesUnit = stringResource(R.string.minutes_short)
-//
-//    // Opens fully instead of stopping at half height.
-//    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-//
-//    ModalBottomSheet(
-//        onDismissRequest = onDismiss,
-//        sheetState = sheetState,
-//        containerColor = MaterialTheme.colorScheme.background
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .imePadding()
-//                .verticalScroll(rememberScrollState())
-//                .padding(horizontal = 20.dp)
-//                .padding(bottom = 24.dp),
-//            verticalArrangement = Arrangement.spacedBy(16.dp)
-//        ) {
-//            Text(
-//                text = stringResource(
-//                    if (existingAlarm == null) R.string.new_custom_alarm else R.string.edit_custom_alarm
-//                ),
-//                style = MaterialTheme.typography.titleLarge,
-//                color = MaterialTheme.colorScheme.onBackground
-//            )
-//
-//            OutlinedTextField(
-//                value = label,
-//                onValueChange = { label = it },
-//                label = { Text(stringResource(R.string.alarm_label_optional)) },
-//                singleLine = true,
-//                modifier = Modifier.fillMaxWidth(),
-//                colors = OutlinedTextFieldDefaults.colors(
-//                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-//                    focusedLabelColor = MaterialTheme.colorScheme.primary
-//                )
-//            )
-//
-//            ExposedDropdownMenuBox(
-//                expanded = isPrayerMenuExpanded,
-//                onExpandedChange = { isPrayerMenuExpanded = it }
-//            ) {
-//                OutlinedTextField(
-//                    value = stringResource(prayerName.labelRes),
-//                    onValueChange = {},
-//                    readOnly = true,
-//                    label = { Text(stringResource(R.string.prayer)) },
-//                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isPrayerMenuExpanded) },
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .menuAnchor(),
-//                    colors = OutlinedTextFieldDefaults.colors(
-//                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-//                        focusedLabelColor = MaterialTheme.colorScheme.primary
-//                    )
-//                )
-//                ExposedDropdownMenu(
-//                    expanded = isPrayerMenuExpanded,
-//                    onDismissRequest = { isPrayerMenuExpanded = false }
-//                ) {
-//                    PrayerNameUi.entries.forEach { name ->
-//                        DropdownMenuItem(
-//                            text = { Text(stringResource(name.labelRes)) },
-//                            onClick = { prayerName = name; isPrayerMenuExpanded = false }
-//                        )
-//                    }
-//                }
-//            }
-//
-//            Column {
-//                Text(
-//                    stringResource(R.string.timing),
-//                    style = MaterialTheme.typography.labelLarge,
-//                    color = MaterialTheme.colorScheme.onBackground
-//                )
-//                Spacer(modifier = Modifier.height(8.dp))
-//                SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-//                    SegmentedButton(
-//                        selected = offsetDirection == OffsetDirectionUi.BEFORE,
-//                        onClick = { offsetDirection = OffsetDirectionUi.BEFORE },
-//                        shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
-//                        colors = SegmentedButtonDefaults.colors(
-//                            activeContainerColor = MaterialTheme.colorScheme.primary,
-//                            activeContentColor = MaterialTheme.colorScheme.onPrimary
-//                        )
-//                    ) { Text(stringResource(R.string.before)) }
-//                    SegmentedButton(
-//                        selected = offsetDirection == OffsetDirectionUi.AFTER,
-//                        onClick = { offsetDirection = OffsetDirectionUi.AFTER },
-//                        shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
-//                        colors = SegmentedButtonDefaults.colors(
-//                            activeContainerColor = MaterialTheme.colorScheme.primary,
-//                            activeContentColor = MaterialTheme.colorScheme.onPrimary
-//                        )
-//                    ) { Text(stringResource(R.string.after)) }
-//                }
-//
-//                Spacer(modifier = Modifier.height(12.dp))
-//
-//                // Typed minutes (0..180). Digits only; larger numbers snap to the maximum.
-//                OutlinedTextField(
-//                    value = minutesText,
-//                    onValueChange = { input ->
-//                        val digits = input.filter { it.isDigit() }.take(MAX_OFFSET_DIGITS)
-//                        val value = digits.toIntOrNull()
-//                        minutesText = if (value != null && value > MAX_OFFSET_MINUTES) {
-//                            MAX_OFFSET_MINUTES.toString()
-//                        } else {
-//                            digits
-//                        }
-//                    },
-//                    label = { Text(stringResource(R.string.alarm_minutes_field_label)) },
-//                    suffix = { Text(minutesUnit) },
-//                    singleLine = true,
-//                    isError = hasConflict,
-//                    supportingText = {
-//                        // Inline, inside the sheet: a snackbar would be hidden behind the scrim.
-//                        if (hasConflict) Text(stringResource(R.string.duplicate_alarm_exists))
-//                    },
-//                    keyboardOptions = KeyboardOptions(
-//                        keyboardType = KeyboardType.Number,
-//                        imeAction = ImeAction.Done
-//                    ),
-//                    modifier = Modifier.fillMaxWidth(),
-//                    colors = OutlinedTextFieldDefaults.colors(
-//                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-//                        focusedLabelColor = MaterialTheme.colorScheme.primary
-//                    )
-//                )
-//
-//                Spacer(modifier = Modifier.height(4.dp))
-//
-//                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-//                    items(MINUTE_PRESETS) { preset ->
-//                        FilterChip(
-//                            selected = offsetMinutes == preset,
-//                            onClick = { minutesText = preset.toString() },
-//                            label = { Text("${numberFormat.format(preset)} $minutesUnit") },
-//                            colors = FilterChipDefaults.filterChipColors(
-//                                selectedContainerColor = MaterialTheme.colorScheme.primary,
-//                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-//                            )
-//                        )
-//                    }
-//                }
-//            }
-//
-//            Column {
-//                Row(
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.SpaceBetween,
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Text(
-//                        stringResource(R.string.repeat_every_day),
-//                        style = MaterialTheme.typography.labelLarge,
-//                        color = MaterialTheme.colorScheme.onBackground
-//                    )
-//                    Switch(
-//                        checked = everyDay,
-//                        onCheckedChange = { everyDay = it },
-//                        colors = SwitchDefaults.colors(
-//                            checkedThumbColor = MaterialTheme.colorScheme.primary,
-//                            checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-//                        )
-//                    )
-//                }
-//
-//                if (!everyDay) {
-//                    Spacer(modifier = Modifier.height(8.dp))
-//                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-//                        items(WEEK_DAYS) { day ->
-//                            val selected = activeDays.contains(day)
-//                            FilterChip(
-//                                selected = selected,
-//                                onClick = {
-//                                    activeDays = if (selected) activeDays - day else activeDays + day
-//                                },
-//                                label = { Text(dayShortLabel(day, locale)) },
-//                                colors = FilterChipDefaults.filterChipColors(
-//                                    selectedContainerColor = MaterialTheme.colorScheme.primary,
-//                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-//                                )
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//
-//            Button(
-//                onClick = { draft?.let(onSave) },
-//                enabled = canSave,
-//                colors = ButtonDefaults.buttonColors(
-//                    containerColor = MaterialTheme.colorScheme.primary,
-//                    contentColor = MaterialTheme.colorScheme.onPrimary
-//                ),
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                Text(stringResource(R.string.save))
-//            }
-//        }
-//    }
-//}
-//
-///** Localized short weekday name for a [Calendar] day constant (Sunday = 1 ... Saturday = 7). */
-//private fun dayShortLabel(calendarDay: Int, locale: Locale): String =
-//    DayOfWeek.of((calendarDay + 5) % 7 + 1).getDisplayName(DayNameStyle.SHORT, locale)
 ```
 
 ## app\src\main\java\com\mhq\salati\alarms\ui\notification\CustomAlarmNotifier.kt
@@ -4823,7 +4295,6 @@ import com.mhq.salati.settings.ui.rawRes
 import com.mhq.salati.shared.ui.labelRes
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import androidx.core.graphics.toColorInt
 
 private const val CHANNEL_ID_PREFIX = "custom_alarms_channel"
 
@@ -5037,20 +4508,21 @@ fun CustomAlarmsContainer(
 ```kotlin
 package com.mhq.salati.alarms.ui.screens
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -5068,7 +4540,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -5077,8 +4548,12 @@ import com.mhq.salati.alarms.presentation.contract.AlarmsContract
 import com.mhq.salati.alarms.ui.components.AddEditAlarmFormContent
 import com.mhq.salati.alarms.ui.components.AddEditAlarmSheet
 import com.mhq.salati.alarms.ui.components.CustomAlarmCard
+import com.mhq.salati.alarms.ui.state.AlarmFormState
 import com.mhq.salati.shared.ui.components.TabHeader
+import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
+
+private val FabColumnWidth = 88.dp // FAB 56 + 20 end margin + 12 gap
 
 @Composable
 fun CustomAlarmsContent(
@@ -5088,8 +4563,7 @@ fun CustomAlarmsContent(
 ) {
     var headerHeightPx by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isLandscape = isWideLayout()
     val showSidePanel = isLandscape && state.isEditorVisible
 
     Box(
@@ -5097,17 +4571,28 @@ fun CustomAlarmsContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
+        val formState = remember(state.isEditorVisible, state.editingAlarm) {
+            AlarmFormState(state.editingAlarm)
+        }
+
         if (isLandscape) {
-            // Layout splits everything to the left of the Floating Action Button zone
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(end = 88.dp) // Leave clean space for the FAB container on the right edge
-                    .padding(top = with(density) { headerHeightPx.toDp() } + 12.dp),
+                    .windowInsetsPadding(
+                        WindowInsets.navigationBars
+                            .union(WindowInsets.displayCutout)
+                            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
+                    )
+                    .padding(
+                        start = 16.dp,
+                        end = FabColumnWidth,
+                        top = with(density) { headerHeightPx.toDp() } + 12.dp,
+                        bottom = BottomNavBarDefaults.Height
+                    ),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.Top
             ) {
-                // Left Column: 50% screen real estate list of Alarms
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -5122,7 +4607,7 @@ fun CustomAlarmsContent(
                         CustomAlarmsContentBlank(modifier = Modifier.align(Alignment.Center))
                     } else {
                         LazyColumn(
-                            contentPadding = PaddingValues(start = 16.dp, end = 8.dp, bottom = 16.dp),
+                            contentPadding = PaddingValues(bottom = 16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             modifier = Modifier.fillMaxSize()
                         ) {
@@ -5139,24 +4624,20 @@ fun CustomAlarmsContent(
                     }
                 }
 
-                // Right Column: 50% screen split for the layout form wireframe
-                if (showSidePanel) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .padding(end = 8.dp, start = 8.dp)
-                    ) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    if (showSidePanel) {
                         AddEditAlarmFormContent(
+                            formState = formState,
                             existingAlarm = state.editingAlarm,
                             existingAlarms = state.alarms,
                             onSave = { alarm -> onIntent(AlarmsContract.Intent.SaveAlarm(alarm)) },
                             onDismiss = { onIntent(AlarmsContract.Intent.DismissEditor) }
                         )
                     }
-                } else {
-                    // Blank space holder matching equal weight constraint parameters when form is hidden
-                    Spacer(modifier = Modifier.weight(1f))
                 }
             }
         } else {
@@ -5209,7 +4690,10 @@ fun CustomAlarmsContent(
             contentColor = MaterialTheme.colorScheme.onTertiary,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .navigationBarsPadding()
+                .windowInsetsPadding(
+                    WindowInsets.navigationBars
+                        .union(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
+                )
                 .padding(
                     bottom = BottomNavBarDefaults.Height + 20.dp,
                     end = 20.dp
@@ -5222,7 +4706,8 @@ fun CustomAlarmsContent(
         }
 
         if (!isLandscape && state.isEditorVisible) {
-            AddEditAlarmSheet(
+            AddEditAlarmSheet( //AddEditAlarmSheet
+                formState = formState,
                 existingAlarm = state.editingAlarm,
                 existingAlarms = state.alarms,
                 onDismiss = { onIntent(AlarmsContract.Intent.DismissEditor) },
@@ -5231,135 +4716,6 @@ fun CustomAlarmsContent(
         }
     }
 }
-
-
-
-
-//package com.mhq.salati.alarms.ui.screens
-//
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.layout.Box
-//import androidx.compose.foundation.layout.PaddingValues
-//import androidx.compose.foundation.layout.Spacer
-//import androidx.compose.foundation.layout.fillMaxSize
-//import androidx.compose.foundation.layout.height
-//import androidx.compose.foundation.layout.navigationBarsPadding
-//import androidx.compose.foundation.layout.padding
-//import androidx.compose.foundation.lazy.LazyColumn
-//import androidx.compose.foundation.lazy.items
-//import androidx.compose.material.icons.Icons
-//import androidx.compose.material.icons.filled.Add
-//import androidx.compose.material.icons.filled.Alarm
-//import androidx.compose.material3.CircularProgressIndicator
-//import androidx.compose.material3.FloatingActionButton
-//import androidx.compose.material3.Icon
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.getValue
-//import androidx.compose.runtime.mutableIntStateOf
-//import androidx.compose.runtime.remember
-//import androidx.compose.runtime.setValue
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.layout.onGloballyPositioned
-//import androidx.compose.ui.platform.LocalDensity
-//import androidx.compose.ui.res.stringResource
-//import androidx.compose.ui.unit.dp
-//import com.mhq.salati.R
-//import com.mhq.salati.alarms.presentation.contract.AlarmsContract
-//import com.mhq.salati.alarms.ui.components.AddEditAlarmSheet
-//import com.mhq.salati.alarms.ui.components.CustomAlarmCard
-//import com.mhq.salati.shared.ui.components.TabHeader
-//import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
-//
-////Original
-//@Composable
-//fun CustomAlarmsContent(
-//    state: AlarmsContract.State,
-//    onIntent: (AlarmsContract.Intent) -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    var headerHeightPx by remember { mutableIntStateOf(0) }
-//    val density = LocalDensity.current
-//
-//    Box(
-//        modifier = modifier
-//            .fillMaxSize()
-//            .background(MaterialTheme.colorScheme.background)
-//    ) {
-//        when {
-//            state.isLoading -> CircularProgressIndicator(
-//                modifier = Modifier.align(Alignment.Center),
-//                color = MaterialTheme.colorScheme.primary
-//            )
-//
-//            state.alarms.isEmpty() -> CustomAlarmsContentBlank(
-//                modifier = Modifier.align(Alignment.Center)
-//            )
-//
-//            else -> LazyColumn(
-//                contentPadding = PaddingValues(
-//                    start = 16.dp,
-//                    end = 16.dp,
-//                    top = with(density) { headerHeightPx.toDp() } + 16.dp,
-//                    bottom = 48.dp
-//                ),
-//                modifier = Modifier.fillMaxSize()
-//            ) {
-//                items(state.alarms, key = { it.id }) { alarm ->
-//                    CustomAlarmCard(
-//                        customAlarm = alarm,
-//                        onToggle = { enabled ->
-//                            onIntent(AlarmsContract.Intent.ToggleAlarm(alarm.id, enabled))
-//                        },
-//                        onEdit = { onIntent(AlarmsContract.Intent.EditAlarm(alarm)) },
-//                        onDelete = { onIntent(AlarmsContract.Intent.DeleteAlarm(alarm.id)) },
-//                        onDayToggle = { day ->
-//                            onIntent(AlarmsContract.Intent.AlarmDayToggled(alarm.id, day))
-//                        }
-//                    )
-//                    Spacer(modifier = Modifier.height(12.dp))
-//                }
-//                item {
-//                    Spacer(modifier = Modifier.height(BottomNavBarDefaults.Height + 16.dp))
-//                }
-//            }
-//        }
-//
-//        TabHeader(
-//            icon = Icons.Default.Alarm,
-//            title = stringResource(R.string.custom_alarms),
-//            subtitle = stringResource(R.string.create_custom_alarms_before_or_after_prayers),
-//            modifier = Modifier.onGloballyPositioned {
-//                headerHeightPx = it.size.height
-//            }
-//        )
-//
-//        FloatingActionButton(
-//            onClick = { onIntent(AlarmsContract.Intent.AddAlarm) },
-//            containerColor = MaterialTheme.colorScheme.tertiary,
-//            contentColor = MaterialTheme.colorScheme.onTertiary,
-//            modifier = Modifier
-//                .align(Alignment.BottomEnd)
-//                .navigationBarsPadding()
-//                .padding(bottom = BottomNavBarDefaults.Height + 20.dp, end = 20.dp)
-//        ) {
-//            Icon(
-//                imageVector = Icons.Default.Add,
-//                contentDescription = stringResource(R.string.add_custom_alarm)
-//            )
-//        }
-//
-//        if (state.isEditorVisible) {
-//            AddEditAlarmSheet(
-//                existingAlarm = state.editingAlarm,
-//                existingAlarms = state.alarms,
-//                onDismiss = { onIntent(AlarmsContract.Intent.DismissEditor) },
-//                onSave = { alarm -> onIntent(AlarmsContract.Intent.SaveAlarm(alarm)) }
-//            )
-//        }
-//    }
-//}
 ```
 
 ## app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContentBlank.kt
@@ -5400,6 +4756,31 @@ fun CustomAlarmsContentBlank(
             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
         )
     }
+}
+```
+
+## app\src\main\java\com\mhq\salati\alarms\ui\state\AlarmFormState.kt
+
+```kotlin
+package com.mhq.salati.alarms.ui.state
+
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableStateOf
+import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
+import com.mhq.salati.alarms.presentation.model.OffsetDirectionUi
+import com.mhq.salati.alarms.ui.components.WeekDays
+import com.mhq.salati.shared.presentation.model.PrayerNameUi
+
+@Stable
+class AlarmFormState(existing: CustomAlarmUi?) {
+    val prayerName = mutableStateOf(existing?.prayerName ?: PrayerNameUi.entries.first())
+    val label = mutableStateOf(existing?.label ?: "")
+    val minutesText = mutableStateOf((existing?.offsetMinutes ?: 5).toString())
+    val offsetDirection = mutableStateOf(existing?.offsetDirection ?: OffsetDirectionUi.BEFORE)
+    val activeDays = mutableStateOf(
+        if (existing == null || existing.everyDay) WeekDays.map { it.first }.toSet()
+        else existing.activeDays
+    )
 }
 ```
 
@@ -9777,7 +9158,6 @@ import com.mhq.salati.shared.presentation.model.MessageUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -9785,19 +9165,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-
-
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
-
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -9816,7 +9192,6 @@ class LocationPickerViewModel @Inject constructor(
     private val _effect = Channel<LocationPickerContract.Effect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
 
-    private val searchQueryFlow = MutableStateFlow("")
     private val immediateSearchFlow = MutableSharedFlow<String>()
     private var lastManualSearchTimeMs = 0L
     private val SEARCH_COOLDOWN_MS = 1000L
@@ -9918,98 +9293,6 @@ class LocationPickerViewModel @Inject constructor(
             )
         }
     }
-
-    // Nominatim: Autocomplete search stopped;
-    // I may stretch the search duration to avoid 1 request per minute limit
-    //    private fun onQueryChanged(query: String) {
-    //        _state.update {
-    //            it.copy(
-    //                query = query,
-    //                searchResults = emptyList(),
-    //                isSearching = query.isNotBlank(),
-    //                errorMessage = null
-    //            )
-    //        }
-    //        searchQueryFlow.value = query
-    //    }
-    //
-    //    private fun observeSearchQuery() {
-    //        merge(
-    //            searchQueryFlow
-    //                .debounce(350.milliseconds)
-    //                .distinctUntilChanged(),
-    //            immediateSearchFlow
-    //        )
-    //            .flatMapLatest { query ->
-    //                flow {
-    //                    if (query.isNotBlank()) {
-    //                        val lang = currentLanguageCode()
-    //                        emit(Result.success(searchLocationByName(query, lang)))
-    //                    } else {
-    //                        emit(Result.success(emptyList()))
-    //                    }
-    //                }.catch { e ->
-    //                    if (e is CancellationException) throw e
-    //                    emit(Result.failure(e))
-    //                }
-    //            }
-    //            .onEach { result ->
-    //                result.fold(
-    //                    onSuccess = { results ->
-    //                        _state.update {
-    //                            it.copy(
-    //                                isSearching = false,
-    //                                searchResults = results.toContractResults()
-    //                            )
-    //                        }
-    //                    },
-    //                    onFailure = {
-    //                        val message = MessageUi.SEARCH_FAILED_CHECK_CONNECTION
-    //                        _state.update {
-    //                            it.copy(
-    //                                isSearching = false,
-    //                                errorMessage = message
-    //                            )
-    //                        }
-    //                        _effect.send(LocationPickerContract.Effect.ShowError(message))
-    //                    }
-    //                )
-    //            }
-    //            .launchIn(viewModelScope)
-    //    }
-    //
-    //    private fun executeManualSearch(query: String) {
-    //        if (query.isBlank()) return
-    //
-    //        val currentTime = System.currentTimeMillis()
-    //
-    //        if (currentTime - lastManualSearchTimeMs < SEARCH_COOLDOWN_MS) {
-    //            return
-    //        }
-    //
-    //        lastManualSearchTimeMs = currentTime
-    //        viewModelScope.launch {
-    //            immediateSearchFlow.emit(query)
-    //        }
-    //    }
-    //
-    //    private fun selectResult(result: LocationPickerContract.LocationSearchResult) {
-    //        searchQueryFlow.value = ""
-    //        _state.update {
-    //            it.copy(
-    //                selectedLocation = LocationPickerContract.SelectedLocation(
-    //                    displayName = result.displayName,
-    //                    latitude = result.latitude,
-    //                    longitude = result.longitude
-    //                ),
-    //                searchResults = emptyList(),
-    //                query = result.displayName,
-    //                mapCenterLat = result.latitude,
-    //                mapCenterLng = result.longitude,
-    //                mapZoom = 12
-    //            )
-    //        }
-    //    }
 
     private fun selectMapPoint(latitude: Double, longitude: Double) {
         reverseGeocodeJob?.cancel()
@@ -11411,6 +10694,8 @@ package com.mhq.salati.onboarding.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -11421,14 +10706,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -11470,18 +10763,19 @@ import com.mhq.salati.onboarding.presentation.contract.OnboardingContract.Intent
 import com.mhq.salati.onboarding.presentation.contract.OnboardingContract.StepUi
 import com.mhq.salati.onboarding.ui.components.OnboardingPageIndicator
 import com.mhq.salati.onboarding.ui.components.OnboardingSelectionSheet
-import com.mhq.salati.shared.ui.components.StepHeader
 import com.mhq.salati.onboarding.ui.icon
 import com.mhq.salati.onboarding.ui.labelRes
 import com.mhq.salati.onboarding.ui.subtitleRes
 import com.mhq.salati.onboarding.ui.titleRes
-import com.mhq.salati.shared.ui.components.ActionRow
 import com.mhq.salati.settings.ui.components.SettingsSwitchRow
 import com.mhq.salati.settings.ui.displayNameRes
+import com.mhq.salati.shared.ui.components.ActionRow
 import com.mhq.salati.shared.ui.components.AppLogo
 import com.mhq.salati.shared.ui.components.GroupCard
 import com.mhq.salati.shared.ui.components.GroupDivider
 import com.mhq.salati.shared.ui.components.StepBadgeIcon
+import com.mhq.salati.shared.ui.components.StepHeader
+import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.shared.ui.theme.prayerGradient
 
@@ -11498,119 +10792,80 @@ fun OnboardingContent(
         onIntent(Intent.BackRequested)
     }
 
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val stepTransition = updateTransition(targetState = state.step, label = "onboardingStep")
+    isStepSettled = !stepTransition.isRunning
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.prayerGradient)
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .height(56.dp)
-                    .padding(horizontal = 8.dp)
-            ) {
-                if (!isFirstStep) {
-                    IconButton(
-                        onClick = { onIntent(Intent.BackRequested) },
-                        modifier = Modifier.align(Alignment.CenterStart)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.cd_back),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
+        if (isWideLayout()) {
+            OnboardingWideLayout(
+                state = state,
+                stepTransition = stepTransition,
+                isRtl = isRtl,
+                isFirstStep = isFirstStep,
+                isStepSettled = isStepSettled,
+                onIntent = onIntent,
+                onOpenSelector = { activeSelector = it }
+            )
+        } else {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .height(56.dp)
+                        .padding(horizontal = 8.dp)
+                ) {
+                    if (!isFirstStep) {
+                        IconButton(
+                            onClick = { onIntent(Intent.BackRequested) },
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.cd_back),
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     }
                 }
-            }
 
-            val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-            val stepTransition = updateTransition(targetState = state.step, label = "onboardingStep")
-            isStepSettled = !stepTransition.isRunning
-
-            stepTransition.AnimatedContent(
-                transitionSpec = {
-                    val direction = (if (state.isMovingForward) 1 else -1) * (if (isRtl) -1 else 1)
-                    (slideInHorizontally { it * direction } + fadeIn()) togetherWith
-                            (slideOutHorizontally { -it * direction } + fadeOut())
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) { step ->
-                OnboardingStepBody(
-                    step = step,
-                    state = state,
-                    onIntent = onIntent,
-                    onOpenSelector = { activeSelector = it }
-                )
-            }
-
-            Surface(
-                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-                color = MaterialTheme.colorScheme.surface,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                stepTransition.AnimatedContent(
+                    transitionSpec = { stepTransitionSpec(state.isMovingForward, isRtl) },
                     modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .padding(top = 20.dp, bottom = 12.dp)
-                        .navigationBarsPadding()
-                ) {
-                    OnboardingPageIndicator(
-                        pageCount = StepUi.entries.size,
-                        currentPage = state.step.ordinal
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) { step ->
+                    OnboardingStepBody(
+                        step = step,
+                        state = state,
+                        onIntent = onIntent,
+                        onOpenSelector = { activeSelector = it }
                     )
+                }
 
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Button(
-                        onClick = { onIntent(Intent.PrimaryActionRequested) },
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        ),
-                        enabled = !state.isLoading && isStepSettled,
+                Surface(
+                    shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
+                            .padding(horizontal = 24.dp)
+                            .padding(top = 20.dp, bottom = 12.dp)
+                            .navigationBarsPadding()
                     ) {
-                        if (state.isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                strokeWidth = 2.dp
-                            )
-                        } else {
-                            Text(
-                                text = stringResource(state.primaryAction.labelRes),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    }
-
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.height(48.dp)
-                    ) {
-                        if (state.canSkip && !state.isLoading) {
-                            TextButton(
-                                onClick = { onIntent(Intent.Skipped) },
-                                enabled = isStepSettled
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.onboarding_not_now),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
-                        }
+                        OnboardingActions(
+                            state = state,
+                            isStepSettled = isStepSettled,
+                            onIntent = onIntent,
+                            isCompact = false
+                        )
                     }
                 }
             }
@@ -11642,13 +10897,7 @@ private fun OnboardingStepBody(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 32.dp)
     ) {
-        StepHeader(
-            title = stringResource(step.titleRes),
-            subtitle = stringResource(step.subtitleRes)
-        ) {
-            val icon = step.icon
-            if (icon == null) AppLogo(size = 96.dp) else StepBadgeIcon(icon)
-        }
+        OnboardingStepHeader(step)
         Spacer(modifier = Modifier.height(28.dp))
         when (step) {
             StepUi.WELCOME -> Column(
@@ -11751,7 +11000,298 @@ private fun OnboardingStepBody(
     }
 }
 
+private fun stepTransitionSpec(isMovingForward: Boolean, isRtl: Boolean): ContentTransform {
+    val direction = (if (isMovingForward) 1 else -1) * (if (isRtl) -1 else 1)
+    return (slideInHorizontally { it * direction } + fadeIn()) togetherWith
+            (slideOutHorizontally { -it * direction } + fadeOut())
+}
+
+@Composable
+private fun OnboardingStepHeader(step: StepUi) {
+    StepHeader(
+        title = stringResource(step.titleRes),
+        subtitle = stringResource(step.subtitleRes)
+    ) {
+        val icon = step.icon
+        if (icon == null) AppLogo(size = 96.dp) else StepBadgeIcon(icon)
+    }
+}
+
+@Composable
+private fun OnboardingStepFields(
+    step: StepUi,
+    state: OnboardingContract.State,
+    onIntent: (Intent) -> Unit,
+    onOpenSelector: (OnboardingContract.SelectorUi) -> Unit
+) {
+    when (step) {
+        StepUi.WELCOME -> Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        ) {
+            GroupCard {
+                ActionRow(
+                    icon = Icons.Default.Language,
+                    title = stringResource(R.string.language),
+                    valueLabel = stringResource(state.language.displayNameRes),
+                    onClick = { onOpenSelector(OnboardingContract.SelectorUi.LANGUAGE) }
+                )
+                GroupDivider()
+                ActionRow(
+                    icon = Icons.Default.DarkMode,
+                    title = stringResource(R.string.theme),
+                    valueLabel = stringResource(state.themeMode.displayNameRes),
+                    onClick = { onOpenSelector(OnboardingContract.SelectorUi.THEME) }
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(R.string.onboarding_change_later_hint),
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.70f),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        StepUi.CALCULATION -> Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        ) {
+            GroupCard {
+                ActionRow(
+                    icon = Icons.Default.Explore,
+                    title = stringResource(R.string.calculation_method),
+                    valueLabel = stringResource(state.calculationMethod.displayNameRes),
+                    onClick = { onOpenSelector(OnboardingContract.SelectorUi.CALCULATION_METHOD) }
+                )
+                GroupDivider()
+                ActionRow(
+                    icon = Icons.AutoMirrored.Filled.MenuBook,
+                    title = stringResource(R.string.asr_madhab),
+                    valueLabel = stringResource(state.madhab.displayNameRes),
+                    onClick = { onOpenSelector(OnboardingContract.SelectorUi.MADHAB) }
+                )
+                GroupDivider()
+                ActionRow(
+                    icon = Icons.Default.Schedule,
+                    title = stringResource(R.string.time_format),
+                    valueLabel = stringResource(state.timeFormat.displayNameRes),
+                    onClick = { onOpenSelector(OnboardingContract.SelectorUi.TIME_FORMAT) }
+                )
+            }
+        }
+
+        StepUi.ALERTS -> Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            GroupCard {
+                SettingsSwitchRow(
+                    icon = Icons.Default.NotificationsActive,
+                    title = stringResource(R.string.onboarding_notifications_toggle_title),
+                    subtitle = stringResource(R.string.onboarding_notifications_toggle_subtitle),
+                    isChecked = state.notificationsEnabled && state.isNotificationPermissionGranted,
+                    onCheckedChange = { onIntent(Intent.NotificationsToggled(it)) }
+                )
+                GroupDivider()
+                ActionRow(
+                    icon = Icons.Default.MusicNote,
+                    title = stringResource(R.string.adhan_sound),
+                    valueLabel = stringResource(state.adhanSound.displayNameRes),
+                    isEnabled = state.notificationsEnabled,
+                    onClick = { onOpenSelector(OnboardingContract.SelectorUi.ADHAN_SOUND) }
+                )
+            }
+
+            if (state.notificationsEnabled &&
+                state.isNotificationPermissionGranted &&
+                !state.isExactAlarmGranted
+            ) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.onboarding_exact_alarm_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f),
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+            }
+        }    }
+}
+
+/** Page indicator, primary button and "Not now". [isCompact] trims spacing for short windows. */
+@Composable
+private fun OnboardingActions(
+    state: OnboardingContract.State,
+    isStepSettled: Boolean,
+    onIntent: (Intent) -> Unit,
+    isCompact: Boolean
+) {
+    OnboardingPageIndicator(
+        pageCount = StepUi.entries.size,
+        currentPage = state.step.ordinal
+    )
+
+    Spacer(modifier = Modifier.height(if (isCompact) 12.dp else 24.dp))
+
+    Button(
+        onClick = { onIntent(Intent.PrimaryActionRequested) },
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+        enabled = !state.isLoading && isStepSettled,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = if (isCompact) 48.dp else 56.dp)
+    ) {
+        if (state.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                color = MaterialTheme.colorScheme.onPrimary,
+                strokeWidth = 2.dp
+            )
+        } else {
+            Text(
+                text = stringResource(state.primaryAction.labelRes),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.heightIn(min = if (isCompact) 40.dp else 48.dp)
+    ) {
+        if (state.canSkip && !state.isLoading) {
+            TextButton(
+                onClick = { onIntent(Intent.Skipped) },
+                enabled = isStepSettled
+            ) {
+                Text(
+                    text = stringResource(R.string.onboarding_not_now),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Wide windows (landscape, tablets, foldables, split-screen): header on the start pane, fields
+ * and buttons on the end pane. Each pane pads itself by the system-bar and cutout insets on its
+ * outer side only, so the surface and gradient still run edge to edge.
+ */
+@Composable
+private fun OnboardingWideLayout(
+    state: OnboardingContract.State,
+    stepTransition: Transition<StepUi>,
+    isRtl: Boolean,
+    isFirstStep: Boolean,
+    isStepSettled: Boolean,
+    onIntent: (Intent) -> Unit,
+    onOpenSelector: (OnboardingContract.SelectorUi) -> Unit
+) {
+    Row(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Start + WindowInsetsSides.Vertical)
+                )
+        ) {
+            stepTransition.AnimatedContent(
+                transitionSpec = { stepTransitionSpec(state.isMovingForward, isRtl) },
+                modifier = Modifier.fillMaxSize()
+            ) { step ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp, vertical = 16.dp)
+                ) {
+                    OnboardingStepHeader(step)
+                }
+            }
+
+            if (!isFirstStep) {
+                IconButton(
+                    onClick = { onIntent(Intent.BackRequested) },
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.cd_back),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        }
+
+        Surface(
+            shape = RoundedCornerShape(topStart = 32.dp, bottomStart = 32.dp),
+            color = MaterialTheme.colorScheme.surface,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(WindowInsetsSides.End + WindowInsetsSides.Vertical)
+                    )
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
+            ) {
+                stepTransition.AnimatedContent(
+                    transitionSpec = { stepTransitionSpec(state.isMovingForward, isRtl) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) { step ->
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(vertical = 8.dp)
+                    ) {
+                        OnboardingStepFields(step, state, onIntent, onOpenSelector)
+                    }
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OnboardingActions(
+                        state = state,
+                        isStepSettled = isStepSettled,
+                        onIntent = onIntent,
+                        isCompact = true
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Preview(name = "Welcome", showSystemUi = true)
+@Preview(name = "Landscape", device = "spec:width=800dp,height=360dp,dpi=420", showSystemUi = true)
+@Preview(name = "Arabic landscape, large font", locale = "ar", fontScale = 1.3f, device = "spec:width=800dp,height=360dp,dpi=420", showSystemUi = true)
 @Composable
 private fun OnboardingWelcomePreview() {
     SalatiTheme {
@@ -13489,11 +13029,21 @@ class PrayerTrackerViewModel @Inject constructor(
 ```kotlin
 package com.mhq.salati.prayertracker.ui.components
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -13502,15 +13052,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.prayertracker.presentation.model.DayStatusUi
+import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
-//Different Sizes and Device Rotation
+/**
+ * One day of the month grid.
+ *
+ * Font sizes are DERIVED from the cell's own size (not fixed sp values) and use a tight line height
+ * with trimmed font padding, so the two numbers always fit inside the cell: narrow phones, large
+ * screens, landscape and Arabic digits can no longer push the content out of the cell.
+ *
+ * - Portrait / tall screens: square cell, Gregorian over Hijri, status dot at the bottom.
+ * - Wide screens (landscape, tablets): the cell fills the row height; Gregorian and Hijri share one line.
+ */
 @Composable
 fun CalendarDayCell(
     gregorianDay: Int,
@@ -13522,8 +13083,7 @@ fun CalendarDayCell(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isWide = isWideLayout()
 
     val dotIndicatorColor = when (status) {
         DayStatusUi.ALL_PRAYED -> MaterialTheme.colorScheme.primary
@@ -13540,75 +13100,77 @@ fun CalendarDayCell(
 
     val baseTextColor = MaterialTheme.colorScheme.onSurface
 
+    val gregorianColor = when {
+        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
+        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
+        else -> baseTextColor
+    }
+    val hijriColor = when {
+        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
     val cellBorderColor = if (isCurrentMonth && !isFuture) {
         MaterialTheme.colorScheme.outlineVariant
     } else {
         MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f)
     }
 
-    Box(
+    BoxWithConstraints(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .then(if (isLandscape) Modifier.fillMaxSize() else Modifier.aspectRatio(1f))
+            .then(if (isWide) Modifier.fillMaxSize() else Modifier.aspectRatio(1f))
             .clip(RoundedCornerShape(8.dp))
             .background(cellBackgroundColor)
-            .border(
-                1.dp,
-                cellBorderColor,
-                RoundedCornerShape(8.dp)
-            )
+            .border(1.dp, cellBorderColor, RoundedCornerShape(8.dp))
             .clickable(enabled = isCurrentMonth && !isFuture, onClick = onClick)
-            .padding(vertical = 2.dp, horizontal = 2.dp)
+            .padding(2.dp)
     ) {
-        if (isLandscape) {
-            // Landscape: Gregorian day then Hijri day, centered as a group
+        if (isWide) {
+            /** Single line: size follows the row height, capped by the width so both numbers fit side by side */
+            val gregorianSp = minOf(maxHeight.value * 0.70f, maxWidth.value * 0.32f).coerceIn(9f, 14f)
+            val hijriSp = minOf(maxHeight.value * 0.58f, maxWidth.value * 0.26f).coerceIn(8f, 12f)
+
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = gregorianDay.toString(),
-                    fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
-                    color = when {
-                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-                        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
-                        else -> baseTextColor
-                    }
+                    color = gregorianColor,
+                    style = dayTextStyle(gregorianSp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = hijriDay.toString(),
-                    fontSize = 11.sp,
                     fontWeight = FontWeight.Light,
-                    color = when {
-                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
-                        else -> MaterialTheme.colorScheme.onSurfaceVariant
-                    }
+                    color = hijriColor,
+                    style = dayTextStyle(hijriSp)
                 )
             }
 
-            // Status dot pinned to the bottom center of the cell
-            Box(
+            /** Status dot pinned to the bottom center of the cell */
+            StatusDot(
+                color = dotIndicatorColor,
+                size = 3.dp,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 3.dp)
-                    .size(3.dp)
-                    .then(
-                        if (dotIndicatorColor != null)
-                            Modifier.background(dotIndicatorColor, CircleShape)
-                        else
-                            Modifier
-                    )
             )
         } else {
+            /** Both numbers scale with the smaller cell side, so the stack + dot always fit */
+            val side = minOf(maxWidth, maxHeight).value
+            val gregorianSp = (side * 0.40f).coerceIn(10f, 20f)
+            val hijriSp = (side * 0.29f).coerceIn(8f, 14f)
+
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Number stack centered in the space above the dot, so the
-                // Hijri number always sits high with clear room below it
+                /** Number stack centered in the space above the dot,
+                 * so the Hijri number always sits high with clear room below it */
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -13618,42 +13180,54 @@ fun CalendarDayCell(
                 ) {
                     Text(
                         text = gregorianDay.toString(),
-                        fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
-                        color = when {
-                            isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-                            !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
-                            else -> baseTextColor
-                        }
+                        color = gregorianColor,
+                        style = dayTextStyle(gregorianSp)
                     )
                     Spacer(modifier = Modifier.height(1.dp))
                     Text(
                         text = hijriDay.toString(),
-                        fontSize = 13.sp,
                         fontWeight = FontWeight.Light,
-                        color = when {
-                            isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                            !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
-                            else -> MaterialTheme.colorScheme.onSurfaceVariant
-                        }
+                        color = hijriColor,
+                        style = dayTextStyle(hijriSp)
                     )
                 }
 
-                // Status dot pinned to the bottom center of the cell
-                Box(
-                    modifier = Modifier
-                        .padding(bottom = 2.dp)
-                        .size(4.dp)
-                        .then(
-                            if (dotIndicatorColor != null)
-                                Modifier.background(dotIndicatorColor, CircleShape)
-                            else
-                                Modifier
-                        )
+                StatusDot(
+                    color = dotIndicatorColor,
+                    size = 4.dp,
+                    modifier = Modifier.padding(bottom = 2.dp)
                 )
             }
         }
     }
+}
+
+/**
+ * Tight text style for day numbers: line height is ~1.15x the font size and the extra font
+ * padding is trimmed on both sides, so Arabic digits / fonts with tall metrics can't add height.
+ */
+private fun dayTextStyle(sizeSp: Float) = TextStyle(
+    fontSize = sizeSp.sp,
+    lineHeight = (sizeSp * 1.15f).sp,
+    lineHeightStyle = LineHeightStyle(
+        alignment = LineHeightStyle.Alignment.Center,
+        trim = LineHeightStyle.Trim.Both
+    )
+)
+
+/** Reserves its space even when [color] is null so cells without a status keep the same layout. */
+@Composable
+private fun StatusDot(
+    color: androidx.compose.ui.graphics.Color?,
+    size: androidx.compose.ui.unit.Dp,
+    modifier: Modifier = Modifier
+) {
+    androidx.compose.foundation.layout.Box(
+        modifier = modifier
+            .size(size)
+            .then(if (color != null) Modifier.background(color, CircleShape) else Modifier)
+    )
 }
 
 @Preview
@@ -13670,301 +13244,6 @@ private fun CalendarDayCellPreview() {
         )
     }
 }
-
-//package com.mhq.salati.prayertracker.ui.components
-//
-//import android.content.res.Configuration
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.border
-//import androidx.compose.foundation.clickable
-//import androidx.compose.foundation.layout.*
-//import androidx.compose.foundation.shape.CircleShape
-//import androidx.compose.foundation.shape.RoundedCornerShape
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.Text
-//import androidx.compose.runtime.Composable
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.draw.clip
-//import androidx.compose.ui.platform.LocalConfiguration
-//import androidx.compose.ui.text.font.FontWeight
-//import androidx.compose.ui.tooling.preview.Preview
-//import androidx.compose.ui.unit.dp
-//import androidx.compose.ui.unit.sp
-//import com.mhq.salati.prayertracker.presentation.model.DayStatusUi
-//import com.mhq.salati.shared.ui.theme.SalatiTheme
-//
-////Different Sizes and Device Rotation
-//@Composable
-//fun CalendarDayCell(
-//    gregorianDay: Int,
-//    hijriDay: Int,
-//    isCurrentMonth: Boolean,
-//    isFuture: Boolean = false,
-//    isSelected: Boolean,
-//    status: DayStatusUi?,
-//    onClick: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    val configuration = LocalConfiguration.current
-//    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-//
-//    val dotIndicatorColor = when (status) {
-//        DayStatusUi.ALL_PRAYED -> MaterialTheme.colorScheme.primary
-//        DayStatusUi.HAS_MISSED -> MaterialTheme.colorScheme.error
-//        DayStatusUi.IN_PROGRESS -> MaterialTheme.colorScheme.secondary
-//        else -> null
-//    }
-//
-//    val cellBackgroundColor = when {
-//        isSelected -> MaterialTheme.colorScheme.primaryContainer
-//        !isCurrentMonth -> MaterialTheme.colorScheme.surfaceVariant
-//        else -> MaterialTheme.colorScheme.surface
-//    }
-//
-//    val baseTextColor = MaterialTheme.colorScheme.onSurface
-//
-//    val cellBorderColor = if (isCurrentMonth && !isFuture) {
-//        MaterialTheme.colorScheme.outlineVariant
-//    } else {
-//        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f)
-//    }
-//
-//    Box(
-//        contentAlignment = Alignment.Center,
-//        modifier = modifier
-//            .then(if (isLandscape) Modifier.fillMaxSize() else Modifier.aspectRatio(1f))
-//            .clip(RoundedCornerShape(8.dp))
-//            .background(cellBackgroundColor)
-//            .border(
-//                1.dp,
-//                cellBorderColor,
-//                RoundedCornerShape(8.dp)
-//            )
-//            .clickable(enabled = isCurrentMonth && !isFuture, onClick = onClick)
-//            .padding(vertical = if (isLandscape) 2.dp else 4.dp, horizontal = 2.dp)
-//    ) {
-//        if (isLandscape) {
-//            // Landscape: Gregorian day then Hijri day, centered as a group
-//            Row(
-//                horizontalArrangement = Arrangement.Center,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Text(
-//                    text = gregorianDay.toString(),
-//                    fontSize = 13.sp,
-//                    fontWeight = FontWeight.Medium,
-//                    color = when {
-//                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-//                        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
-//                        else -> baseTextColor
-//                    }
-//                )
-//                Spacer(modifier = Modifier.width(6.dp))
-//                Text(
-//                    text = hijriDay.toString(),
-//                    fontSize = 11.sp,
-//                    fontWeight = FontWeight.Light,
-//                    color = when {
-//                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-//                        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
-//                        else -> MaterialTheme.colorScheme.onSurfaceVariant
-//                    }
-//                )
-//            }
-//
-//            // Status dot pinned to the bottom center of the cell
-//            Box(
-//                modifier = Modifier
-//                    .align(Alignment.BottomCenter)
-//                    .padding(bottom = 3.dp)
-//                    .size(3.dp)
-//                    .then(
-//                        if (dotIndicatorColor != null)
-//                            Modifier.background(dotIndicatorColor, CircleShape)
-//                        else
-//                            Modifier
-//                    )
-//            )
-//        } else {
-//            Column(
-//                horizontalAlignment = Alignment.CenterHorizontally,
-//                verticalArrangement = Arrangement.Center
-//            ) {
-//                Text(
-//                    text = gregorianDay.toString(),
-//                    fontSize = 18.sp,
-//                    fontWeight = FontWeight.Medium,
-//                    color = when {
-//                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-//                        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
-//                        else -> baseTextColor
-//                    }
-//                )
-//                Spacer(modifier = Modifier.height(2.dp))
-//                Text(
-//                    text = hijriDay.toString(),
-//                    fontSize = 13.sp,
-//                    fontWeight = FontWeight.Light,
-//                    color = when {
-//                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-//                        !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
-//                        else -> MaterialTheme.colorScheme.onSurfaceVariant
-//                    }
-//                )
-//                Spacer(modifier = Modifier.height(2.dp))
-//                Box(
-//                    modifier = Modifier
-//                        .size(4.dp)
-//                        .then(
-//                            if (dotIndicatorColor != null)
-//                                Modifier.background(dotIndicatorColor, CircleShape)
-//                            else
-//                                Modifier
-//                        )
-//                )
-//            }
-//        }
-//    }
-//}
-//
-//@Preview
-//@Composable
-//private fun CalendarDayCellPreview() {
-//    SalatiTheme {
-//        CalendarDayCell(
-//            gregorianDay = 1,
-//            hijriDay = 1,
-//            isSelected = true,
-//            isCurrentMonth = true,
-//            status = DayStatusUi.ALL_PRAYED,
-//            onClick = {}
-//        )
-//    }
-//}
-
-
-
-
-
-//package com.mhq.salati.prayertracker.ui.components
-//
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.border
-//import androidx.compose.foundation.clickable
-//import androidx.compose.foundation.layout.*
-//import androidx.compose.foundation.shape.CircleShape
-//import androidx.compose.foundation.shape.RoundedCornerShape
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.Text
-//import androidx.compose.runtime.Composable
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.draw.clip
-//import androidx.compose.ui.text.font.FontWeight
-//import androidx.compose.ui.tooling.preview.Preview
-//import androidx.compose.ui.unit.dp
-//import androidx.compose.ui.unit.sp
-//import com.mhq.salati.prayertracker.presentation.model.DayStatusUi
-//import com.mhq.salati.shared.ui.theme.SalatiTheme
-//
-////Original
-//@Composable
-//fun CalendarDayCell(
-//    gregorianDay: Int,
-//    hijriDay: Int,
-//    isCurrentMonth: Boolean,
-//    isFuture: Boolean = false,
-//    isSelected: Boolean,
-//    status: DayStatusUi?,
-//    onClick: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    val dotIndicatorColor = when (status) {
-//        DayStatusUi.ALL_PRAYED -> MaterialTheme.colorScheme.primary
-//        DayStatusUi.HAS_MISSED -> MaterialTheme.colorScheme.error
-//        DayStatusUi.IN_PROGRESS -> MaterialTheme.colorScheme.secondary
-//        else -> null
-//    }
-//
-//    val cellBackgroundColor = when {
-//        isSelected -> MaterialTheme.colorScheme.primaryContainer
-//        !isCurrentMonth -> MaterialTheme.colorScheme.surfaceVariant
-//        else -> MaterialTheme.colorScheme.surface
-//    }
-//
-//    val baseTextColor = MaterialTheme.colorScheme.onSurface
-//
-//    val cellBorderColor = if (isCurrentMonth && !isFuture) {
-//        MaterialTheme.colorScheme.outlineVariant
-//    } else {
-//        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f)
-//    }
-//
-//    Column(
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Center,
-//        modifier = modifier
-//            .aspectRatio(1f)
-//            .clip(RoundedCornerShape(8.dp))
-//            .background(cellBackgroundColor)
-//            .border(
-//                1.dp,
-//                cellBorderColor,
-//                RoundedCornerShape(8.dp)
-//            )
-//            .clickable(enabled = isCurrentMonth && !isFuture, onClick = onClick)
-//            .padding(4.dp)
-//    ) {
-//        Text(
-//            text = gregorianDay.toString(),
-//            fontSize = 18.sp,
-//            fontWeight = FontWeight.Medium,
-//            color = when {
-//                isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-//                !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.38f)
-//                else -> baseTextColor
-//            }
-//        )
-//        Spacer(modifier = Modifier.height(2.dp))
-//        Text(
-//            text = hijriDay.toString(),
-//            fontSize = 13.sp,
-//            fontWeight = FontWeight.Light,
-//            color = when {
-//                isSelected -> MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-//                !isCurrentMonth || isFuture -> baseTextColor.copy(alpha = 0.24f)
-//                else -> MaterialTheme.colorScheme.onSurfaceVariant
-//            }
-//        )
-//        Spacer(modifier = Modifier.height(2.dp))
-//        Box(
-//            modifier = Modifier
-//                .size(4.dp)
-//                .then(
-//                    if (dotIndicatorColor != null)
-//                        Modifier.background(dotIndicatorColor, CircleShape)
-//                    else
-//                        Modifier
-//                )
-//        )
-//    }
-//}
-//
-//@Preview
-//@Composable
-//private fun CalendarDayCellPreview() {
-//    SalatiTheme {
-//        CalendarDayCell(
-//            gregorianDay = 1,
-//            hijriDay = 1,
-//            isSelected = true,
-//            isCurrentMonth = true,
-//            status = DayStatusUi.ALL_PRAYED,
-//            onClick = {}
-//        )
-//    }
-//}
 ```
 
 ## app\src\main\java\com\mhq\salati\prayertracker\ui\components\CalendarMonthView.kt
@@ -13990,12 +13269,10 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -14005,6 +13282,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
 import com.mhq.salati.prayertracker.presentation.model.DayStatusUi
+import com.mhq.salati.shared.ui.components.ShrinkToFitText
+import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import java.time.LocalDate
 import java.time.YearMonth
@@ -14014,7 +13293,16 @@ import java.time.format.TextStyle
 import java.time.temporal.ChronoField
 import java.time.temporal.WeekFields
 
-//Different Sizes and Device Rotation
+/**
+ * Month grid with Gregorian + Hijri dates.
+ *
+ * - Tall screens: square cells, width comes from the caller ([modifier]).
+ * - Wide screens: the CALLER must give this a bounded height (see PrayerTrackerContent); the rows
+ *   then share that height equally with weight(1f).
+ *
+ * Header and weekday labels are single-line and shrink to fit, so Arabic names (long short-day
+ * names, long Hijri month names) never wrap and grow the header.
+ */
 @Composable
 fun CalendarMonthView(
     selectedMonth: YearMonth,
@@ -14023,10 +13311,10 @@ fun CalendarMonthView(
     dayStatus: Map<LocalDate, DayStatusUi>,
     onDateSelected: (LocalDate) -> Unit,
     onMonthChanged: (Int) -> Unit,
+    modifier: Modifier = Modifier,
     hijriOffsetDays: Int = 0,
 ) {
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isWide = isWideLayout()
 
     val locale = LocalLocale.current.platformLocale
     val hijriChronology = HijrahChronology.INSTANCE
@@ -14070,14 +13358,11 @@ fun CalendarMonthView(
 
     val hijriHeaderFormatter = remember(locale) { DateTimeFormatter.ofPattern("MMMM y", locale) }
 
-    // Landscape: fill the full height so the grid rows can share the space evenly.
-    // This keeps every day cell the same size and stops the last row from
-    // being pushed against the bottom nav bar.
-    Column(
-        modifier = Modifier.then(if (isLandscape) Modifier.fillMaxHeight() else Modifier)
-    ) {
+    val gregorianHeader = "${selectedMonth.month.getDisplayName(TextStyle.FULL, locale)} ${selectedMonth.year}"
+    val hijriHeader = hijriHeaderFormatter.format(hijriDatesMap[firstDayOfTheMonth]!!)
+
+    Column(modifier = modifier) {
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -14089,39 +13374,49 @@ fun CalendarMonthView(
                 )
             }
 
-            if (isLandscape) {
-                // Single-line header: Gregorian month first, then Hijri month on the same line
+            if (isWide) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Text(
-                        text = "${selectedMonth.month.getDisplayName(TextStyle.FULL, locale)} ${selectedMonth.year}",
+                    ShrinkToFitText(
+                        text = gregorianHeader,
                         fontSize = 16.sp,
+                        minFontSize = 11.sp,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
-                    Text(
-                        text = hijriHeaderFormatter.format(hijriDatesMap[firstDayOfTheMonth]!!),
+                    ShrinkToFitText(
+                        text = hijriHeader,
                         fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        minFontSize = 10.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.weight(1.4f, fill = false)
                     )
                 }
             } else {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = "${selectedMonth.month.getDisplayName(TextStyle.FULL, locale)} ${selectedMonth.year}",
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    ShrinkToFitText(
+                        text = gregorianHeader,
                         fontSize = 20.sp,
+                        minFontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    Text(
-                        text = hijriHeaderFormatter.format(hijriDatesMap[firstDayOfTheMonth]!!),
+                    ShrinkToFitText(
+                        text = hijriHeader,
                         fontSize = 16.sp,
+                        minFontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
+
             val canGoForward = selectedMonth.isBefore(YearMonth.from(today))
             IconButton(onClick = { onMonthChanged(1) }, enabled = canGoForward) {
                 Icon(
@@ -14131,29 +13426,29 @@ fun CalendarMonthView(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(if (isLandscape) 1.dp else 8.dp))
+        Spacer(modifier = Modifier.height(if (isWide) 1.dp else 8.dp))
 
         val weekDays = (0 until 7).map { firstDayOfTheWeek.plus(it.toLong()) }
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth()) {
             weekDays.forEach { dayOfWeek ->
-                Text(
+                ShrinkToFitText(
                     text = dayOfWeek.getDisplayName(TextStyle.SHORT, locale)
                         .replaceFirstChar { it.uppercase() },
+                    fontSize = if (isWide) 12.sp else 16.sp,
+                    minFontSize = 9.sp,
                     textAlign = TextAlign.Center,
-                    fontSize = if (isLandscape) 12.sp else 16.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f)
                 )
             }
         }
-        Spacer(modifier = Modifier.height(if (isLandscape) 2.dp else 6.dp))
+        Spacer(modifier = Modifier.height(if (isWide) 2.dp else 6.dp))
 
         for (row in 0 until rows) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    // Landscape: equal share of the remaining height for every row
-                    .then(if (isLandscape) Modifier.weight(1f) else Modifier)
+                    .then(if (isWide) Modifier.weight(1f) else Modifier)
             ) {
                 for (col in 0 until 7) {
                     val cellIndex = row * 7 + col
@@ -14165,8 +13460,8 @@ fun CalendarMonthView(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .weight(1f)
-                            .then(if (isLandscape) Modifier.fillMaxHeight() else Modifier.aspectRatio(1f))
-                            .padding(if (isLandscape) 1.dp else 2.dp)
+                            .then(if (isWide) Modifier.fillMaxHeight() else Modifier.aspectRatio(1f))
+                            .padding(if (isWide) 1.dp else 2.dp)
                     ) {
                         CalendarDayCell(
                             gregorianDay = cellDate.dayOfMonth,
@@ -14176,7 +13471,7 @@ fun CalendarMonthView(
                             isCurrentMonth = isCurrentMonth,
                             status = if (isCurrentMonth) dayStatus[cellDate] ?: DayStatusUi.FUTURE else null,
                             onClick = { onDateSelected(cellDate) },
-                            modifier = if (isLandscape) Modifier.padding(vertical = 1.dp) else Modifier
+                            modifier = if (isWide) Modifier.padding(vertical = 1.dp) else Modifier
                         )
                     }
                 }
@@ -14209,221 +13504,6 @@ private fun CalendarMonthViewPreview() {
         }
     }
 }
-
-
-
-//package com.mhq.salati.prayertracker.ui.components
-//
-//import android.content.res.Configuration
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.layout.Arrangement
-//import androidx.compose.foundation.layout.Box
-//import androidx.compose.foundation.layout.Column
-//import androidx.compose.foundation.layout.Row
-//import androidx.compose.foundation.layout.Spacer
-//import androidx.compose.foundation.layout.aspectRatio
-//import androidx.compose.foundation.layout.fillMaxWidth
-//import androidx.compose.foundation.layout.height
-//import androidx.compose.foundation.layout.padding
-//import androidx.compose.material.icons.Icons
-//import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-//import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-//import androidx.compose.material3.Icon
-//import androidx.compose.material3.IconButton
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material3.Text
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.remember
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.platform.LocalLocale
-//import androidx.compose.ui.res.stringResource
-//import androidx.compose.ui.text.font.FontWeight
-//import androidx.compose.ui.text.style.TextAlign
-//import androidx.compose.ui.tooling.preview.Preview
-//import androidx.compose.ui.unit.dp
-//import androidx.compose.ui.unit.sp
-//import com.mhq.salati.R
-//import com.mhq.salati.prayertracker.presentation.model.DayStatusUi
-//import com.mhq.salati.shared.ui.theme.SalatiTheme
-//import java.time.LocalDate
-//import java.time.YearMonth
-//import java.time.chrono.HijrahChronology
-//import java.time.format.DateTimeFormatter
-//import java.time.format.TextStyle
-//import java.time.temporal.ChronoField
-//import java.time.temporal.WeekFields
-//
-////Original
-//@Composable
-//fun CalendarMonthView(
-//    selectedMonth: YearMonth,
-//    selectedDate: LocalDate,
-//    today: LocalDate,
-//    dayStatus: Map<LocalDate, DayStatusUi>,
-//    onDateSelected: (LocalDate) -> Unit,
-//    onMonthChanged: (Int) -> Unit,
-//    hijriOffsetDays: Int = 0,
-//) {
-//    val locale = LocalLocale.current.platformLocale
-//    val hijriChronology = HijrahChronology.INSTANCE
-//
-//    val firstDayOfTheWeek = WeekFields.of(locale).firstDayOfWeek
-//    val firstDayOfTheWeekValue = firstDayOfTheWeek.value
-//    val firstDayOfTheMonth = selectedMonth.atDay(1)
-//    val firstOfTheMonthDayValue = firstDayOfTheMonth.dayOfWeek.value
-//    val firstDayOfWeekIndex = (firstOfTheMonthDayValue - firstDayOfTheWeekValue + 7) % 7
-//    val totalDays = selectedMonth.lengthOfMonth()
-//
-//    val rows = (totalDays + firstDayOfWeekIndex + 6) / 7
-//
-//    val gridDates = remember(selectedMonth, firstDayOfWeekIndex, rows) {
-//        val dates = mutableListOf<LocalDate>()
-//        for (row in 0 until rows) {
-//            for (col in 0 until 7) {
-//                val cellIndex = row * 7 + col
-//                val dayNum = cellIndex - firstDayOfWeekIndex + 1
-//                val cellDate = when {
-//                    dayNum < 1 -> {
-//                        val previousMonth = selectedMonth.minusMonths(1)
-//                        previousMonth.atDay(previousMonth.lengthOfMonth() + dayNum)
-//                    }
-//
-//                    dayNum > totalDays -> {
-//                        selectedMonth.plusMonths(1).atDay(dayNum - totalDays)
-//                    }
-//
-//                    else -> selectedMonth.atDay(dayNum)
-//                }
-//                dates.add(cellDate)
-//            }
-//        }
-//        dates
-//    }
-//
-//    val hijriDatesMap = remember(gridDates, hijriOffsetDays) {
-//        gridDates.associateWith { date ->
-//            hijriChronology.date(date.plusDays(hijriOffsetDays.toLong()))
-//        }
-//    }
-//
-//    val hijriHeaderFormatter = remember(locale) { DateTimeFormatter.ofPattern("MMMM y", locale) }
-//
-//    Column {
-//        Row(
-//            horizontalArrangement = Arrangement.SpaceBetween,
-//            verticalAlignment = Alignment.CenterVertically,
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            IconButton(onClick = { onMonthChanged(-1) }) {
-//                Icon(
-//                    Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-//                    contentDescription = stringResource(R.string.previous_month),
-//                    tint = MaterialTheme.colorScheme.onSurface
-//                )
-//            }
-//
-//            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-//                Text(
-//                    text = "${
-//                        selectedMonth.month.getDisplayName(
-//                            TextStyle.FULL,
-//                            locale
-//                        )
-//                    } ${selectedMonth.year}",
-//                    fontSize = 20.sp,
-//                    fontWeight = FontWeight.Medium,
-//                    color = MaterialTheme.colorScheme.onSurface
-//                )
-//                Text(
-//                    // Uses the pre-calculated map to avoid heavy HijrahChronology math on recomposition
-//                    text = hijriHeaderFormatter.format(hijriDatesMap[firstDayOfTheMonth]!!),
-//                    fontSize = 16.sp,
-//                    color = MaterialTheme.colorScheme.onSurfaceVariant
-//                )
-//            }
-//            val canGoForward = selectedMonth.isBefore(YearMonth.from(today))
-//            IconButton(onClick = { onMonthChanged(1) }, enabled = canGoForward) {
-//                Icon(
-//                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
-//                    contentDescription = stringResource(R.string.next_month),
-//                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = if (canGoForward) 1f else 0.38f)
-//                )
-//            }
-//        }
-//        Spacer(modifier = Modifier.height(8.dp))
-//
-//        val weekDays = (0 until 7).map { firstDayOfTheWeek.plus(it.toLong()) }
-//        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-//            weekDays.forEach { dayOfWeek ->
-//                Text(
-//                    text = dayOfWeek.getDisplayName(TextStyle.SHORT, locale)
-//                        .replaceFirstChar { it.uppercase() },
-//                    textAlign = TextAlign.Center,
-//                    fontSize = 16.sp,
-//                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-//                    modifier = Modifier.weight(1f)
-//                )
-//            }
-//        }
-//        Spacer(modifier = Modifier.height(6.dp))
-//
-//        for (row in 0 until rows) {
-//            Row(modifier = Modifier.fillMaxWidth()) {
-//                for (col in 0 until 7) {
-//                    val cellIndex = row * 7 + col
-//                    val cellDate = gridDates[cellIndex]
-//                    val hijriDate = hijriDatesMap[cellDate]!!
-//                    val isCurrentMonth = cellDate.month == selectedMonth.month
-//
-//                    Box(
-//                        contentAlignment = Alignment.Center,
-//                        modifier = Modifier
-//                            .weight(1f)
-//                            .aspectRatio(1f)
-//                            .padding(2.dp)
-//                    ) {
-//                        DayCell(
-//                            gregorianDay = cellDate.dayOfMonth,
-//                            hijriDay = hijriDate.get(ChronoField.DAY_OF_MONTH),
-//                            isSelected = isCurrentMonth && cellDate == selectedDate,
-//                            isFuture = cellDate.isAfter(today),
-//                            isCurrentMonth = isCurrentMonth,
-//                            status = if (isCurrentMonth) dayStatus[cellDate]
-//                                ?: DayStatusUi.FUTURE else null,
-//                            onClick = { onDateSelected(cellDate) }
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-//
-//@Preview(name = "Light Mode", showBackground = true)
-//@Preview(name = "Dark Mode", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-//@Composable
-//private fun CalendarMonthViewPreview() {
-//    SalatiTheme {
-//        Box(
-//            modifier = Modifier
-//                .background(MaterialTheme.colorScheme.background)
-//                .padding(12.dp)
-//        ) {
-//            CalendarMonthView(
-//                selectedMonth = YearMonth.of(2026, 10),
-//                selectedDate = LocalDate.of(2026, 10, 8),
-//                today = LocalDate.of(2026, 10, 8),
-//                dayStatus = mapOf(
-//                    LocalDate.of(2026, 10, 7) to DayStatusUi.ALL_PRAYED,
-//                    LocalDate.of(2026, 10, 8) to DayStatusUi.IN_PROGRESS
-//                ),
-//                onDateSelected = {},
-//                onMonthChanged = {},
-//            )
-//        }
-//    }
-//}
 ```
 
 ## app\src\main\java\com\mhq\salati\prayertracker\ui\components\DialogChoiceButton.kt
@@ -14445,7 +13525,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14453,9 +13532,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.shared.ui.components.ShrinkToFitText
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 @Composable
@@ -14481,11 +13562,14 @@ fun DialogChoiceButton(
             modifier = Modifier.size(22.dp)
         )
         Spacer(modifier = Modifier.height(6.dp))
-        Text(
+        ShrinkToFitText(
             text = label,
             fontSize = 13.sp,
+            minFontSize = 10.sp,
             fontWeight = FontWeight.Medium,
-            color = color
+            textAlign = TextAlign.Center,
+            color = color,
+            modifier = Modifier.padding(horizontal = 8.dp)
         )
     }
 }
@@ -14526,7 +13610,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -14564,6 +13650,7 @@ fun PrayerConfirmDialog(
             modifier = Modifier
                 .clip(RoundedCornerShape(24.dp))
                 .background(MaterialTheme.colorScheme.surface)
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp),
         ) {
             Text(
@@ -14620,7 +13707,7 @@ private fun PrayerConfirmDialogPreview() {
 }
 ```
 
-## app\src\main\java\com\mhq\salati\prayertracker\ui\components\PrayerTrackerCard.kt
+## app\src\main\java\com\mhq\salati\prayertracker\ui\components\PrayerStatusCard.kt
 
 ```kotlin
 package com.mhq.salati.prayertracker.ui.components
@@ -14648,7 +13735,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14666,6 +13752,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.prayertracker.presentation.model.PrayerStatusUi
 import com.mhq.salati.shared.presentation.model.PrayerNameUi
+import com.mhq.salati.shared.ui.components.ShrinkToFitText
 import com.mhq.salati.shared.ui.labelRes
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
@@ -14714,16 +13801,16 @@ fun PrayerStatusCard(
             )
             .padding(horizontal = 6.dp, vertical = 14.dp)
     ) {
-        Text(
+        ShrinkToFitText(
             text = stringResource(prayer.labelRes),
             fontSize = 14.sp,
+            minFontSize = 10.sp,
             fontWeight = FontWeight.SemiBold,
             color =
                 if (locked)
                     MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 else
-                    MaterialTheme.colorScheme.onSurface,
-            maxLines = 1
+                    MaterialTheme.colorScheme.onSurface
         )
 
         AnimatedContent(
@@ -14812,21 +13899,30 @@ import androidx.compose.ui.unit.sp
 import com.mhq.salati.R
 import com.mhq.salati.prayertracker.presentation.model.PrayerStatusUi
 import com.mhq.salati.shared.presentation.model.PrayerNameUi
+import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import java.time.LocalDate
 
+/**
+ * Title + the five prayer status cards in one row.
+ * On wide screens the pane is narrower, so the gap between cards is tighter to leave room for labels.
+ */
 @Composable
 fun PrayerStatusList(
     selectedDate: LocalDate,
     today: LocalDate,
     duePrayers: Set<PrayerNameUi>,
     records: Map<PrayerNameUi, PrayerStatusUi>,
-    onPrayerTapped: (PrayerNameUi) -> Unit
+    onPrayerTapped: (PrayerNameUi) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val isFutureDate = selectedDate.isAfter(today)
     val hasUnduePrayers = selectedDate == today && PrayerNameUi.majorEntries.any { it !in duePrayers }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
         Text(
             text = stringResource(R.string.track_your_prayers),
             color = MaterialTheme.colorScheme.onSurface,
@@ -14836,7 +13932,7 @@ fun PrayerStatusList(
             modifier = Modifier.padding(bottom = 12.dp)
         )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(if (isWideLayout()) 6.dp else 10.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             PrayerNameUi.majorEntries.forEach { prayer ->
@@ -15075,20 +14171,26 @@ fun PrayerTrackerContainer(
 ```kotlin
 package com.mhq.salati.prayertracker.ui.screens
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -15097,9 +14199,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.coerceAtLeast
+import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.Intent
@@ -15108,19 +14212,35 @@ import com.mhq.salati.prayertracker.ui.components.CalendarMonthView
 import com.mhq.salati.prayertracker.ui.components.PrayerStatusList
 import com.mhq.salati.prayertracker.ui.components.StreakBanner
 import com.mhq.salati.shared.ui.components.TabHeader
+import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import java.time.LocalDate
 import java.time.YearMonth
 
-//Different Sizes and Device Rotation
+/** Tall screens: content never stretches wider than this (big portrait tablets), centered. */
+private val TrackerPortraitMaxWidth = 560.dp
+
+/** Wide screens (landscape, tablets, split-screen). */
+private object TrackerWideLayout {
+    /** Calendar never gets wider than this inside its half of the screen. */
+    val CalendarMaxWidth = 340.dp
+
+    /** Below this height the calendar stops shrinking and the pane scrolls instead. */
+    val CalendarMinHeight = 216.dp
+
+    /** Calendar height is capped at width x this, so cells don't become tall slivers on tablets. */
+    const val CalendarMaxHeightPerWidth = 1.2f
+
+    val PaneSpacing = 24.dp
+}
+
 @Composable
 fun PrayerTrackerContent(
     state: State,
     onIntent: (Intent) -> Unit
 ) {
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isWide = isWideLayout()
 
     Box(
         modifier = Modifier
@@ -15144,55 +14264,11 @@ fun PrayerTrackerContent(
                 }
             )
 
-            if (isLandscape) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 24.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Left Column: Caps total width to force square aspect ratio to shrink cells uniformly
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .widthIn(max = 300.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CalendarMonthView(
-                            selectedMonth = state.selectedMonth,
-                            selectedDate = state.selectedDate,
-                            today = state.today,
-                            dayStatus = state.monthDayStatus,
-                            onDateSelected = { onIntent(Intent.DateSelected(it)) },
-                            onMonthChanged = { onIntent(Intent.MonthChanged(it)) },
-                            hijriOffsetDays = state.hijriDateOffset
-                        )
-                    }
-
-                    // Separating space between the calendar and the prayer checklist
-                    Spacer(modifier = Modifier.width(24.dp))
-
-                    // Right Column: Symmetrical vertical checklist
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                    ) {
-                        PrayerStatusList(
-                            duePrayers = state.duePrayers,
-                            selectedDate = state.selectedDate,
-                            today = state.today,
-                            records = state.selectedDateRecords,
-                            onPrayerTapped = { onIntent(Intent.PrayerSelected(it)) }
-                        )
-                    }
-                }
+            if (isWide) {
+                TrackerWideContent(state = state, onIntent = onIntent)
             } else {
                 Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 20.dp, vertical = 24.dp)
@@ -15205,7 +14281,10 @@ fun PrayerTrackerContent(
                         dayStatus = state.monthDayStatus,
                         onDateSelected = { onIntent(Intent.DateSelected(it)) },
                         onMonthChanged = { onIntent(Intent.MonthChanged(it)) },
-                        hijriOffsetDays = state.hijriDateOffset
+                        hijriOffsetDays = state.hijriDateOffset,
+                        modifier = Modifier
+                            .widthIn(max = TrackerPortraitMaxWidth)
+                            .fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     PrayerStatusList(
@@ -15213,7 +14292,10 @@ fun PrayerTrackerContent(
                         selectedDate = state.selectedDate,
                         today = state.today,
                         records = state.selectedDateRecords,
-                        onPrayerTapped = { onIntent(Intent.PrayerSelected(it)) }
+                        onPrayerTapped = { onIntent(Intent.PrayerSelected(it)) },
+                        modifier = Modifier
+                            .widthIn(max = TrackerPortraitMaxWidth)
+                            .fillMaxWidth()
                     )
                 }
             }
@@ -15221,8 +14303,82 @@ fun PrayerTrackerContent(
     }
 }
 
+/**
+ * Two panes side by side: calendar (left) and prayer checklist (right).
+ *
+ * - Both panes scroll when the screen is too short (small landscape, large font scale, Arabic).
+ *   `fillMaxHeight().verticalScroll()` keeps the content centered while it fits.
+ * - The calendar is given an explicit, bounded height (needed for its weighted rows); it is the
+ *   available height, clamped between [TrackerWideLayout.CalendarMinHeight] and width x aspect cap.
+ * - Display-cutout insets keep both panes clear of a notch in landscape.
+ */
+@Composable
+private fun TrackerWideContent(
+    state: State,
+    onIntent: (Intent) -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(TrackerWideLayout.PaneSpacing),
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
+            .padding(horizontal = 24.dp, vertical = 4.dp)
+    ) {
+        BoxWithConstraints(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            val calendarWidth: Dp = maxWidth.coerceAtMost(TrackerWideLayout.CalendarMaxWidth)
+            val calendarHeight: Dp = maxHeight
+                .coerceAtMost(calendarWidth * TrackerWideLayout.CalendarMaxHeightPerWidth)
+                .coerceAtLeast(TrackerWideLayout.CalendarMinHeight)
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                CalendarMonthView(
+                    selectedMonth = state.selectedMonth,
+                    selectedDate = state.selectedDate,
+                    today = state.today,
+                    dayStatus = state.monthDayStatus,
+                    onDateSelected = { onIntent(Intent.DateSelected(it)) },
+                    onMonthChanged = { onIntent(Intent.MonthChanged(it)) },
+                    hijriOffsetDays = state.hijriDateOffset,
+                    modifier = Modifier
+                        .width(calendarWidth)
+                        .height(calendarHeight)
+                )
+            }
+        }
+
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+        ) {
+            PrayerStatusList(
+                duePrayers = state.duePrayers,
+                selectedDate = state.selectedDate,
+                today = state.today,
+                records = state.selectedDateRecords,
+                onPrayerTapped = { onIntent(Intent.PrayerSelected(it)) }
+            )
+        }
+    }
+}
+
 @Preview(name = "Portrait", showSystemUi = true)
 @Preview(name = "Landscape", device = "spec:width=800dp,height=400dp,dpi=440", showSystemUi = true)
+@Preview(name = "Small landscape", device = "spec:width=640dp,height=320dp,dpi=420", showSystemUi = true)
+@Preview(name = "Tablet", device = "spec:width=1280dp,height=800dp,dpi=240", showSystemUi = true)
 @Composable
 private fun PrayerTrackerContentPreview() {
     SalatiTheme {
@@ -15236,111 +14392,6 @@ private fun PrayerTrackerContentPreview() {
         )
     }
 }
-
-
-
-
-
-//package com.mhq.salati.prayertracker.ui.screens
-//
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.layout.Box
-//import androidx.compose.foundation.layout.Column
-//import androidx.compose.foundation.layout.Spacer
-//import androidx.compose.foundation.layout.fillMaxSize
-//import androidx.compose.foundation.layout.height
-//import androidx.compose.foundation.layout.navigationBarsPadding
-//import androidx.compose.foundation.layout.padding
-//import androidx.compose.material.icons.Icons
-//import androidx.compose.material.icons.filled.CheckCircle
-//import androidx.compose.material3.MaterialTheme
-//import androidx.compose.runtime.Composable
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.res.stringResource
-//import androidx.compose.ui.tooling.preview.Preview
-//import androidx.compose.ui.unit.dp
-//import com.mhq.salati.R
-//import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.Intent
-//import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.State
-//import com.mhq.salati.prayertracker.ui.components.CalendarMonthView
-//import com.mhq.salati.prayertracker.ui.components.PrayerStatusList
-//import com.mhq.salati.prayertracker.ui.components.StreakBanner
-//import com.mhq.salati.shared.ui.components.TabHeader
-//import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
-//import com.mhq.salati.shared.ui.theme.SalatiTheme
-//import java.time.LocalDate
-//import java.time.YearMonth
-//
-////Original
-//@Composable
-//fun PrayerTrackerContent(
-//    state: State,
-//    onIntent: (Intent) -> Unit
-//) {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(color = MaterialTheme.colorScheme.background)
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .navigationBarsPadding()
-//                .padding(bottom = BottomNavBarDefaults.Height)
-//        ) {
-//            TabHeader(
-//                icon = Icons.Default.CheckCircle,
-//                title = stringResource(R.string.tracker),
-//                subtitle = stringResource(R.string.track_your_five_daily_prayers),
-//                trailingContent = {
-//                    if (state.currentStreak > 0) {
-//                        StreakBanner(state.currentStreak)
-//                    }
-//                }
-//            )
-//
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .background(MaterialTheme.colorScheme.background)
-//                    .padding(horizontal = 20.dp, vertical = 24.dp)
-//            ) {
-//                CalendarMonthView(
-//                    selectedMonth = state.selectedMonth,
-//                    selectedDate = state.selectedDate,
-//                    today = state.today,
-//                    dayStatus = state.monthDayStatus,
-//                    onDateSelected = { onIntent(Intent.DateSelected(it)) },
-//                    onMonthChanged = { onIntent(Intent.MonthChanged(it)) },
-//                    hijriOffsetDays = state.hijriDateOffset
-//                )
-//                Spacer(modifier = Modifier.height(24.dp))
-//                PrayerStatusList(
-//                    duePrayers = state.duePrayers,
-//                    selectedDate = state.selectedDate,
-//                    today = state.today,
-//                    records = state.selectedDateRecords,
-//                    onPrayerTapped = { onIntent(Intent.PrayerSelected(it)) }
-//                )
-//            }
-//        }
-//    }
-//}
-//
-//@Preview
-//@Composable
-//private fun PrayerTrackerContentPreview() {
-//    SalatiTheme() {
-//        PrayerTrackerContent(
-//            state = State(
-//                today = LocalDate.of(2026, 10, 8),
-//                selectedMonth = YearMonth.of(2026, 10),
-//                selectedDate = LocalDate.of(2026, 10, 8)
-//            ),
-//            onIntent = {}
-//        )
-//    }
-//}
 ```
 
 ## app\src\main\java\com\mhq\salati\qibla\data\repoimpl\CompassRepoImpl.kt
@@ -15794,7 +14845,7 @@ class QiblaLocationHandler @Inject constructor(
                 is CoordinatesLookup.PermissionDenied -> emit(QiblaLocationLoad.Blocked(prerequisites.copy(permissionGranted = false)))
                 is CoordinatesLookup.Locating -> emit(QiblaLocationLoad.LookingUpCurrentLocation)
                 is CoordinatesLookup.TimedOut -> emit(QiblaLocationLoad.TimedOut)
-                is CoordinatesLookup.Failed -> emit(QiblaLocationLoad.Failed(lookup.message))
+                is CoordinatesLookup.Failed -> emit(QiblaLocationLoad.Failed)
                 is CoordinatesLookup.Found -> emit(QiblaLocationLoad.Located(lookup.coordinates))
             }
         }
@@ -15823,7 +14874,8 @@ sealed interface QiblaLocationLoad {
     data class Blocked(val prerequisites: LocationPrerequisites) : QiblaLocationLoad
 
     data object TimedOut : QiblaLocationLoad
-    data class Failed(val message: String?) : QiblaLocationLoad
+
+    data object Failed : QiblaLocationLoad
 }
 ```
 
@@ -19290,15 +18342,28 @@ package com.mhq.salati.settings.ui.screens
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.DarkMode
@@ -19315,13 +18380,8 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -19332,16 +18392,37 @@ import com.mhq.salati.settings.presentation.contract.SettingsContract.State
 import com.mhq.salati.settings.ui.components.SettingsActionRow
 import com.mhq.salati.settings.ui.components.SettingsSectionHeader
 import com.mhq.salati.settings.ui.components.SettingsSelectionSheet
-import com.mhq.salati.shared.ui.components.ActionRow
 import com.mhq.salati.settings.ui.components.SettingsStepperRow
 import com.mhq.salati.settings.ui.components.SettingsSwitchRow
 import com.mhq.salati.settings.ui.displayNameRes
+import com.mhq.salati.shared.ui.components.ActionRow
 import com.mhq.salati.shared.ui.components.GroupCard
 import com.mhq.salati.shared.ui.components.GroupDivider
 import com.mhq.salati.shared.ui.components.TabHeader
+import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
+/** Tall screens: the settings list never stretches wider than this (big portrait tablets). */
+private val SettingsPortraitMaxWidth = 560.dp
+
+/** Wide screens (landscape, tablets, foldables, split-screen). */
+private object SettingsWideLayout {
+    /** A pane's rows never stretch wider than this, even when the pane itself is huge. */
+    val PaneMaxWidth = 420.dp
+
+    val PaneSpacing = 24.dp
+}
+
+/**
+ * Settings tab.
+ *
+ * - Narrow windows: one centered, lazy list bounded by [SettingsPortraitMaxWidth].
+ * - Wide windows: two balanced panes side by side (notifications & calculation on the start
+ *   side, appearance, Hijri and about on the end side), each scrolling on its own.
+ * - The header sits in the column flow (like Tracker), so no measured-height overlay hack is
+ *   needed and it grows safely with font scale or Arabic line heights.
+ */
 @Composable
 fun SettingsContent(
     state: State,
@@ -19349,188 +18430,34 @@ fun SettingsContent(
     onIntent: (Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val density = LocalDensity.current
-    var headerHeightPx by remember { mutableIntStateOf(0) }
-
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        LazyColumn(
-            contentPadding = PaddingValues(
-                top = with(density) { headerHeightPx.toDp() },
-                bottom = BottomNavBarDefaults.Height + 40.dp
-            ),
-            modifier = Modifier
-                .fillMaxSize()
-                .navigationBarsPadding()
-        ) {
-            item {
-                Column(Modifier.padding(horizontal = 20.dp)) {
-                    Spacer(Modifier.height(24.dp))
+        Column(modifier = Modifier.fillMaxSize()) {
+            TabHeader(
+                icon = Icons.Default.Settings,
+                title = stringResource(R.string.settings),
+                subtitle = stringResource(R.string.customize_your_app_experience)
+            )
 
-                    SettingsSectionHeader(stringResource(R.string.notifications))
-                    GroupCard {
-                        SettingsSwitchRow(
-                            icon = Icons.Default.NotificationsActive,
-                            title = stringResource(R.string.prayer_notifications),
-                            subtitle = stringResource(R.string.get_alerted_and_notified_at_each_prayer_time),
-                            isChecked = state.notificationsEnabled && state.hasNotificationPermission,
-                            onCheckedChange = { onIntent(Intent.ToggleNotifications(it)) }
-                        )
-                        GroupDivider()
-                        ActionRow(
-                            icon = Icons.Default.MusicNote,
-                            title = stringResource(R.string.adhan_sound),
-                            valueLabel = stringResource(state.adhanSound.displayNameRes),
-                            isEnabled = state.notificationsEnabled,
-                            onClick = {
-                                onIntent(
-                                    Intent.OpenSelector(
-                                        SelectorType.AdhanSound
-                                    )
-                                )
-                            }
-                        )
-                        GroupDivider()
-                        ActionRow(
-                            icon = Icons.Default.MusicNote,
-                            title = stringResource(R.string.custom_alarm_sound),
-                            valueLabel = stringResource(state.customAlarmSound.displayNameRes),
-                            isEnabled = state.notificationsEnabled,
-                            onClick = {
-                                onIntent(
-                                    Intent.OpenSelector(
-                                        SelectorType.CustomAlarmSound
-                                    )
-                                )
-                            }
-                        )
-                    }
-
-                    Spacer(Modifier.height(28.dp))
-                    SettingsSectionHeader(stringResource(R.string.prayer_calculation))
-                    GroupCard {
-                        ActionRow(
-                            icon = Icons.Default.Explore,
-                            title = stringResource(R.string.calculation_method),
-                            valueLabel = stringResource(state.calculationMethod.displayNameRes),
-                            onClick = {
-                                onIntent(
-                                    Intent.OpenSelector(
-                                        SelectorType.CalculationMethod
-                                    )
-                                )
-                            }
-                        )
-                        GroupDivider()
-                        ActionRow(
-                            icon = Icons.Default.School,
-                            title = stringResource(R.string.asr_madhab),
-                            valueLabel = stringResource(state.madhab.displayNameRes),
-                            onClick = {
-                                onIntent(
-                                    Intent.OpenSelector(
-                                        SelectorType.Madhab
-                                    )
-                                )
-                            }
-                        )
-                        GroupDivider()
-                        ActionRow(
-                            icon = Icons.Default.Schedule,
-                            title = stringResource(R.string.time_format),
-                            valueLabel = stringResource(state.timeFormat.displayNameRes),
-                            onClick = {
-                                onIntent(Intent.OpenSelector(SelectorType.TimeFormat))
-                            }
-                        )
-                    }
-
-                    Spacer(Modifier.height(28.dp))
-                    SettingsSectionHeader(stringResource(R.string.appearance))
-                    GroupCard {
-                        ActionRow(
-                            icon = Icons.Default.DarkMode,
-                            title = stringResource(R.string.theme),
-                            valueLabel = stringResource(state.themeMode.displayNameRes),
-                            onClick = {
-                                onIntent(
-                                    Intent.OpenSelector(
-                                        SelectorType.Theme
-                                    )
-                                )
-                            }
-                        )
-                        GroupDivider()
-                        ActionRow(
-                            icon = Icons.Default.Language,
-                            title = stringResource(R.string.language),
-                            valueLabel = stringResource(state.language.displayNameRes),
-                            onClick = {
-                                onIntent(
-                                    Intent.OpenSelector(
-                                        SelectorType.Language
-                                    )
-                                )
-                            }
-                        )
-                    }
-
-                    Spacer(Modifier.height(28.dp))
-                    SettingsSectionHeader(stringResource(R.string.hijri_calendar))
-                    GroupCard {
-                        SettingsStepperRow(
-                            icon = Icons.Default.CalendarMonth,
-                            title = stringResource(R.string.date_adjustment),
-                            subtitle = stringResource(R.string.correct_for_local_moon_sighting),
-                            value = state.hijriDateOffset,
-                            onIncrement = { onIntent(Intent.IncrementHijriOffset) },
-                            onDecrement = { onIntent(Intent.DecrementHijriOffset) }
-                        )
-                    }
-
-                    Spacer(Modifier.height(28.dp))
-                    SettingsSectionHeader(stringResource(R.string.about))
-                    GroupCard {
-                        SettingsActionRow(
-                            icon = Icons.Default.StarRate,
-                            title = stringResource(R.string.rate_salati),
-                            onClick = { onIntent(Intent.RateApp) }
-                        )
-                        GroupDivider()
-                        SettingsActionRow(
-                            icon = Icons.Default.Share,
-                            title = stringResource(R.string.share_with_friends),
-                            onClick = { onIntent(Intent.ShareApp) }
-                        )
-                        GroupDivider()
-                        SettingsActionRow(
-                            icon = Icons.Default.Email,
-                            title = stringResource(R.string.contact_support),
-                            onClick = { onIntent(Intent.ContactSupport) }
-                        )
-                        GroupDivider()
-                        SettingsActionRow(
-                            icon = Icons.Default.Info,
-                            title = stringResource(R.string.version),
-                            trailingText = appVersion,
-                            onClick = null
-                        )
-                    }
-                }
+            if (isWideLayout()) {
+                SettingsWideContent(
+                    state = state,
+                    appVersion = appVersion,
+                    onIntent = onIntent,
+                    modifier = Modifier.weight(1f)
+                )
+            } else {
+                SettingsNarrowContent(
+                    state = state,
+                    appVersion = appVersion,
+                    onIntent = onIntent,
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
-
-        TabHeader(
-            icon = Icons.Default.Settings,
-            title = stringResource(R.string.settings),
-            subtitle = stringResource(R.string.customize_your_app_experience),
-            modifier = Modifier.onGloballyPositioned {
-                headerHeightPx = it.size.height
-            }
-        )
 
         state.activeSelector?.let { selector ->
             SettingsSelectionSheet(
@@ -19546,8 +18473,262 @@ fun SettingsContent(
     }
 }
 
-@Preview(name = "Light Mode", showSystemUi = true)
-@Preview(name = "Dark Mode", showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+/**
+ * One centered list. Each section is its own [LazyColumn] item (real laziness), and the list is
+ * bounded by [SettingsPortraitMaxWidth] so rows don't stretch on tablets. Display-cutout insets
+ * keep the rows clear of a notch.
+ */
+@Composable
+private fun SettingsNarrowContent(
+    state: State,
+    appVersion: String,
+    onIntent: (Intent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        contentAlignment = Alignment.TopCenter,
+        modifier = modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
+            .navigationBarsPadding()
+            .padding(bottom = BottomNavBarDefaults.Height)
+    ) {
+        LazyColumn(
+            contentPadding = PaddingValues(
+                start = 20.dp,
+                end = 20.dp,
+                top = 24.dp,
+                bottom = 40.dp
+            ),
+            modifier = Modifier
+                .fillMaxHeight()
+                .widthIn(max = SettingsPortraitMaxWidth)
+        ) {
+            item(key = "notifications") {
+                NotificationsSection(state = state, onIntent = onIntent)
+            }
+
+            item(key = "calculation") {
+                SectionGap()
+                PrayerCalculationSection(state = state, onIntent = onIntent)
+            }
+
+            item(key = "appearance") {
+                SectionGap()
+                AppearanceSection(state = state, onIntent = onIntent)
+            }
+
+            item(key = "hijri") {
+                SectionGap()
+                HijriCalendarSection(state = state, onIntent = onIntent)
+            }
+
+            item(key = "about") {
+                SectionGap()
+                AboutSection(appVersion = appVersion, onIntent = onIntent)
+            }
+        }
+    }
+}
+
+/**
+ * Two panes side by side, balanced by section count.
+ *
+ * Both panes scroll when the window is too short (small landscape, large font scale, Arabic):
+ * `fillMaxHeight().verticalScroll()` keeps the content centered while it fits, exactly like the
+ * Tracker panes. Display-cutout insets keep both panes clear of a notch in landscape.
+ */
+@Composable
+private fun SettingsWideContent(
+    state: State,
+    appVersion: String,
+    onIntent: (Intent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(SettingsWideLayout.PaneSpacing),
+        modifier = modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
+            .navigationBarsPadding()
+            .padding(start = 24.dp, end = 24.dp, bottom = BottomNavBarDefaults.Height)
+    ) {
+        SettingsPane(modifier = Modifier.weight(1f)) {
+            NotificationsSection(state = state, onIntent = onIntent)
+            SectionGap()
+            PrayerCalculationSection(state = state, onIntent = onIntent)
+        }
+
+        SettingsPane(modifier = Modifier.weight(1f)) {
+            AppearanceSection(state = state, onIntent = onIntent)
+            SectionGap()
+            HijriCalendarSection(state = state, onIntent = onIntent)
+            SectionGap()
+            AboutSection(appVersion = appVersion, onIntent = onIntent)
+        }
+    }
+}
+
+/**
+ * One scrollable, horizontally bounded pane. The inner column is capped at
+ * [SettingsWideLayout.PaneMaxWidth] and centered, so rows keep a sane width on tablets.
+ */
+@Composable
+private fun SettingsPane(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 16.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .widthIn(max = SettingsWideLayout.PaneMaxWidth)
+                .fillMaxWidth(),
+            content = content
+        )
+    }
+}
+
+@Composable
+private fun SectionGap() {
+    Spacer(Modifier.height(28.dp))
+}
+
+@Composable
+private fun NotificationsSection(state: State, onIntent: (Intent) -> Unit) {
+    SettingsSectionHeader(stringResource(R.string.notifications))
+    GroupCard {
+        SettingsSwitchRow(
+            icon = Icons.Default.NotificationsActive,
+            title = stringResource(R.string.prayer_notifications),
+            subtitle = stringResource(R.string.get_alerted_and_notified_at_each_prayer_time),
+            isChecked = state.notificationsEnabled && state.hasNotificationPermission,
+            onCheckedChange = { onIntent(Intent.ToggleNotifications(it)) }
+        )
+        GroupDivider()
+        ActionRow(
+            icon = Icons.Default.MusicNote,
+            title = stringResource(R.string.adhan_sound),
+            valueLabel = stringResource(state.adhanSound.displayNameRes),
+            isEnabled = state.notificationsEnabled,
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.AdhanSound)) }
+        )
+        GroupDivider()
+        ActionRow(
+            icon = Icons.Default.MusicNote,
+            title = stringResource(R.string.custom_alarm_sound),
+            valueLabel = stringResource(state.customAlarmSound.displayNameRes),
+            isEnabled = state.notificationsEnabled,
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.CustomAlarmSound)) }
+        )
+    }
+}
+
+@Composable
+private fun PrayerCalculationSection(state: State, onIntent: (Intent) -> Unit) {
+    SettingsSectionHeader(stringResource(R.string.prayer_calculation))
+    GroupCard {
+        ActionRow(
+            icon = Icons.Default.Explore,
+            title = stringResource(R.string.calculation_method),
+            valueLabel = stringResource(state.calculationMethod.displayNameRes),
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.CalculationMethod)) }
+        )
+        GroupDivider()
+        ActionRow(
+            icon = Icons.Default.School,
+            title = stringResource(R.string.asr_madhab),
+            valueLabel = stringResource(state.madhab.displayNameRes),
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.Madhab)) }
+        )
+        GroupDivider()
+        ActionRow(
+            icon = Icons.Default.Schedule,
+            title = stringResource(R.string.time_format),
+            valueLabel = stringResource(state.timeFormat.displayNameRes),
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.TimeFormat)) }
+        )
+    }
+}
+
+@Composable
+private fun AppearanceSection(state: State, onIntent: (Intent) -> Unit) {
+    SettingsSectionHeader(stringResource(R.string.appearance))
+    GroupCard {
+        ActionRow(
+            icon = Icons.Default.DarkMode,
+            title = stringResource(R.string.theme),
+            valueLabel = stringResource(state.themeMode.displayNameRes),
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.Theme)) }
+        )
+        GroupDivider()
+        ActionRow(
+            icon = Icons.Default.Language,
+            title = stringResource(R.string.language),
+            valueLabel = stringResource(state.language.displayNameRes),
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.Language)) }
+        )
+    }
+}
+
+@Composable
+private fun HijriCalendarSection(state: State, onIntent: (Intent) -> Unit) {
+    SettingsSectionHeader(stringResource(R.string.hijri_calendar))
+    GroupCard {
+        SettingsStepperRow(
+            icon = Icons.Default.CalendarMonth,
+            title = stringResource(R.string.date_adjustment),
+            subtitle = stringResource(R.string.correct_for_local_moon_sighting),
+            value = state.hijriDateOffset,
+            onIncrement = { onIntent(Intent.IncrementHijriOffset) },
+            onDecrement = { onIntent(Intent.DecrementHijriOffset) }
+        )
+    }
+}
+
+@Composable
+private fun AboutSection(appVersion: String, onIntent: (Intent) -> Unit) {
+    SettingsSectionHeader(stringResource(R.string.about))
+    GroupCard {
+        SettingsActionRow(
+            icon = Icons.Default.StarRate,
+            title = stringResource(R.string.rate_salati),
+            onClick = { onIntent(Intent.RateApp) }
+        )
+        GroupDivider()
+        SettingsActionRow(
+            icon = Icons.Default.Share,
+            title = stringResource(R.string.share_with_friends),
+            onClick = { onIntent(Intent.ShareApp) }
+        )
+        GroupDivider()
+        SettingsActionRow(
+            icon = Icons.Default.Email,
+            title = stringResource(R.string.contact_support),
+            onClick = { onIntent(Intent.ContactSupport) }
+        )
+        GroupDivider()
+        SettingsActionRow(
+            icon = Icons.Default.Info,
+            title = stringResource(R.string.version),
+            trailingText = appVersion,
+            onClick = null
+        )
+    }
+}
+
+@Preview(name = "Portrait", showSystemUi = true)
+@Preview(name = "Landscape", device = "spec:width=800dp,height=400dp,dpi=440", showSystemUi = true)
+@Preview(name = "Small landscape", device = "spec:width=640dp,height=320dp,dpi=420", showSystemUi = true)
+@Preview(name = "Tablet", device = "spec:width=1280dp,height=800dp,dpi=240", showSystemUi = true)
+@Preview(name = "Arabic Large Font", locale = "ar", fontScale = 1.5f, showSystemUi = true)
+@Preview(name = "Dark", showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun SettingsContentPreview() {
     SalatiTheme {
@@ -20237,6 +19418,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
@@ -20256,6 +19438,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
+/**
+ * Longest a value label may get before it shrinks and then clips. Without a cap, a long Arabic
+ * translation (e.g. calculation method names) is measured with the full row width and wraps,
+ * growing the row vertically and squeezing the weighted title into a sliver.
+ */
+private val ValueLabelMaxWidth = 200.dp
+
+/**
+ * Settings-style row with a trailing value label and a chevron.
+ *
+ * The value label stays on ONE line: it shrinks (via [ShrinkToFitText]), then clips, but never
+ * wraps, so a longer translation or a narrow pane (landscape, split-screen) cannot grow this row
+ * vertically. Titles may still wrap inside their weighted space, which is bounded.
+ */
 @Composable
 fun ActionRow(
     icon: ImageVector,
@@ -20290,14 +19486,15 @@ fun ActionRow(
             modifier = Modifier.weight(1f)
         )
 
-        Text(
+        ShrinkToFitText(
             text = valueLabel,
             fontSize = 13.sp,
             color =
                 if (isEnabled)
                     MaterialTheme.colorScheme.onSurfaceVariant
                 else
-                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            modifier = Modifier.widthIn(max = ValueLabelMaxWidth)
         )
 
         Spacer(Modifier.width(4.dp))
@@ -20321,6 +19518,21 @@ private fun ActionRowPreview() {
                 icon = Icons.Default.Language,
                 title = "App Language",
                 valueLabel = "English",
+                onClick = {}
+            )
+        }
+    }
+}
+
+@Preview(name = "Long Arabic Value Label", locale = "ar", showBackground = true)
+@Composable
+private fun ActionRowLongArabicValuePreview() {
+    SalatiTheme {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
+            ActionRow(
+                icon = Icons.Default.Language,
+                title = "طريقة الحساب",
+                valueLabel = "الهيئة المصرية العامة للمساحة",
                 onClick = {}
             )
         }
@@ -20623,6 +19835,76 @@ fun SelectionSheet(
 }
 ```
 
+## app\src\main\java\com\mhq\salati\shared\ui\components\ShrinkToFitText.kt
+
+```kotlin
+package com.mhq.salati.shared.ui.components
+
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
+
+/**
+ * Single-line text that shrinks its font (down to [minFontSize]) until it fits the width it is given.
+ *
+ * Use it wherever a label must stay on ONE line, so a longer translation (Arabic day / prayer names)
+ * or a narrow pane (landscape, split-screen) shrinks the text instead of wrapping and growing the
+ * parent vertically. The text stays hidden until the final size is found, so there is no visible jump.
+ *
+ * The shrink restarts whenever the text, font size, screen width or font scale changes.
+ */
+@Composable
+fun ShrinkToFitText(
+    text: String,
+    fontSize: TextUnit,
+    modifier: Modifier = Modifier,
+    minFontSize: TextUnit = 9.sp,
+    color: Color = Color.Unspecified,
+    fontWeight: FontWeight? = null,
+    textAlign: TextAlign? = null
+) {
+    val configuration = LocalConfiguration.current
+    var sizeSp by remember(text, fontSize, configuration.screenWidthDp, configuration.fontScale) {
+        mutableFloatStateOf(fontSize.value)
+    }
+    var fits by remember(text, fontSize, configuration.screenWidthDp, configuration.fontScale) {
+        mutableStateOf(false)
+    }
+
+    Text(
+        text = text,
+        color = color,
+        fontSize = sizeSp.sp,
+        fontWeight = fontWeight,
+        textAlign = textAlign,
+        maxLines = 1,
+        softWrap = false,
+        overflow = TextOverflow.Clip,
+        onTextLayout = { result ->
+            if (result.didOverflowWidth && sizeSp > minFontSize.value) {
+                sizeSp = (sizeSp * 0.92f).coerceAtLeast(minFontSize.value)
+            } else {
+                fits = true
+            }
+        },
+        modifier = modifier.drawWithContent { if (fits) drawContent() }
+    )
+}
+```
+
 ## app\src\main\java\com\mhq\salati\shared\ui\components\StepBadgeIcon.kt
 
 ```kotlin
@@ -20735,7 +20017,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -20744,6 +20025,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
@@ -20771,7 +20053,7 @@ import com.mhq.salati.shared.ui.theme.tabHeaderGradient
  *
  * The height is a MINIMUM ([heightIn]), never a fixed value, so a larger font scale or Arabic
  * line heights grow the header instead of clipping it. The gradient runs edge to edge (behind the
- * status bar and any display cutout); only the content is pushed clear of them.
+ * status bar and any system bars); only the content is pushed clear of them.
  */
 @Composable
 fun TabHeader(
@@ -20789,7 +20071,8 @@ fun TabHeader(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.tabHeaderGradient)
             .statusBarsPadding()
-            .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
+            // Updated from displayCutout to safeDrawing to dynamically avoid both camera cutouts and side navigation bars in landscape orientation
+            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
             .heightIn(min = if (isWide) 64.dp else 112.dp)
             .padding(vertical = if (isWide) 8.dp else 24.dp, horizontal = 24.dp)
     ) {
@@ -21162,7 +20445,6 @@ fun MessageUi.asString(context: Context): String = context.getString(textRes)
 ```kotlin
 package com.mhq.salati.shared.ui.navigation
 
-import android.content.res.Configuration
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -21208,7 +20490,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
@@ -21645,7 +20926,7 @@ private val ScreenEnter: AnimatedContentTransitionScope<NavBackStackEntry>.() ->
 }
 
 private val ScreenExit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-    fadeOut(tween(if (isTabSwitch()) TAB_FADE_MILLIS else NON_TAB_FADE_MILLIS))
+    ExitTransition.None // the old tab stays fully opaque while the new one fades in on top
 }
 
 /**
@@ -22446,6 +21727,7 @@ import com.mhq.salati.splash.domain.usecases.GetStartDestinationUseCase
 import com.mhq.salati.splash.presentation.contract.SplashContract
 import com.mhq.salati.splash.presentation.mapper.toUi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -22465,10 +21747,6 @@ class SplashViewModel @Inject constructor(
 
     init {
         onIntent(SplashContract.Intent.CheckStartDestination)
-
-        // The theme is observed here so MainActivity can theme the very first frame.
-        // First-run language selection moved to onboarding's Welcome page,
-        // so this ViewModel no longer carries any language flow.
         observeSettingsUseCase()
             .onEach { settings ->
                 _state.update {
@@ -22490,13 +21768,19 @@ class SplashViewModel @Inject constructor(
 
     private fun checkStartDestination() {
         viewModelScope.launch {
-            val destination = getStartDestinationUseCase()
-            _state.update {
-                it.copy(
-                    startDestination = destination.toUi(),
-                    isDestinationReady = true,
-                    isLoading = !it.isSettingsReady
-                )
+            try {
+                val destination = getStartDestinationUseCase()
+                _state.update {
+                    it.copy(
+                        startDestination = destination.toUi(),
+                        isDestinationReady = true,
+                        isLoading = !it.isSettingsReady
+                    )
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _state.update { it.copy(isDestinationReady = true, isLoading = !it.isSettingsReady) }
             }
         }
     }
@@ -22763,9 +22047,6 @@ class SplashViewModel @Inject constructor(
     </plurals>
 
     <!-- Custom alarms: Editor sheet -->
-    <string name="new_custom_alarm">Customize an alarm</string>
-    <string name="edit_custom_alarm">Edit custom alarm</string>
-    <string name="alarm_label_optional">Label (Optional)</string>
     <string name="alarm_minutes_field_label">Minutes</string>
     <string name="prayer">Prayer</string>
     <string name="timing">Timing</string>
@@ -23035,9 +22316,6 @@ class SplashViewModel @Inject constructor(
     </plurals>
 
     <!-- Custom alarms: Editor sheet -->
-    <string name="new_custom_alarm">منبه خاص جديد</string>
-    <string name="edit_custom_alarm">تعديل المنبه</string>
-    <string name="alarm_label_optional">اسم المنبه (اختياري)</string>
     <string name="alarm_minutes_field_label">الدقائق</string>
     <string name="prayer">الصلاة</string>
     <string name="timing">التوقيت</string>
@@ -23150,6 +22428,775 @@ class SplashViewModel @Inject constructor(
 </data-extraction-rules>
 ```
 
+## app\src\test\java\com\mhq\salati\home\domain\service\DayNavigatorTest.kt
+
+```kotlin
+package com.mhq.salati.home.domain.service
+
+import com.mhq.salati.home.domain.model.PrayerWindow
+import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.testutil.FakeClock
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import java.time.LocalDate
+
+class DayNavigatorTest {
+
+    private val today = LocalDate.of(2026, 11, 11)
+    private val clock = FakeClock(today)
+    private val navigator = DayNavigator(clock)
+
+    // --- isToday / today / previousOrNull / next ---
+
+    @Test
+    fun `isToday is true only for the clock's day`() {
+        assertTrue(navigator.isToday(today))
+        assertFalse(navigator.isToday(today.minusDays(1)))
+        assertFalse(navigator.isToday(today.plusDays(1)))
+    }
+
+    @Test
+    fun `today returns the clock's day`() {
+        assertEquals(today, navigator.today())
+    }
+
+    @Test
+    fun `previousOrNull returns null for today`() {
+        assertNull(navigator.previousOrNull(today))
+    }
+
+    @Test
+    fun `previousOrNull returns the previous day for any past or future day`() {
+        assertEquals(today.minusDays(1), navigator.previousOrNull(today.minusDays(1)))
+        assertEquals(today, navigator.previousOrNull(today.plusDays(1)))
+    }
+
+    @Test
+    fun `next returns the following day`() {
+        assertEquals(today.plusDays(1), navigator.next(today))
+    }
+
+    // --- rolloverDate ---
+
+    @Test
+    fun `rolloverDate returns tomorrow when the window ends after the day`() {
+        val window = PrayerWindow(
+            nextPrayer = PrayerName.FAJR,
+            start = today.atTime(18, 0).atZone(clock.zone()).toInstant(),
+            end = today.plusDays(1).atTime(5, 0).atZone(clock.zone()).toInstant()
+        )
+        assertEquals(today.plusDays(1), navigator.rolloverDate(today, window))
+    }
+
+    @Test
+    fun `rolloverDate returns null when the window ends within the day`() {
+        val window = PrayerWindow(
+            nextPrayer = PrayerName.MAGHRIB,
+            start = today.atTime(12, 0).atZone(clock.zone()).toInstant(),
+            end = today.atTime(18, 0).atZone(clock.zone()).toInstant()
+        )
+        assertNull(navigator.rolloverDate(today, window))
+    }
+
+    @Test
+    fun `rolloverDate returns null when there is no window`() {
+        assertNull(navigator.rolloverDate(today, null))
+    }
+
+    // --- endOfMonth ---
+
+    @Test
+    fun `endOfMonth returns the month's last day for a mid-month date`() {
+        assertEquals(
+            LocalDate.of(2026, 11, 30),
+            navigator.endOfMonth(LocalDate.of(2026, 11, 11))
+        )
+    }
+
+    @Test
+    fun `endOfMonth returns the same day when the date already is the month's last day`() {
+        assertEquals(
+            LocalDate.of(2026, 11, 30),
+            navigator.endOfMonth(LocalDate.of(2026, 11, 30))
+        )
+    }
+
+    @Test
+    fun `endOfMonth returns the next month's last day when on the last day`() {
+        assertEquals(
+            LocalDate.of(2026, 12, 31),
+            navigator.endOfMonth(LocalDate.of(2026, 11, 30))
+        )
+    }
+
+    @Test
+    fun `endOfMonth handles short months from their last day`() {
+        assertEquals(
+            LocalDate.of(2026, 3, 31),
+            navigator.endOfMonth(LocalDate.of(2026, 2, 28))
+        )
+    }
+
+    @Test
+    fun `endOfMonth handles leap year February`() {
+        assertEquals(
+            LocalDate.of(2024, 2, 29),
+            navigator.endOfMonth(LocalDate.of(2024, 2, 10))
+        )
+        // From Feb 29 itself: the next month's last day
+        assertEquals(
+            LocalDate.of(2024, 3, 31),
+            navigator.endOfMonth(LocalDate.of(2024, 2, 29))
+        )
+    }
+
+    @Test
+    fun `endOfMonth crosses the year boundary from December 31`() {
+        assertEquals(
+            LocalDate.of(2027, 1, 31),
+            navigator.endOfMonth(LocalDate.of(2026, 12, 31))
+        )
+    }
+}
+```
+
+## app\src\test\java\com\mhq\salati\home\domain\usecases\LoadPrayerTimesUseCaseTest.kt
+
+```kotlin
+package com.mhq.salati.home.domain.usecases
+
+import com.mhq.salati.home.domain.model.PrayerTimesError
+import com.mhq.salati.home.domain.model.PrayerTimesLoad
+import com.mhq.salati.prayertimes.domain.model.HijriDate
+import com.mhq.salati.prayertimes.domain.model.PrayerDate
+import com.mhq.salati.prayertimes.domain.model.PrayerTimesResult
+import com.mhq.salati.prayertimes.domain.model.PrayerTimings
+import com.mhq.salati.prayertimes.domain.usecases.GetCachedPrayerTimesUseCase
+import com.mhq.salati.prayertimes.domain.usecases.GetPrayerTimesUseCase
+import com.mhq.salati.shared.domain.Coordinates
+import com.mhq.salati.shared.domain.HijriMonth
+import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.shared.domain.toDateKey
+import com.mhq.salati.testutil.FakeClock
+import com.mhq.salati.testutil.FakeConnectivityChecker
+import com.mhq.salati.testutil.FakePrayerTimesRepository
+import com.mhq.salati.testutil.FakeSettingsRepository
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import java.time.LocalDate
+import java.time.LocalTime
+
+class LoadPrayerTimesUseCaseTest {
+
+    private val coordinates = Coordinates(30.0444, 31.2357)
+    private val date = LocalDate.of(2026, 11, 11)
+
+    private fun timings() = PrayerTimings(
+        imsak = LocalTime.of(4, 50),
+        fajr = LocalTime.of(5, 0),
+        sunrise = LocalTime.of(6, 10),
+        dhuhr = LocalTime.of(12, 0),
+        asr = LocalTime.of(15, 0),
+        sunset = LocalTime.of(17, 55),
+        maghrib = LocalTime.of(18, 0),
+        isha = LocalTime.of(19, 30),
+        midnight = LocalTime.of(22, 30),
+        firstThird = LocalTime.of(21, 30),
+        lastThird = LocalTime.of(23, 30)
+    )
+
+    private fun result() = PrayerTimesResult(
+        timings = timings(),
+        date = PrayerDate(date, HijriDate(25, HijriMonth.JUMADA_AL_AWWAL, 1448))
+    )
+
+    private fun useCase(
+        cached: Map<String, PrayerTimesResult> = emptyMap(),
+        network: Map<String, Result<PrayerTimesResult>> = emptyMap(),
+        online: Boolean = true,
+        networkDelayMillis: Long = 0
+    ): LoadPrayerTimesUseCase {
+        val clock = FakeClock(date)
+        val repo = FakePrayerTimesRepository(cached, network, networkDelayMillis)
+        val settingsRepo = FakeSettingsRepository()
+        val cachedUseCase = GetCachedPrayerTimesUseCase(repo, settingsRepo)
+        val networkUseCase = GetPrayerTimesUseCase(repo, settingsRepo)
+        return LoadPrayerTimesUseCase(
+            getCachedPrayerTimesUseCase = cachedUseCase,
+            getPrayerTimesUseCase = networkUseCase,
+            resolvePrayerWindowForDisplayUseCase = ResolvePrayerWindowForDisplayUseCase(
+                clock = clock,
+                getCachedPrayerTimesUseCase = cachedUseCase,
+                getPrayerTimesUseCase = networkUseCase,
+                calculatePrayerWindowUseCase = CalculatePrayerWindowUseCase(clock, networkUseCase, cachedUseCase)
+            ),
+            calculatePrayerStatusUseCase = CalculatePrayerStatusUseCase(
+                clock = clock,
+                calculateCurrentPrayerNameUseCase = CalculateCurrentPrayerNameUseCase(clock),
+                calculatePastPrayersUseCase = CalculatePastPrayersUseCase(clock)
+            ),
+            connectivityChecker = FakeConnectivityChecker(online)
+        )
+    }
+
+    @Test
+    fun `cache hit emits a single Loaded without going online`() = runTest {
+        val useCase = useCase(cached = mapOf(date.toDateKey() to result()))
+
+        val emissions = useCase(date, coordinates).toList()
+
+        assertEquals(1, emissions.size)
+        val loaded = emissions[0] as PrayerTimesLoad.Loaded
+        assertEquals(LocalTime.of(5, 0), loaded.timings.fajr)
+        assertEquals(date, loaded.prayerDate.gregorianDate)
+    }
+
+    @Test
+    fun `cache miss emits FetchingFromNetwork then Loaded`() = runTest {
+        val useCase = useCase(network = mapOf(date.toDateKey() to Result.success(result())))
+
+        val emissions = useCase(date, coordinates).toList()
+
+        assertEquals(2, emissions.size)
+        assertEquals(PrayerTimesLoad.FetchingFromNetwork, emissions[0])
+        val loaded = emissions[1] as PrayerTimesLoad.Loaded
+        assertEquals(LocalTime.of(12, 0), loaded.timings.dhuhr)
+    }
+
+    @Test
+    fun `today's Loaded status carries the current prayer and past prayers`() = runTest {
+        val useCase = useCase(cached = mapOf(date.toDateKey() to result()))
+
+        val loaded = useCase(date, coordinates).first() as PrayerTimesLoad.Loaded
+
+        // Clock fixed at 12:00: Dhuhr is the current prayer; Fajr and sunrise have passed.
+        assertEquals(PrayerName.DHUHR, loaded.status.currentPrayer)
+        assertTrue(loaded.status.pastPrayers.contains(PrayerName.FAJR))
+        assertTrue(loaded.status.pastPrayers.contains(PrayerName.DHUHR))
+    }
+
+    @Test
+    fun `a non-today Loaded status carries no current prayer or past prayers`() = runTest {
+        val otherDate = date.minusDays(1)
+        val useCase = useCase(cached = mapOf(otherDate.toDateKey() to result()))
+
+        val loaded = useCase(otherDate, coordinates).first() as PrayerTimesLoad.Loaded
+
+        assertEquals(null, loaded.status.currentPrayer)
+        assertEquals(emptySet<PrayerName>(), loaded.status.pastPrayers)
+    }
+
+    @Test
+    fun `network failure while offline maps to PrayerTimesError Offline`() = runTest {
+        val useCase = useCase(
+            network = mapOf(date.toDateKey() to Result.failure(IllegalStateException("boom"))),
+            online = false
+        )
+
+        val emissions = useCase(date, coordinates).toList()
+
+        assertEquals(2, emissions.size)
+        val failed = emissions[1] as PrayerTimesLoad.Failed
+        assertEquals(PrayerTimesError.Offline, failed.error)
+    }
+
+    @Test
+    fun `network failure while online maps to PrayerTimesError Other with the message`() = runTest {
+        val useCase = useCase(
+            network = mapOf(date.toDateKey() to Result.failure(IllegalStateException("http 500"))),
+            online = true
+        )
+
+        val emissions = useCase(date, coordinates).toList()
+
+        val failed = emissions[1] as PrayerTimesLoad.Failed
+        assertEquals(PrayerTimesError.Other("http 500"), failed.error)
+    }
+
+    @Test
+    fun `a network fetch slower than the timeout maps to PrayerTimesError TimedOut`() = runTest {
+        val useCase = useCase(
+            network = mapOf(date.toDateKey() to Result.success(result())),
+            online = true,
+            // The fetch timeout is 5s; runTest's virtual clock makes this instantaneous.
+            networkDelayMillis = 10_000
+        )
+
+        val emissions = useCase(date, coordinates).toList()
+
+        assertEquals(2, emissions.size)
+        val failed = emissions[1] as PrayerTimesLoad.Failed
+        assertEquals(PrayerTimesError.TimedOut, failed.error)
+    }
+}
+```
+
+## app\src\test\java\com\mhq\salati\home\domain\usecases\ResolvePrayerWindowForDisplayUseCaseTest.kt
+
+```kotlin
+package com.mhq.salati.home.domain.usecases
+
+import com.mhq.salati.prayertimes.domain.model.HijriDate
+import com.mhq.salati.prayertimes.domain.model.PrayerDate
+import com.mhq.salati.prayertimes.domain.model.PrayerTimesResult
+import com.mhq.salati.prayertimes.domain.model.PrayerTimings
+import com.mhq.salati.prayertimes.domain.usecases.GetCachedPrayerTimesUseCase
+import com.mhq.salati.prayertimes.domain.usecases.GetPrayerTimesUseCase
+import com.mhq.salati.shared.domain.Coordinates
+import com.mhq.salati.shared.domain.HijriMonth
+import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.shared.domain.toDateKey
+import com.mhq.salati.testutil.FakeClock
+import com.mhq.salati.testutil.FakePrayerTimesRepository
+import com.mhq.salati.testutil.FakeSettingsRepository
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Test
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+
+class ResolvePrayerWindowForDisplayUseCaseTest {
+
+    private val coordinates = Coordinates(30.0444, 31.2357)
+    private val today = LocalDate.of(2026, 11, 11)
+
+    private fun timings(fajr: LocalTime, dhuhr: LocalTime, asr: LocalTime, maghrib: LocalTime, isha: LocalTime) =
+        PrayerTimings(
+            imsak = fajr.minusMinutes(10),
+            fajr = fajr,
+            sunrise = fajr.plusHours(1),
+            dhuhr = dhuhr,
+            asr = asr,
+            sunset = maghrib.minusMinutes(1),
+            maghrib = maghrib,
+            isha = isha,
+            midnight = isha.plusHours(3),
+            firstThird = isha.plusHours(2),
+            lastThird = isha.plusHours(4)
+        )
+
+    private fun prayerDate(date: LocalDate) = PrayerDate(
+        gregorianDate = date,
+        hijriDate = HijriDate(25, HijriMonth.JUMADA_AL_AWWAL, 1448)
+    )
+
+    private fun result(date: LocalDate, dayTimings: PrayerTimings) =
+        PrayerTimesResult(timings = dayTimings, date = prayerDate(date))
+
+    /** Standard day: Fajr 05:00, Dhuhr 12:00, Asr 15:00, Maghrib 18:00, Isha 19:30. */
+    private fun standardTimings() =
+        timings(LocalTime.of(5, 0), LocalTime.of(12, 0), LocalTime.of(15, 0), LocalTime.of(18, 0), LocalTime.of(19, 30))
+
+    private fun useCase(
+        cached: Map<String, PrayerTimesResult> = emptyMap(),
+        network: Map<String, Result<PrayerTimesResult>> = emptyMap()
+    ): ResolvePrayerWindowForDisplayUseCase {
+        val clock = FakeClock(today)
+        val repo = FakePrayerTimesRepository(cached, network)
+        val settingsRepo = FakeSettingsRepository()
+        val cachedUseCase = GetCachedPrayerTimesUseCase(repo, settingsRepo)
+        val networkUseCase = GetPrayerTimesUseCase(repo, settingsRepo)
+        return ResolvePrayerWindowForDisplayUseCase(
+            clock = clock,
+            getCachedPrayerTimesUseCase = cachedUseCase,
+            getPrayerTimesUseCase = networkUseCase,
+            calculatePrayerWindowUseCase = CalculatePrayerWindowUseCase(clock, networkUseCase, cachedUseCase)
+        )
+    }
+
+    @Test
+    fun `browsing today uses the browsed timings and never touches cache or network`() = runTest {
+        val browsed = standardTimings()
+        val useCase = useCase(
+            cached = mapOf(today.toDateKey() to result(today, timings(LocalTime.MIDNIGHT, LocalTime.NOON, LocalTime.NOON, LocalTime.NOON, LocalTime.of(23, 0)))),
+            network = mapOf(today.toDateKey() to Result.success(result(today, timings(LocalTime.MIDNIGHT, LocalTime.NOON, LocalTime.NOON, LocalTime.NOON, LocalTime.of(23, 30)))))
+        )
+
+        val window = useCase(browsed, today, coordinates)
+
+        // Clock is fixed at 12:00, so the window runs Dhuhr 12:00 -> Asr 15:00 of the browsed day.
+        assertEquals(PrayerName.ASR, window.nextPrayer)
+        val zone = ZoneId.of("UTC")
+        assertEquals(today.atTime(12, 0).atZone(zone).toInstant(), window.start)
+        assertEquals(today.atTime(15, 0).atZone(zone).toInstant(), window.end)
+    }
+
+    @Test
+    fun `browsing another day falls back to today's cached timings`() = runTest {
+        val browsedDate = today.minusDays(3)
+        val browsed = timings(LocalTime.of(4, 0), LocalTime.of(11, 0), LocalTime.of(14, 0), LocalTime.of(17, 0), LocalTime.of(18, 30))
+        val todayTimings = standardTimings()
+        val useCase = useCase(cached = mapOf(today.toDateKey() to result(today, todayTimings)))
+
+        val window = useCase(browsed, browsedDate, coordinates)
+
+        // The window must come from today's cached times, not the browsed ones.
+        assertEquals(PrayerName.ASR, window.nextPrayer)
+        assertEquals(today.atTime(12, 0).atZone(ZoneId.of("UTC")).toInstant(), window.start)
+        assertEquals(today.atTime(15, 0).atZone(ZoneId.of("UTC")).toInstant(), window.end)
+    }
+
+    @Test
+    fun `browsing another day fetches today from the network on a cache miss`() = runTest {
+        val browsedDate = today.minusDays(3)
+        val browsed = timings(LocalTime.of(4, 0), LocalTime.of(11, 0), LocalTime.of(14, 0), LocalTime.of(17, 0), LocalTime.of(18, 30))
+        val todayTimings = standardTimings()
+        val useCase = useCase(network = mapOf(today.toDateKey() to Result.success(result(today, todayTimings))))
+
+        val window = useCase(browsed, browsedDate, coordinates)
+
+        assertEquals(PrayerName.ASR, window.nextPrayer)
+        assertEquals(today.atTime(12, 0).atZone(ZoneId.of("UTC")).toInstant(), window.start)
+        assertEquals(today.atTime(15, 0).atZone(ZoneId.of("UTC")).toInstant(), window.end)
+    }
+
+    @Test
+    fun `browsing another day uses the browsed timings as the last resort`() = runTest {
+        val browsedDate = today.minusDays(3)
+        val browsed = timings(LocalTime.of(4, 0), LocalTime.of(11, 0), LocalTime.of(14, 0), LocalTime.of(17, 0), LocalTime.of(18, 30))
+        val useCase = useCase(
+            network = mapOf(today.toDateKey() to Result.failure(IllegalStateException("offline")))
+        )
+
+        val window = useCase(browsed, browsedDate, coordinates)
+
+        // Fallback timings place 12:00 between Dhuhr 11:00 and Asr 14:00.
+        assertEquals(PrayerName.ASR, window.nextPrayer)
+        assertEquals(today.atTime(11, 0).atZone(ZoneId.of("UTC")).toInstant(), window.start)
+        assertEquals(today.atTime(14, 0).atZone(ZoneId.of("UTC")).toInstant(), window.end)
+    }
+
+    @Test
+    fun `after Isha the window runs into tomorrow's Fajr`() = runTest {
+        val browsed = timings(LocalTime.of(5, 0), LocalTime.of(12, 0), LocalTime.of(15, 0), LocalTime.of(18, 0), LocalTime.of(19, 30))
+        val repo = FakePrayerTimesRepository()
+        val settingsRepo = FakeSettingsRepository()
+        val cachedUseCase = GetCachedPrayerTimesUseCase(repo, settingsRepo)
+        val networkUseCase = GetPrayerTimesUseCase(repo, settingsRepo)
+        val lateClock = FakeClock(today, LocalTime.of(23, 0))
+        val useCase = ResolvePrayerWindowForDisplayUseCase(
+            clock = lateClock,
+            getCachedPrayerTimesUseCase = cachedUseCase,
+            getPrayerTimesUseCase = networkUseCase,
+            calculatePrayerWindowUseCase = CalculatePrayerWindowUseCase(lateClock, networkUseCase, cachedUseCase)
+        )
+        val window = useCase(browsed, today, coordinates)
+
+        assertEquals(PrayerName.FAJR, window.nextPrayer)
+        assertEquals(today.atTime(19, 30).atZone(ZoneId.of("UTC")).toInstant(), window.start)
+        assertEquals(today.plusDays(1).atTime(5, 0).atZone(ZoneId.of("UTC")).toInstant(), window.end)
+    }
+}
+```
+
+## app\src\test\java\com\mhq\salati\location\domain\usecases\CheckLocationPrerequisitesUseCaseTest.kt
+
+```kotlin
+package com.mhq.salati.location.domain.usecases
+
+import com.mhq.salati.location.domain.model.LocationPrerequisites
+import com.mhq.salati.location.domain.repo.LocationProvider
+import com.mhq.salati.testutil.FakeConnectivityChecker
+import com.mhq.salati.testutil.FakePermissionChecker
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Test
+
+class CheckLocationPrerequisitesUseCaseTest {
+
+    private class FakeLocationProvider(private val enabled: Boolean) : LocationProvider {
+        override fun isLocationEnabled() = enabled
+        override suspend fun getCurrentLocation() = throw UnsupportedOperationException()
+    }
+
+    /** Builds the use case over fakes and runs it, returning the resulting [LocationPrerequisites]. */
+    private suspend fun check(
+        hasInternet: Boolean = true,
+        servicesEnabled: Boolean = true,
+        permissionGranted: Boolean = true
+    ): LocationPrerequisites {
+        val useCase = CheckLocationPrerequisitesUseCase(
+            connectivityChecker = FakeConnectivityChecker(hasInternet),
+            locationProvider = FakeLocationProvider(servicesEnabled),
+            permissionChecker = FakePermissionChecker(permissionGranted)
+        )
+        return useCase()
+    }
+
+    @Test
+    fun `all conditions met returns met prerequisites`() = runTest {
+        val result = check()
+        assertEquals(true, result.hasInternet)
+        assertEquals(true, result.servicesEnabled)
+        assertEquals(true, result.permissionGranted)
+        assertEquals(true, result.areMet)
+    }
+
+    @Test
+    fun `missing internet is reported on its own`() = runTest {
+        val result = check(hasInternet = false)
+        assertEquals(false, result.hasInternet)
+        assertEquals(true, result.servicesEnabled)
+        assertEquals(true, result.permissionGranted)
+        assertEquals(false, result.areMet)
+    }
+
+    @Test
+    fun `disabled location services are reported on their own`() = runTest {
+        val result = check(servicesEnabled = false)
+        assertEquals(true, result.hasInternet)
+        assertEquals(false, result.servicesEnabled)
+        assertEquals(true, result.permissionGranted)
+        assertEquals(false, result.areMet)
+    }
+
+    @Test
+    fun `missing permission is reported on its own`() = runTest {
+        val result = check(permissionGranted = false)
+        assertEquals(true, result.hasInternet)
+        assertEquals(true, result.servicesEnabled)
+        assertEquals(false, result.permissionGranted)
+        assertEquals(false, result.areMet)
+    }
+
+    @Test
+    fun `all failures are reported together, not just the first one`() = runTest {
+        val result = check(hasInternet = false, servicesEnabled = false, permissionGranted = false)
+        assertEquals(false, result.hasInternet)
+        assertEquals(false, result.servicesEnabled)
+        assertEquals(false, result.permissionGranted)
+        assertEquals(false, result.areMet)
+    }
+}
+```
+
+## app\src\test\java\com\mhq\salati\location\domain\usecases\ResolveLocationUseCaseTest.kt
+
+```kotlin
+package com.mhq.salati.location.domain.usecases
+
+import com.mhq.salati.location.domain.model.CoordinatesLookup
+import com.mhq.salati.location.domain.model.GeocodeResult
+import com.mhq.salati.location.domain.model.LocationResolution
+import com.mhq.salati.location.domain.model.LocationSearchResult
+import com.mhq.salati.location.domain.model.SavedLocation
+import com.mhq.salati.location.domain.repo.GeocoderProvider
+import com.mhq.salati.location.domain.repo.LocationProvider
+import com.mhq.salati.location.domain.repo.LocationRepository
+import com.mhq.salati.settings.domain.usecases.ObserveSettingsUseCase
+import com.mhq.salati.shared.domain.Coordinates
+import com.mhq.salati.testutil.FakeConnectivityChecker
+import com.mhq.salati.testutil.FakePermissionChecker
+import com.mhq.salati.testutil.FakeSettingsRepository
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import kotlin.time.Duration.Companion.milliseconds
+
+class ResolveLocationUseCaseTest {
+
+    private class FakeLocationProvider(
+        private val enabled: Boolean,
+        private val lookupResult: CoordinatesLookup
+    ) : LocationProvider {
+        override fun isLocationEnabled() = enabled
+
+        // Drives GetCurrentCoordinatesUseCase once its own checks pass:
+        // a slow fix becomes TimedOut, throws become Failed / PermissionDenied.
+        override suspend fun getCurrentLocation(): Coordinates = when (lookupResult) {
+            is CoordinatesLookup.Found -> lookupResult.coordinates
+            is CoordinatesLookup.TimedOut -> {
+                delay(10_000.milliseconds) // GPS timeout is 5s; runTest's virtual clock makes this instantaneous.
+                throw IllegalStateException("unreachable")
+            }
+            is CoordinatesLookup.Failed -> throw IllegalStateException("gps broke")
+            is CoordinatesLookup.PermissionDenied -> throw SecurityException("denied")
+            is CoordinatesLookup.ServicesDisabled,
+            is CoordinatesLookup.Locating -> throw IllegalStateException("unreachable")
+        }
+    }
+
+    private class FakeGeocoder(private val result: GeocodeResult) : GeocoderProvider {
+        override suspend fun reverseGeocode(coordinates: Coordinates, acceptLanguage: String?): GeocodeResult = result
+
+        override suspend fun searchByName(query: String, acceptLanguage: String?): List<LocationSearchResult> = emptyList()
+    }
+
+    private class FakeLocationRepository : LocationRepository {
+        val saved = mutableListOf<SavedLocation>()
+        override val savedLocation: Flow<SavedLocation?> = flowOf(null)
+        override suspend fun saveManualLocation(location: SavedLocation) {
+            saved.add(location)
+        }
+        override suspend fun clearSavedLocation() = Unit
+    }
+
+    private val coordinates = Coordinates(30.0444, 31.2357)
+
+    private fun useCase(
+        hasInternet: Boolean = true,
+        servicesEnabled: Boolean = true,
+        permissionGranted: Boolean = true,
+        gpsServicesEnabled: Boolean = servicesEnabled,
+        lookupResult: CoordinatesLookup = CoordinatesLookup.Found(coordinates),
+        geocodeResult: GeocodeResult = GeocodeResult.Found("Cairo", "Egypt")
+    ): Pair<ResolveLocationUseCase, FakeLocationRepository> {
+        val locationRepo = FakeLocationRepository()
+        val useCase = ResolveLocationUseCase(
+            checkLocationPrerequisitesUseCase = CheckLocationPrerequisitesUseCase(
+                connectivityChecker = FakeConnectivityChecker(hasInternet),
+                locationProvider = FakeLocationProvider(servicesEnabled, lookupResult),
+                permissionChecker = FakePermissionChecker(permissionGranted)
+            ),
+            getCurrentCoordinatesUseCase = GetCurrentCoordinatesUseCase(
+                locationProvider = FakeLocationProvider(gpsServicesEnabled, lookupResult),
+                permissionChecker = FakePermissionChecker(permissionGranted)
+            ),
+            reverseGeocodeLocationUseCase = ReverseGeocodeLocationUseCase(FakeGeocoder(geocodeResult)),
+            saveManualLocationUseCase = SaveManualLocationUseCase(locationRepo),
+            observeSettingsUseCase = ObserveSettingsUseCase(FakeSettingsRepository())
+        )
+        return useCase to locationRepo
+    }
+
+    // --- Blocked cases ---
+
+    @Test
+    fun `no internet is Blocked before any GPS work happens`() = runTest {
+        val (useCase, repo) = useCase(hasInternet = false)
+
+        val result = useCase()
+
+        val blocked = result as LocationResolution.Blocked
+        assertEquals(false, blocked.prerequisites.hasInternet)
+        assertEquals(true, blocked.prerequisites.servicesEnabled)
+        assertEquals(true, blocked.prerequisites.permissionGranted)
+        assertTrue(repo.saved.isEmpty())
+    }
+
+    @Test
+    fun `disabled location services is Blocked`() = runTest {
+        val (useCase, repo) = useCase(servicesEnabled = false)
+
+        val result = useCase()
+
+        val blocked = result as LocationResolution.Blocked
+        assertEquals(true, blocked.prerequisites.hasInternet)
+        assertEquals(false, blocked.prerequisites.servicesEnabled)
+        assertEquals(true, blocked.prerequisites.permissionGranted)
+        assertTrue(repo.saved.isEmpty())
+    }
+
+    @Test
+    fun `missing permission is Blocked`() = runTest {
+        val (useCase, repo) = useCase(permissionGranted = false)
+
+        val result = useCase()
+
+        val blocked = result as LocationResolution.Blocked
+        assertEquals(true, blocked.prerequisites.hasInternet)
+        assertEquals(true, blocked.prerequisites.servicesEnabled)
+        assertEquals(false, blocked.prerequisites.permissionGranted)
+        assertTrue(repo.saved.isEmpty())
+    }
+
+    @Test
+    fun `permission lost between the check and the GPS fix is Blocked`() = runTest {
+        val (useCase, repo) = useCase(lookupResult = CoordinatesLookup.PermissionDenied)
+
+        val result = useCase()
+
+        val blocked = result as LocationResolution.Blocked
+        assertEquals(false, blocked.prerequisites.permissionGranted)
+        assertTrue(repo.saved.isEmpty())
+    }
+
+    @Test
+    fun `services lost between the check and the GPS fix is Blocked`() = runTest {
+        val (useCase, repo) = useCase(gpsServicesEnabled = false)
+
+        val result = useCase()
+
+        val blocked = result as LocationResolution.Blocked
+        assertEquals(false, blocked.prerequisites.servicesEnabled)
+        assertTrue(repo.saved.isEmpty())
+    }
+
+    // --- Success paths ---
+
+    @Test
+    fun `a GPS fix with a successful geocode resolves and saves the place`() = runTest {
+        val (useCase, repo) = useCase()
+
+        val result = useCase()
+
+        val resolved = result as LocationResolution.Resolved
+        assertEquals(coordinates, resolved.location.coordinates)
+        assertEquals("Cairo", resolved.location.cityName)
+        assertEquals("Egypt", resolved.location.countryName)
+        assertEquals(listOf(resolved.location), repo.saved)
+    }
+
+    @Test
+    fun `a geocode NotFound still resolves with unnamed coordinates`() = runTest {
+        val (useCase, repo) = useCase(geocodeResult = GeocodeResult.NotFound)
+
+        val result = useCase()
+
+        val resolved = result as LocationResolution.Resolved
+        assertEquals(coordinates, resolved.location.coordinates)
+        assertNull(resolved.location.cityName)
+        assertNull(resolved.location.countryName)
+        assertEquals(listOf(resolved.location), repo.saved)
+    }
+
+    // --- Other failure paths ---
+
+    @Test
+    fun `a GPS timeout is LocationUnavailable`() = runTest {
+        val (useCase, repo) = useCase(lookupResult = CoordinatesLookup.TimedOut)
+
+        val result = useCase()
+
+        assertEquals(LocationResolution.LocationUnavailable, result)
+        assertTrue(repo.saved.isEmpty())
+    }
+
+    @Test
+    fun `a GPS failure is LocationUnavailable`() = runTest {
+        val (useCase, repo) = useCase(lookupResult = CoordinatesLookup.Failed("gps broke"))
+
+        val result = useCase()
+
+        assertEquals(LocationResolution.LocationUnavailable, result)
+        assertTrue(repo.saved.isEmpty())
+    }
+
+    @Test
+    fun `a geocode failure is GeocodingFailed`() = runTest {
+        val (useCase, repo) = useCase(geocodeResult = GeocodeResult.Failed(IllegalStateException("nominatim down")))
+
+        val result = useCase()
+
+        assertEquals(LocationResolution.GeocodingFailed, result)
+        assertTrue(repo.saved.isEmpty())
+    }
+}
+```
+
 ## app\src\test\java\com\mhq\salati\prayertracker\domain\usecases\GetCurrentStreakUseCaseTest.kt
 
 ```kotlin
@@ -23157,8 +23204,8 @@ package com.mhq.salati.prayertracker.domain.usecases
 
 import com.mhq.salati.prayertracker.domain.model.PrayerStatus
 import com.mhq.salati.prayertracker.domain.repo.PrayerTrackerRepository
-import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.testutil.FakeClock
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -23166,15 +23213,7 @@ import java.time.LocalDate
 
 class GetCurrentStreakUseCaseTest {
 
-    // 1. Create a Fake Clock to control "today" and satisfy the expanded Clock boundary interface
-    private class FakeClock(private val fixedDate: LocalDate) : Clock {
-        override fun now() = throw UnsupportedOperationException()
-        override fun today() = fixedDate
-        override fun instant() = throw UnsupportedOperationException()
-        override fun zone() = throw UnsupportedOperationException()
-    }
-
-    // 2. Create a Fake Repository to return controlled data
+    // Create a Fake Repository to return controlled data
     private class FakeRepository(
         private val records: Map<LocalDate, Map<PrayerName, PrayerStatus>>
     ) : PrayerTrackerRepository {
@@ -23298,25 +23337,139 @@ class GetCurrentStreakUseCaseTest {
     }
 
     @Test
-    fun `invoke caps lookup cleanly at maximum lookback limit parameters`() = runTest {
+    fun `invoke has no lookback cap and counts a streak longer than ten years`() = runTest {
         val today = LocalDate.of(2026, 1, 1)
         val clock = FakeClock(today)
+        val days = 3_700
 
-        val mutableRecords = mutableMapOf<LocalDate, Map<PrayerName, PrayerStatus>>()
+        // Today and the 3,700 days before it, all fully prayed.
+        val records = (0..days).associate { today.minusDays(it.toLong()) to allPrayed() }
 
-        // Generate an uninterrupted historical data block longer than our 10-year constraint limit
-        // 3650 days = 10 regular years, but with leap years handled safely
-        val maxLookback = 3650
-        for (i in 0..maxLookback + 50) {
-            mutableRecords[today.minusDays(i.toLong())] = allPrayed()
-        }
+        val useCase = GetCurrentStreakUseCase(FakeRepository(records), clock)
 
-        val repo = FakeRepository(mutableRecords)
-        val useCase = GetCurrentStreakUseCase(repo, clock)
-
-        // The streak calculation loop terminates immediately when reaching the startDate ceiling limit
-        assertEquals(maxLookback + 1, useCase())
+        assertEquals(days + 1, useCase())
     }
+}
+```
+
+## app\src\test\java\com\mhq\salati\testutil\FakeClock.kt
+
+```kotlin
+package com.mhq.salati.testutil
+
+import com.mhq.salati.shared.domain.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
+
+class FakeClock(
+    private val fixedToday: LocalDate,
+    private val timeOfDay: LocalTime = LocalTime.NOON,
+    private val zoneId: ZoneId = ZoneId.of("UTC")
+) : Clock {
+    override fun now(): LocalDateTime = fixedToday.atTime(timeOfDay)
+    override fun today(): LocalDate = fixedToday
+    override fun instant(): Instant = now().atZone(zoneId).toInstant()
+    override fun zone(): ZoneId = zoneId
+}
+```
+
+## app\src\test\java\com\mhq\salati\testutil\FakeConnectivityChecker.kt
+
+```kotlin
+package com.mhq.salati.testutil
+
+import com.mhq.salati.connectivity.domain.repo.ConnectivityChecker
+
+class FakeConnectivityChecker(private val connected: Boolean) : ConnectivityChecker {
+    override fun isConnected() = connected
+}
+```
+
+## app\src\test\java\com\mhq\salati\testutil\FakePermissionChecker.kt
+
+```kotlin
+package com.mhq.salati.testutil
+
+import com.mhq.salati.permissions.domain.repo.PermissionChecker
+
+class FakePermissionChecker(private val granted: Boolean) : PermissionChecker {
+    override fun hasLocationPermission() = granted
+    override fun hasNotificationPermission() = granted
+    override fun canScheduleExactAlarms() = granted
+}
+```
+
+## app\src\test\java\com\mhq\salati\testutil\FakePrayerTimesRepository.kt
+
+```kotlin
+package com.mhq.salati.testutil
+
+import com.mhq.salati.prayertimes.domain.model.PrayerTimesResult
+import com.mhq.salati.prayertimes.domain.repo.PrayerTimesRepository
+import com.mhq.salati.settings.domain.model.Madhab
+import com.mhq.salati.shared.domain.Coordinates
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
+
+class FakePrayerTimesRepository(
+    private val cached: Map<String, PrayerTimesResult> = emptyMap(),
+    private val network: Map<String, Result<PrayerTimesResult>> = emptyMap(),
+    private val networkDelayMillis: Long = 0
+) : PrayerTimesRepository {
+    override suspend fun getPrayerTimings(
+        date: String,
+        coordinates: Coordinates,
+        method: Int,
+        madhab: Madhab,
+        adjustment: Int
+    ): Result<PrayerTimesResult> {
+        delay(networkDelayMillis.milliseconds)
+        return network[date] ?: Result.failure(IllegalStateException("no network fixture for $date"))
+    }
+
+    override suspend fun getCachedTimings(
+        date: String,
+        coordinates: Coordinates,
+        method: Int,
+        madhab: Madhab,
+        adjustment: Int
+    ): PrayerTimesResult? = cached[date]
+}
+```
+
+## app\src\test\java\com\mhq\salati\testutil\FakeSettingsRepository.kt
+
+```kotlin
+package com.mhq.salati.testutil
+
+import com.mhq.salati.settings.domain.model.AdhanSound
+import com.mhq.salati.settings.domain.model.AppLanguage
+import com.mhq.salati.settings.domain.model.AppSettings
+import com.mhq.salati.settings.domain.model.CalculationMethod
+import com.mhq.salati.settings.domain.model.CustomAlarmSound
+import com.mhq.salati.settings.domain.model.Madhab
+import com.mhq.salati.settings.domain.model.ThemeMode
+import com.mhq.salati.settings.domain.model.TimeFormat
+import com.mhq.salati.settings.domain.repo.SettingsRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+
+class FakeSettingsRepository(
+    private val settings: AppSettings = AppSettings()
+) : SettingsRepository {
+    override fun observeSettings(): Flow<AppSettings> = flowOf(settings)
+    override suspend fun setNotificationsEnabled(enabled: Boolean) = Unit
+    override suspend fun setCalculationMethod(method: CalculationMethod) = Unit
+    override suspend fun setMadhab(madhab: Madhab) = Unit
+    override suspend fun setThemeMode(mode: ThemeMode) = Unit
+    override suspend fun setLanguage(language: AppLanguage) = Unit
+    override suspend fun setAdhanSound(sound: AdhanSound) = Unit
+    override suspend fun setCustomAlarmSound(sound: CustomAlarmSound) = Unit
+    override suspend fun setHijriDateOffset(offset: Int) = Unit
+    override suspend fun setTimeFormat(format: TimeFormat) = Unit
 }
 ```
 

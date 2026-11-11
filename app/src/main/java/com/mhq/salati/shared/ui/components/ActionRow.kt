@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
@@ -29,6 +30,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
+/**
+ * Longest a value label may get before it shrinks and then clips. Without a cap, a long Arabic
+ * translation (e.g. calculation method names) is measured with the full row width and wraps,
+ * growing the row vertically and squeezing the weighted title into a sliver.
+ */
+private val ValueLabelMaxWidth = 200.dp
+
+/**
+ * Settings-style row with a trailing value label and a chevron.
+ *
+ * The value label stays on ONE line: it shrinks (via [ShrinkToFitText]), then clips, but never
+ * wraps, so a longer translation or a narrow pane (landscape, split-screen) cannot grow this row
+ * vertically. Titles may still wrap inside their weighted space, which is bounded.
+ */
 @Composable
 fun ActionRow(
     icon: ImageVector,
@@ -63,14 +78,15 @@ fun ActionRow(
             modifier = Modifier.weight(1f)
         )
 
-        Text(
+        ShrinkToFitText(
             text = valueLabel,
             fontSize = 13.sp,
             color =
                 if (isEnabled)
                     MaterialTheme.colorScheme.onSurfaceVariant
                 else
-                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            modifier = Modifier.widthIn(max = ValueLabelMaxWidth)
         )
 
         Spacer(Modifier.width(4.dp))
@@ -94,6 +110,21 @@ private fun ActionRowPreview() {
                 icon = Icons.Default.Language,
                 title = "App Language",
                 valueLabel = "English",
+                onClick = {}
+            )
+        }
+    }
+}
+
+@Preview(name = "Long Arabic Value Label", locale = "ar", showBackground = true)
+@Composable
+private fun ActionRowLongArabicValuePreview() {
+    SalatiTheme {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
+            ActionRow(
+                icon = Icons.Default.Language,
+                title = "طريقة الحساب",
+                valueLabel = "الهيئة المصرية العامة للمساحة",
                 onClick = {}
             )
         }

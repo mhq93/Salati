@@ -19,16 +19,7 @@ import com.mhq.salati.adhan.presentation.presenter.AdhanPlaybackPresenter
 import com.mhq.salati.settings.presentation.model.AdhanSoundUi
 import com.mhq.salati.shared.ui.labelRes
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
-import androidx.core.graphics.toColorInt
 
 @AndroidEntryPoint
 class AdhanPlaybackService : Service() {
@@ -38,7 +29,6 @@ class AdhanPlaybackService : Service() {
     private var mediaPlayer: MediaPlayer? = null
     private var audioManager: AudioManager? = null
     private var focusRequest: AudioFocusRequest? = null
-    private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -174,7 +164,7 @@ class AdhanPlaybackService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(body)
-            .setSmallIcon(R.drawable.ic_salati_colored)
+            .setSmallIcon(R.drawable.ic_salati_white)
             .setSilent(true)
             .setOngoing(false)
             .setAutoCancel(true)
@@ -187,7 +177,6 @@ class AdhanPlaybackService : Service() {
         mediaPlayer?.release()
         mediaPlayer = null
         focusRequest?.let { audioManager?.abandonAudioFocusRequest(it) }
-        serviceScope.cancel()
         super.onDestroy()
     }
 

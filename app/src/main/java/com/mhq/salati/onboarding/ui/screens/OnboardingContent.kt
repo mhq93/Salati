@@ -2,6 +2,8 @@ package com.mhq.salati.onboarding.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -12,14 +14,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -61,18 +71,19 @@ import com.mhq.salati.onboarding.presentation.contract.OnboardingContract.Intent
 import com.mhq.salati.onboarding.presentation.contract.OnboardingContract.StepUi
 import com.mhq.salati.onboarding.ui.components.OnboardingPageIndicator
 import com.mhq.salati.onboarding.ui.components.OnboardingSelectionSheet
-import com.mhq.salati.shared.ui.components.StepHeader
 import com.mhq.salati.onboarding.ui.icon
 import com.mhq.salati.onboarding.ui.labelRes
 import com.mhq.salati.onboarding.ui.subtitleRes
 import com.mhq.salati.onboarding.ui.titleRes
-import com.mhq.salati.shared.ui.components.ActionRow
 import com.mhq.salati.settings.ui.components.SettingsSwitchRow
 import com.mhq.salati.settings.ui.displayNameRes
+import com.mhq.salati.shared.ui.components.ActionRow
 import com.mhq.salati.shared.ui.components.AppLogo
 import com.mhq.salati.shared.ui.components.GroupCard
 import com.mhq.salati.shared.ui.components.GroupDivider
 import com.mhq.salati.shared.ui.components.StepBadgeIcon
+import com.mhq.salati.shared.ui.components.StepHeader
+import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.shared.ui.theme.prayerGradient
 
@@ -89,119 +100,80 @@ fun OnboardingContent(
         onIntent(Intent.BackRequested)
     }
 
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val stepTransition = updateTransition(targetState = state.step, label = "onboardingStep")
+    isStepSettled = !stepTransition.isRunning
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.prayerGradient)
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .height(56.dp)
-                    .padding(horizontal = 8.dp)
-            ) {
-                if (!isFirstStep) {
-                    IconButton(
-                        onClick = { onIntent(Intent.BackRequested) },
-                        modifier = Modifier.align(Alignment.CenterStart)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.cd_back),
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
+        if (isWideLayout()) {
+            OnboardingWideLayout(
+                state = state,
+                stepTransition = stepTransition,
+                isRtl = isRtl,
+                isFirstStep = isFirstStep,
+                isStepSettled = isStepSettled,
+                onIntent = onIntent,
+                onOpenSelector = { activeSelector = it }
+            )
+        } else {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .height(56.dp)
+                        .padding(horizontal = 8.dp)
+                ) {
+                    if (!isFirstStep) {
+                        IconButton(
+                            onClick = { onIntent(Intent.BackRequested) },
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.cd_back),
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     }
                 }
-            }
 
-            val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-            val stepTransition = updateTransition(targetState = state.step, label = "onboardingStep")
-            isStepSettled = !stepTransition.isRunning
-
-            stepTransition.AnimatedContent(
-                transitionSpec = {
-                    val direction = (if (state.isMovingForward) 1 else -1) * (if (isRtl) -1 else 1)
-                    (slideInHorizontally { it * direction } + fadeIn()) togetherWith
-                            (slideOutHorizontally { -it * direction } + fadeOut())
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) { step ->
-                OnboardingStepBody(
-                    step = step,
-                    state = state,
-                    onIntent = onIntent,
-                    onOpenSelector = { activeSelector = it }
-                )
-            }
-
-            Surface(
-                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-                color = MaterialTheme.colorScheme.surface,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                stepTransition.AnimatedContent(
+                    transitionSpec = { stepTransitionSpec(state.isMovingForward, isRtl) },
                     modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .padding(top = 20.dp, bottom = 12.dp)
-                        .navigationBarsPadding()
-                ) {
-                    OnboardingPageIndicator(
-                        pageCount = StepUi.entries.size,
-                        currentPage = state.step.ordinal
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) { step ->
+                    OnboardingStepBody(
+                        step = step,
+                        state = state,
+                        onIntent = onIntent,
+                        onOpenSelector = { activeSelector = it }
                     )
+                }
 
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Button(
-                        onClick = { onIntent(Intent.PrimaryActionRequested) },
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        ),
-                        enabled = !state.isLoading && isStepSettled,
+                Surface(
+                    shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
+                            .padding(horizontal = 24.dp)
+                            .padding(top = 20.dp, bottom = 12.dp)
+                            .navigationBarsPadding()
                     ) {
-                        if (state.isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                strokeWidth = 2.dp
-                            )
-                        } else {
-                            Text(
-                                text = stringResource(state.primaryAction.labelRes),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    }
-
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.height(48.dp)
-                    ) {
-                        if (state.canSkip && !state.isLoading) {
-                            TextButton(
-                                onClick = { onIntent(Intent.Skipped) },
-                                enabled = isStepSettled
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.onboarding_not_now),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
-                        }
+                        OnboardingActions(
+                            state = state,
+                            isStepSettled = isStepSettled,
+                            onIntent = onIntent,
+                            isCompact = false
+                        )
                     }
                 }
             }
@@ -233,13 +205,7 @@ private fun OnboardingStepBody(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 32.dp)
     ) {
-        StepHeader(
-            title = stringResource(step.titleRes),
-            subtitle = stringResource(step.subtitleRes)
-        ) {
-            val icon = step.icon
-            if (icon == null) AppLogo(size = 96.dp) else StepBadgeIcon(icon)
-        }
+        OnboardingStepHeader(step)
         Spacer(modifier = Modifier.height(28.dp))
         when (step) {
             StepUi.WELCOME -> Column(
@@ -342,7 +308,298 @@ private fun OnboardingStepBody(
     }
 }
 
+private fun stepTransitionSpec(isMovingForward: Boolean, isRtl: Boolean): ContentTransform {
+    val direction = (if (isMovingForward) 1 else -1) * (if (isRtl) -1 else 1)
+    return (slideInHorizontally { it * direction } + fadeIn()) togetherWith
+            (slideOutHorizontally { -it * direction } + fadeOut())
+}
+
+@Composable
+private fun OnboardingStepHeader(step: StepUi) {
+    StepHeader(
+        title = stringResource(step.titleRes),
+        subtitle = stringResource(step.subtitleRes)
+    ) {
+        val icon = step.icon
+        if (icon == null) AppLogo(size = 96.dp) else StepBadgeIcon(icon)
+    }
+}
+
+@Composable
+private fun OnboardingStepFields(
+    step: StepUi,
+    state: OnboardingContract.State,
+    onIntent: (Intent) -> Unit,
+    onOpenSelector: (OnboardingContract.SelectorUi) -> Unit
+) {
+    when (step) {
+        StepUi.WELCOME -> Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        ) {
+            GroupCard {
+                ActionRow(
+                    icon = Icons.Default.Language,
+                    title = stringResource(R.string.language),
+                    valueLabel = stringResource(state.language.displayNameRes),
+                    onClick = { onOpenSelector(OnboardingContract.SelectorUi.LANGUAGE) }
+                )
+                GroupDivider()
+                ActionRow(
+                    icon = Icons.Default.DarkMode,
+                    title = stringResource(R.string.theme),
+                    valueLabel = stringResource(state.themeMode.displayNameRes),
+                    onClick = { onOpenSelector(OnboardingContract.SelectorUi.THEME) }
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(R.string.onboarding_change_later_hint),
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.70f),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        StepUi.CALCULATION -> Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        ) {
+            GroupCard {
+                ActionRow(
+                    icon = Icons.Default.Explore,
+                    title = stringResource(R.string.calculation_method),
+                    valueLabel = stringResource(state.calculationMethod.displayNameRes),
+                    onClick = { onOpenSelector(OnboardingContract.SelectorUi.CALCULATION_METHOD) }
+                )
+                GroupDivider()
+                ActionRow(
+                    icon = Icons.AutoMirrored.Filled.MenuBook,
+                    title = stringResource(R.string.asr_madhab),
+                    valueLabel = stringResource(state.madhab.displayNameRes),
+                    onClick = { onOpenSelector(OnboardingContract.SelectorUi.MADHAB) }
+                )
+                GroupDivider()
+                ActionRow(
+                    icon = Icons.Default.Schedule,
+                    title = stringResource(R.string.time_format),
+                    valueLabel = stringResource(state.timeFormat.displayNameRes),
+                    onClick = { onOpenSelector(OnboardingContract.SelectorUi.TIME_FORMAT) }
+                )
+            }
+        }
+
+        StepUi.ALERTS -> Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            GroupCard {
+                SettingsSwitchRow(
+                    icon = Icons.Default.NotificationsActive,
+                    title = stringResource(R.string.onboarding_notifications_toggle_title),
+                    subtitle = stringResource(R.string.onboarding_notifications_toggle_subtitle),
+                    isChecked = state.notificationsEnabled && state.isNotificationPermissionGranted,
+                    onCheckedChange = { onIntent(Intent.NotificationsToggled(it)) }
+                )
+                GroupDivider()
+                ActionRow(
+                    icon = Icons.Default.MusicNote,
+                    title = stringResource(R.string.adhan_sound),
+                    valueLabel = stringResource(state.adhanSound.displayNameRes),
+                    isEnabled = state.notificationsEnabled,
+                    onClick = { onOpenSelector(OnboardingContract.SelectorUi.ADHAN_SOUND) }
+                )
+            }
+
+            if (state.notificationsEnabled &&
+                state.isNotificationPermissionGranted &&
+                !state.isExactAlarmGranted
+            ) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.onboarding_exact_alarm_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f),
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+            }
+        }    }
+}
+
+/** Page indicator, primary button and "Not now". [isCompact] trims spacing for short windows. */
+@Composable
+private fun OnboardingActions(
+    state: OnboardingContract.State,
+    isStepSettled: Boolean,
+    onIntent: (Intent) -> Unit,
+    isCompact: Boolean
+) {
+    OnboardingPageIndicator(
+        pageCount = StepUi.entries.size,
+        currentPage = state.step.ordinal
+    )
+
+    Spacer(modifier = Modifier.height(if (isCompact) 12.dp else 24.dp))
+
+    Button(
+        onClick = { onIntent(Intent.PrimaryActionRequested) },
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+        enabled = !state.isLoading && isStepSettled,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = if (isCompact) 48.dp else 56.dp)
+    ) {
+        if (state.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                color = MaterialTheme.colorScheme.onPrimary,
+                strokeWidth = 2.dp
+            )
+        } else {
+            Text(
+                text = stringResource(state.primaryAction.labelRes),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.heightIn(min = if (isCompact) 40.dp else 48.dp)
+    ) {
+        if (state.canSkip && !state.isLoading) {
+            TextButton(
+                onClick = { onIntent(Intent.Skipped) },
+                enabled = isStepSettled
+            ) {
+                Text(
+                    text = stringResource(R.string.onboarding_not_now),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Wide windows (landscape, tablets, foldables, split-screen): header on the start pane, fields
+ * and buttons on the end pane. Each pane pads itself by the system-bar and cutout insets on its
+ * outer side only, so the surface and gradient still run edge to edge.
+ */
+@Composable
+private fun OnboardingWideLayout(
+    state: OnboardingContract.State,
+    stepTransition: Transition<StepUi>,
+    isRtl: Boolean,
+    isFirstStep: Boolean,
+    isStepSettled: Boolean,
+    onIntent: (Intent) -> Unit,
+    onOpenSelector: (OnboardingContract.SelectorUi) -> Unit
+) {
+    Row(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Start + WindowInsetsSides.Vertical)
+                )
+        ) {
+            stepTransition.AnimatedContent(
+                transitionSpec = { stepTransitionSpec(state.isMovingForward, isRtl) },
+                modifier = Modifier.fillMaxSize()
+            ) { step ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp, vertical = 16.dp)
+                ) {
+                    OnboardingStepHeader(step)
+                }
+            }
+
+            if (!isFirstStep) {
+                IconButton(
+                    onClick = { onIntent(Intent.BackRequested) },
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.cd_back),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        }
+
+        Surface(
+            shape = RoundedCornerShape(topStart = 32.dp, bottomStart = 32.dp),
+            color = MaterialTheme.colorScheme.surface,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(WindowInsetsSides.End + WindowInsetsSides.Vertical)
+                    )
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
+            ) {
+                stepTransition.AnimatedContent(
+                    transitionSpec = { stepTransitionSpec(state.isMovingForward, isRtl) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) { step ->
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(vertical = 8.dp)
+                    ) {
+                        OnboardingStepFields(step, state, onIntent, onOpenSelector)
+                    }
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OnboardingActions(
+                        state = state,
+                        isStepSettled = isStepSettled,
+                        onIntent = onIntent,
+                        isCompact = true
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Preview(name = "Welcome", showSystemUi = true)
+@Preview(name = "Landscape", device = "spec:width=800dp,height=360dp,dpi=420", showSystemUi = true)
+@Preview(name = "Arabic landscape, large font", locale = "ar", fontScale = 1.3f, device = "spec:width=800dp,height=360dp,dpi=420", showSystemUi = true)
 @Composable
 private fun OnboardingWelcomePreview() {
     SalatiTheme {

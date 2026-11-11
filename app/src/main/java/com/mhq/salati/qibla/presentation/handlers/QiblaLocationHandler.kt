@@ -35,7 +35,7 @@ class QiblaLocationHandler @Inject constructor(
                 is CoordinatesLookup.PermissionDenied -> emit(QiblaLocationLoad.Blocked(prerequisites.copy(permissionGranted = false)))
                 is CoordinatesLookup.Locating -> emit(QiblaLocationLoad.LookingUpCurrentLocation)
                 is CoordinatesLookup.TimedOut -> emit(QiblaLocationLoad.TimedOut)
-                is CoordinatesLookup.Failed -> emit(QiblaLocationLoad.Failed(lookup.message))
+                is CoordinatesLookup.Failed -> emit(QiblaLocationLoad.Failed)
                 is CoordinatesLookup.Found -> emit(QiblaLocationLoad.Located(lookup.coordinates))
             }
         }

@@ -17,7 +17,6 @@ import com.mhq.salati.shared.presentation.model.MessageUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,19 +24,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-
-
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
-
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -56,7 +51,6 @@ class LocationPickerViewModel @Inject constructor(
     private val _effect = Channel<LocationPickerContract.Effect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
 
-    private val searchQueryFlow = MutableStateFlow("")
     private val immediateSearchFlow = MutableSharedFlow<String>()
     private var lastManualSearchTimeMs = 0L
     private val SEARCH_COOLDOWN_MS = 1000L
@@ -158,98 +152,6 @@ class LocationPickerViewModel @Inject constructor(
             )
         }
     }
-
-    // Nominatim: Autocomplete search stopped;
-    // I may stretch the search duration to avoid 1 request per minute limit
-    //    private fun onQueryChanged(query: String) {
-    //        _state.update {
-    //            it.copy(
-    //                query = query,
-    //                searchResults = emptyList(),
-    //                isSearching = query.isNotBlank(),
-    //                errorMessage = null
-    //            )
-    //        }
-    //        searchQueryFlow.value = query
-    //    }
-    //
-    //    private fun observeSearchQuery() {
-    //        merge(
-    //            searchQueryFlow
-    //                .debounce(350.milliseconds)
-    //                .distinctUntilChanged(),
-    //            immediateSearchFlow
-    //        )
-    //            .flatMapLatest { query ->
-    //                flow {
-    //                    if (query.isNotBlank()) {
-    //                        val lang = currentLanguageCode()
-    //                        emit(Result.success(searchLocationByName(query, lang)))
-    //                    } else {
-    //                        emit(Result.success(emptyList()))
-    //                    }
-    //                }.catch { e ->
-    //                    if (e is CancellationException) throw e
-    //                    emit(Result.failure(e))
-    //                }
-    //            }
-    //            .onEach { result ->
-    //                result.fold(
-    //                    onSuccess = { results ->
-    //                        _state.update {
-    //                            it.copy(
-    //                                isSearching = false,
-    //                                searchResults = results.toContractResults()
-    //                            )
-    //                        }
-    //                    },
-    //                    onFailure = {
-    //                        val message = MessageUi.SEARCH_FAILED_CHECK_CONNECTION
-    //                        _state.update {
-    //                            it.copy(
-    //                                isSearching = false,
-    //                                errorMessage = message
-    //                            )
-    //                        }
-    //                        _effect.send(LocationPickerContract.Effect.ShowError(message))
-    //                    }
-    //                )
-    //            }
-    //            .launchIn(viewModelScope)
-    //    }
-    //
-    //    private fun executeManualSearch(query: String) {
-    //        if (query.isBlank()) return
-    //
-    //        val currentTime = System.currentTimeMillis()
-    //
-    //        if (currentTime - lastManualSearchTimeMs < SEARCH_COOLDOWN_MS) {
-    //            return
-    //        }
-    //
-    //        lastManualSearchTimeMs = currentTime
-    //        viewModelScope.launch {
-    //            immediateSearchFlow.emit(query)
-    //        }
-    //    }
-    //
-    //    private fun selectResult(result: LocationPickerContract.LocationSearchResult) {
-    //        searchQueryFlow.value = ""
-    //        _state.update {
-    //            it.copy(
-    //                selectedLocation = LocationPickerContract.SelectedLocation(
-    //                    displayName = result.displayName,
-    //                    latitude = result.latitude,
-    //                    longitude = result.longitude
-    //                ),
-    //                searchResults = emptyList(),
-    //                query = result.displayName,
-    //                mapCenterLat = result.latitude,
-    //                mapCenterLng = result.longitude,
-    //                mapZoom = 12
-    //            )
-    //        }
-    //    }
 
     private fun selectMapPoint(latitude: Double, longitude: Double) {
         reverseGeocodeJob?.cancel()

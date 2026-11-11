@@ -81,7 +81,7 @@ private val ScreenEnter: AnimatedContentTransitionScope<NavBackStackEntry>.() ->
 }
 
 private val ScreenExit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-    fadeOut(tween(if (isTabSwitch()) TAB_FADE_MILLIS else NON_TAB_FADE_MILLIS))
+    ExitTransition.None // the old tab stays fully opaque while the new one fades in on top
 }
 
 /**

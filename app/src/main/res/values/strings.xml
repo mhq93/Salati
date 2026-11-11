@@ -172,9 +172,6 @@
     </plurals>
 
     <!-- Custom alarms: Editor sheet -->
-    <string name="new_custom_alarm">Customize an alarm</string>
-    <string name="edit_custom_alarm">Edit custom alarm</string>
-    <string name="alarm_label_optional">Label (Optional)</string>
     <string name="alarm_minutes_field_label">Minutes</string>
     <string name="prayer">Prayer</string>
     <string name="timing">Timing</string>

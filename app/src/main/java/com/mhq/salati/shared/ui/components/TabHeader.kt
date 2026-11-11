@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
@@ -44,7 +44,7 @@ import com.mhq.salati.shared.ui.theme.tabHeaderGradient
  *
  * The height is a MINIMUM ([heightIn]), never a fixed value, so a larger font scale or Arabic
  * line heights grow the header instead of clipping it. The gradient runs edge to edge (behind the
- * status bar and any display cutout); only the content is pushed clear of them.
+ * status bar and any system bars); only the content is pushed clear of them.
  */
 @Composable
 fun TabHeader(
@@ -62,7 +62,8 @@ fun TabHeader(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.tabHeaderGradient)
             .statusBarsPadding()
-            .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
+            // Updated from displayCutout to safeDrawing to dynamically avoid both camera cutouts and side navigation bars in landscape orientation
+            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
             .heightIn(min = if (isWide) 64.dp else 112.dp)
             .padding(vertical = if (isWide) 8.dp else 24.dp, horizontal = 24.dp)
     ) {

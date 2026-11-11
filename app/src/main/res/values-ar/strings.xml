@@ -184,9 +184,6 @@
     </plurals>
 
     <!-- Custom alarms: Editor sheet -->
-    <string name="new_custom_alarm">منبه خاص جديد</string>
-    <string name="edit_custom_alarm">تعديل المنبه</string>
-    <string name="alarm_label_optional">اسم المنبه (اختياري)</string>
     <string name="alarm_minutes_field_label">الدقائق</string>
     <string name="prayer">الصلاة</string>
     <string name="timing">التوقيت</string>

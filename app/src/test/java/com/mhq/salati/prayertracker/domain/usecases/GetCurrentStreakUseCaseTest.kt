@@ -2,8 +2,8 @@ package com.mhq.salati.prayertracker.domain.usecases
 
 import com.mhq.salati.prayertracker.domain.model.PrayerStatus
 import com.mhq.salati.prayertracker.domain.repo.PrayerTrackerRepository
-import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.PrayerName
+import com.mhq.salati.testutil.FakeClock
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -11,15 +11,7 @@ import java.time.LocalDate
 
 class GetCurrentStreakUseCaseTest {
 
-    // 1. Create a Fake Clock to control "today" and satisfy the expanded Clock boundary interface
-    private class FakeClock(private val fixedDate: LocalDate) : Clock {
-        override fun now() = throw UnsupportedOperationException()
-        override fun today() = fixedDate
-        override fun instant() = throw UnsupportedOperationException()
-        override fun zone() = throw UnsupportedOperationException()
-    }
-
-    // 2. Create a Fake Repository to return controlled data
+    // Create a Fake Repository to return controlled data
     private class FakeRepository(
         private val records: Map<LocalDate, Map<PrayerName, PrayerStatus>>
     ) : PrayerTrackerRepository {
@@ -143,23 +135,16 @@ class GetCurrentStreakUseCaseTest {
     }
 
     @Test
-    fun `invoke caps lookup cleanly at maximum lookback limit parameters`() = runTest {
+    fun `invoke has no lookback cap and counts a streak longer than ten years`() = runTest {
         val today = LocalDate.of(2026, 1, 1)
         val clock = FakeClock(today)
+        val days = 3_700
 
-        val mutableRecords = mutableMapOf<LocalDate, Map<PrayerName, PrayerStatus>>()
+        // Today and the 3,700 days before it, all fully prayed.
+        val records = (0..days).associate { today.minusDays(it.toLong()) to allPrayed() }
 
-        // Generate an uninterrupted historical data block longer than our 10-year constraint limit
-        // 3650 days = 10 regular years, but with leap years handled safely
-        val maxLookback = 3650
-        for (i in 0..maxLookback + 50) {
-            mutableRecords[today.minusDays(i.toLong())] = allPrayed()
-        }
+        val useCase = GetCurrentStreakUseCase(FakeRepository(records), clock)
 
-        val repo = FakeRepository(mutableRecords)
-        val useCase = GetCurrentStreakUseCase(repo, clock)
-
-        // The streak calculation loop terminates immediately when reaching the startDate ceiling limit
-        assertEquals(maxLookback + 1, useCase())
+        assertEquals(days + 1, useCase())
     }
 }

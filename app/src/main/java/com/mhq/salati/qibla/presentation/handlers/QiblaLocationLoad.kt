@@ -16,5 +16,6 @@ sealed interface QiblaLocationLoad {
     data class Blocked(val prerequisites: LocationPrerequisites) : QiblaLocationLoad
 
     data object TimedOut : QiblaLocationLoad
-    data class Failed(val message: String?) : QiblaLocationLoad
+
+    data object Failed : QiblaLocationLoad
 }
