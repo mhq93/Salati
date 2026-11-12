@@ -1,0 +1,3 @@
+# Ktor CIO / utils reference JVM-only classes that do not exist on Android.
+-dontwarn java.lang.management.**
+-dontwarn org.slf4j.impl.StaticLoggerBinder

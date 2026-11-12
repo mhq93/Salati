@@ -33,17 +33,10 @@ android {
     buildTypes {
         release {
             optimization {
-                enable = false
+                enable = true
             }
         }
     }
-
-    //    buildTypes {
-    //        release {
-    //            isMinifyEnabled = false // Standard way to disable optimization/proguard in newer AGP
-    //            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-    //        }
-    //    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -76,7 +69,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation("androidx.core:core-splashscreen:1.2.0")
-    implementation(libs.androidx.ui)
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
@@ -102,7 +94,6 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.compose.material.icons.extended)
-    implementation("androidx.compose.material:material-icons-extended")
 
     implementation("org.osmdroid:osmdroid-android:6.1.20")
     implementation("io.coil-kt.coil3:coil-compose:3.5.0")

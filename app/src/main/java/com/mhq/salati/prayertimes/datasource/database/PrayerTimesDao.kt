@@ -16,4 +16,24 @@ interface PrayerTimesDao {
 
     @Query("SELECT * FROM prayer_timings WHERE date = :date LIMIT 1")
     suspend fun getByDate(date: String): PrayerTimesEntity?
+
+    /** Removes every row that was fetched with settings other than the given ones. */
+    @Query(
+        """
+        DELETE FROM prayer_timings
+        WHERE method != :method
+           OR schoolId != :schoolId
+           OR hijriAdjustment != :adjustment
+           OR ABS(latitude - :latitude) >= :tolerance
+           OR ABS(longitude - :longitude) >= :tolerance
+        """
+    )
+    suspend fun deleteWithOtherSettings(
+        method: Int,
+        schoolId: Int,
+        adjustment: Int,
+        latitude: Double,
+        longitude: Double,
+        tolerance: Double
+    )
 }

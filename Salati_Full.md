@@ -1,8 +1,8 @@
 # Salati project export
 
-- Generated: 2026-11-12 00:09
+- Generated: 2026-11-12 13:54
 - PowerShell: 5.1.19041.6456
-- Files embedded: 422
+- Files embedded: 433
 - Files listed only (binary / too large / sensitive): 29
 - Secrets: local.properties, google-services.json, keystores and .env files are skipped; key/secret/password/token string literals are replaced with <REDACTED>.
 
@@ -10,9 +10,10 @@
 
 ```text
 branch: dev
-last commit: a4d0d79 2026-11-11 ` redesign: redesigned Custom Alarms Screen to handle different screen sizes and device rotation + Code refactor and cleanup + adding tests
+last commit: 36be703 2026-11-12 wip: realigning and centering Qibla, Tracker, Alarms and Settings screens + adding KDoc comments (domain models, done)
 
 recent commits:
+  36be703 2026-11-12 wip: realigning and centering Qibla, Tracker, Alarms and Settings screens + adding KDoc comments (domain models, done)
   a4d0d79 2026-11-11 ` redesign: redesigned Custom Alarms Screen to handle different screen sizes and device rotation + Code refactor and cleanup + adding tests
   54af52c 2026-11-09 redesign: redesigned Tracker Screen to handle different screen sizes and device rotation
   4c4a5cf 2026-11-09 wip: modified Type.kt to handle vertical expansion in UI elements upon switching app language to Arabic, redesigned Home and Qibla to handle different screen sizes and device rotation. Qibla is confirmed done, pending: rest of the screens
@@ -27,77 +28,9 @@ recent commits:
   607639a 2026-11-02 feature: reworked and refactored Onboarding
   53d5ca3 2026-11-01 refactor: architecture cleanups, refactored datastore models, renamed intents and moved some files
   da49d62 2026-11-01 refactor: stop Presentation from holding state and logic that belongs in Domain
-  2cbd0d0 2026-11-01 refactor: removed UiText and R.string references to make UI depend only on Presentation
 
 working tree changes (git status --short, first 80):
-   M app/src/main/java/com/mhq/salati/alarms/ui/screens/CustomAlarmsContent.kt
-   M app/src/main/java/com/mhq/salati/home/domain/model/PrayerCountdown.kt
-   M app/src/main/java/com/mhq/salati/home/domain/model/PrayerProgress.kt
-   M app/src/main/java/com/mhq/salati/home/domain/model/PrayerTimesError.kt
-   M app/src/main/java/com/mhq/salati/home/domain/model/PrayerTimesLoad.kt
-   M app/src/main/java/com/mhq/salati/home/domain/model/PrayerTimesTick.kt
-   M app/src/main/java/com/mhq/salati/home/domain/model/PrayerWindow.kt
-   M app/src/main/java/com/mhq/salati/home/domain/service/DayNavigator.kt
-   M app/src/main/java/com/mhq/salati/home/domain/usecases/CalculateCurrentPrayerNameUseCase.kt
-   M app/src/main/java/com/mhq/salati/home/domain/usecases/CalculatePastPrayersUseCase.kt
-   M app/src/main/java/com/mhq/salati/home/domain/usecases/CalculatePrayerStatusUseCase.kt
-   M app/src/main/java/com/mhq/salati/home/domain/usecases/CalculatePrayerWindowUseCase.kt
-   M app/src/main/java/com/mhq/salati/home/domain/usecases/LoadPrayerTimesUseCase.kt
-   M app/src/main/java/com/mhq/salati/home/domain/usecases/ObservePrayerCountdownUseCase.kt
-   M app/src/main/java/com/mhq/salati/home/domain/usecases/ObservePrayerTimesTicksUseCase.kt
-   M app/src/main/java/com/mhq/salati/home/domain/usecases/RefreshPrayerStatusUseCase.kt
-   M app/src/main/java/com/mhq/salati/home/domain/usecases/ResolvePrayerWindowForDisplayUseCase.kt
-   M app/src/main/java/com/mhq/salati/location/domain/model/CoordinatesLookup.kt
-   M app/src/main/java/com/mhq/salati/location/domain/model/GeocodeResult.kt
-   M app/src/main/java/com/mhq/salati/location/domain/model/LocationPrerequisites.kt
-   M app/src/main/java/com/mhq/salati/location/domain/model/LocationResolution.kt
-   M app/src/main/java/com/mhq/salati/location/domain/model/LocationSearchResult.kt
-   M app/src/main/java/com/mhq/salati/location/domain/model/SavedLocation.kt
-   M app/src/main/java/com/mhq/salati/location/domain/repo/GeocoderProvider.kt
-   M app/src/main/java/com/mhq/salati/location/domain/repo/LocationProvider.kt
-   M app/src/main/java/com/mhq/salati/location/domain/repo/LocationRepository.kt
-   M app/src/main/java/com/mhq/salati/location/domain/service/LocationLocalizer.kt
-   M app/src/main/java/com/mhq/salati/location/domain/usecases/CheckLocationPrerequisitesUseCase.kt
-   M app/src/main/java/com/mhq/salati/location/domain/usecases/ClearSavedLocationUseCase.kt
-   M app/src/main/java/com/mhq/salati/location/domain/usecases/GetCurrentCoordinatesUseCase.kt
-   M app/src/main/java/com/mhq/salati/location/domain/usecases/GetLocalizedLocationUseCase.kt
-   M app/src/main/java/com/mhq/salati/location/domain/usecases/GetSavedLocationUseCase.kt
-   M app/src/main/java/com/mhq/salati/location/domain/usecases/ResolveLocationUseCase.kt
-   M app/src/main/java/com/mhq/salati/location/domain/usecases/ReverseGeocodeLocationUseCase.kt
-   M app/src/main/java/com/mhq/salati/location/domain/usecases/SaveManualLocationUseCase.kt
-   M app/src/main/java/com/mhq/salati/location/domain/usecases/SearchLocationByNameUseCase.kt
-   M app/src/main/java/com/mhq/salati/prayertimes/domain/model/HijriDate.kt
-   M app/src/main/java/com/mhq/salati/prayertimes/domain/model/HijriDateAdjustment.kt
-   M app/src/main/java/com/mhq/salati/prayertimes/domain/model/PrayerDate.kt
-   M app/src/main/java/com/mhq/salati/prayertimes/domain/model/PrayerTimesResult.kt
-   M app/src/main/java/com/mhq/salati/prayertimes/domain/model/PrayerTimings.kt
-   M app/src/main/java/com/mhq/salati/prayertimes/domain/repo/PrayerTimesRepository.kt
-   M app/src/main/java/com/mhq/salati/prayertimes/domain/usecases/GetCachedPrayerTimesUseCase.kt
-   M app/src/main/java/com/mhq/salati/prayertimes/domain/usecases/GetPrayerTimesUseCase.kt
-   M app/src/main/java/com/mhq/salati/prayertracker/domain/model/DayStatus.kt
-   M app/src/main/java/com/mhq/salati/prayertracker/domain/model/PrayerStatus.kt
-   M app/src/main/java/com/mhq/salati/prayertracker/domain/repo/PrayerTrackerRepository.kt
-   M app/src/main/java/com/mhq/salati/prayertracker/domain/usecases/GetCurrentStreakUseCase.kt
-   M app/src/main/java/com/mhq/salati/prayertracker/domain/usecases/GetDuePrayersUseCase.kt
-  RM app/src/main/java/com/mhq/salati/home/domain/usecases/ObserveMonthDayStatusUseCase.kt -> app/src/main/java/com/mhq/salati/prayertracker/domain/usecases/ObserveMonthDayStatusUseCase.kt
-   M app/src/main/java/com/mhq/salati/prayertracker/domain/usecases/ObservePrayerRecordsForDateUseCase.kt
-   M app/src/main/java/com/mhq/salati/prayertracker/domain/usecases/ObservePrayerRecordsForMonthUseCase.kt
-   M app/src/main/java/com/mhq/salati/prayertracker/domain/usecases/SetPrayerStatusUseCase.kt
-   M app/src/main/java/com/mhq/salati/prayertracker/ui/screens/PrayerTrackerContent.kt
-   M app/src/main/java/com/mhq/salati/qibla/ui/components/CompassCalibrationOverlay.kt
-   M app/src/main/java/com/mhq/salati/qibla/ui/components/CompassWideLayout.kt
-   M app/src/main/java/com/mhq/salati/qibla/ui/screens/QiblaContentSuccess.kt
-   M app/src/main/java/com/mhq/salati/settings/ui/screens/SettingsContent.kt
-   M app/src/main/java/com/mhq/salati/shared/domain/Clock.kt
-   M app/src/main/java/com/mhq/salati/shared/domain/Coordinates.kt
-   M app/src/main/java/com/mhq/salati/shared/domain/DateKey.kt
-   M app/src/main/java/com/mhq/salati/shared/domain/HijriMonth.kt
-   M app/src/main/java/com/mhq/salati/shared/domain/MinuteOfday.kt
-   M app/src/main/java/com/mhq/salati/shared/domain/PrayerName.kt
-   M app/src/main/java/com/mhq/salati/shared/domain/PrayerNameResolver.kt
-   M app/src/main/java/com/mhq/salati/shared/domain/usecases/ResolvePrayerNameUseCase.kt
-   M app/src/main/java/com/mhq/salati/shared/ui/ScreenLayout.kt
-   M app/src/main/java/com/mhq/salati/shared/ui/components/TabHeader.kt
+  (clean)
 ```
 
 ## Project tree
@@ -192,7 +125,7 @@ app\src\main\java\com\mhq\salati\alarms\ui\notification\CustomAlarmNotifier.kt  
 app\src\main\java\com\mhq\salati\alarms\ui\receiver\CustomAlarmIntentKeys.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\receiver\CustomAlarmReceiver.kt  (1.8 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContainer.kt  (1.7 KB)
-app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContent.kt  (9.5 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContent.kt  (9.4 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContentBlank.kt  (1.2 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\state\AlarmFormState.kt  (0.9 KB)
 app\src\main\java\com\mhq\salati\connectivity\data\repoimpl\ConnectivityCheckerImpl.kt  (0.4 KB)
@@ -363,8 +296,10 @@ app\src\main\java\com\mhq\salati\prayertracker\ui\components\PrayerStatusCard.kt
 app\src\main\java\com\mhq\salati\prayertracker\ui\components\PrayerTrackerList.kt  (3.4 KB)
 app\src\main\java\com\mhq\salati\prayertracker\ui\components\StreakBanner.kt  (2.4 KB)
 app\src\main\java\com\mhq\salati\prayertracker\ui\components\TrackerBadge.kt  (1.5 KB)
-app\src\main\java\com\mhq\salati\prayertracker\ui\screens\PrayerTrackerContainer.kt  (2.3 KB)
-app\src\main\java\com\mhq\salati\prayertracker\ui\screens\PrayerTrackerContent.kt  (9.4 KB)
+app\src\main\java\com\mhq\salati\prayertracker\ui\screens\PrayerTrackerContainer.kt  (2.4 KB)
+app\src\main\java\com\mhq\salati\prayertracker\ui\screens\PrayerTrackerContent.kt  (5.3 KB)
+app\src\main\java\com\mhq\salati\prayertracker\ui\screens\TrackerLayout.kt  (0.7 KB)
+app\src\main\java\com\mhq\salati\prayertracker\ui\screens\TrackerWideContent.kt  (4.7 KB)
 app\src\main\java\com\mhq\salati\qibla\data\repoimpl\CompassRepoImpl.kt  (1.7 KB)
 app\src\main\java\com\mhq\salati\qibla\datasource\device\AndroidRotationSensorDataSource.kt  (5.2 KB)
 app\src\main\java\com\mhq\salati\qibla\datasource\device\CompassSample.kt  (0.2 KB)
@@ -385,14 +320,14 @@ app\src\main\java\com\mhq\salati\qibla\presentation\mapper\QiblaUiMapper.kt  (0.
 app\src\main\java\com\mhq\salati\qibla\presentation\model\CompassAccuracyUi.kt  (0.1 KB)
 app\src\main\java\com\mhq\salati\qibla\presentation\viewmodel\QiblaViewModel.kt  (11.4 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\components\CompassCalibrationBanner.kt  (4.5 KB)
-app\src\main\java\com\mhq\salati\qibla\ui\components\CompassCalibrationOverlay.kt  (11.8 KB)
+app\src\main\java\com\mhq\salati\qibla\ui\components\CompassCalibrationOverlay.kt  (12.0 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\components\CompassWideLayout.kt  (0.9 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\components\RotatingCompassDial.kt  (17.3 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\errors\QiblaSensorUnavailableError.kt  (1.9 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContainer.kt  (5.0 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContent.kt  (5.4 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContentError.kt  (1.6 KB)
-app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContentSuccess.kt  (10.8 KB)
+app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContentSuccess.kt  (11.2 KB)
 app\src\main\java\com\mhq\salati\settings\data\mapper\SettingsMapper.kt  (1.1 KB)
 app\src\main\java\com\mhq\salati\settings\data\repoimpl\SettingsRepoImpl.kt  (2.1 KB)
 app\src\main\java\com\mhq\salati\settings\datasource\preferences\SettingsDataStore.kt  (3.2 KB)
@@ -435,8 +370,17 @@ app\src\main\java\com\mhq\salati\settings\ui\components\SettingsSectionHeader.kt
 app\src\main\java\com\mhq\salati\settings\ui\components\SettingsSelectionSheet.kt  (3.6 KB)
 app\src\main\java\com\mhq\salati\settings\ui\components\SettingsStepperRow.kt  (3.1 KB)
 app\src\main\java\com\mhq\salati\settings\ui\components\SettingsSwitchRow.kt  (3.1 KB)
+app\src\main\java\com\mhq\salati\settings\ui\screens\AboutSection.kt  (1.7 KB)
+app\src\main\java\com\mhq\salati\settings\ui\screens\AppearanceSection.kt  (1.5 KB)
+app\src\main\java\com\mhq\salati\settings\ui\screens\HijriCalendarSection.kt  (1.2 KB)
+app\src\main\java\com\mhq\salati\settings\ui\screens\NotificationsSection.kt  (2.2 KB)
+app\src\main\java\com\mhq\salati\settings\ui\screens\PrayerCalculationSection.kt  (1.9 KB)
 app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsContainer.kt  (6.2 KB)
-app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsContent.kt  (15.7 KB)
+app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsContent.kt  (3.9 KB)
+app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsLayout.kt  (0.5 KB)
+app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsNarrowContent.kt  (2.9 KB)
+app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsPane.kt  (1.5 KB)
+app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsWideContent.kt  (2.8 KB)
 app\src\main\java\com\mhq\salati\settings\ui\SettingsLabels.kt  (2.8 KB)
 app\src\main\java\com\mhq\salati\shared\app\SalatiApplication.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\shared\data\mapper\PrayerNameMapper.kt  (1.0 KB)
@@ -484,7 +428,7 @@ app\src\main\java\com\mhq\salati\shared\ui\navigation\BottomNavBarItem.kt  (0.2 
 app\src\main\java\com\mhq\salati\shared\ui\navigation\NavigationScreen.kt  (0.7 KB)
 app\src\main\java\com\mhq\salati\shared\ui\PrayerNameLabels.kt  (0.7 KB)
 app\src\main\java\com\mhq\salati\shared\ui\SalatiApp.kt  (9.7 KB)
-app\src\main\java\com\mhq\salati\shared\ui\ScreenLayout.kt  (0.4 KB)
+app\src\main\java\com\mhq\salati\shared\ui\ScreenLayout.kt  (1.4 KB)
 app\src\main\java\com\mhq\salati\shared\ui\screens\LoadingContent.kt  (1.7 KB)
 app\src\main\java\com\mhq\salati\shared\ui\theme\Color.kt  (8.5 KB)
 app\src\main\java\com\mhq\salati\shared\ui\theme\Gradients.kt  (1.4 KB)
@@ -4552,13 +4496,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -4590,8 +4532,10 @@ import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 import com.mhq.salati.shared.ui.components.TabHeader
 import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
+import com.mhq.salati.shared.ui.screenHorizontalMargin
+import com.mhq.salati.shared.ui.symmetricCutoutInset
 
-private val FabColumnWidth = 88.dp // FAB 56 + 20 end margin + 12 gap
+private val FabColumnWidth = 56.dp + ScreenHorizontalPadding + 12.dp
 
 @Composable
 fun CustomAlarmsContent(
@@ -4618,13 +4562,13 @@ fun CustomAlarmsContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .windowInsetsPadding(
-                        WindowInsets.navigationBars
-                            .union(WindowInsets.displayCutout)
-                            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
+                        WindowInsets.navigationBars.only(
+                            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
+                        )
                     )
                     .padding(
-                        start = ScreenHorizontalPadding,
-                        end = FabColumnWidth,
+                        start = screenHorizontalMargin(),
+                        end = FabColumnWidth + symmetricCutoutInset(),
                         top = with(density) { headerHeightPx.toDp() } + 12.dp,
                         bottom = BottomNavBarDefaults.Height
                     ),
@@ -4679,7 +4623,7 @@ fun CustomAlarmsContent(
                 }
             }
         } else {
-            // Portrait view footprint restored
+            /** Portrait view footprint restored */
             if (state.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
@@ -4711,7 +4655,7 @@ fun CustomAlarmsContent(
             }
         }
 
-        // TabHeader strictly placed at Top across layout contexts
+        /** TabHeader strictly placed at Top across layout contexts */
         TabHeader(
             icon = Icons.Default.Alarm,
             title = stringResource(R.string.custom_alarms),
@@ -4721,20 +4665,17 @@ fun CustomAlarmsContent(
             }
         )
 
-        // Floating Action Button perfectly pinned to the absolute bottom-end area across screens
+        /** Floating Action Button pinned to the absolute bottom-end area across screens */
         FloatingActionButton(
             onClick = { onIntent(AlarmsContract.Intent.AddAlarm) },
             containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = MaterialTheme.colorScheme.onTertiary,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .windowInsetsPadding(
-                    WindowInsets.navigationBars
-                        .union(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
-                )
+                .windowInsetsPadding(WindowInsets.navigationBars)
                 .padding(
                     bottom = BottomNavBarDefaults.Height + 20.dp,
-                    end = 20.dp
+                    end = screenHorizontalMargin()
                 )
         ) {
             Icon(
@@ -14754,9 +14695,15 @@ fun PrayerTrackerContainer(
     state.dialogPrayer?.let { prayer ->
         PrayerConfirmDialog(
             prayer = prayer,
-            onConfirmPrayed = { prayerTrackerViewModel.onIntent(PrayerTrackerContract.Intent.ConfirmPrayed) },
-            onConfirmMissed = { prayerTrackerViewModel.onIntent(PrayerTrackerContract.Intent.ConfirmMissed) },
-            onDismiss = { prayerTrackerViewModel.onIntent(PrayerTrackerContract.Intent.DialogDismissed) }
+            onConfirmPrayed = {
+                prayerTrackerViewModel.onIntent(PrayerTrackerContract.Intent.ConfirmPrayed)
+            },
+            onConfirmMissed = {
+                prayerTrackerViewModel.onIntent(PrayerTrackerContract.Intent.ConfirmMissed)
+            },
+            onDismiss = {
+                prayerTrackerViewModel.onIntent(PrayerTrackerContract.Intent.DialogDismissed)
+            }
         )
     }
 }
@@ -14768,25 +14715,15 @@ fun PrayerTrackerContainer(
 package com.mhq.salati.prayertracker.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -14797,9 +14734,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.coerceAtLeast
-import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
 import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.Intent
@@ -14807,6 +14741,7 @@ import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.
 import com.mhq.salati.prayertracker.ui.components.CalendarMonthView
 import com.mhq.salati.prayertracker.ui.components.PrayerStatusList
 import com.mhq.salati.prayertracker.ui.components.StreakBanner
+import com.mhq.salati.prayertracker.ui.screens.TrackerLayout.TrackerPortraitMaxWidth
 import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 import com.mhq.salati.shared.ui.components.TabHeader
 import com.mhq.salati.shared.ui.isWideLayout
@@ -14814,20 +14749,6 @@ import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import java.time.LocalDate
 import java.time.YearMonth
-
-/** Tall screens: content never stretches wider than this (big portrait tablets), centered. */
-private val TrackerPortraitMaxWidth = 560.dp
-
-/** Wide screens (landscape, tablets, split-screen). */
-private object TrackerWideLayout {
-    /** Calendar never gets wider than this inside its half of the screen. */
-    val CalendarMaxWidth = 340.dp
-    /** Below this height the calendar stops shrinking and the pane scrolls instead. */
-    val CalendarMinHeight = 216.dp
-    /** Calendar height is capped at width x this, so cells don't become tall slivers on tablets. */
-    const val CalendarMaxHeightPerWidth = 1.2f
-    val PaneSpacing = 24.dp
-}
 
 @Composable
 fun PrayerTrackerContent(
@@ -14869,10 +14790,10 @@ fun PrayerTrackerContent(
                         .verticalScroll(rememberScrollState())
                 ) {
                     CalendarMonthView(
-                        selectedMonth = state.selectedMonth,
-                        selectedDate = state.selectedDate,
                         today = state.today,
                         dayStatus = state.monthDayStatus,
+                        selectedDate = state.selectedDate,
+                        selectedMonth = state.selectedMonth,
                         onDateSelected = { onIntent(Intent.DateSelected(it)) },
                         onMonthChanged = { onIntent(Intent.MonthChanged(it)) },
                         hijriOffsetDays = state.hijriDateOffset,
@@ -14882,10 +14803,10 @@ fun PrayerTrackerContent(
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     PrayerStatusList(
-                        duePrayers = state.duePrayers,
-                        selectedDate = state.selectedDate,
                         today = state.today,
+                        selectedDate = state.selectedDate,
                         records = state.selectedDateRecords,
+                        duePrayers = state.duePrayers,
                         onPrayerTapped = { onIntent(Intent.PrayerSelected(it)) },
                         modifier = Modifier
                             .widthIn(max = TrackerPortraitMaxWidth)
@@ -14897,26 +14818,118 @@ fun PrayerTrackerContent(
     }
 }
 
+@Preview(
+    name = "Portrait",
+    showSystemUi = true
+)
+@Preview(
+    name = "Landscape",
+    device = "spec:width=800dp,height=400dp,dpi=440",
+    showSystemUi = true
+)
+@Preview(
+    name = "Small landscape",
+    device = "spec:width=640dp,height=320dp,dpi=420",
+    showSystemUi = true
+)
+@Preview(
+    name = "Tablet",
+    device = "spec:width=1280dp,height=800dp,dpi=240",
+    showSystemUi = true
+)
+@Composable
+private fun PrayerTrackerContentPreview() {
+    SalatiTheme {
+        PrayerTrackerContent(
+            state = State(
+                today = LocalDate.of(2026, 10, 8),
+                selectedMonth = YearMonth.of(2026, 10),
+                selectedDate = LocalDate.of(2026, 10, 8)
+            ),
+            onIntent = {}
+        )
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\prayertracker\ui\screens\TrackerLayout.kt
+
+```kotlin
+package com.mhq.salati.prayertracker.ui.screens
+
+import androidx.compose.ui.unit.dp
+
+/** Screens (Portrait, landscape, tablets, split-screen). */
+internal object TrackerLayout {
+    /** Tall screens: content never stretches wider than this (big portrait tablets), centered. */
+    val TrackerPortraitMaxWidth = 560.dp
+
+    /** Calendar never gets wider than this inside its half of the screen. */
+    val PaneContentMaxWidth = 340.dp
+
+    /** Below this height the calendar stops shrinking and the pane scrolls instead. */
+    val CalendarMinHeight = 216.dp
+
+    /** Calendar height is capped at width x this, so cells don't become tall slivers on tablets. */
+    const val CalendarMaxHeightPerWidth = 1.2f
+
+    val PaneSpacing = 24.dp
+}
+```
+
+## app\src\main\java\com\mhq\salati\prayertracker\ui\screens\TrackerWideContent.kt
+
+```kotlin
+package com.mhq.salati.prayertracker.ui.screens
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.coerceAtLeast
+import androidx.compose.ui.unit.coerceAtMost
+import androidx.compose.ui.unit.dp
+import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract
+import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.Intent
+import com.mhq.salati.prayertracker.ui.components.CalendarMonthView
+import com.mhq.salati.prayertracker.ui.components.PrayerStatusList
+import com.mhq.salati.shared.ui.screenHorizontalMargin
+
 /**
  * Two panes side by side: calendar (left) and prayer checklist (right).
  *
  * - Both panes scroll when the screen is too short (small landscape, large font scale, Arabic).
  *   `fillMaxHeight().verticalScroll()` keeps the content centered while it fits.
  * - The calendar is given an explicit, bounded height (needed for its weighted rows); it is the
- *   available height, clamped between [TrackerWideLayout.CalendarMinHeight] and width x aspect cap.
+ *   available height, clamped between [TrackerLayout.CalendarMinHeight] and width x aspect cap.
  * - Display-cutout insets keep both panes clear of a notch in landscape.
  */
 @Composable
-private fun TrackerWideContent(
-    state: State,
+fun TrackerWideContent(
+    state: PrayerTrackerContract.State,
     onIntent: (Intent) -> Unit
 ) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(TrackerWideLayout.PaneSpacing),
-        modifier = Modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
-            .padding(horizontal = ScreenHorizontalPadding, vertical = 4.dp)
+        horizontalArrangement = Arrangement.spacedBy(TrackerLayout.PaneSpacing),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(
+                    horizontal = screenHorizontalMargin(),
+                    vertical = 4.dp
+                )
     ) {
         BoxWithConstraints(
             contentAlignment = Alignment.Center,
@@ -14924,10 +14937,16 @@ private fun TrackerWideContent(
                 .weight(1f)
                 .fillMaxHeight()
         ) {
-            val calendarWidth: Dp = maxWidth.coerceAtMost(TrackerWideLayout.CalendarMaxWidth)
-            val calendarHeight: Dp = maxHeight
-                .coerceAtMost(calendarWidth * TrackerWideLayout.CalendarMaxHeightPerWidth)
-                .coerceAtLeast(TrackerWideLayout.CalendarMinHeight)
+            val calendarWidth: Dp =
+                maxWidth.coerceAtMost(TrackerLayout.PaneContentMaxWidth)
+            val calendarHeight: Dp =
+                maxHeight
+                    .coerceAtMost(
+                        calendarWidth * TrackerLayout.CalendarMaxHeightPerWidth
+                    )
+                    .coerceAtLeast(
+                        TrackerLayout.CalendarMinHeight
+                    )
 
             Box(
                 contentAlignment = Alignment.CenterStart,
@@ -14950,40 +14969,32 @@ private fun TrackerWideContent(
             }
         }
 
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+        BoxWithConstraints(
+            contentAlignment = Alignment.CenterEnd,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
-                .verticalScroll(rememberScrollState())
         ) {
-            PrayerStatusList(
-                duePrayers = state.duePrayers,
-                selectedDate = state.selectedDate,
-                today = state.today,
-                records = state.selectedDateRecords,
-                onPrayerTapped = { onIntent(Intent.PrayerSelected(it)) }
-            )
-        }
-    }
-}
+            val listWidth: Dp =
+                maxWidth.coerceAtMost(TrackerLayout.PaneContentMaxWidth)
 
-@Preview(name = "Portrait", showSystemUi = true)
-@Preview(name = "Landscape", device = "spec:width=800dp,height=400dp,dpi=440", showSystemUi = true)
-@Preview(name = "Small landscape", device = "spec:width=640dp,height=320dp,dpi=420", showSystemUi = true)
-@Preview(name = "Tablet", device = "spec:width=1280dp,height=800dp,dpi=240", showSystemUi = true)
-@Composable
-private fun PrayerTrackerContentPreview() {
-    SalatiTheme {
-        PrayerTrackerContent(
-            state = State(
-                today = LocalDate.of(2026, 10, 8),
-                selectedMonth = YearMonth.of(2026, 10),
-                selectedDate = LocalDate.of(2026, 10, 8)
-            ),
-            onIntent = {}
-        )
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .width(listWidth)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                PrayerStatusList(
+                    duePrayers = state.duePrayers,
+                    selectedDate = state.selectedDate,
+                    today = state.today,
+                    records = state.selectedDateRecords,
+                    onPrayerTapped = { onIntent(Intent.PrayerSelected(it)) }
+                )
+            }
+        }
     }
 }
 ```
@@ -15957,12 +15968,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -15988,6 +16001,7 @@ import com.mhq.salati.R
 import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
+import com.mhq.salati.shared.ui.screenHorizontalMargin
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import kotlin.math.PI
 import kotlin.math.cos
@@ -16039,7 +16053,7 @@ fun CompassCalibrationOverlay(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) { /* absorb clicks */ }
-            .safeDrawingPadding()
+            .windowInsetsPadding(WindowInsets.systemBars)
             .padding(bottom = BottomNavBarDefaults.Height),
     ) {
         if (isWide) {
@@ -16047,7 +16061,7 @@ fun CompassCalibrationOverlay(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(
-                        horizontal = CompassWideLayout.HorizontalPadding,
+                        horizontal = screenHorizontalMargin(),
                         vertical = CompassWideLayout.VerticalPadding
                     ),
                 horizontalArrangement = Arrangement.spacedBy(CompassWideLayout.Spacing),
@@ -16246,18 +16260,18 @@ import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 /**
  * Geometry shared by the wide (landscape) Qibla screen and the calibration overlay.
  *
- * Both lay out two panes with the SAME outer padding, spacing and weights, so each pane has the
- * same width and position in both. Content centered inside a pane therefore sits on the same
- * vertical line in both: the compass dial and the figure-8, and the Recalibrate and Done buttons.
+ * Both lay out two panes with the SAME outer padding, spacing and weights,
+ * so each pane has the same width and position in both.
+ * Content centered inside a pane therefore sits on the same vertical line in both:
+ * the compass dial and the figure-8, and the Recalibrate and Done buttons.
  * Change a value here and both screens move together.
  */
 internal object CompassWideLayout {
-    val HorizontalPadding = ScreenHorizontalPadding
     val VerticalPadding = 16.dp
     val Spacing = 16.dp
 
     /** Start pane: compass dial / figure-8 animation. */
-    const val DialPaneWeight = 1.2f
+    const val DialPaneWeight = 1f
 
     /** End pane: status card / calibration text. */
     const val SidePaneWeight = 1f
@@ -17083,19 +17097,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17122,6 +17131,7 @@ import com.mhq.salati.qibla.ui.components.RotatingCompassDial
 import com.mhq.salati.qibla.ui.components.sensorStatus
 import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 import com.mhq.salati.shared.ui.isWideLayout
+import com.mhq.salati.shared.ui.screenHorizontalMargin
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
 private val NarrowCardMargin = ScreenHorizontalPadding
@@ -17153,17 +17163,13 @@ fun QiblaContentSuccess(
     onRecalibrateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val contentModifier = modifier
-        .fillMaxSize()
-        .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
-
     if (isWideLayout()) {
         QiblaWideContent(
             deviceHeading = deviceHeading,
             qiblaBearing = qiblaBearing,
             compassAccuracy = compassAccuracy,
             onRecalibrateClick = onRecalibrateClick,
-            modifier = contentModifier
+            modifier = modifier.fillMaxSize()
         )
     } else {
         QiblaNarrowContent(
@@ -17171,7 +17177,7 @@ fun QiblaContentSuccess(
             qiblaBearing = qiblaBearing,
             compassAccuracy = compassAccuracy,
             onRecalibrateClick = onRecalibrateClick,
-            modifier = contentModifier
+            modifier = modifier.fillMaxSize()
         )
     }
 }
@@ -17184,72 +17190,89 @@ private fun QiblaWideContent(
     onRecalibrateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(CompassWideLayout.Spacing),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(
-            horizontal = CompassWideLayout.HorizontalPadding,
-            vertical = CompassWideLayout.VerticalPadding)
-    ) {
-        // The dial takes the largest square that fits this pane (5% left for its shadow).
-        BoxWithConstraints(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .weight(CompassWideLayout.DialPaneWeight)
-                .fillMaxHeight()
-        ) {
-            RotatingCompassDial(
-                deviceHeading = deviceHeading,
-                qiblaBearing = qiblaBearing,
-                modifier = Modifier.size(minOf(maxWidth, maxHeight) * 0.95f)
-            )
-        }
+    BoxWithConstraints(modifier = modifier) {
+        val margin = screenHorizontalMargin()
+        val paneWidth = (maxWidth - margin * 2 - CompassWideLayout.Spacing) / 2
+        val paneHeight = maxHeight - CompassWideLayout.VerticalPadding * 2
+        val dialSize = minOf(paneWidth, paneHeight) * 0.95f
+        val cardWidth = (paneWidth + dialSize) / 2
 
-        QiblaCard(
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(CompassWideLayout.Spacing),
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .weight(CompassWideLayout.SidePaneWeight)
-                .fillMaxHeight()
+                .fillMaxSize()
+                .padding(horizontal = margin, vertical = CompassWideLayout.VerticalPadding)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(24.dp)
+                    .weight(1f)
+                    .fillMaxHeight()
             ) {
-                val (label, dotColor) = compassAccuracy.sensorStatus()
+                RotatingCompassDial(
+                    deviceHeading = deviceHeading,
+                    qiblaBearing = qiblaBearing,
+                    modifier = Modifier.size(dialSize)
+                )
+            }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .background(dotColor, CircleShape)
-                    )
-                    Spacer(Modifier.width(10.dp))
-                    Text(
-                        text = label,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
-
-                Spacer(Modifier.height(24.dp))
-
-                TextButton(
-                    onClick = onRecalibrateClick,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-                    colors = ButtonDefaults.textButtonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                    ),
-                    modifier = Modifier.fillMaxWidth(0.8f)
+            Box(
+                contentAlignment = Alignment.CenterEnd,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            ) {
+                QiblaCard(
+                    modifier = Modifier
+                        .width(cardWidth)
+                        .fillMaxHeight()
                 ) {
-                    Text(
-                        text = stringResource(R.string.recalibrate),
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(24.dp)
+                    ) {
+                        val (label, dotColor) = compassAccuracy.sensorStatus()
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .background(dotColor, CircleShape)
+                            )
+                            Spacer(Modifier.width(10.dp))
+                            Text(
+                                text = label,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+
+                        Spacer(Modifier.height(24.dp))
+
+                        TextButton(
+                            onClick = onRecalibrateClick,
+                            border = BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                            ),
+                            colors = ButtonDefaults.textButtonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            ),
+                            modifier = Modifier.fillMaxWidth(0.8f)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.recalibrate),
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -17266,7 +17289,6 @@ private fun QiblaNarrowContent(
 ) {
     BoxWithConstraints(modifier = modifier) {
         val cardWidth = minOf(maxWidth - NarrowCardMargin * 2, NarrowCardMaxWidth)
-        // Limited by width first (as before), then by the height that is really left.
         val dialSize = minOf(cardWidth * 0.85f - 16.dp, maxHeight - NarrowChromeHeight)
             .coerceIn(MinDialSize, MaxDialSize)
 
@@ -18786,6 +18808,231 @@ private fun SettingsSwitchRowPreview() {
 }
 ```
 
+## app\src\main\java\com\mhq\salati\settings\ui\screens\AboutSection.kt
+
+```kotlin
+package com.mhq.salati.settings.ui.screens
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.StarRate
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.mhq.salati.R
+import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
+import com.mhq.salati.settings.ui.components.SettingsActionRow
+import com.mhq.salati.settings.ui.components.SettingsSectionHeader
+import com.mhq.salati.shared.ui.components.GroupCard
+import com.mhq.salati.shared.ui.components.GroupDivider
+
+@Composable
+fun AboutSection(appVersion: String, onIntent: (Intent) -> Unit) {
+    SettingsSectionHeader(stringResource(R.string.about))
+    GroupCard {
+        SettingsActionRow(
+            icon = Icons.Default.StarRate,
+            title = stringResource(R.string.rate_salati),
+            onClick = { onIntent(Intent.RateApp) }
+        )
+        GroupDivider()
+        SettingsActionRow(
+            icon = Icons.Default.Share,
+            title = stringResource(R.string.share_with_friends),
+            onClick = { onIntent(Intent.ShareApp) }
+        )
+        GroupDivider()
+        SettingsActionRow(
+            icon = Icons.Default.Email,
+            title = stringResource(R.string.contact_support),
+            onClick = { onIntent(Intent.ContactSupport) }
+        )
+        GroupDivider()
+        SettingsActionRow(
+            icon = Icons.Default.Info,
+            title = stringResource(R.string.version),
+            trailingText = appVersion,
+            onClick = null
+        )
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\settings\ui\screens\AppearanceSection.kt
+
+```kotlin
+package com.mhq.salati.settings.ui.screens
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.mhq.salati.R
+import com.mhq.salati.settings.presentation.SelectorType
+import com.mhq.salati.settings.presentation.contract.SettingsContract
+import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
+import com.mhq.salati.settings.ui.components.SettingsSectionHeader
+import com.mhq.salati.settings.ui.displayNameRes
+import com.mhq.salati.shared.ui.components.ActionRow
+import com.mhq.salati.shared.ui.components.GroupCard
+import com.mhq.salati.shared.ui.components.GroupDivider
+
+@Composable
+fun AppearanceSection(state: SettingsContract.State, onIntent: (Intent) -> Unit) {
+    SettingsSectionHeader(stringResource(R.string.appearance))
+    GroupCard {
+        ActionRow(
+            icon = Icons.Default.DarkMode,
+            title = stringResource(R.string.theme),
+            valueLabel = stringResource(state.themeMode.displayNameRes),
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.Theme)) }
+        )
+        GroupDivider()
+        ActionRow(
+            icon = Icons.Default.Language,
+            title = stringResource(R.string.language),
+            valueLabel = stringResource(state.language.displayNameRes),
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.Language)) }
+        )
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\settings\ui\screens\HijriCalendarSection.kt
+
+```kotlin
+package com.mhq.salati.settings.ui.screens
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.mhq.salati.R
+import com.mhq.salati.settings.presentation.contract.SettingsContract
+import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
+import com.mhq.salati.settings.ui.components.SettingsSectionHeader
+import com.mhq.salati.settings.ui.components.SettingsStepperRow
+import com.mhq.salati.shared.ui.components.GroupCard
+
+@Composable
+fun HijriCalendarSection(state: SettingsContract.State, onIntent: (Intent) -> Unit) {
+    SettingsSectionHeader(stringResource(R.string.hijri_calendar))
+    GroupCard {
+        SettingsStepperRow(
+            icon = Icons.Default.CalendarMonth,
+            title = stringResource(R.string.date_adjustment),
+            subtitle = stringResource(R.string.correct_for_local_moon_sighting),
+            value = state.hijriDateOffset,
+            onIncrement = { onIntent(Intent.IncrementHijriOffset) },
+            onDecrement = { onIntent(Intent.DecrementHijriOffset) }
+        )
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\settings\ui\screens\NotificationsSection.kt
+
+```kotlin
+package com.mhq.salati.settings.ui.screens
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.mhq.salati.R
+import com.mhq.salati.settings.presentation.SelectorType
+import com.mhq.salati.settings.presentation.contract.SettingsContract
+import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
+import com.mhq.salati.settings.ui.components.SettingsSectionHeader
+import com.mhq.salati.settings.ui.components.SettingsSwitchRow
+import com.mhq.salati.settings.ui.displayNameRes
+import com.mhq.salati.shared.ui.components.ActionRow
+import com.mhq.salati.shared.ui.components.GroupCard
+import com.mhq.salati.shared.ui.components.GroupDivider
+
+@Composable
+fun NotificationsSection(state: SettingsContract.State, onIntent: (Intent) -> Unit) {
+    SettingsSectionHeader(stringResource(R.string.notifications))
+    GroupCard {
+        SettingsSwitchRow(
+            icon = Icons.Default.NotificationsActive,
+            title = stringResource(R.string.prayer_notifications),
+            subtitle = stringResource(R.string.get_alerted_and_notified_at_each_prayer_time),
+            isChecked = state.notificationsEnabled && state.hasNotificationPermission,
+            onCheckedChange = { onIntent(Intent.ToggleNotifications(it)) }
+        )
+        GroupDivider()
+        ActionRow(
+            icon = Icons.Default.MusicNote,
+            title = stringResource(R.string.adhan_sound),
+            valueLabel = stringResource(state.adhanSound.displayNameRes),
+            isEnabled = state.notificationsEnabled,
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.AdhanSound)) }
+        )
+        GroupDivider()
+        ActionRow(
+            icon = Icons.Default.MusicNote,
+            title = stringResource(R.string.custom_alarm_sound),
+            valueLabel = stringResource(state.customAlarmSound.displayNameRes),
+            isEnabled = state.notificationsEnabled,
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.CustomAlarmSound)) }
+        )
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\settings\ui\screens\PrayerCalculationSection.kt
+
+```kotlin
+package com.mhq.salati.settings.ui.screens
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.School
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.mhq.salati.R
+import com.mhq.salati.settings.presentation.SelectorType
+import com.mhq.salati.settings.presentation.contract.SettingsContract
+import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
+import com.mhq.salati.settings.ui.components.SettingsSectionHeader
+import com.mhq.salati.settings.ui.displayNameRes
+import com.mhq.salati.shared.ui.components.ActionRow
+import com.mhq.salati.shared.ui.components.GroupCard
+import com.mhq.salati.shared.ui.components.GroupDivider
+
+@Composable
+fun PrayerCalculationSection(state: SettingsContract.State, onIntent: (Intent) -> Unit) {
+    SettingsSectionHeader(stringResource(R.string.prayer_calculation))
+    GroupCard {
+        ActionRow(
+            icon = Icons.Default.Explore,
+            title = stringResource(R.string.calculation_method),
+            valueLabel = stringResource(state.calculationMethod.displayNameRes),
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.CalculationMethod)) }
+        )
+        GroupDivider()
+        ActionRow(
+            icon = Icons.Default.School,
+            title = stringResource(R.string.asr_madhab),
+            valueLabel = stringResource(state.madhab.displayNameRes),
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.Madhab)) }
+        )
+        GroupDivider()
+        ActionRow(
+            icon = Icons.Default.Schedule,
+            title = stringResource(R.string.time_format),
+            valueLabel = stringResource(state.timeFormat.displayNameRes),
+            onClick = { onIntent(Intent.OpenSelector(SelectorType.TimeFormat)) }
+        )
+    }
+}
+```
+
 ## app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsContainer.kt
 
 ```kotlin
@@ -18944,78 +19191,23 @@ package com.mhq.salati.settings.ui.screens
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Explore
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.NotificationsActive
-import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.mhq.salati.R
-import com.mhq.salati.settings.presentation.SelectorType
 import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
 import com.mhq.salati.settings.presentation.contract.SettingsContract.State
-import com.mhq.salati.settings.ui.components.SettingsActionRow
-import com.mhq.salati.settings.ui.components.SettingsSectionHeader
 import com.mhq.salati.settings.ui.components.SettingsSelectionSheet
-import com.mhq.salati.settings.ui.components.SettingsStepperRow
-import com.mhq.salati.settings.ui.components.SettingsSwitchRow
-import com.mhq.salati.settings.ui.displayNameRes
-import com.mhq.salati.shared.ui.ScreenHorizontalPadding
-import com.mhq.salati.shared.ui.components.ActionRow
-import com.mhq.salati.shared.ui.components.GroupCard
-import com.mhq.salati.shared.ui.components.GroupDivider
 import com.mhq.salati.shared.ui.components.TabHeader
 import com.mhq.salati.shared.ui.isWideLayout
-import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.theme.SalatiTheme
-
-/** Tall screens: the settings list never stretches wider than this (big portrait tablets). */
-private val SettingsPortraitMaxWidth = 560.dp
-
-/** Wide screens (landscape, tablets, foldables, split-screen). */
-private object SettingsWideLayout {
-    /** A pane's rows never stretch wider than this, even when the pane itself is huge. */
-    val PaneMaxWidth = 420.dp
-
-    val PaneSpacing = 24.dp
-}
 
 /**
  * Settings tab.
@@ -19076,260 +19268,6 @@ fun SettingsContent(
     }
 }
 
-/**
- * One centered list. Each section is its own [LazyColumn] item (real laziness), and the list is
- * bounded by [SettingsPortraitMaxWidth] so rows don't stretch on tablets. Display-cutout insets
- * keep the rows clear of a notch.
- */
-@Composable
-private fun SettingsNarrowContent(
-    state: State,
-    appVersion: String,
-    onIntent: (Intent) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        contentAlignment = Alignment.TopCenter,
-        modifier = modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
-            .navigationBarsPadding()
-            .padding(bottom = BottomNavBarDefaults.Height)
-    ) {
-        LazyColumn(
-            contentPadding = PaddingValues(
-                start = ScreenHorizontalPadding,
-                end = ScreenHorizontalPadding,
-                top = 24.dp,
-                bottom = 40.dp
-            ),
-            modifier = Modifier
-                .fillMaxHeight()
-                .widthIn(max = SettingsPortraitMaxWidth)
-        ) {
-            item(key = "notifications") {
-                NotificationsSection(state = state, onIntent = onIntent)
-            }
-
-            item(key = "calculation") {
-                SectionGap()
-                PrayerCalculationSection(state = state, onIntent = onIntent)
-            }
-
-            item(key = "appearance") {
-                SectionGap()
-                AppearanceSection(state = state, onIntent = onIntent)
-            }
-
-            item(key = "hijri") {
-                SectionGap()
-                HijriCalendarSection(state = state, onIntent = onIntent)
-            }
-
-            item(key = "about") {
-                SectionGap()
-                AboutSection(appVersion = appVersion, onIntent = onIntent)
-            }
-        }
-    }
-}
-
-/**
- * Two panes side by side, balanced by section count.
- *
- * Both panes scroll when the window is too short (small landscape, large font scale, Arabic):
- * `fillMaxHeight().verticalScroll()` keeps the content centered while it fits, exactly like the
- * Tracker panes. Display-cutout insets keep both panes clear of a notch in landscape.
- */
-@Composable
-private fun SettingsWideContent(
-    state: State,
-    appVersion: String,
-    onIntent: (Intent) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(SettingsWideLayout.PaneSpacing),
-        modifier = modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
-            .navigationBarsPadding()
-            .padding(
-                start = ScreenHorizontalPadding,
-                end = ScreenHorizontalPadding,
-                bottom = BottomNavBarDefaults.Height
-            )
-    ) {
-        SettingsPane(modifier = Modifier.weight(1f)) {
-            NotificationsSection(state = state, onIntent = onIntent)
-            SectionGap()
-            PrayerCalculationSection(state = state, onIntent = onIntent)
-        }
-
-        SettingsPane(modifier = Modifier.weight(1f)) {
-            AppearanceSection(state = state, onIntent = onIntent)
-            SectionGap()
-            HijriCalendarSection(state = state, onIntent = onIntent)
-            SectionGap()
-            AboutSection(appVersion = appVersion, onIntent = onIntent)
-        }
-    }
-}
-
-/**
- * One scrollable, horizontally bounded pane. The inner column is capped at
- * [SettingsWideLayout.PaneMaxWidth] and centered, so rows keep a sane width on tablets.
- */
-@Composable
-private fun SettingsPane(
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState())
-            .padding(vertical = 16.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .widthIn(max = SettingsWideLayout.PaneMaxWidth)
-                .fillMaxWidth(),
-            content = content
-        )
-    }
-}
-
-@Composable
-private fun SectionGap() {
-    Spacer(Modifier.height(28.dp))
-}
-
-@Composable
-private fun NotificationsSection(state: State, onIntent: (Intent) -> Unit) {
-    SettingsSectionHeader(stringResource(R.string.notifications))
-    GroupCard {
-        SettingsSwitchRow(
-            icon = Icons.Default.NotificationsActive,
-            title = stringResource(R.string.prayer_notifications),
-            subtitle = stringResource(R.string.get_alerted_and_notified_at_each_prayer_time),
-            isChecked = state.notificationsEnabled && state.hasNotificationPermission,
-            onCheckedChange = { onIntent(Intent.ToggleNotifications(it)) }
-        )
-        GroupDivider()
-        ActionRow(
-            icon = Icons.Default.MusicNote,
-            title = stringResource(R.string.adhan_sound),
-            valueLabel = stringResource(state.adhanSound.displayNameRes),
-            isEnabled = state.notificationsEnabled,
-            onClick = { onIntent(Intent.OpenSelector(SelectorType.AdhanSound)) }
-        )
-        GroupDivider()
-        ActionRow(
-            icon = Icons.Default.MusicNote,
-            title = stringResource(R.string.custom_alarm_sound),
-            valueLabel = stringResource(state.customAlarmSound.displayNameRes),
-            isEnabled = state.notificationsEnabled,
-            onClick = { onIntent(Intent.OpenSelector(SelectorType.CustomAlarmSound)) }
-        )
-    }
-}
-
-@Composable
-private fun PrayerCalculationSection(state: State, onIntent: (Intent) -> Unit) {
-    SettingsSectionHeader(stringResource(R.string.prayer_calculation))
-    GroupCard {
-        ActionRow(
-            icon = Icons.Default.Explore,
-            title = stringResource(R.string.calculation_method),
-            valueLabel = stringResource(state.calculationMethod.displayNameRes),
-            onClick = { onIntent(Intent.OpenSelector(SelectorType.CalculationMethod)) }
-        )
-        GroupDivider()
-        ActionRow(
-            icon = Icons.Default.School,
-            title = stringResource(R.string.asr_madhab),
-            valueLabel = stringResource(state.madhab.displayNameRes),
-            onClick = { onIntent(Intent.OpenSelector(SelectorType.Madhab)) }
-        )
-        GroupDivider()
-        ActionRow(
-            icon = Icons.Default.Schedule,
-            title = stringResource(R.string.time_format),
-            valueLabel = stringResource(state.timeFormat.displayNameRes),
-            onClick = { onIntent(Intent.OpenSelector(SelectorType.TimeFormat)) }
-        )
-    }
-}
-
-@Composable
-private fun AppearanceSection(state: State, onIntent: (Intent) -> Unit) {
-    SettingsSectionHeader(stringResource(R.string.appearance))
-    GroupCard {
-        ActionRow(
-            icon = Icons.Default.DarkMode,
-            title = stringResource(R.string.theme),
-            valueLabel = stringResource(state.themeMode.displayNameRes),
-            onClick = { onIntent(Intent.OpenSelector(SelectorType.Theme)) }
-        )
-        GroupDivider()
-        ActionRow(
-            icon = Icons.Default.Language,
-            title = stringResource(R.string.language),
-            valueLabel = stringResource(state.language.displayNameRes),
-            onClick = { onIntent(Intent.OpenSelector(SelectorType.Language)) }
-        )
-    }
-}
-
-@Composable
-private fun HijriCalendarSection(state: State, onIntent: (Intent) -> Unit) {
-    SettingsSectionHeader(stringResource(R.string.hijri_calendar))
-    GroupCard {
-        SettingsStepperRow(
-            icon = Icons.Default.CalendarMonth,
-            title = stringResource(R.string.date_adjustment),
-            subtitle = stringResource(R.string.correct_for_local_moon_sighting),
-            value = state.hijriDateOffset,
-            onIncrement = { onIntent(Intent.IncrementHijriOffset) },
-            onDecrement = { onIntent(Intent.DecrementHijriOffset) }
-        )
-    }
-}
-
-@Composable
-private fun AboutSection(appVersion: String, onIntent: (Intent) -> Unit) {
-    SettingsSectionHeader(stringResource(R.string.about))
-    GroupCard {
-        SettingsActionRow(
-            icon = Icons.Default.StarRate,
-            title = stringResource(R.string.rate_salati),
-            onClick = { onIntent(Intent.RateApp) }
-        )
-        GroupDivider()
-        SettingsActionRow(
-            icon = Icons.Default.Share,
-            title = stringResource(R.string.share_with_friends),
-            onClick = { onIntent(Intent.ShareApp) }
-        )
-        GroupDivider()
-        SettingsActionRow(
-            icon = Icons.Default.Email,
-            title = stringResource(R.string.contact_support),
-            onClick = { onIntent(Intent.ContactSupport) }
-        )
-        GroupDivider()
-        SettingsActionRow(
-            icon = Icons.Default.Info,
-            title = stringResource(R.string.version),
-            trailingText = appVersion,
-            onClick = null
-        )
-    }
-}
-
 @Preview(name = "Portrait", showSystemUi = true)
 @Preview(name = "Landscape", device = "spec:width=800dp,height=400dp,dpi=440", showSystemUi = true)
 @Preview(name = "Small landscape", device = "spec:width=640dp,height=320dp,dpi=420", showSystemUi = true)
@@ -19349,6 +19287,226 @@ private fun SettingsContentPreview() {
             appVersion = "1.0.4-release",
             onIntent = {}
         )
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsLayout.kt
+
+```kotlin
+package com.mhq.salati.settings.ui.screens
+
+import androidx.compose.ui.unit.dp
+
+/** Wide screens (landscape, tablets, foldables, split-screen). */
+internal object SettingsLayout {
+    /** Tall screens: the settings list never stretches wider than this (big portrait tablets). */
+    val SettingsPortraitMaxWidth = 560.dp
+
+    /** A pane's rows never stretch wider than this, even when the pane itself is huge. */
+    val PaneMaxWidth = 420.dp
+
+    val PaneSpacing = 24.dp
+}
+```
+
+## app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsNarrowContent.kt
+
+```kotlin
+package com.mhq.salati.settings.ui.screens
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.mhq.salati.settings.presentation.contract.SettingsContract
+import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
+import com.mhq.salati.settings.ui.screens.SettingsLayout.SettingsPortraitMaxWidth
+import com.mhq.salati.shared.ui.ScreenHorizontalPadding
+import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
+
+/**
+ * One centered list. Each section is its own [LazyColumn] item (real laziness),
+ * and the list is bounded by [SettingsPortraitMaxWidth] so rows don't stretch on tablets.
+ * Display-cutout insets keep the rows clear of a notch.
+ */
+@Composable
+fun SettingsNarrowContent(
+    state: SettingsContract.State,
+    appVersion: String,
+    onIntent: (Intent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        contentAlignment = Alignment.TopCenter,
+        modifier = modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
+            .padding(bottom = BottomNavBarDefaults.Height)
+    ) {
+        LazyColumn(
+            contentPadding = PaddingValues(
+                start = ScreenHorizontalPadding,
+                end = ScreenHorizontalPadding,
+                top = 24.dp,
+                bottom = 40.dp
+            ),
+            modifier = Modifier
+                .fillMaxHeight()
+                .widthIn(max = SettingsPortraitMaxWidth)
+        ) {
+            item(key = "notifications") {
+                NotificationsSection(state = state, onIntent = onIntent)
+            }
+
+            item(key = "calculation") {
+                Spacer(Modifier.height(28.dp))
+                PrayerCalculationSection(state = state, onIntent = onIntent)
+            }
+
+            item(key = "appearance") {
+                Spacer(Modifier.height(28.dp))
+                AppearanceSection(state = state, onIntent = onIntent)
+            }
+
+            item(key = "hijri") {
+                Spacer(Modifier.height(28.dp))
+                HijriCalendarSection(state = state, onIntent = onIntent)
+            }
+
+            item(key = "about") {
+                Spacer(Modifier.height(28.dp))
+                AboutSection(appVersion = appVersion, onIntent = onIntent)
+            }
+        }
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsPane.kt
+
+```kotlin
+package com.mhq.salati.settings.ui.screens
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+/**
+ * One scrollable, horizontally bounded pane. The inner column is capped at
+ * [SettingsLayout.PaneMaxWidth] and centered, so rows keep a sane width on tablets.
+ */
+@Composable
+fun SettingsPane(
+    modifier: Modifier = Modifier,
+    horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        horizontalAlignment = horizontalAlignment,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 16.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .widthIn(max = SettingsLayout.PaneMaxWidth)
+                .fillMaxWidth(),
+            content = content
+        )
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsWideContent.kt
+
+```kotlin
+package com.mhq.salati.settings.ui.screens
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.mhq.salati.settings.presentation.contract.SettingsContract
+import com.mhq.salati.settings.presentation.contract.SettingsContract.Intent
+import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
+import com.mhq.salati.shared.ui.screenHorizontalMargin
+
+/**
+ * Two panes side by side, balanced by section count.
+ *
+ * Both panes scroll when the window is too short (small landscape, large font scale, Arabic):
+ * `fillMaxHeight().verticalScroll()` keeps the content centered while it fits,
+ * exactly like the Tracker panes. Display-cutout insets keep panes clear of a notch in landscape.
+ */
+@Composable
+fun SettingsWideContent(
+    state: SettingsContract.State,
+    appVersion: String,
+    onIntent: (Intent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(SettingsLayout.PaneSpacing),
+        modifier = modifier
+            .fillMaxSize()
+            .windowInsetsPadding(
+                WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal)
+            )
+            .navigationBarsPadding()
+            .padding(
+                start = screenHorizontalMargin(),
+                end = screenHorizontalMargin(),
+                bottom = BottomNavBarDefaults.Height
+            )
+    ) {
+        SettingsPane(horizontalAlignment = Alignment.Start, modifier = Modifier.weight(1f)) {
+            NotificationsSection(state = state, onIntent = onIntent)
+            Spacer(Modifier.height(28.dp))
+            PrayerCalculationSection(state = state, onIntent = onIntent)
+        }
+
+        SettingsPane(horizontalAlignment = Alignment.Start, modifier = Modifier.weight(1f)) {
+            AppearanceSection(state = state, onIntent = onIntent)
+            Spacer(Modifier.height(28.dp))
+            HijriCalendarSection(state = state, onIntent = onIntent)
+            Spacer(Modifier.height(28.dp))
+            AboutSection(appVersion = appVersion, onIntent = onIntent)
+        }
     }
 }
 ```
@@ -20711,9 +20869,9 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -20735,8 +20893,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 import com.mhq.salati.shared.ui.isWideLayout
+import com.mhq.salati.shared.ui.screenHorizontalMargin
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.shared.ui.theme.tabHeaderGradient
 
@@ -20765,10 +20923,10 @@ fun TabHeader(
             .background(MaterialTheme.colorScheme.tabHeaderGradient)
             .statusBarsPadding()
             .windowInsetsPadding(
-                WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
+                WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal)
             )
             .heightIn(min = if (isWide) 64.dp else 112.dp)
-            .padding(vertical = if (isWide) 8.dp else 24.dp, horizontal = ScreenHorizontalPadding)
+            .padding(vertical = if (isWide) 8.dp else 24.dp, horizontal = screenHorizontalMargin())
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -21786,8 +21944,13 @@ private fun SalatiBottomBar(
 ```kotlin
 package com.mhq.salati.shared.ui
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /** Horizontal margin shared by the tab header and the content of every tab screen. */
@@ -21798,6 +21961,29 @@ fun isWideLayout(): Boolean {
     val c = LocalConfiguration.current
     return c.screenWidthDp > c.screenHeightDp
 }
+
+/**
+ * The larger of the left and right display-cutout insets.
+ * Applying it on BOTH sides keeps the margins symmetric whichever way the phone is rotated.
+ * Zero in portrait.
+ */
+@Composable
+fun symmetricCutoutInset(): Dp {
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val cutout = WindowInsets.displayCutout
+    return with(density) {
+        maxOf(
+            cutout.getLeft(density, layoutDirection),
+            cutout.getRight(density, layoutDirection)
+        ).toDp()
+    }
+}
+
+/** Horizontal margin for tab headers and content:
+ * the base padding plus the symmetric cutout inset. */
+@Composable
+fun screenHorizontalMargin(): Dp = ScreenHorizontalPadding + symmetricCutoutInset()
 ```
 
 ## app\src\main\java\com\mhq\salati\shared\ui\screens\LoadingContent.kt
