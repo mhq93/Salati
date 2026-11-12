@@ -10,11 +10,25 @@ import java.time.LocalDate
 import java.time.YearMonth
 import javax.inject.Inject
 
-/** How each recorded day of [yearMonth] went, for the calendar colours. */
+/**
+ * How each recorded day of [yearMonth] went, for the calendar colors.
+ *
+ * Mapping per day, first rule that applies wins: a day after today is [DayStatus.FUTURE];
+ * any MISSED prayer makes it [DayStatus.HAS_MISSED];
+ * all five major prayers PRAYED makes it [DayStatus.ALL_PRAYED];
+ * anything else is [DayStatus.IN_PROGRESS].
+ *
+ * Days with no records at all are absent from the map,
+ * so the calendar draws them as unmarked.
+ */
 class ObserveMonthDayStatusUseCase @Inject constructor(
     private val observePrayerRecordsForMonthUseCase: ObservePrayerRecordsForMonthUseCase,
     private val clock: Clock
 ) {
+    /**
+     * @param yearMonth the month to summarize
+     * @return a live map of day to status for the days that have records
+     */
     operator fun invoke(yearMonth: YearMonth): Flow<Map<LocalDate, DayStatus>> =
         observePrayerRecordsForMonthUseCase(yearMonth).map { recordsByDate ->
             val today = clock.today()

@@ -1,8 +1,8 @@
 # Salati project export
 
-- Generated: 2026-11-11 07:07
+- Generated: 2026-11-12 00:09
 - PowerShell: 5.1.19041.6456
-- Files embedded: 421
+- Files embedded: 422
 - Files listed only (binary / too large / sensitive): 29
 - Secrets: local.properties, google-services.json, keystores and .env files are skipped; key/secret/password/token string literals are replaced with <REDACTED>.
 
@@ -10,9 +10,10 @@
 
 ```text
 branch: dev
-last commit: 54af52c 2026-11-09 redesign: redesigned Tracker Screen to handle different screen sizes and device rotation
+last commit: a4d0d79 2026-11-11 ` redesign: redesigned Custom Alarms Screen to handle different screen sizes and device rotation + Code refactor and cleanup + adding tests
 
 recent commits:
+  a4d0d79 2026-11-11 ` redesign: redesigned Custom Alarms Screen to handle different screen sizes and device rotation + Code refactor and cleanup + adding tests
   54af52c 2026-11-09 redesign: redesigned Tracker Screen to handle different screen sizes and device rotation
   4c4a5cf 2026-11-09 wip: modified Type.kt to handle vertical expansion in UI elements upon switching app language to Arabic, redesigned Home and Qibla to handle different screen sizes and device rotation. Qibla is confirmed done, pending: rest of the screens
   33831c0 2026-11-08 fix: cancelled notification auto-dismiss
@@ -27,42 +28,76 @@ recent commits:
   53d5ca3 2026-11-01 refactor: architecture cleanups, refactored datastore models, renamed intents and moved some files
   da49d62 2026-11-01 refactor: stop Presentation from holding state and logic that belongs in Domain
   2cbd0d0 2026-11-01 refactor: removed UiText and R.string references to make UI depend only on Presentation
-  39371da 2026-10-31 refactor: make the UI layer depend only on Presentation
 
 working tree changes (git status --short, first 80):
-   M Salati_Full.md
-   M app/src/main/java/com/mhq/salati/adhan/ui/service/AdhanPlaybackService.kt
-   M app/src/main/java/com/mhq/salati/alarms/presentation/mapper/CustomAlarmUiMapper.kt
-   M app/src/main/java/com/mhq/salati/alarms/ui/components/CustomAlarmCard.kt
-   M app/src/main/java/com/mhq/salati/alarms/ui/components/CustomAlarmSheet.kt
-   M app/src/main/java/com/mhq/salati/alarms/ui/notification/CustomAlarmNotifier.kt
    M app/src/main/java/com/mhq/salati/alarms/ui/screens/CustomAlarmsContent.kt
-   M app/src/main/java/com/mhq/salati/locationpicker/presentation/viewmodel/LocationPickerViewModel.kt
-   M app/src/main/java/com/mhq/salati/onboarding/ui/screens/OnboardingContent.kt
-   M app/src/main/java/com/mhq/salati/qibla/presentation/handlers/QiblaLocationHandler.kt
-   M app/src/main/java/com/mhq/salati/qibla/presentation/handlers/QiblaLocationLoad.kt
+   M app/src/main/java/com/mhq/salati/home/domain/model/PrayerCountdown.kt
+   M app/src/main/java/com/mhq/salati/home/domain/model/PrayerProgress.kt
+   M app/src/main/java/com/mhq/salati/home/domain/model/PrayerTimesError.kt
+   M app/src/main/java/com/mhq/salati/home/domain/model/PrayerTimesLoad.kt
+   M app/src/main/java/com/mhq/salati/home/domain/model/PrayerTimesTick.kt
+   M app/src/main/java/com/mhq/salati/home/domain/model/PrayerWindow.kt
+   M app/src/main/java/com/mhq/salati/home/domain/service/DayNavigator.kt
+   M app/src/main/java/com/mhq/salati/home/domain/usecases/CalculateCurrentPrayerNameUseCase.kt
+   M app/src/main/java/com/mhq/salati/home/domain/usecases/CalculatePastPrayersUseCase.kt
+   M app/src/main/java/com/mhq/salati/home/domain/usecases/CalculatePrayerStatusUseCase.kt
+   M app/src/main/java/com/mhq/salati/home/domain/usecases/CalculatePrayerWindowUseCase.kt
+   M app/src/main/java/com/mhq/salati/home/domain/usecases/LoadPrayerTimesUseCase.kt
+   M app/src/main/java/com/mhq/salati/home/domain/usecases/ObservePrayerCountdownUseCase.kt
+   M app/src/main/java/com/mhq/salati/home/domain/usecases/ObservePrayerTimesTicksUseCase.kt
+   M app/src/main/java/com/mhq/salati/home/domain/usecases/RefreshPrayerStatusUseCase.kt
+   M app/src/main/java/com/mhq/salati/home/domain/usecases/ResolvePrayerWindowForDisplayUseCase.kt
+   M app/src/main/java/com/mhq/salati/location/domain/model/CoordinatesLookup.kt
+   M app/src/main/java/com/mhq/salati/location/domain/model/GeocodeResult.kt
+   M app/src/main/java/com/mhq/salati/location/domain/model/LocationPrerequisites.kt
+   M app/src/main/java/com/mhq/salati/location/domain/model/LocationResolution.kt
+   M app/src/main/java/com/mhq/salati/location/domain/model/LocationSearchResult.kt
+   M app/src/main/java/com/mhq/salati/location/domain/model/SavedLocation.kt
+   M app/src/main/java/com/mhq/salati/location/domain/repo/GeocoderProvider.kt
+   M app/src/main/java/com/mhq/salati/location/domain/repo/LocationProvider.kt
+   M app/src/main/java/com/mhq/salati/location/domain/repo/LocationRepository.kt
+   M app/src/main/java/com/mhq/salati/location/domain/service/LocationLocalizer.kt
+   M app/src/main/java/com/mhq/salati/location/domain/usecases/CheckLocationPrerequisitesUseCase.kt
+   M app/src/main/java/com/mhq/salati/location/domain/usecases/ClearSavedLocationUseCase.kt
+   M app/src/main/java/com/mhq/salati/location/domain/usecases/GetCurrentCoordinatesUseCase.kt
+   M app/src/main/java/com/mhq/salati/location/domain/usecases/GetLocalizedLocationUseCase.kt
+   M app/src/main/java/com/mhq/salati/location/domain/usecases/GetSavedLocationUseCase.kt
+   M app/src/main/java/com/mhq/salati/location/domain/usecases/ResolveLocationUseCase.kt
+   M app/src/main/java/com/mhq/salati/location/domain/usecases/ReverseGeocodeLocationUseCase.kt
+   M app/src/main/java/com/mhq/salati/location/domain/usecases/SaveManualLocationUseCase.kt
+   M app/src/main/java/com/mhq/salati/location/domain/usecases/SearchLocationByNameUseCase.kt
+   M app/src/main/java/com/mhq/salati/prayertimes/domain/model/HijriDate.kt
+   M app/src/main/java/com/mhq/salati/prayertimes/domain/model/HijriDateAdjustment.kt
+   M app/src/main/java/com/mhq/salati/prayertimes/domain/model/PrayerDate.kt
+   M app/src/main/java/com/mhq/salati/prayertimes/domain/model/PrayerTimesResult.kt
+   M app/src/main/java/com/mhq/salati/prayertimes/domain/model/PrayerTimings.kt
+   M app/src/main/java/com/mhq/salati/prayertimes/domain/repo/PrayerTimesRepository.kt
+   M app/src/main/java/com/mhq/salati/prayertimes/domain/usecases/GetCachedPrayerTimesUseCase.kt
+   M app/src/main/java/com/mhq/salati/prayertimes/domain/usecases/GetPrayerTimesUseCase.kt
+   M app/src/main/java/com/mhq/salati/prayertracker/domain/model/DayStatus.kt
+   M app/src/main/java/com/mhq/salati/prayertracker/domain/model/PrayerStatus.kt
+   M app/src/main/java/com/mhq/salati/prayertracker/domain/repo/PrayerTrackerRepository.kt
+   M app/src/main/java/com/mhq/salati/prayertracker/domain/usecases/GetCurrentStreakUseCase.kt
+   M app/src/main/java/com/mhq/salati/prayertracker/domain/usecases/GetDuePrayersUseCase.kt
+  RM app/src/main/java/com/mhq/salati/home/domain/usecases/ObserveMonthDayStatusUseCase.kt -> app/src/main/java/com/mhq/salati/prayertracker/domain/usecases/ObserveMonthDayStatusUseCase.kt
+   M app/src/main/java/com/mhq/salati/prayertracker/domain/usecases/ObservePrayerRecordsForDateUseCase.kt
+   M app/src/main/java/com/mhq/salati/prayertracker/domain/usecases/ObservePrayerRecordsForMonthUseCase.kt
+   M app/src/main/java/com/mhq/salati/prayertracker/domain/usecases/SetPrayerStatusUseCase.kt
+   M app/src/main/java/com/mhq/salati/prayertracker/ui/screens/PrayerTrackerContent.kt
+   M app/src/main/java/com/mhq/salati/qibla/ui/components/CompassCalibrationOverlay.kt
+   M app/src/main/java/com/mhq/salati/qibla/ui/components/CompassWideLayout.kt
+   M app/src/main/java/com/mhq/salati/qibla/ui/screens/QiblaContentSuccess.kt
    M app/src/main/java/com/mhq/salati/settings/ui/screens/SettingsContent.kt
-   M app/src/main/java/com/mhq/salati/shared/ui/SalatiApp.kt
-   M app/src/main/java/com/mhq/salati/shared/ui/components/ActionRow.kt
+   M app/src/main/java/com/mhq/salati/shared/domain/Clock.kt
+   M app/src/main/java/com/mhq/salati/shared/domain/Coordinates.kt
+   M app/src/main/java/com/mhq/salati/shared/domain/DateKey.kt
+   M app/src/main/java/com/mhq/salati/shared/domain/HijriMonth.kt
+   M app/src/main/java/com/mhq/salati/shared/domain/MinuteOfday.kt
+   M app/src/main/java/com/mhq/salati/shared/domain/PrayerName.kt
+   M app/src/main/java/com/mhq/salati/shared/domain/PrayerNameResolver.kt
+   M app/src/main/java/com/mhq/salati/shared/domain/usecases/ResolvePrayerNameUseCase.kt
+   M app/src/main/java/com/mhq/salati/shared/ui/ScreenLayout.kt
    M app/src/main/java/com/mhq/salati/shared/ui/components/TabHeader.kt
-   M app/src/main/java/com/mhq/salati/shared/ui/navigation/BottomNavBar.kt
-   M app/src/main/java/com/mhq/salati/splash/presentation/viewmodel/SplashViewModel.kt
-   M app/src/main/res/values-ar/strings.xml
-   M app/src/main/res/values/strings.xml
-   M app/src/test/java/com/mhq/salati/prayertracker/domain/usecases/GetCurrentStreakUseCaseTest.kt
-  ?? app/src/main/java/com/mhq/salati/alarms/presentation/mapper/OffsetDirectionUiMapper.kt
-  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/AddEditAlarmFormContent.kt
-  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/AlarmTitleEditor.kt
-  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/DayBadge.kt
-  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/DayCircle.kt
-  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/OffsetDirectionSegment.kt
-  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/OffsetInlineHeadline.kt
-  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/RepeatTag.kt
-  ?? app/src/main/java/com/mhq/salati/alarms/ui/components/WeekDays.kt
-  ?? app/src/main/java/com/mhq/salati/alarms/ui/state/
-  ?? app/src/test/java/com/mhq/salati/home/
-  ?? app/src/test/java/com/mhq/salati/location/
-  ?? app/src/test/java/com/mhq/salati/testutil/
 ```
 
 ## Project tree
@@ -144,9 +179,9 @@ app\src\main\java\com\mhq\salati\alarms\presentation\model\OffsetDirectionUi.kt 
 app\src\main\java\com\mhq\salati\alarms\presentation\presenter\CustomAlarmNotificationPresenter.kt  (1.5 KB)
 app\src\main\java\com\mhq\salati\alarms\presentation\viewmodel\AlarmsViewModel.kt  (5.6 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\components\AddEditAlarmFormContent.kt  (14.9 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\components\AddEditAlarmSheet.kt  (1.8 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\components\AlarmTitleEditor.kt  (3.5 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\components\CustomAlarmCard.kt  (8.1 KB)
-app\src\main\java\com\mhq\salati\alarms\ui\components\CustomAlarmSheet.kt  (1.8 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\components\DayBadge.kt  (0.2 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\components\DayCircle.kt  (2.1 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\components\OffsetDirectionSegment.kt  (1.5 KB)
@@ -157,7 +192,7 @@ app\src\main\java\com\mhq\salati\alarms\ui\notification\CustomAlarmNotifier.kt  
 app\src\main\java\com\mhq\salati\alarms\ui\receiver\CustomAlarmIntentKeys.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\receiver\CustomAlarmReceiver.kt  (1.8 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContainer.kt  (1.7 KB)
-app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContent.kt  (9.4 KB)
+app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContent.kt  (9.5 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\screens\CustomAlarmsContentBlank.kt  (1.2 KB)
 app\src\main\java\com\mhq\salati\alarms\ui\state\AlarmFormState.kt  (0.9 KB)
 app\src\main\java\com\mhq\salati\connectivity\data\repoimpl\ConnectivityCheckerImpl.kt  (0.4 KB)
@@ -166,23 +201,22 @@ app\src\main\java\com\mhq\salati\connectivity\datasource\device\ConnectivityData
 app\src\main\java\com\mhq\salati\connectivity\di\ConnectivityModule.kt  (0.8 KB)
 app\src\main\java\com\mhq\salati\connectivity\domain\repo\ConnectivityChecker.kt  (0.1 KB)
 app\src\main\java\com\mhq\salati\connectivity\ui\components\rememberNetworkConnected.kt  (2.0 KB)
-app\src\main\java\com\mhq\salati\home\domain\model\PrayerCountdown.kt  (0.2 KB)
-app\src\main\java\com\mhq\salati\home\domain\model\PrayerProgress.kt  (0.3 KB)
-app\src\main\java\com\mhq\salati\home\domain\model\PrayerTimesError.kt  (0.2 KB)
-app\src\main\java\com\mhq\salati\home\domain\model\PrayerTimesLoad.kt  (0.6 KB)
-app\src\main\java\com\mhq\salati\home\domain\model\PrayerTimesTick.kt  (0.6 KB)
-app\src\main\java\com\mhq\salati\home\domain\model\PrayerWindow.kt  (1.4 KB)
-app\src\main\java\com\mhq\salati\home\domain\service\DayNavigator.kt  (1.6 KB)
-app\src\main\java\com\mhq\salati\home\domain\usecases\CalculateCurrentPrayerNameUseCase.kt  (1.1 KB)
-app\src\main\java\com\mhq\salati\home\domain\usecases\CalculatePastPrayersUseCase.kt  (1.0 KB)
-app\src\main\java\com\mhq\salati\home\domain\usecases\CalculatePrayerStatusUseCase.kt  (1.1 KB)
-app\src\main\java\com\mhq\salati\home\domain\usecases\CalculatePrayerWindowUseCase.kt  (3.4 KB)
-app\src\main\java\com\mhq\salati\home\domain\usecases\LoadPrayerTimesUseCase.kt  (2.9 KB)
-app\src\main\java\com\mhq\salati\home\domain\usecases\ObserveMonthDayStatusUseCase.kt  (1.4 KB)
-app\src\main\java\com\mhq\salati\home\domain\usecases\ObservePrayerCountdownUseCase.kt  (1.0 KB)
-app\src\main\java\com\mhq\salati\home\domain\usecases\ObservePrayerTimesTicksUseCase.kt  (1.8 KB)
-app\src\main\java\com\mhq\salati\home\domain\usecases\RefreshPrayerStatusUseCase.kt  (1.0 KB)
-app\src\main\java\com\mhq\salati\home\domain\usecases\ResolvePrayerWindowForDisplayUseCase.kt  (1.6 KB)
+app\src\main\java\com\mhq\salati\home\domain\model\PrayerCountdown.kt  (0.4 KB)
+app\src\main\java\com\mhq\salati\home\domain\model\PrayerProgress.kt  (0.7 KB)
+app\src\main\java\com\mhq\salati\home\domain\model\PrayerTimesError.kt  (0.6 KB)
+app\src\main\java\com\mhq\salati\home\domain\model\PrayerTimesLoad.kt  (0.9 KB)
+app\src\main\java\com\mhq\salati\home\domain\model\PrayerTimesTick.kt  (0.7 KB)
+app\src\main\java\com\mhq\salati\home\domain\model\PrayerWindow.kt  (2.1 KB)
+app\src\main\java\com\mhq\salati\home\domain\service\DayNavigator.kt  (2.0 KB)
+app\src\main\java\com\mhq\salati\home\domain\usecases\CalculateCurrentPrayerNameUseCase.kt  (1.5 KB)
+app\src\main\java\com\mhq\salati\home\domain\usecases\CalculatePastPrayersUseCase.kt  (1.4 KB)
+app\src\main\java\com\mhq\salati\home\domain\usecases\CalculatePrayerStatusUseCase.kt  (1.4 KB)
+app\src\main\java\com\mhq\salati\home\domain\usecases\CalculatePrayerWindowUseCase.kt  (4.4 KB)
+app\src\main\java\com\mhq\salati\home\domain\usecases\LoadPrayerTimesUseCase.kt  (3.7 KB)
+app\src\main\java\com\mhq\salati\home\domain\usecases\ObservePrayerCountdownUseCase.kt  (1.2 KB)
+app\src\main\java\com\mhq\salati\home\domain\usecases\ObservePrayerTimesTicksUseCase.kt  (2.5 KB)
+app\src\main\java\com\mhq\salati\home\domain\usecases\RefreshPrayerStatusUseCase.kt  (1.5 KB)
+app\src\main\java\com\mhq\salati\home\domain\usecases\ResolvePrayerWindowForDisplayUseCase.kt  (2.2 KB)
 app\src\main\java\com\mhq\salati\home\presentation\contract\HomeContract.kt  (3.1 KB)
 app\src\main\java\com\mhq\salati\home\presentation\handlers\HomeAlarmsHandler.kt  (0.9 KB)
 app\src\main\java\com\mhq\salati\home\presentation\handlers\HomeLocationHandler.kt  (2.1 KB)
@@ -220,25 +254,25 @@ app\src\main\java\com\mhq\salati\location\datasource\network\service\NominatimHt
 app\src\main\java\com\mhq\salati\location\datasource\preferences\LocationDataStore.kt  (2.2 KB)
 app\src\main\java\com\mhq\salati\location\datasource\preferences\StoredLocation.kt  (0.3 KB)
 app\src\main\java\com\mhq\salati\location\di\LocationModule.kt  (1.9 KB)
-app\src\main\java\com\mhq\salati\location\domain\model\CoordinatesLookup.kt  (0.6 KB)
-app\src\main\java\com\mhq\salati\location\domain\model\GeocodeResult.kt  (0.3 KB)
-app\src\main\java\com\mhq\salati\location\domain\model\LocationPrerequisites.kt  (0.3 KB)
-app\src\main\java\com\mhq\salati\location\domain\model\LocationResolution.kt  (0.5 KB)
-app\src\main\java\com\mhq\salati\location\domain\model\LocationSearchResult.kt  (0.2 KB)
-app\src\main\java\com\mhq\salati\location\domain\model\SavedLocation.kt  (0.6 KB)
-app\src\main\java\com\mhq\salati\location\domain\repo\GeocoderProvider.kt  (0.5 KB)
-app\src\main\java\com\mhq\salati\location\domain\repo\LocationProvider.kt  (0.2 KB)
-app\src\main\java\com\mhq\salati\location\domain\repo\LocationRepository.kt  (0.3 KB)
-app\src\main\java\com\mhq\salati\location\domain\service\LocationLocalizer.kt  (3.1 KB)
-app\src\main\java\com\mhq\salati\location\domain\usecases\CheckLocationPrerequisitesUseCase.kt  (0.9 KB)
-app\src\main\java\com\mhq\salati\location\domain\usecases\ClearSavedLocationUseCase.kt  (0.4 KB)
-app\src\main\java\com\mhq\salati\location\domain\usecases\GetCurrentCoordinatesUseCase.kt  (1.8 KB)
-app\src\main\java\com\mhq\salati\location\domain\usecases\GetLocalizedLocationUseCase.kt  (0.9 KB)
-app\src\main\java\com\mhq\salati\location\domain\usecases\GetSavedLocationUseCase.kt  (0.4 KB)
-app\src\main\java\com\mhq\salati\location\domain\usecases\ResolveLocationUseCase.kt  (2.7 KB)
-app\src\main\java\com\mhq\salati\location\domain\usecases\ReverseGeocodeLocationUseCase.kt  (0.5 KB)
-app\src\main\java\com\mhq\salati\location\domain\usecases\SaveManualLocationUseCase.kt  (0.4 KB)
-app\src\main\java\com\mhq\salati\location\domain\usecases\SearchLocationByNameUseCase.kt  (0.6 KB)
+app\src\main\java\com\mhq\salati\location\domain\model\CoordinatesLookup.kt  (1.1 KB)
+app\src\main\java\com\mhq\salati\location\domain\model\GeocodeResult.kt  (0.7 KB)
+app\src\main\java\com\mhq\salati\location\domain\model\LocationPrerequisites.kt  (0.7 KB)
+app\src\main\java\com\mhq\salati\location\domain\model\LocationResolution.kt  (0.9 KB)
+app\src\main\java\com\mhq\salati\location\domain\model\LocationSearchResult.kt  (0.4 KB)
+app\src\main\java\com\mhq\salati\location\domain\model\SavedLocation.kt  (1.0 KB)
+app\src\main\java\com\mhq\salati\location\domain\repo\GeocoderProvider.kt  (1.1 KB)
+app\src\main\java\com\mhq\salati\location\domain\repo\LocationProvider.kt  (0.7 KB)
+app\src\main\java\com\mhq\salati\location\domain\repo\LocationRepository.kt  (0.7 KB)
+app\src\main\java\com\mhq\salati\location\domain\service\LocationLocalizer.kt  (3.6 KB)
+app\src\main\java\com\mhq\salati\location\domain\usecases\CheckLocationPrerequisitesUseCase.kt  (1.1 KB)
+app\src\main\java\com\mhq\salati\location\domain\usecases\ClearSavedLocationUseCase.kt  (0.5 KB)
+app\src\main\java\com\mhq\salati\location\domain\usecases\GetCurrentCoordinatesUseCase.kt  (2.2 KB)
+app\src\main\java\com\mhq\salati\location\domain\usecases\GetLocalizedLocationUseCase.kt  (1.4 KB)
+app\src\main\java\com\mhq\salati\location\domain\usecases\GetSavedLocationUseCase.kt  (0.6 KB)
+app\src\main\java\com\mhq\salati\location\domain\usecases\ResolveLocationUseCase.kt  (3.3 KB)
+app\src\main\java\com\mhq\salati\location\domain\usecases\ReverseGeocodeLocationUseCase.kt  (0.9 KB)
+app\src\main\java\com\mhq\salati\location\domain\usecases\SaveManualLocationUseCase.kt  (0.7 KB)
+app\src\main\java\com\mhq\salati\location\domain\usecases\SearchLocationByNameUseCase.kt  (1.0 KB)
 app\src\main\java\com\mhq\salati\location\presentation\handlers\LocationPrerequisitesHandler.kt  (2.1 KB)
 app\src\main\java\com\mhq\salati\location\presentation\mapper\PrerequisitesMapper.kt  (0.5 KB)
 app\src\main\java\com\mhq\salati\location\presentation\model\PrerequisitesUi.kt  (0.3 KB)
@@ -295,26 +329,27 @@ app\src\main\java\com\mhq\salati\prayertimes\datasource\network\dto\MonthDto.kt 
 app\src\main\java\com\mhq\salati\prayertimes\datasource\network\dto\TimingsDataDto.kt  (0.2 KB)
 app\src\main\java\com\mhq\salati\prayertimes\datasource\network\dto\TimingsDto.kt  (0.7 KB)
 app\src\main\java\com\mhq\salati\prayertimes\di\PrayerTimesModule.kt  (1.2 KB)
-app\src\main\java\com\mhq\salati\prayertimes\domain\model\HijriDate.kt  (0.2 KB)
-app\src\main\java\com\mhq\salati\prayertimes\domain\model\HijriDateAdjustment.kt  (0.8 KB)
-app\src\main\java\com\mhq\salati\prayertimes\domain\model\PrayerDate.kt  (0.2 KB)
-app\src\main\java\com\mhq\salati\prayertimes\domain\model\PrayerTimesResult.kt  (0.1 KB)
-app\src\main\java\com\mhq\salati\prayertimes\domain\model\PrayerTimings.kt  (1.1 KB)
-app\src\main\java\com\mhq\salati\prayertimes\domain\repo\PrayerTimesRepository.kt  (0.7 KB)
-app\src\main\java\com\mhq\salati\prayertimes\domain\usecases\GetCachedPrayerTimesUseCase.kt  (1.1 KB)
-app\src\main\java\com\mhq\salati\prayertimes\domain\usecases\GetPrayerTimesUseCase.kt  (1.1 KB)
+app\src\main\java\com\mhq\salati\prayertimes\domain\model\HijriDate.kt  (0.4 KB)
+app\src\main\java\com\mhq\salati\prayertimes\domain\model\HijriDateAdjustment.kt  (1.2 KB)
+app\src\main\java\com\mhq\salati\prayertimes\domain\model\PrayerDate.kt  (0.4 KB)
+app\src\main\java\com\mhq\salati\prayertimes\domain\model\PrayerTimesResult.kt  (0.3 KB)
+app\src\main\java\com\mhq\salati\prayertimes\domain\model\PrayerTimings.kt  (1.3 KB)
+app\src\main\java\com\mhq\salati\prayertimes\domain\repo\PrayerTimesRepository.kt  (1.7 KB)
+app\src\main\java\com\mhq\salati\prayertimes\domain\usecases\GetCachedPrayerTimesUseCase.kt  (1.6 KB)
+app\src\main\java\com\mhq\salati\prayertimes\domain\usecases\GetPrayerTimesUseCase.kt  (1.6 KB)
 app\src\main\java\com\mhq\salati\prayertracker\data\repoimpl\PrayerTrackerRepoImpl.kt  (2.6 KB)
 app\src\main\java\com\mhq\salati\prayertracker\datasource\database\PrayerRecordDao.kt  (0.8 KB)
 app\src\main\java\com\mhq\salati\prayertracker\datasource\database\PrayerRecordEntity.kt  (0.3 KB)
 app\src\main\java\com\mhq\salati\prayertracker\di\PrayerTrackerModule.kt  (0.8 KB)
-app\src\main\java\com\mhq\salati\prayertracker\domain\model\DayStatus.kt  (0.1 KB)
-app\src\main\java\com\mhq\salati\prayertracker\domain\model\PrayerStatus.kt  (0.1 KB)
-app\src\main\java\com\mhq\salati\prayertracker\domain\repo\PrayerTrackerRepository.kt  (0.7 KB)
-app\src\main\java\com\mhq\salati\prayertracker\domain\usecases\GetCurrentStreakUseCase.kt  (1.8 KB)
-app\src\main\java\com\mhq\salati\prayertracker\domain\usecases\GetDuePrayersUseCase.kt  (1.8 KB)
-app\src\main\java\com\mhq\salati\prayertracker\domain\usecases\ObservePrayerRecordsForDateUseCase.kt  (0.4 KB)
-app\src\main\java\com\mhq\salati\prayertracker\domain\usecases\ObservePrayerRecordsForMonthUseCase.kt  (0.4 KB)
-app\src\main\java\com\mhq\salati\prayertracker\domain\usecases\SetPrayerStatusUseCase.kt  (0.5 KB)
+app\src\main\java\com\mhq\salati\prayertracker\domain\model\DayStatus.kt  (0.6 KB)
+app\src\main\java\com\mhq\salati\prayertracker\domain\model\PrayerStatus.kt  (0.4 KB)
+app\src\main\java\com\mhq\salati\prayertracker\domain\repo\PrayerTrackerRepository.kt  (1.5 KB)
+app\src\main\java\com\mhq\salati\prayertracker\domain\usecases\GetCurrentStreakUseCase.kt  (2.3 KB)
+app\src\main\java\com\mhq\salati\prayertracker\domain\usecases\GetDuePrayersUseCase.kt  (2.0 KB)
+app\src\main\java\com\mhq\salati\prayertracker\domain\usecases\ObserveMonthDayStatusUseCase.kt  (1.9 KB)
+app\src\main\java\com\mhq\salati\prayertracker\domain\usecases\ObservePrayerRecordsForDateUseCase.kt  (0.7 KB)
+app\src\main\java\com\mhq\salati\prayertracker\domain\usecases\ObservePrayerRecordsForMonthUseCase.kt  (0.7 KB)
+app\src\main\java\com\mhq\salati\prayertracker\domain\usecases\SetPrayerStatusUseCase.kt  (1.0 KB)
 app\src\main\java\com\mhq\salati\prayertracker\presentation\contract\PrayerTrackerContract.kt  (1.4 KB)
 app\src\main\java\com\mhq\salati\prayertracker\presentation\mapper\PrayerTrackerUiMapper.kt  (1.3 KB)
 app\src\main\java\com\mhq\salati\prayertracker\presentation\model\DayStatusUi.kt  (0.1 KB)
@@ -329,7 +364,7 @@ app\src\main\java\com\mhq\salati\prayertracker\ui\components\PrayerTrackerList.k
 app\src\main\java\com\mhq\salati\prayertracker\ui\components\StreakBanner.kt  (2.4 KB)
 app\src\main\java\com\mhq\salati\prayertracker\ui\components\TrackerBadge.kt  (1.5 KB)
 app\src\main\java\com\mhq\salati\prayertracker\ui\screens\PrayerTrackerContainer.kt  (2.3 KB)
-app\src\main\java\com\mhq\salati\prayertracker\ui\screens\PrayerTrackerContent.kt  (9.3 KB)
+app\src\main\java\com\mhq\salati\prayertracker\ui\screens\PrayerTrackerContent.kt  (9.4 KB)
 app\src\main\java\com\mhq\salati\qibla\data\repoimpl\CompassRepoImpl.kt  (1.7 KB)
 app\src\main\java\com\mhq\salati\qibla\datasource\device\AndroidRotationSensorDataSource.kt  (5.2 KB)
 app\src\main\java\com\mhq\salati\qibla\datasource\device\CompassSample.kt  (0.2 KB)
@@ -350,14 +385,14 @@ app\src\main\java\com\mhq\salati\qibla\presentation\mapper\QiblaUiMapper.kt  (0.
 app\src\main\java\com\mhq\salati\qibla\presentation\model\CompassAccuracyUi.kt  (0.1 KB)
 app\src\main\java\com\mhq\salati\qibla\presentation\viewmodel\QiblaViewModel.kt  (11.4 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\components\CompassCalibrationBanner.kt  (4.5 KB)
-app\src\main\java\com\mhq\salati\qibla\ui\components\CompassCalibrationOverlay.kt  (11.7 KB)
-app\src\main\java\com\mhq\salati\qibla\ui\components\CompassWideLayout.kt  (0.8 KB)
+app\src\main\java\com\mhq\salati\qibla\ui\components\CompassCalibrationOverlay.kt  (11.8 KB)
+app\src\main\java\com\mhq\salati\qibla\ui\components\CompassWideLayout.kt  (0.9 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\components\RotatingCompassDial.kt  (17.3 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\errors\QiblaSensorUnavailableError.kt  (1.9 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContainer.kt  (5.0 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContent.kt  (5.4 KB)
 app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContentError.kt  (1.6 KB)
-app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContentSuccess.kt  (10.6 KB)
+app\src\main\java\com\mhq\salati\qibla\ui\screens\QiblaContentSuccess.kt  (10.8 KB)
 app\src\main\java\com\mhq\salati\settings\data\mapper\SettingsMapper.kt  (1.1 KB)
 app\src\main\java\com\mhq\salati\settings\data\repoimpl\SettingsRepoImpl.kt  (2.1 KB)
 app\src\main\java\com\mhq\salati\settings\datasource\preferences\SettingsDataStore.kt  (3.2 KB)
@@ -401,7 +436,7 @@ app\src\main\java\com\mhq\salati\settings\ui\components\SettingsSelectionSheet.k
 app\src\main\java\com\mhq\salati\settings\ui\components\SettingsStepperRow.kt  (3.1 KB)
 app\src\main\java\com\mhq\salati\settings\ui\components\SettingsSwitchRow.kt  (3.1 KB)
 app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsContainer.kt  (6.2 KB)
-app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsContent.kt  (15.5 KB)
+app\src\main\java\com\mhq\salati\settings\ui\screens\SettingsContent.kt  (15.7 KB)
 app\src\main\java\com\mhq\salati\settings\ui\SettingsLabels.kt  (2.8 KB)
 app\src\main\java\com\mhq\salati\shared\app\SalatiApplication.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\shared\data\mapper\PrayerNameMapper.kt  (1.0 KB)
@@ -414,14 +449,14 @@ app\src\main\java\com\mhq\salati\shared\di\ClockModule.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\shared\di\DatabaseModule.kt  (0.8 KB)
 app\src\main\java\com\mhq\salati\shared\di\NetworkModule.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\shared\di\PrayerNameModule.kt  (0.5 KB)
-app\src\main\java\com\mhq\salati\shared\domain\Clock.kt  (0.3 KB)
-app\src\main\java\com\mhq\salati\shared\domain\Coordinates.kt  (0.3 KB)
-app\src\main\java\com\mhq\salati\shared\domain\DateKey.kt  (0.5 KB)
-app\src\main\java\com\mhq\salati\shared\domain\HijriMonth.kt  (0.5 KB)
-app\src\main\java\com\mhq\salati\shared\domain\MinuteOfday.kt  (0.2 KB)
-app\src\main\java\com\mhq\salati\shared\domain\PrayerName.kt  (0.4 KB)
-app\src\main\java\com\mhq\salati\shared\domain\PrayerNameResolver.kt  (0.3 KB)
-app\src\main\java\com\mhq\salati\shared\domain\usecases\ResolvePrayerNameUseCase.kt  (0.5 KB)
+app\src\main\java\com\mhq\salati\shared\domain\Clock.kt  (0.8 KB)
+app\src\main\java\com\mhq\salati\shared\domain\Coordinates.kt  (0.9 KB)
+app\src\main\java\com\mhq\salati\shared\domain\DateKey.kt  (1.0 KB)
+app\src\main\java\com\mhq\salati\shared\domain\HijriMonth.kt  (0.9 KB)
+app\src\main\java\com\mhq\salati\shared\domain\MinuteOfday.kt  (0.5 KB)
+app\src\main\java\com\mhq\salati\shared\domain\PrayerName.kt  (0.8 KB)
+app\src\main\java\com\mhq\salati\shared\domain\PrayerNameResolver.kt  (0.7 KB)
+app\src\main\java\com\mhq\salati\shared\domain\usecases\ResolvePrayerNameUseCase.kt  (0.8 KB)
 app\src\main\java\com\mhq\salati\shared\presentation\mapper\HijriMonthUiMapper.kt  (0.8 KB)
 app\src\main\java\com\mhq\salati\shared\presentation\mapper\PrayerNameUiMapper.kt  (1.4 KB)
 app\src\main\java\com\mhq\salati\shared\presentation\model\HijriMonthUi.kt  (0.3 KB)
@@ -449,7 +484,7 @@ app\src\main\java\com\mhq\salati\shared\ui\navigation\BottomNavBarItem.kt  (0.2 
 app\src\main\java\com\mhq\salati\shared\ui\navigation\NavigationScreen.kt  (0.7 KB)
 app\src\main\java\com\mhq\salati\shared\ui\PrayerNameLabels.kt  (0.7 KB)
 app\src\main\java\com\mhq\salati\shared\ui\SalatiApp.kt  (9.7 KB)
-app\src\main\java\com\mhq\salati\shared\ui\ScreenLayout.kt  (0.3 KB)
+app\src\main\java\com\mhq\salati\shared\ui\ScreenLayout.kt  (0.4 KB)
 app\src\main\java\com\mhq\salati\shared\ui\screens\LoadingContent.kt  (1.7 KB)
 app\src\main\java\com\mhq\salati\shared\ui\theme\Color.kt  (8.5 KB)
 app\src\main\java\com\mhq\salati\shared\ui\theme\Gradients.kt  (1.4 KB)
@@ -463,6 +498,7 @@ app\src\main\java\com\mhq\salati\splash\presentation\mapper\SplashUiMapper.kt  (
 app\src\main\java\com\mhq\salati\splash\presentation\model\StartDestinationUi.kt  (0.1 KB)
 app\src\main\java\com\mhq\salati\splash\presentation\viewmodel\SplashViewModel.kt  (2.4 KB)
 app\src\main\res\drawable\ic_salati_colored.xml  (1.1 KB)
+app\src\main\res\drawable\ic_salati_white.xml  (0.8 KB)
 app\src\main\res\drawable\ic_stop.xml  (0.3 KB)
 app\src\main\res\mipmap-anydpi-v26\ic_launcher.xml  (0.3 KB)
 app\src\main\res\mipmap-anydpi-v26\ic_launcher_round.xml  (0.3 KB)
@@ -2109,7 +2145,7 @@ class AdhanPlaybackService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(body)
-            .setSmallIcon(R.drawable.ic_salati_colored)
+            .setSmallIcon(R.drawable.ic_salati_white)
             .setSilent(true)
             .setOngoing(false)
             .setAutoCancel(true)
@@ -3321,6 +3357,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
@@ -3557,7 +3594,7 @@ fun AddEditAlarmFormContent(
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth(if (isLandscape) 0.6f else 1f) // Keep compact in landscape splits
+                modifier = Modifier.widthIn(max = 400.dp).fillMaxWidth()
             ) {
                 badges.forEach { badge ->
                     val isDayActive = activeDays.contains(badge.calendarDay)
@@ -3652,6 +3689,63 @@ private fun AddEditAlarmFormContentPreview() {
                 existingAlarms = emptyList(),
                 onSave = {},
                 onDismiss = {}
+            )
+        }
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\alarms\ui\components\AddEditAlarmSheet.kt
+
+```kotlin
+package com.mhq.salati.alarms.ui.components
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
+import com.mhq.salati.alarms.ui.state.AlarmFormState
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddEditAlarmSheet(
+    formState: AlarmFormState,
+    existingAlarm: CustomAlarmUi?,
+    existingAlarms: List<CustomAlarmUi>,
+    onSave: (CustomAlarmUi) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = Modifier.wrapContentHeight()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .imePadding()
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 24.dp)
+        ) {
+            AddEditAlarmFormContent(
+                formState = formState,
+                existingAlarm = existingAlarm,
+                existingAlarms = existingAlarms,
+                onSave = onSave,
+                onDismiss = onDismiss
             )
         }
     }
@@ -3956,63 +4050,6 @@ fun CustomAlarmCard(
 }
 ```
 
-## app\src\main\java\com\mhq\salati\alarms\ui\components\CustomAlarmSheet.kt
-
-```kotlin
-package com.mhq.salati.alarms.ui.components
-
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
-import com.mhq.salati.alarms.ui.state.AlarmFormState
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AddEditAlarmSheet(
-    formState: AlarmFormState,
-    existingAlarm: CustomAlarmUi?,
-    existingAlarms: List<CustomAlarmUi>,
-    onSave: (CustomAlarmUi) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.background,
-        modifier = Modifier.wrapContentHeight()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .imePadding()
-                .padding(horizontal = 20.dp)
-                .padding(bottom = 24.dp)
-        ) {
-            AddEditAlarmFormContent(
-                formState = formState,
-                existingAlarm = existingAlarm,
-                existingAlarms = existingAlarms,
-                onSave = onSave,
-                onDismiss = onDismiss
-            )
-        }
-    }
-}
-```
-
 ## app\src\main\java\com\mhq\salati\alarms\ui\components\DayBadge.kt
 
 ```kotlin
@@ -4260,7 +4297,7 @@ package com.mhq.salati.alarms.ui.components
 import java.time.DayOfWeek
 import java.util.Calendar
 
-val WeekDays = listOf(
+internal val WeekDays = listOf(
     Calendar.MONDAY to DayOfWeek.MONDAY,
     Calendar.TUESDAY to DayOfWeek.TUESDAY,
     Calendar.WEDNESDAY to DayOfWeek.WEDNESDAY,
@@ -4333,7 +4370,7 @@ class CustomAlarmNotifier @Inject constructor(
         )
 
         val notification = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_salati_colored)
+            .setSmallIcon(R.drawable.ic_salati_white)
             .setContentTitle(title)
             .setContentText(body)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -4549,6 +4586,7 @@ import com.mhq.salati.alarms.ui.components.AddEditAlarmFormContent
 import com.mhq.salati.alarms.ui.components.AddEditAlarmSheet
 import com.mhq.salati.alarms.ui.components.CustomAlarmCard
 import com.mhq.salati.alarms.ui.state.AlarmFormState
+import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 import com.mhq.salati.shared.ui.components.TabHeader
 import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
@@ -4585,7 +4623,7 @@ fun CustomAlarmsContent(
                             .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
                     )
                     .padding(
-                        start = 16.dp,
+                        start = ScreenHorizontalPadding,
                         end = FabColumnWidth,
                         top = with(density) { headerHeightPx.toDp() } + 12.dp,
                         bottom = BottomNavBarDefaults.Height
@@ -4652,8 +4690,8 @@ fun CustomAlarmsContent(
             } else {
                 LazyColumn(
                     contentPadding = PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
+                        start = ScreenHorizontalPadding,
+                        end = ScreenHorizontalPadding,
                         top = with(density) { headerHeightPx.toDp() } + 16.dp,
                         bottom = BottomNavBarDefaults.Height + 80.dp
                     ),
@@ -4706,7 +4744,7 @@ fun CustomAlarmsContent(
         }
 
         if (!isLandscape && state.isEditorVisible) {
-            AddEditAlarmSheet( //AddEditAlarmSheet
+            AddEditAlarmSheet(
                 formState = formState,
                 existingAlarm = state.editingAlarm,
                 existingAlarms = state.alarms,
@@ -4942,6 +4980,12 @@ package com.mhq.salati.home.domain.model
 
 import java.time.Duration
 
+/**
+ * A snapshot of the countdown to the next prayer at one moment.
+ *
+ * @property remaining time left until the window ends; zero once it has ended
+ * @property progress how far through the window we are, from 0f at its start to 1f at its end
+ */
 data class PrayerCountdown(
     val remaining: Duration,
     val progress: Float
@@ -4955,8 +4999,15 @@ package com.mhq.salati.home.domain.model
 
 import com.mhq.salati.shared.domain.PrayerName
 
-/** Where the day stands right now: the countdown window,
- * the prayer in progress and the ones already passed. */
+/**
+ * Where the day stands right now: the countdown window,
+ * the prayer in progress and the ones already passed.
+ *
+ * @property window the countdown window the screen draws its ring and timer from
+ * @property currentPrayer the prayer whose window is running now,
+ * or null when the browsed day is not today (past and future days have no "current" prayer)
+ * @property pastPrayers the day's timings that have already passed
+ */
 data class PrayerProgress(
     val window: PrayerWindow,
     val currentPrayer: PrayerName?,
@@ -4969,9 +5020,20 @@ data class PrayerProgress(
 ```kotlin
 package com.mhq.salati.home.domain.model
 
+/**
+ * Why loading prayer times failed, in the granularity the UI needs.
+ *
+ * [Offline] and [TimedOut] get their own user-facing messages;
+ * [Other] carries any unexpected failure verbatim.
+ */
 sealed interface PrayerTimesError {
+    /** The device had no usable network connection. */
     data object Offline : PrayerTimesError
+
+    /** The network request exceeded the fetch timeout. */
     data object TimedOut : PrayerTimesError
+
+    /** Any other failure; [message] is the underlying exception's message, when there is one. */
     data class Other(val message: String?) : PrayerTimesError
 }
 ```
@@ -4984,17 +5046,24 @@ package com.mhq.salati.home.domain.model
 import com.mhq.salati.prayertimes.domain.model.PrayerDate
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
 
-/** The steps of loading a day's prayer times, in the order they happen. */
+/**
+ * The steps of loading a day's prayer times, in the order they happen.
+ *
+ * A load emits [FetchingFromNetwork] only on a cache miss,
+ * then either [Loaded] or [Failed] exactly once; the flow completes after that.
+ */
 sealed interface PrayerTimesLoad {
     /** Nothing was cached, so a network request is now in flight. */
     data object FetchingFromNetwork : PrayerTimesLoad
 
+    /** Times are on screen: the timings themselves, the date they belong to, and the day's status. */
     data class Loaded(
         val timings: PrayerTimings,
         val prayerDate: PrayerDate,
         val status: PrayerProgress
     ) : PrayerTimesLoad
 
+    /** The load failed; see [PrayerTimesError] for why. */
     data class Failed(val error: PrayerTimesError) : PrayerTimesLoad
 }
 ```
@@ -5006,9 +5075,14 @@ package com.mhq.salati.home.domain.model
 
 import java.time.LocalDate
 
-/** What happens, in order, while a day's prayer times stay on screen. */
-
+/**
+ * What happens, in order, while a day's prayer times stay on screen.
+ *
+ * [Countdown] fires about once a second;
+ * [StatusRefreshed] and [DayRolledOver] fire when a countdown window ends.
+ */
 sealed interface PrayerTimesTick {
+    /** One countdown snapshot for the running window. */
     data class Countdown(val countdown: PrayerCountdown) : PrayerTimesTick
 
     /** A countdown window ended and the next one has started. */
@@ -5032,9 +5106,15 @@ import java.time.ZoneId
 
 /**
  * The stretch of time leading up to [nextPrayer]:
- * it starts at the previous prayer time
- * and ends when [nextPrayer] begins.
+ * it starts at the previous prayer time and ends when [nextPrayer] begins.
  * Home's countdown ring and timer are drawn from it.
+ *
+ * Validated on construction: [end] may equal [start] (an instant window) but never precede it.
+ *
+ * @property nextPrayer the prayer whose time [end] points at
+ * @property start the instant the window opens, i.e. the previous prayer's time
+ * @property end the instant [nextPrayer] begins
+ * @throws IllegalArgumentException if [end] is before [start]
  */
 data class PrayerWindow(
     val nextPrayer: PrayerName,
@@ -5047,11 +5127,18 @@ data class PrayerWindow(
         }
     }
 
+    /**
+     * Time left until [end] as seen from [now];
+     * clamped to zero once the window has ended, so callers never see a negative countdown.
+     */
     fun remainingAt(now: Instant): Duration =
         Duration.between(now, end).coerceAtLeast(Duration.ZERO)
 
-    /** 0f when [now] is at (or before) the start,
-     * 1f at (or after) the end. */
+    /**
+     * How far through the window [now] sits,
+     * from 0f at (or before) the start to 1f at (or after) the end.
+     * A zero-length window is always 0f.
+     */
     fun progressAt(now: Instant): Float {
         val totalMillis = Duration.between(start, end).toMillis()
         if (totalMillis <= 0L) return 0f
@@ -5059,8 +5146,11 @@ data class PrayerWindow(
         return (elapsedMillis.toFloat() / totalMillis.toFloat()).coerceIn(0f, 1f)
     }
 
-    /** True when this window ends on a calendar day later than [day]
-     * (e.g. after Isha, running into tomorrow's Fajr). */
+    /**
+     * True when this window ends on a calendar day later than [day]
+     * (e.g. after Isha, running into tomorrow's Fajr);
+     * the signal for a day rollover when the browsed day is [day].
+     */
     fun endsAfterDay(day: LocalDate, zoneId: ZoneId): Boolean =
         end.atZone(zoneId).toLocalDate().isAfter(day)
 }
@@ -5077,10 +5167,15 @@ import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
-/** The rules for which day the Home screen may show. */
+/**
+ * The rules for which day the Home screen may show.
+ * Centralizes day arithmetic (today check, previous/next, month end, rollover)
+ * so every screen and use case browses days by the same rules.
+ */
 class DayNavigator @Inject constructor(
     private val clock: Clock
 ) {
+    /** True when [date] is today in the device's time zone. */
     fun isToday(date: LocalDate): Boolean =
         date == clock.today()
 
@@ -5088,26 +5183,35 @@ class DayNavigator @Inject constructor(
     fun today(): LocalDate =
         clock.today()
 
-    /** The day before [date], or null when [date] is today:
-     * browsing into the past isn't allowed. */
+    /**
+     * The day before [date], or null when [date] is today:
+     * browsing into the past isn't allowed.
+     */
     fun previousOrNull(date: LocalDate): LocalDate? =
         if (isToday(date))
             null
         else
             date.minusDays(1)
 
+    /** The day after [date]; browsing forward is always allowed. */
     fun next(date: LocalDate): LocalDate =
         date.plusDays(1)
 
-    /** The following day when [window] runs past [date]
-     * (after Isha, into tomorrow's Fajr); otherwise null. */
+    /**
+     * The following day when [window] runs past [date] (after Isha, into tomorrow's Fajr);
+     * otherwise null.
+     */
     fun rolloverDate(date: LocalDate, window: PrayerWindow?): LocalDate? =
         if (window?.endsAfterDay(date, clock.zone()) == true)
             date.plusDays(1)
         else
             null
 
-    /** The last day of [date]'s month; when [date] already is that day, the last day of the next month. */
+    /**
+     * The last day of [date]'s month;
+     * when [date] already is that day, the last day of the next month.
+     * Used to bound how far ahead one jump can go.
+     */
     fun endOfMonth(date: LocalDate): LocalDate {
         val lastDay = date.with(TemporalAdjusters.lastDayOfMonth())
         return if (date == lastDay) {
@@ -5131,9 +5235,20 @@ import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.domain.toMinuteOfDay
 import javax.inject.Inject
 
+/**
+ * The major prayer whose window is running right now,
+ * i.e. the latest of the five daily prayers whose time has already passed.
+ *
+ * Times before today's Fajr are normalized into the previous day's cycle,
+ * so a 03:00 "now" is treated as late in yesterday's timeline rather than before the day began.
+ */
 class CalculateCurrentPrayerNameUseCase @Inject constructor(
     private val clock: Clock
 ) {
+    /**
+     * @param timings the day's prayer timings
+     * @return the prayer in progress, or null when no prayer time has passed yet
+     */
     operator fun invoke(timings: PrayerTimings): PrayerName? {
         // Anything earlier than Fajr belongs to the tail of the previous day's cycle.
         val fajrMinutes = timings.fajr.toMinuteOfDay()
@@ -5161,13 +5276,26 @@ import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.domain.toMinuteOfDay
 import javax.inject.Inject
 
+/**
+ * Every timing of the day (major and minor) whose time has already passed.
+ * Unlike [CalculateCurrentPrayerNameUseCase], this includes the minor timings,
+ * so Imsak and Shorouq that have gone by also count as past.
+ */
 class CalculatePastPrayersUseCase @Inject constructor(
     private val clock: Clock
 ) {
+    /**
+     * @param timings the day's prayer timings
+     * @return the timings whose time is at or before now
+     */
     operator fun invoke(timings: PrayerTimings): Set<PrayerName> {
-        // Imsak is the first timing of the day; anything earlier than it is treated as after midnight.
+        /** Imsak is the first timing of the day; anything earlier is treated as after midnight. */
         val imsakMinutes = timings.imsak.toMinuteOfDay()
-        fun normalize(minutes: Int) = if (minutes < imsakMinutes) minutes + MINUTES_PER_DAY else minutes
+        fun normalize(minutes: Int) =
+            if (minutes < imsakMinutes)
+                minutes + MINUTES_PER_DAY
+            else
+                minutes
 
         val nowMinutes = normalize(clock.now().toLocalTime().toMinuteOfDay())
 
@@ -5190,12 +5318,21 @@ import com.mhq.salati.shared.domain.Clock
 import java.time.LocalDate
 import javax.inject.Inject
 
+/**
+ * Builds the day's [PrayerProgress] from its timings and countdown window.
+ * The current and past prayers only mean something for today, so other days get none.
+ */
 class CalculatePrayerStatusUseCase @Inject constructor(
     private val clock: Clock,
     private val calculateCurrentPrayerNameUseCase: CalculateCurrentPrayerNameUseCase,
     private val calculatePastPrayersUseCase: CalculatePastPrayersUseCase
 ) {
-    /** The current and past prayers only mean something for today, so other days get none. */
+    /**
+     * @param timings the browsed day's prayer timings
+     * @param date the browsed day
+     * @param window the countdown window already resolved for that day
+     * @return the progress for [date]; current/past prayers are empty unless [date] is today
+     */
     operator fun invoke(timings: PrayerTimings, date: LocalDate, window: PrayerWindow): PrayerProgress {
         val isToday = date == clock.today()
         return PrayerProgress(
@@ -5229,11 +5366,27 @@ import java.time.ZoneId
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * The [PrayerWindow] a day's timings put us in right now.
+ *
+ * Three cases:
+ * - midday: the window between the last passed prayer and the next one;
+ * - after Isha: a window from Isha to tomorrow's Fajr;
+ * - before Fajr: a window from yesterday's Isha to today's Fajr.
+ * Yesterday's Isha is taken from cache first, then a short network fetch,
+ * then today's Isha as a fallback, so the window is never blocked on the network.
+ */
 class CalculatePrayerWindowUseCase @Inject constructor(
     private val clock: Clock,
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase
 ) {
+    /**
+     * @param timings the day's prayer timings
+     * @param date the day as its "dd-MM-yyyy" storage key
+     * @param coordinates the location the timings were calculated for
+     * @return the window that contains the current moment
+     */
     suspend operator fun invoke(
         timings: PrayerTimings,
         date: String,
@@ -5249,16 +5402,15 @@ class CalculatePrayerWindowUseCase @Inject constructor(
 
         val nextIndex = prayerInstants.indexOfFirst { (_, instant) -> instant.isAfter(now) }
 
-        return when {
-            nextIndex == -1 -> {
+        return when (nextIndex) {
+            -1 -> {
                 PrayerWindow(
                     nextPrayer = PrayerName.FAJR,
                     start = prayerInstants.last().second,
                     end = day.plusDays(1).instantAt(timings.fajr, zoneId)
                 )
             }
-
-            nextIndex == 0 -> {
+            0 -> {
                 val yesterdayIsha = resolveYesterdayIsha(
                     yesterday = day.minusDays(1),
                     coordinates = coordinates,
@@ -5272,7 +5424,6 @@ class CalculatePrayerWindowUseCase @Inject constructor(
                     end = prayerInstants[0].second
                 )
             }
-
             else -> {
                 val (nextName, nextInstant) = prayerInstants[nextIndex]
                 val previousInstant = prayerInstants[nextIndex - 1].second
@@ -5281,6 +5432,11 @@ class CalculatePrayerWindowUseCase @Inject constructor(
         }
     }
 
+    /**
+     * Yesterday's Isha instant, resolved from the cheapest source that works:
+     * cache, then a 5-second-bounded network fetch,
+     * then today's Isha as a fallback (close enough for the window's start).
+     */
     private suspend fun resolveYesterdayIsha(
         yesterday: LocalDate,
         coordinates: Coordinates,
@@ -5304,6 +5460,7 @@ class CalculatePrayerWindowUseCase @Inject constructor(
         return yesterday.instantAt(fallback, zoneId)
     }
 
+    /** The instant [time] occurs on this day in [zoneId]. */
     private fun LocalDate.instantAt(time: LocalTime, zoneId: ZoneId): Instant =
         atTime(time).atZone(zoneId).toInstant()
 }
@@ -5329,15 +5486,28 @@ import java.time.LocalDate
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
+/** Hard cap on the network fetch; past it the load reports [PrayerTimesError.TimedOut]. */
 private val FETCH_TIMEOUT = 5_000L.milliseconds
 
+/**
+ * Loads a day's prayer times as a one-shot [PrayerTimesLoad] flow.
+ *
+ * Cache first. It will only emit [PrayerTimesLoad.FetchingFromNetwork] on a cache miss and go online.
+ * Offline failures reported as [PrayerTimesError.Offline] regardless of the underlying exception,
+ * so the UI can show the right message.
+ */
 class LoadPrayerTimesUseCase @Inject constructor(
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
-    private val resolvePrayerWindowForDisplayUseCase: ResolvePrayerWindowForDisplayUseCase,    private val calculatePrayerStatusUseCase: CalculatePrayerStatusUseCase,
+    private val resolvePrayerWindowForDisplayUseCase: ResolvePrayerWindowForDisplayUseCase,
+    private val calculatePrayerStatusUseCase: CalculatePrayerStatusUseCase,
     private val connectivityChecker: ConnectivityChecker
 ) {
-    /** Cache first. Only on a cache miss does it emit [PrayerTimesLoad.FetchingFromNetwork] and go online. */
+    /**
+     * @param date the day to load
+     * @param coordinates the location to load times for
+     * @return a flow that emits the load's steps once each, then completes
+     */
     operator fun invoke(date: LocalDate, coordinates: Coordinates): Flow<PrayerTimesLoad> = flow {
         val dateKey = date.toDateKey()
 
@@ -5366,6 +5536,7 @@ class LoadPrayerTimesUseCase @Inject constructor(
         }
     }
 
+    /** Assembles a [PrayerTimesLoad.Loaded]: window and status resolved on top of the timings. */
     private suspend fun loaded(
         result: PrayerTimesResult,
         date: LocalDate,
@@ -5379,47 +5550,12 @@ class LoadPrayerTimesUseCase @Inject constructor(
         )
     }
 
+    /**
+     * Keeps [error] when the device is online,
+     * but reports [PrayerTimesError.Offline] when the real cause is a missing connection.
+     */
     private fun failureWhileOnlineOr(error: PrayerTimesError): PrayerTimesError =
         if (connectivityChecker.isConnected()) error else PrayerTimesError.Offline
-}
-```
-
-## app\src\main\java\com\mhq\salati\home\domain\usecases\ObserveMonthDayStatusUseCase.kt
-
-```kotlin
-package com.mhq.salati.prayertracker.domain.usecases
-
-import com.mhq.salati.prayertracker.domain.model.DayStatus
-import com.mhq.salati.prayertracker.domain.model.PrayerStatus
-import com.mhq.salati.shared.domain.Clock
-import com.mhq.salati.shared.domain.PrayerName
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import java.time.LocalDate
-import java.time.YearMonth
-import javax.inject.Inject
-
-/** How each recorded day of [yearMonth] went, for the calendar colours. */
-class ObserveMonthDayStatusUseCase @Inject constructor(
-    private val observePrayerRecordsForMonthUseCase: ObservePrayerRecordsForMonthUseCase,
-    private val clock: Clock
-) {
-    operator fun invoke(yearMonth: YearMonth): Flow<Map<LocalDate, DayStatus>> =
-        observePrayerRecordsForMonthUseCase(yearMonth).map { recordsByDate ->
-            val today = clock.today()
-            recordsByDate.mapValues { (date, records) -> dayStatusFor(date, records, today) }
-        }
-
-    private fun dayStatusFor(
-        date: LocalDate,
-        records: Map<PrayerName, PrayerStatus>,
-        today: LocalDate
-    ): DayStatus = when {
-        date.isAfter(today) -> DayStatus.FUTURE
-        records.values.any { it == PrayerStatus.MISSED } -> DayStatus.HAS_MISSED
-        PrayerName.majorEntries.all { records[it] == PrayerStatus.PRAYED } -> DayStatus.ALL_PRAYED
-        else -> DayStatus.IN_PROGRESS
-    }
 }
 ```
 
@@ -5437,10 +5573,18 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * One [PrayerCountdown] per second while [window] runs.
+ *
+ * Emits once a second until [window] ends; the flow completes right after the zero emission.
+ */
 class ObservePrayerCountdownUseCase @Inject constructor(
     private val clock: Clock
 ) {
-    /** Emits once a second until [window] ends; the flow completes right after the zero emission. */
+    /**
+     * @param window the countdown window to observe
+     * @return a flow of countdown snapshots, ending with the zero-remaining one
+     */
     operator fun invoke(window: PrayerWindow): Flow<PrayerCountdown> = flow {
         while (true) {
             val now = clock.instant()
@@ -5471,12 +5615,25 @@ import javax.inject.Inject
 /**
  * Counts down [window]; when it ends, either moves on to the next day or starts the next window.
  * Keeps going until the day rolls over, so collect it for as long as these times are on screen.
+ *
+ * The chain is: countdown ticks until the window ends,
+ * then either a day rollover (window crosses midnight past the browsed day)
+ * or a status refresh that hands over the next window.
+ * A refreshed window that doesn't end later than the one that just ended
+ * stops the flow rather than looping forever.
  */
 class ObservePrayerTimesTicksUseCase @Inject constructor(
     private val observePrayerCountdownUseCase: ObservePrayerCountdownUseCase,
     private val refreshPrayerStatusUseCase: RefreshPrayerStatusUseCase,
     private val dayNavigator: DayNavigator
 ) {
+    /**
+     * @param timings the browsed day's prayer timings
+     * @param date the browsed day
+     * @param coordinates the location the timings were calculated for
+     * @param window the window resolved when these times were loaded
+     * @return a flow of ticks that completes on a day rollover or a stalled window
+     */
     operator fun invoke(
         timings: PrayerTimings,
         date: LocalDate,
@@ -5494,7 +5651,7 @@ class ObservePrayerTimesTicksUseCase @Inject constructor(
             }
 
             val status = refreshPrayerStatusUseCase(timings, date, coordinates)
-            // A window that doesn't end later than the one that just ended would loop forever.
+            /** A window that doesn't end later than the one that just ended would loop forever. */
             if (!status.window.end.isAfter(currentWindow.end)) return@flow
             emit(PrayerTimesTick.StatusRefreshed(status))
             currentWindow = status.window
@@ -5514,11 +5671,23 @@ import com.mhq.salati.shared.domain.Coordinates
 import java.time.LocalDate
 import javax.inject.Inject
 
+/**
+ * Recomputes the status for already-loaded [timings],
+ * e.g. when the previous countdown window ends.
+ *
+ * Re-resolves the display window (which may have moved to the next prayer)
+ * and rebuilds the progress from it, without touching cache or network for the browsed day's timings.
+ */
 class RefreshPrayerStatusUseCase @Inject constructor(
     private val resolvePrayerWindowForDisplayUseCase: ResolvePrayerWindowForDisplayUseCase,
     private val calculatePrayerStatusUseCase: CalculatePrayerStatusUseCase
 ) {
-    /** Recomputes the status for already-loaded [timings], e.g. when the previous countdown window ends. */
+    /**
+     * @param timings the already-loaded timings for the browsed day
+     * @param browsedDate the day currently on screen
+     * @param coordinates the location the timings were calculated for
+     * @return fresh progress: new window, current prayer and past prayers
+     */
     suspend operator fun invoke(
         timings: PrayerTimings,
         browsedDate: LocalDate,
@@ -5549,6 +5718,14 @@ import com.mhq.salati.shared.domain.toDateKey
 import java.time.LocalDate
 import javax.inject.Inject
 
+/**
+ * The window the Home screen should count down, no matter which day is browsed.
+ *
+ * The countdown always runs to today's real next prayer, whichever day is being browsed.
+ * Today's own timings are used when available; the browsed ones are only a last resort.
+ * Resolution order for today's timings: the browsed timings when the browsed day is today,
+ * then today's cache, then a network fetch, then the browsed timings as a fallback.
+ */
 class ResolvePrayerWindowForDisplayUseCase @Inject constructor(
     private val clock: Clock,
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
@@ -5556,8 +5733,10 @@ class ResolvePrayerWindowForDisplayUseCase @Inject constructor(
     private val calculatePrayerWindowUseCase: CalculatePrayerWindowUseCase
 ) {
     /**
-     * The countdown always runs to today's real next prayer, whichever day is being browsed.
-     * Today's own timings are used when available; the browsed ones are only a last resort.
+     * @param browsedTimings the timings already loaded for the browsed day
+     * @param browsedDate the day currently on screen
+     * @param coordinates the location the timings were calculated for
+     * @return the window to today's next prayer, built from today's timings
      */
     suspend operator fun invoke(
         browsedTimings: PrayerTimings,
@@ -8211,17 +8390,29 @@ package com.mhq.salati.location.domain.model
 
 import com.mhq.salati.shared.domain.Coordinates
 
-/** The steps of getting the device's position through GPS, in the order they happen. */
-
+/**
+ * The steps of getting the device's position through GPS, in the order they happen.
+ *
+ * A lookup emits at most two states: one of the two blockers if a check fails up front,
+ * otherwise [Locating] followed by exactly one outcome.
+ */
 sealed interface CoordinatesLookup {
+    /** Location services are off; the user must enable them in system settings. */
     data object ServicesDisabled : CoordinatesLookup
+
+    /** The location permission is not granted. */
     data object PermissionDenied : CoordinatesLookup
 
     /** The checks passed and the GPS fix is now being awaited. */
     data object Locating : CoordinatesLookup
 
+    /** The GPS fix arrived. */
     data class Found(val coordinates: Coordinates) : CoordinatesLookup
+
+    /** The lookup failed for a reason other than timeout or permission. */
     data class Failed(val message: String?) : CoordinatesLookup
+
+    /** The GPS fix did not arrive within the timeout. */
     data object TimedOut : CoordinatesLookup
 }
 ```
@@ -8231,9 +8422,20 @@ sealed interface CoordinatesLookup {
 ```kotlin
 package com.mhq.salati.location.domain.model
 
+/**
+ * The outcome of a geocoding call, forward or reverse.
+ *
+ * [Found] may carry one or both names as null;
+ * only a call where both are null counts as [NotFound] at the use-case level.
+ */
 sealed interface GeocodeResult {
+    /** The place was resolved; either name may still be missing. */
     data class Found(val cityName: String?, val countryName: String?) : GeocodeResult
+
+    /** The geo-coder answered but recognized no place. */
     data object NotFound : GeocodeResult
+
+    /** The geo-coder itself errored; [throwable] carries the cause. */
     data class Failed(val throwable: Throwable) : GeocodeResult
 }
 ```
@@ -8243,12 +8445,22 @@ sealed interface GeocodeResult {
 ```kotlin
 package com.mhq.salati.location.domain.model
 
-/** What finding the user's place needs, each checked on its own. */
+/**
+ * What finding the user's place needs, each checked on its own.
+ *
+ * All three are evaluated independently
+ * so the UI can show every missing one at once, instead of one at a time.
+ *
+ * @property hasInternet whether the device has a usable network connection
+ * @property servicesEnabled whether location services (GPS) are on
+ * @property permissionGranted whether the location permission is granted
+ */
 data class LocationPrerequisites(
     val hasInternet: Boolean,
     val servicesEnabled: Boolean,
     val permissionGranted: Boolean
 ) {
+    /** True only when nothing is missing. */
     val areMet: Boolean
         get() = hasInternet && servicesEnabled && permissionGranted
 }
@@ -8259,14 +8471,23 @@ data class LocationPrerequisites(
 ```kotlin
 package com.mhq.salati.location.domain.model
 
-/** What happened when the app tried to find where the user is. */
+/**
+ * What happened when the app tried to find where the user is.
+ *
+ * This is the one-shot result of the full resolve flow: prerequisites, GPS fix, geocoding and save.
+ * A [Resolved] location has already been persisted.
+ */
 sealed interface LocationResolution {
+    /** The place was found and saved. */
     data class Resolved(val location: SavedLocation) : LocationResolution
 
     /** Something the lookup needs is missing (internet, location services or the permission). */
     data class Blocked(val prerequisites: LocationPrerequisites) : LocationResolution
 
+    /** Coordinates were found but naming them failed. */
     data object GeocodingFailed : LocationResolution
+
+    /** The GPS fix never arrived or the lookup crashed unexpectedly. */
     data object LocationUnavailable : LocationResolution
 }
 ```
@@ -8278,6 +8499,12 @@ package com.mhq.salati.location.domain.model
 
 import com.mhq.salati.shared.domain.Coordinates
 
+/**
+ * One hit from searching a place by name.
+ *
+ * @property displayName the place's name as the geo-coder formatted it
+ * @property coordinates the place's position, ready to save as a location
+ */
 data class LocationSearchResult(
     val displayName: String,
     val coordinates: Coordinates
@@ -8291,13 +8518,23 @@ package com.mhq.salati.location.domain.model
 
 import com.mhq.salati.shared.domain.Coordinates
 
+/**
+ * The location the app prays by: coordinates plus optional place names.
+ *
+ * Names may be absent right after a GPS-only resolve,
+ * before geocoding or localization has filled them in;
+ * in that case only [coordinates] are set.
+ *
+ * @property coordinates the position prayer times are calculated for
+ * @property cityName the city part of the display name, when known
+ * @property countryName the country part of the display name, when known
+ */
 data class SavedLocation(
     val coordinates: Coordinates,
     val cityName: String? = null,
     val countryName: String? = null
 ) {
-    /** "City, Country",
-     * or whichever part exists;
+    /** "City, Country" or whichever part exists;
      * null when the place has no name yet. */
     val displayName: String?
         get() = when {
@@ -8318,12 +8555,29 @@ import com.mhq.salati.location.domain.model.GeocodeResult
 import com.mhq.salati.location.domain.model.LocationSearchResult
 import com.mhq.salati.shared.domain.Coordinates
 
+/**
+ * Place-name lookups, implemented in Data over the platform geo-coder or a web service.
+ *
+ * [acceptLanguage] is a BCP-47 language tag forwarded to the geo-coder
+ * so names come back in the app's language; null means the geo-coder's default.
+ */
 interface GeocoderProvider {
+    /**
+     * Names the place at [coordinates].
+     *
+     * @return the names, [GeocodeResult.NotFound] when the place is unknown,
+     *   or [GeocodeResult.Failed] when the lookup itself errors
+     */
     suspend fun reverseGeocode(
         coordinates: Coordinates,
         acceptLanguage: String? = null
     ): GeocodeResult
 
+    /**
+     * Finds places matching [query].
+     *
+     * @return the hits, the best one first; empty when nothing matches
+     */
     suspend fun searchByName(
         query: String,
         acceptLanguage: String? = null
@@ -8338,8 +8592,22 @@ package com.mhq.salati.location.domain.repo
 
 import com.mhq.salati.shared.domain.Coordinates
 
+/**
+ * The device's own positioning hardware, implemented in Data over the platform location APIs.
+ *
+ * Never touches the internet; network-side needs are checked separately by the connectivity layer.
+ */
 interface LocationProvider {
+    /** Whether location services (GPS) are currently on. */
     fun isLocationEnabled(): Boolean
+
+    /**
+     * Waits for a GPS fix.
+     *
+     * @return the device's current position
+     * @throws SecurityException if the location permission is not granted
+     * @throws kotlinx.coroutines.TimeoutCancellationException if the caller applies a timeout
+     */
     suspend fun getCurrentLocation(): Coordinates
 }
 ```
@@ -8352,9 +8620,19 @@ package com.mhq.salati.location.domain.repo
 import com.mhq.salati.location.domain.model.SavedLocation
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * The app's saved prayer location, implemented in Data over persistent storage.
+ *
+ * A null [savedLocation] means no place is saved and lookups should use the device position.
+ */
 interface LocationRepository {
+    /** The saved place, or null when none is saved; re-emits on every change. */
     val savedLocation: Flow<SavedLocation?>
+
+    /** Stores [location] as the place the app prays by, replacing the previous one. */
     suspend fun saveManualLocation(location: SavedLocation)
+
+    /** Forgets the saved place; [savedLocation] emits null afterwards. */
     suspend fun clearSavedLocation()
 }
 ```
@@ -8384,10 +8662,17 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.milliseconds
 
+/** Hard cap on one geocoding lookup; past it the location is left as it is. */
 private val LOOKUP_TIMEOUT = 5_000L.milliseconds
 
-/** Puts a place's city and country names into the app language and stores them.
- * One lookup at a time for the whole app, and none repeated for a place already done in this language. */
+/**
+ * Puts a place's city and country names into the app language and stores them.
+ * One lookup at a time for the app, and none repeated for a place already done in this language.
+ *
+ * A single [Mutex] serializes all lookups app-wide, and the last successful lookup is remembered
+ * so re-checking the same place in the same language is free.
+ * Offline, slow, or not-found lookups return the location unchanged rather than erroring.
+ */
 @Singleton
 class LocationLocalizer @Inject constructor(
     private val getLocalizedLocation: GetLocalizedLocationUseCase,
@@ -8399,14 +8684,17 @@ class LocationLocalizer @Inject constructor(
     private val lookupLock = Mutex()
     private var lastLookup: Lookup? = null
 
+    /** What the memoised result is valid for: the exact place and language it was looked up in. */
     private data class Lookup(
         val coordinates: Coordinates,
         val languageCode: String,
         val result: SavedLocation
     )
 
-    /** [location] with localized names (stored when they changed), or unchanged when offline,
-     * the lookup is slow, or nothing is found. */
+    /**
+     * [location] with localized names (stored when they changed), or unchanged when offline,
+     * the lookup is slow, or nothing is found.
+     */
     suspend fun localizeAndSave(location: SavedLocation): SavedLocation = lookupLock.withLock {
         val languageCode = observeSettings().first().language.code
 
@@ -8425,13 +8713,18 @@ class LocationLocalizer @Inject constructor(
         localized
     }
 
-    /** The saved location, re-localized, each time the app language changes (the initial value is skipped). */
+    /** The saved location, re-localized each time the app language changes
+     * (the initial value is skipped). */
     fun observeLanguageChanges(): Flow<SavedLocation> =
         observeSettings()
             .map { it.language.code }
             .distinctUntilChanged()
             .drop(1)
-            .mapNotNull { getSavedLocation().first()?.let { saved -> localizeAndSave(saved) } }
+            .mapNotNull {
+                getSavedLocation().first()?.let { saved ->
+                    localizeAndSave(saved)
+                }
+            }
 }
 ```
 
@@ -8446,12 +8739,18 @@ import com.mhq.salati.location.domain.repo.LocationProvider
 import com.mhq.salati.permissions.domain.repo.PermissionChecker
 import javax.inject.Inject
 
+/**
+ * Checks everything an automatic location lookup needs, in one pass:
+ * internet, location services and the location permission.
+ *
+ * Evaluates all three conditions; nothing stops at the first one that fails.
+ */
 class CheckLocationPrerequisitesUseCase @Inject constructor(
     private val connectivityChecker: ConnectivityChecker,
     private val locationProvider: LocationProvider,
     private val permissionChecker: PermissionChecker
 ) {
-    /** Evaluates all three conditions; nothing stops at the first one that fails. */
+    /** @return the three checks, each independently true or false */
     suspend operator fun invoke(): LocationPrerequisites = LocationPrerequisites(
         hasInternet = connectivityChecker.isConnected(),
         servicesEnabled = locationProvider.isLocationEnabled(),
@@ -8468,7 +8767,11 @@ package com.mhq.salati.location.domain.usecases
 import com.mhq.salati.location.domain.repo.LocationRepository
 import javax.inject.Inject
 
-/** Forgets the saved place, so the next lookup uses the device location again. */
+/**
+ * Forgets the saved place, so the next lookup uses the device location again.
+ *
+ * Thin pass-through over [LocationRepository.clearSavedLocation].
+ */
 class ClearSavedLocationUseCase @Inject constructor(
     private val locationRepository: LocationRepository
 ) {
@@ -8494,14 +8797,22 @@ import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
+/** Hard cap on waiting for the GPS fix. */
 private val GPS_TIMEOUT = 5_000L.milliseconds
 
+/**
+ * The device's position as a short one-shot flow of [CoordinatesLookup] states.
+ *
+ * Needs location services and permission, never the internet.
+ * Ends with the GPS fix or the reason there isn't one.
+ * Emits a blocker immediately when a check fails,
+ * otherwise [CoordinatesLookup.Locating] and then exactly one outcome within [GPS_TIMEOUT].
+ */
 class GetCurrentCoordinatesUseCase @Inject constructor(
     private val locationProvider: LocationProvider,
     private val permissionChecker: PermissionChecker
 ) {
-    /** Needs location services and permission, never the internet.
-     * Ends with the GPS fix or the reason there isn't one. */
+    /** @return a flow ending in [CoordinatesLookup.Found] or one of the failure states */
     operator fun invoke(): Flow<CoordinatesLookup> = flow {
         if (!locationProvider.isLocationEnabled()) {
             emit(CoordinatesLookup.ServicesDisabled)
@@ -8516,6 +8827,7 @@ class GetCurrentCoordinatesUseCase @Inject constructor(
         emit(currentLocation())
     }
 
+    /** Maps a failed fix to its lookup state; cancellation always propagates. */
     private suspend fun currentLocation(): CoordinatesLookup = try {
         CoordinatesLookup.Found(
             withTimeout(GPS_TIMEOUT) { locationProvider.getCurrentLocation() }
@@ -8541,23 +8853,38 @@ import com.mhq.salati.location.domain.model.GeocodeResult
 import com.mhq.salati.location.domain.model.SavedLocation
 import javax.inject.Inject
 
+/**
+ * The same place with its city and country names in [languageCode],
+ * or null when the names can't be looked up.
+ *
+ * A lookup that succeeds but finds no names at all counts as a failure,
+ * so callers never store an empty-looking "localization" over existing names.
+ */
 class GetLocalizedLocationUseCase @Inject constructor(
     private val reverseGeocodeLocation: ReverseGeocodeLocationUseCase
 ) {
     /**
-     * The same place with its city and country names in [languageCode],
-     * or null when the names can't be looked up.
+     * @param savedLocation the place to name
+     * @param languageCode the BCP-47 language to request names in
+     * @return the place with new names, or null when the geocode failed,
+     *   found nothing, or returned no names
      */
     suspend operator fun invoke(
         savedLocation: SavedLocation,
         languageCode: String
     ): SavedLocation? {
-        val found = reverseGeocodeLocation(savedLocation.coordinates, languageCode) as? GeocodeResult.Found
-            ?: return null
+        val found = reverseGeocodeLocation(
+            savedLocation.coordinates,
+            languageCode
+        ) as? GeocodeResult.Found ?: return null
 
-        if (found.cityName == null && found.countryName == null) return null
+        if (found.cityName == null && found.countryName == null)
+            return null
 
-        return savedLocation.copy(cityName = found.cityName, countryName = found.countryName)
+        return savedLocation.copy(
+            cityName = found.cityName,
+            countryName = found.countryName
+        )
     }
 }
 ```
@@ -8572,6 +8899,12 @@ import com.mhq.salati.location.domain.repo.LocationRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+/**
+ * The app's saved prayer location, live.
+ *
+ * Emits null when no place is saved;
+ * re-emits whenever the saved place changes (including localization updates).
+ */
 class GetSavedLocationUseCase @Inject constructor(
     private val locationRepository: LocationRepository
 ) {
@@ -8595,6 +8928,16 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import javax.inject.Inject
 
+/**
+ * The full automatic "find where the user is" flow, as a one-shot [LocationResolution].
+ *
+ * Steps, in order:
+ * check prerequisites (returning [LocationResolution.Blocked] with every missing one if any fail),
+ * take the last GPS lookup state (re-mapping blockers onto the prerequisites so UI shows the fix),
+ * then geocode the coordinates in the app language and save the place.
+ * Coordinates are saved even when the geo-coder recognizes no place;
+ * only a geo-coder error stops the save. Cancellation always propagates.
+ */
 class ResolveLocationUseCase @Inject constructor(
     private val checkLocationPrerequisitesUseCase: CheckLocationPrerequisitesUseCase,
     private val getCurrentCoordinatesUseCase: GetCurrentCoordinatesUseCase,
@@ -8602,15 +8945,17 @@ class ResolveLocationUseCase @Inject constructor(
     private val saveManualLocationUseCase: SaveManualLocationUseCase,
     private val observeSettingsUseCase: ObserveSettingsUseCase
 ) {
-
+    /** @return what happened; a [LocationResolution.Resolved] place is already saved */
     suspend operator fun invoke(): LocationResolution {
         val prerequisites = checkLocationPrerequisitesUseCase()
         if (!prerequisites.areMet) return LocationResolution.Blocked(prerequisites)
 
         val coordinates = when (val lookup = getCurrentCoordinatesUseCase().last()) {
             is CoordinatesLookup.Found -> lookup.coordinates
-            is CoordinatesLookup.ServicesDisabled -> return LocationResolution.Blocked(prerequisites.copy(servicesEnabled = false))
-            is CoordinatesLookup.PermissionDenied -> return LocationResolution.Blocked(prerequisites.copy(permissionGranted = false))
+            is CoordinatesLookup.ServicesDisabled ->
+                return LocationResolution.Blocked(prerequisites.copy(servicesEnabled = false))
+            is CoordinatesLookup.PermissionDenied ->
+                return LocationResolution.Blocked(prerequisites.copy(permissionGranted = false))
             is CoordinatesLookup.TimedOut,
             is CoordinatesLookup.Failed,
             is CoordinatesLookup.Locating -> return LocationResolution.LocationUnavailable
@@ -8652,9 +8997,19 @@ import com.mhq.salati.location.domain.repo.GeocoderProvider
 import com.mhq.salati.shared.domain.Coordinates
 import javax.inject.Inject
 
+/**
+ * Names the place at [coordinates].
+ *
+ * Thin pass-through over [GeocoderProvider.reverseGeocode].
+ */
 class ReverseGeocodeLocationUseCase @Inject constructor(
     private val geocoderProvider: GeocoderProvider
 ) {
+    /**
+     * @param coordinates the position to name
+     * @param acceptLanguage BCP-47 language tag for the returned names, or null for the default
+     * @return the names, not-found, or the lookup failure
+     */
     suspend operator fun invoke(
         coordinates: Coordinates,
         acceptLanguage: String? = null
@@ -8671,9 +9026,16 @@ import com.mhq.salati.location.domain.model.SavedLocation
 import com.mhq.salati.location.domain.repo.LocationRepository
 import javax.inject.Inject
 
+/**
+ * Stores [location] as the place the app prays by.
+ *
+ * Used both for genuinely manual picks (search, map) and for saving the automatic lookup's result,
+ * which is why the name says "manual" but the callers are broader.
+ */
 class SaveManualLocationUseCase @Inject constructor(
     private val locationRepository: LocationRepository
 ) {
+    /** @param location the place to save, replacing any previous one */
     suspend operator fun invoke(location: SavedLocation) {
         locationRepository.saveManualLocation(location)
     }
@@ -8689,9 +9051,20 @@ import com.mhq.salati.location.domain.model.LocationSearchResult
 import com.mhq.salati.location.domain.repo.GeocoderProvider
 import javax.inject.Inject
 
+/**
+ * Finds places matching a name, for the manual location picker.
+ *
+ * Blank queries are short-circuited to an empty list
+ * so the geo-coder is never called with nothing to look for.
+ */
 class SearchLocationByNameUseCase @Inject constructor(
     private val geocoderProvider: GeocoderProvider
 ) {
+    /**
+     * @param query the text to search for
+     * @param acceptLanguage BCP-47 language tag for the returned names, or null for the default
+     * @return the hits, the best one first; empty for a blank query or no matches
+     */
     suspend operator fun invoke(
         query: String,
         acceptLanguage: String? = null
@@ -12214,6 +12587,13 @@ package com.mhq.salati.prayertimes.domain.model
 
 import com.mhq.salati.shared.domain.HijriMonth
 
+/**
+ * A date on the Hijri calendar, as shown next to the Gregorian one.
+ *
+ * @property day day of the Hijri month, 1-based
+ * @property month the Hijri month
+ * @property year the Hijri year
+ */
 data class HijriDate(
     val day: Int,
     val month: HijriMonth,
@@ -12231,6 +12611,17 @@ import java.time.chrono.HijrahDate
 import java.time.temporal.ChronoField
 import java.time.temporal.ChronoUnit
 
+/**
+ * Shifts a date's Hijri part by [offsetDays] while leaving the Gregorian part alone.
+ *
+ * Users can nudge it when local moon sighting differs from the computed one.
+ * A zero offset resets the date otherwise the date is re-derived from the adjusted [HijrahDate],
+ * rolling over months and years as needed.
+ *
+ * @receiver the date whose Hijri part to adjust
+ * @param offsetDays days to add (negative to subtract)
+ * @return a copy of the date with the adjusted Hijri part
+ */
 fun PrayerDate.applyHijriAdjustment(offsetDays: Int): PrayerDate {
     if (offsetDays == 0) return this
 
@@ -12255,6 +12646,13 @@ package com.mhq.salati.prayertimes.domain.model
 
 import java.time.LocalDate
 
+/**
+ * The two calendars a prayer day is shown in.
+ *
+ * @property gregorianDate the civil date the timings were calculated for
+ * @property hijriDate the Hijri date displayed alongside it
+ * (already adjusted for the user's offset by the time it reaches the UI)
+ */
 data class PrayerDate(
     val gregorianDate: LocalDate,
     val hijriDate: HijriDate
@@ -12266,6 +12664,12 @@ data class PrayerDate(
 ```kotlin
 package com.mhq.salati.prayertimes.domain.model
 
+/**
+ * A day's prayer times together with the date they belong to.
+ *
+ * @property timings the day's timings
+ * @property date the Gregorian and Hijri dates those timings are for
+ */
 data class PrayerTimesResult(
     val timings: PrayerTimings,
     val date: PrayerDate
@@ -12280,6 +12684,11 @@ package com.mhq.salati.prayertimes.domain.model
 import com.mhq.salati.shared.domain.PrayerName
 import java.time.LocalTime
 
+/**
+ * All eleven timings of one day, in the order the calculation API returns them.
+ * Every [PrayerName] has a timing here, including the minor ones (Imsak,
+ * Shorouq, the third-of-night marks) that are displayed but not tracked.
+ */
 data class PrayerTimings(
     val imsak: LocalTime,
     val fajr: LocalTime,
@@ -12293,9 +12702,10 @@ data class PrayerTimings(
     val firstThird: LocalTime,
     val lastThird: LocalTime
 ) {
-    // Exhaustive `when` (no else):
-    // adding a PrayerName without deciding which timing it maps to
-    // becomes a compile error instead of a silent gap.
+    /**
+     * The time a [PrayerName] refers to on this day.
+     * Note the two renames the API needs: SHOROUQ maps to [sunrise].
+     */
     operator fun get(name: PrayerName): LocalTime = when (name) {
         PrayerName.IMSAK -> imsak
         PrayerName.FAJR -> fajr
@@ -12320,7 +12730,23 @@ import com.mhq.salati.prayertimes.domain.model.PrayerTimesResult
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.shared.domain.Coordinates
 
+/**
+ * Source of prayer times, implemented in Data over the calculation API and cache.
+ * Both methods take the calculation parameters explicitly (with defaults
+ * matching the API's own defaults) so callers decide which configuration a
+ * result belongs to; cached results are only valid for the same parameters.
+ */
 interface PrayerTimesRepository {
+    /**
+     * Fetches the day's timings from the network.
+     *
+     * @param date the day as its "dd-MM-yyyy" storage key
+     * @param coordinates the location to calculate times for
+     * @param method the calculation method's API id
+     * @param madhab the madhab used for Asr
+     * @param adjustment minute-level adjustment applied to every timing
+     * @return the timings, or the failure reason
+     */
     suspend fun getPrayerTimings(
         date: String,
         coordinates: Coordinates,
@@ -12329,6 +12755,14 @@ interface PrayerTimesRepository {
         adjustment: Int = 0
     ): Result<PrayerTimesResult>
 
+    /**
+     * Reads the day's timings from cache only; never touches the network.
+     *
+     * Same parameters as [getPrayerTimings]; a cache entry stored under
+     * different parameters is not returned.
+     *
+     * @return the cached timings, or null on a cache miss
+     */
     suspend fun getCachedTimings(
         date: String,
         coordinates: Coordinates,
@@ -12352,10 +12786,21 @@ import com.mhq.salati.shared.domain.Coordinates
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
+/**
+ * Reads a day's timings from cache, configured with the user's current settings.
+ * Fills in the calculation method and madhab from [SettingsRepository] and
+ * applies the stored Hijri date offset to the result, so cached timings come
+ * out exactly as the user should see them. Cache only; never goes online.
+ */
 class GetCachedPrayerTimesUseCase @Inject constructor(
     private val prayerTimesRepository: PrayerTimesRepository,
     private val settingsRepository: SettingsRepository
 ) {
+    /**
+     * @param date the day as its "dd-MM-yyyy" storage key
+     * @param coordinates the location the cached timings must match
+     * @return the adjusted cached timings, or null on a cache miss
+     */
     suspend operator fun invoke(
         date: String,
         coordinates: Coordinates
@@ -12386,10 +12831,21 @@ import com.mhq.salati.shared.domain.Coordinates
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
+/**
+ * Fetches a day's timings from the network, configured with the user's current settings.
+ * Fills in the calculation method and madhab from [SettingsRepository]
+ * and applies the stored Hijri date offset to the result,
+ * mirroring [GetCachedPrayerTimesUseCase] so both sources return identically shaped data.
+ */
 class GetPrayerTimesUseCase @Inject constructor(
     private val prayerTimesRepository: PrayerTimesRepository,
     private val settingsRepository: SettingsRepository
 ) {
+    /**
+     * @param date the day as its "dd-MM-yyyy" storage key
+     * @param coordinates the location to calculate times for
+     * @return the adjusted timings, or the failure reason
+     */
     suspend operator fun invoke(
         date: String,
         coordinates: Coordinates
@@ -12555,10 +13011,21 @@ abstract class PrayerTrackerModule {
 ```kotlin
 package com.mhq.salati.prayertracker.domain.model
 
+/**
+ * How a calendar day went, as color-coded for the tracker calendar.
+ * Derived per day from its records; see ObserveMonthDayStatusUseCase for the mapping rules.
+ */
 enum class DayStatus {
+    /** The day has not happened yet; never colored. */
     FUTURE,
+
+    /** All five daily prayers were marked PRAYED. */
     ALL_PRAYED,
+
+    /** At least one prayer was marked MISSED. */
     HAS_MISSED,
+
+    /** The day is today or a past day with neither a miss nor a full set. */
     IN_PROGRESS
 }
 ```
@@ -12568,9 +13035,20 @@ enum class DayStatus {
 ```kotlin
 package com.mhq.salati.prayertracker.domain.model
 
+/**
+ * What the user recorded for one prayer on one day.
+ *
+ * [PENDING] is the default state of an unmarked prayer;
+ * it is usually implicit (absent from storage) rather than written as a row.
+ */
 enum class PrayerStatus {
+    /** Not marked yet. */
     PENDING,
+
+    /** Marked as prayed. */
     PRAYED,
+
+    /** Marked as missed. */
     MISSED
 }
 ```
@@ -12586,16 +13064,36 @@ import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.time.YearMonth
 
+/**
+ * Storage of the user's prayer records, implemented in Data.
+ *
+ * Records are keyed by calendar date and prayer;
+ * a prayer with no stored row reads as [PrayerStatus.PENDING].
+ * The observe methods emit again whenever the underlying records change.
+ */
 interface PrayerTrackerRepository {
+    /**
+     * All records for the days of [yearMonth], keyed by date.
+     * Days with no records may be absent from the map.
+     */
     fun observeRecordsForMonth(yearMonth: YearMonth):
             Flow<Map<LocalDate, Map<PrayerName, PrayerStatus>>>
 
+    /**
+     * All records for [date], keyed by prayer.
+     * Prayers with no stored row may be absent from the map.
+     */
     fun observeRecordsForDate(date: LocalDate):
             Flow<Map<PrayerName, PrayerStatus>>
 
+    /**
+     * One-shot read of every record between [start] and [end], both inclusive.
+     * Used by random-access walks (e.g. the streak) that must not re-query per day.
+     */
     suspend fun getRecordsForRange(start: LocalDate, end: LocalDate):
             Map<LocalDate, Map<PrayerName, PrayerStatus>>
 
+    /** Writes [status] for [prayer] on [date], replacing any previous value. */
     suspend fun setStatus(date: LocalDate, prayer: PrayerName, status: PrayerStatus)
 }
 ```
@@ -12611,18 +13109,29 @@ import com.mhq.salati.shared.domain.Clock
 import com.mhq.salati.shared.domain.PrayerName
 import javax.inject.Inject
 
+/**
+ * How many consecutive days (ending today or yesterday) the user prayed all five daily prayers.
+ *
+ * Today is special: it is still in progress,
+ * so it counts toward the streak only if all prayers are marked;
+ * being unmarked doesn't break the streak, but a MISSED prayer does.
+ */
 class GetCurrentStreakUseCase @Inject constructor(
     private val prayerTrackerRepository: PrayerTrackerRepository,
     private val clock: Clock
 ) {
+    /**
+     * @return the current streak length in days;
+     * 0 when today (or the most recent recorded day) already breaks it
+     */
     suspend operator fun invoke(): Int {
         var streak = 0
         var day = clock.today()
         var isToday = true
 
-        // Walk back one window at a time and stop at the first day that breaks the streak:
-        // a short streak reads one small window, a long one reads only as much as it needs,
-        // and there is no artificial cap. A day with no records always ends the walk.
+        /** Walk back one window at a time and stop at the first day that breaks the streak:
+         * a short streak reads one small window, a long one reads only as much as it needs,
+         * and there is no artificial cap. A day with no records always ends the walk. */
         while (true) {
             val windowStart = day.minusDays(WINDOW_DAYS - 1)
             val records = prayerTrackerRepository.getRecordsForRange(windowStart, day)
@@ -12634,7 +13143,7 @@ class GetCurrentStreakUseCase @Inject constructor(
 
                 when {
                     allPrayed -> streak++
-                    // Today is still in progress: it doesn't break the streak unless something was missed.
+                    /** Today in progress: doesn't break the streak unless something was missed. */
                     isToday && !hasMissed -> Unit
                     else -> return streak
                 }
@@ -12644,6 +13153,7 @@ class GetCurrentStreakUseCase @Inject constructor(
         }
     }
 
+    /** Days fetched per repository call; a batching detail, not a streak cap. */
     private companion object {
         const val WINDOW_DAYS = 90L
     }
@@ -12669,14 +13179,19 @@ import javax.inject.Inject
  *
  * - Past days: all of them.
  * - Future days: none.
- * - Today: only prayers whose time has arrived. If today's timings can't be found
- *   (no saved location or nothing cached), every prayer is allowed rather than blocking the user.
+ * - Today: only prayers whose time has arrived.
+ *   If today's timings can't be found (no saved location or nothing cached),
+ *   every prayer is allowed rather than blocking the user.
  */
 class GetDuePrayersUseCase @Inject constructor(
     private val clock: Clock,
     private val getSavedLocationUseCase: GetSavedLocationUseCase,
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase
 ) {
+    /**
+     * @param date the day the user is looking at
+     * @return the prayers that may be marked; empty for future days
+     */
     suspend operator fun invoke(date: LocalDate): Set<PrayerName> {
         val allPrayers = PrayerName.majorEntries.toSet()
         val today = clock.today()
@@ -12688,13 +13203,69 @@ class GetDuePrayersUseCase @Inject constructor(
         }
     }
 
+    /** For today, a prayer is due once its time has arrived (equal counts as arrived). */
     private suspend fun dueToday(allPrayers: Set<PrayerName>, today: LocalDate): Set<PrayerName> {
         val location = getSavedLocationUseCase().first() ?: return allPrayers
         val timings = getCachedPrayerTimesUseCase(today.toDateKey(), location.coordinates)
             ?.timings ?: return allPrayers
 
         val timeNow = clock.now().toLocalTime()
-        return allPrayers.filterTo(mutableSetOf()) { prayer -> !timeNow.isBefore(timings[prayer]) }
+        return allPrayers.filterTo(mutableSetOf()) {
+            prayer -> !timeNow.isBefore(timings[prayer])
+        }
+    }
+}
+```
+
+## app\src\main\java\com\mhq\salati\prayertracker\domain\usecases\ObserveMonthDayStatusUseCase.kt
+
+```kotlin
+package com.mhq.salati.prayertracker.domain.usecases
+
+import com.mhq.salati.prayertracker.domain.model.DayStatus
+import com.mhq.salati.prayertracker.domain.model.PrayerStatus
+import com.mhq.salati.shared.domain.Clock
+import com.mhq.salati.shared.domain.PrayerName
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import java.time.LocalDate
+import java.time.YearMonth
+import javax.inject.Inject
+
+/**
+ * How each recorded day of [yearMonth] went, for the calendar colors.
+ *
+ * Mapping per day, first rule that applies wins: a day after today is [DayStatus.FUTURE];
+ * any MISSED prayer makes it [DayStatus.HAS_MISSED];
+ * all five major prayers PRAYED makes it [DayStatus.ALL_PRAYED];
+ * anything else is [DayStatus.IN_PROGRESS].
+ *
+ * Days with no records at all are absent from the map,
+ * so the calendar draws them as unmarked.
+ */
+class ObserveMonthDayStatusUseCase @Inject constructor(
+    private val observePrayerRecordsForMonthUseCase: ObservePrayerRecordsForMonthUseCase,
+    private val clock: Clock
+) {
+    /**
+     * @param yearMonth the month to summarize
+     * @return a live map of day to status for the days that have records
+     */
+    operator fun invoke(yearMonth: YearMonth): Flow<Map<LocalDate, DayStatus>> =
+        observePrayerRecordsForMonthUseCase(yearMonth).map { recordsByDate ->
+            val today = clock.today()
+            recordsByDate.mapValues { (date, records) -> dayStatusFor(date, records, today) }
+        }
+
+    private fun dayStatusFor(
+        date: LocalDate,
+        records: Map<PrayerName, PrayerStatus>,
+        today: LocalDate
+    ): DayStatus = when {
+        date.isAfter(today) -> DayStatus.FUTURE
+        records.values.any { it == PrayerStatus.MISSED } -> DayStatus.HAS_MISSED
+        PrayerName.majorEntries.all { records[it] == PrayerStatus.PRAYED } -> DayStatus.ALL_PRAYED
+        else -> DayStatus.IN_PROGRESS
     }
 }
 ```
@@ -12708,10 +13279,17 @@ import com.mhq.salati.prayertracker.domain.repo.PrayerTrackerRepository
 import java.time.LocalDate
 import javax.inject.Inject
 
+/**
+ * Live records for one day, keyed by prayer; re-emits whenever they change.
+ *
+ * Thin pass-through over [PrayerTrackerRepository.observeRecordsForDate];
+ * exists so presentation code goes through the standard use-case seam.
+ */
 class ObservePrayerRecordsForDateUseCase @Inject constructor(
-    private val repository: PrayerTrackerRepository
+    private val prayerTrackerRepository: PrayerTrackerRepository
 ) {
-    operator fun invoke(date: LocalDate) = repository.observeRecordsForDate(date)
+    /** @param date the day to observe */
+    operator fun invoke(date: LocalDate) = prayerTrackerRepository.observeRecordsForDate(date)
 }
 ```
 
@@ -12724,9 +13302,16 @@ import com.mhq.salati.prayertracker.domain.repo.PrayerTrackerRepository
 import java.time.YearMonth
 import javax.inject.Inject
 
+/**
+ * Live records for every day of a month, keyed by date; re-emits on changes.
+ *
+ * Thin pass-through over [PrayerTrackerRepository.observeRecordsForMonth];
+ * it is what the calendar's day colors are derived from.
+ */
 class ObservePrayerRecordsForMonthUseCase @Inject constructor(
     private val repository: PrayerTrackerRepository
 ) {
+    /** @param yearMonth the month to observe */
     operator fun invoke(yearMonth: YearMonth) = repository.observeRecordsForMonth(yearMonth)
 }
 ```
@@ -12742,11 +13327,22 @@ import com.mhq.salati.shared.domain.PrayerName
 import java.time.LocalDate
 import javax.inject.Inject
 
+/**
+ * Records the user's marking for one prayer on one day.
+ *
+ * Thin pass-through over [PrayerTrackerRepository.setStatus];
+ * whether the marking is allowed (the prayer is due) is decided upstream by GetDuePrayersUseCase.
+ */
 class SetPrayerStatusUseCase @Inject constructor(
-    private val repository: PrayerTrackerRepository
+    private val prayerTrackerRepository: PrayerTrackerRepository
 ) {
+    /**
+     * @param date the day being marked
+     * @param prayer the prayer being marked
+     * @param status the new status, replacing any previous one
+     */
     suspend operator fun invoke(date: LocalDate, prayer: PrayerName, status: PrayerStatus) {
-        repository.setStatus(date, prayer, status)
+        prayerTrackerRepository.setStatus(date, prayer, status)
     }
 }
 ```
@@ -14211,6 +14807,7 @@ import com.mhq.salati.prayertracker.presentation.contract.PrayerTrackerContract.
 import com.mhq.salati.prayertracker.ui.components.CalendarMonthView
 import com.mhq.salati.prayertracker.ui.components.PrayerStatusList
 import com.mhq.salati.prayertracker.ui.components.StreakBanner
+import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 import com.mhq.salati.shared.ui.components.TabHeader
 import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
@@ -14225,13 +14822,10 @@ private val TrackerPortraitMaxWidth = 560.dp
 private object TrackerWideLayout {
     /** Calendar never gets wider than this inside its half of the screen. */
     val CalendarMaxWidth = 340.dp
-
     /** Below this height the calendar stops shrinking and the pane scrolls instead. */
     val CalendarMinHeight = 216.dp
-
     /** Calendar height is capped at width x this, so cells don't become tall slivers on tablets. */
     const val CalendarMaxHeightPerWidth = 1.2f
-
     val PaneSpacing = 24.dp
 }
 
@@ -14271,7 +14865,7 @@ fun PrayerTrackerContent(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 20.dp, vertical = 24.dp)
+                        .padding(horizontal = ScreenHorizontalPadding, vertical = 24.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
                     CalendarMonthView(
@@ -14322,7 +14916,7 @@ private fun TrackerWideContent(
         modifier = Modifier
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
-            .padding(horizontal = 24.dp, vertical = 4.dp)
+            .padding(horizontal = ScreenHorizontalPadding, vertical = 4.dp)
     ) {
         BoxWithConstraints(
             contentAlignment = Alignment.Center,
@@ -14336,7 +14930,7 @@ private fun TrackerWideContent(
                 .coerceAtLeast(TrackerWideLayout.CalendarMinHeight)
 
             Box(
-                contentAlignment = Alignment.Center,
+                contentAlignment = Alignment.CenterStart,
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
@@ -15452,7 +16046,10 @@ fun CompassCalibrationOverlay(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(CompassWideLayout.Padding),
+                    .padding(
+                        horizontal = CompassWideLayout.HorizontalPadding,
+                        vertical = CompassWideLayout.VerticalPadding
+                    ),
                 horizontalArrangement = Arrangement.spacedBy(CompassWideLayout.Spacing),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -15644,6 +16241,7 @@ private fun CompassCalibrationOverlayPreview() {
 package com.mhq.salati.qibla.ui.components
 
 import androidx.compose.ui.unit.dp
+import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 
 /**
  * Geometry shared by the wide (landscape) Qibla screen and the calibration overlay.
@@ -15654,7 +16252,8 @@ import androidx.compose.ui.unit.dp
  * Change a value here and both screens move together.
  */
 internal object CompassWideLayout {
-    val Padding = 16.dp
+    val HorizontalPadding = ScreenHorizontalPadding
+    val VerticalPadding = 16.dp
     val Spacing = 16.dp
 
     /** Start pane: compass dial / figure-8 animation. */
@@ -16521,10 +17120,11 @@ import com.mhq.salati.qibla.ui.components.CalibrationBanner
 import com.mhq.salati.qibla.ui.components.CompassWideLayout
 import com.mhq.salati.qibla.ui.components.RotatingCompassDial
 import com.mhq.salati.qibla.ui.components.sensorStatus
+import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
-private val NarrowCardMargin = 16.dp
+private val NarrowCardMargin = ScreenHorizontalPadding
 private val NarrowCardMaxWidth = 560.dp
 
 /**
@@ -16587,7 +17187,9 @@ private fun QiblaWideContent(
     Row(
         horizontalArrangement = Arrangement.spacedBy(CompassWideLayout.Spacing),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(CompassWideLayout.Padding)
+        modifier = modifier.padding(
+            horizontal = CompassWideLayout.HorizontalPadding,
+            vertical = CompassWideLayout.VerticalPadding)
     ) {
         // The dial takes the largest square that fits this pane (5% left for its shadow).
         BoxWithConstraints(
@@ -18395,6 +18997,7 @@ import com.mhq.salati.settings.ui.components.SettingsSelectionSheet
 import com.mhq.salati.settings.ui.components.SettingsStepperRow
 import com.mhq.salati.settings.ui.components.SettingsSwitchRow
 import com.mhq.salati.settings.ui.displayNameRes
+import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 import com.mhq.salati.shared.ui.components.ActionRow
 import com.mhq.salati.shared.ui.components.GroupCard
 import com.mhq.salati.shared.ui.components.GroupDivider
@@ -18420,8 +19023,8 @@ private object SettingsWideLayout {
  * - Narrow windows: one centered, lazy list bounded by [SettingsPortraitMaxWidth].
  * - Wide windows: two balanced panes side by side (notifications & calculation on the start
  *   side, appearance, Hijri and about on the end side), each scrolling on its own.
- * - The header sits in the column flow (like Tracker), so no measured-height overlay hack is
- *   needed and it grows safely with font scale or Arabic line heights.
+ * - The header sits in the column flow (like Tracker), no measured-height overlay hack is needed,
+ *   and it grows safely with font scale or Arabic line heights.
  */
 @Composable
 fun SettingsContent(
@@ -18495,8 +19098,8 @@ private fun SettingsNarrowContent(
     ) {
         LazyColumn(
             contentPadding = PaddingValues(
-                start = 20.dp,
-                end = 20.dp,
+                start = ScreenHorizontalPadding,
+                end = ScreenHorizontalPadding,
                 top = 24.dp,
                 bottom = 40.dp
             ),
@@ -18551,7 +19154,11 @@ private fun SettingsWideContent(
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
             .navigationBarsPadding()
-            .padding(start = 24.dp, end = 24.dp, bottom = BottomNavBarDefaults.Height)
+            .padding(
+                start = ScreenHorizontalPadding,
+                end = ScreenHorizontalPadding,
+                bottom = BottomNavBarDefaults.Height
+            )
     ) {
         SettingsPane(modifier = Modifier.weight(1f)) {
             NotificationsSection(state = state, onIntent = onIntent)
@@ -19118,10 +19725,24 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 
+/**
+ * Injectable source of the current date and time.
+ *
+ * Wraps [java.time] clock reads so domain code never touches the system clock directly.
+ * Production binds it to the real system time; tests bind it to a fixed or scripted time,
+ * which makes time-dependent use cases deterministic.
+ */
 interface Clock {
+    /** The current date and time in the device's time zone. */
     fun now(): LocalDateTime
+
+    /** The current calendar date in the device's time zone. */
     fun today(): LocalDate
+
+    /** The current moment as a zone-independent [Instant]. */
     fun instant(): Instant
+
+    /** The time zone all other methods resolve their results in. */
     fun zone(): ZoneId
 }
 ```
@@ -19131,13 +19752,29 @@ interface Clock {
 ```kotlin
 package com.mhq.salati.shared.domain
 
+/**
+ * A geographic position in decimal degrees.
+ *
+ * Validated on construction: latitude must lie in [-90, 90] and longitude in [-180, 180].
+ * This guarantees every [Coordinates] in the app is a usable location,
+ * so consumers never re-check the ranges.
+ *
+ * @property latitude north-south position in degrees, from -90 (South Pole) to 90 (North Pole)
+ * @property longitude east-west position in degrees, from -180 to 180
+ * @throws IllegalArgumentException if either value is outside its valid range
+ */
 data class Coordinates(
     val latitude: Double,
     val longitude: Double
 ) {
     init {
-        require(latitude in -90.0..90.0) { "Latitude must be between -90 and 90 but was $latitude" }
-        require(longitude in -180.0..180.0) { "Longitude must be between -180 and 180 but was $longitude" }
+        require(latitude in -90.0..90.0) {
+            "Latitude must be between -90 and 90 but was $latitude"
+        }
+
+        require(longitude in -180.0..180.0) {
+            "Longitude must be between -180 and 180 but was $longitude"
+        }
     }
 }
 ```
@@ -19151,12 +19788,25 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-// Pinned to Locale.US so digits never depend on the app language.
+/**
+ * Formatter for the stable string key a calendar date is stored under.
+ * Pinned to [Locale.US] so the digits never depend on the app or device language;
+ * Arabic locale settings must not change what is written to storage.
+ */
 private val DateKeyFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.US)
 
-/** The "dd-MM-yyyy" key that prayer times and muted prayers are stored under. */
+/**
+ * The "dd-MM-yyyy" key that prayer times and muted prayers are stored under.
+ * This key is part of the persisted data format:
+ * changing the pattern would orphan every previously saved row.
+ */
 fun LocalDate.toDateKey(): String = format(DateKeyFormatter)
 
+/**
+ * Parses a key produced by [toDateKey] back into a [LocalDate].
+ *
+ * @throws java.time.format.DateTimeParseException if the string is not a valid "dd-MM-yyyy" key
+ */
 fun String.toLocalDateFromKey(): LocalDate = LocalDate.parse(this, DateKeyFormatter)
 ```
 
@@ -19165,6 +19815,11 @@ fun String.toLocalDateFromKey(): LocalDate = LocalDate.parse(this, DateKeyFormat
 ```kotlin
 package com.mhq.salati.shared.domain
 
+/**
+ * The twelve months of the Hijri calendar, in order.
+ *
+ * @property number the 1-based month index used by Hijri date conversions and stored data
+ */
 enum class HijriMonth(val number: Int) {
     MUHARRAM(1),
     SAFAR(2),
@@ -19180,6 +19835,11 @@ enum class HijriMonth(val number: Int) {
     DHU_AL_HIJJAH(12);
 
     companion object {
+        /**
+         * Returns the month with the given [number], or [MUHARRAM] when no month matches.
+         * The fallback keeps callers safe against out-of-range values
+         * coming from external date converters or corrupted stored data.
+         */
         fun fromNumber(number: Int): HijriMonth =
             entries.firstOrNull { it.number == number } ?: MUHARRAM
     }
@@ -19193,8 +19853,14 @@ package com.mhq.salati.shared.domain
 
 import java.time.LocalTime
 
+/** Number of minutes in a full day; the upper bound (exclusive) of any minute-of-day value. */
 const val MINUTES_PER_DAY = 24 * 60
 
+/**
+ * Converts a time to its minute-of-day value, from 0 (00:00) to 1439 (23:59).
+ * Seconds and finer fields are ignored, so a time is identified by its whole minute.
+ * This is the unit prayer times are compared and offset in.
+ */
 fun LocalTime.toMinuteOfDay(): Int = hour * 60 + minute
 ```
 
@@ -19203,6 +19869,12 @@ fun LocalTime.toMinuteOfDay(): Int = hour * 60 + minute
 ```kotlin
 package com.mhq.salati.shared.domain
 
+/**
+ * Every named timing the app tracks, major prayers first, then minor timings.
+ *
+ * @property isMinorTiming true for auxiliary timings (Imsak, Shorouq, the third-of-night marks)
+ * displayed for reference but are not one of the five daily prayers a user can mark as prayed
+ */
 enum class PrayerName(val isMinorTiming: Boolean) {
     FAJR(false),
     DHUHR(false),
@@ -19216,6 +19888,7 @@ enum class PrayerName(val isMinorTiming: Boolean) {
     LAST_THIRD(true);
 
     companion object {
+        /** The five daily prayers, in observance order; the ones a user can track. */
         val majorEntries: List<PrayerName> = entries.filter { !it.isMinorTiming }
     }
 }
@@ -19229,8 +19902,17 @@ package com.mhq.salati.shared.domain
 /**
  * Turns the text a prayer travels as (inside alarm Intents and saved rows) back into a [PrayerName].
  * Implemented in Data, which owns that text.
+ *
+ * The string keys are owned by the Data layer (alarm Intent extras and persisted rows),
+ * so the mapping lives there too. Domain code only sees the resolved [PrayerName],
+ * or null when the key is unknown or stale.
  */
 interface PrayerNameResolver {
+    /**
+     * Resolves [key] to the [PrayerName] it stands for.
+     *
+     * @return the matching prayer, or null when the key is not a known prayer key
+     */
     fun resolve(key: String): PrayerName?
 }
 ```
@@ -19244,10 +19926,19 @@ import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.domain.PrayerNameResolver
 import javax.inject.Inject
 
-/** Gives the [PrayerName] a stored or Intent key stands for, or null for an unknown key. */
+/**
+ * Gives the [PrayerName] a stored or Intent key stands for, or null for an unknown key.
+ *
+ * Thin pass-through over [PrayerNameResolver]; exists so presentation code can resolve keys
+ * through the standard use-case seam without reaching into Data.
+ */
 class ResolvePrayerNameUseCase @Inject constructor(
     private val prayerNameResolver: PrayerNameResolver
 ) {
+    /**
+     * @param key the string key carried by an alarm Intent or a saved row
+     * @return the matching prayer, or null when the key is unknown or stale
+     */
     operator fun invoke(key: String): PrayerName? = prayerNameResolver.resolve(key)
 }
 ```
@@ -20022,10 +20713,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
@@ -20044,6 +20735,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.shared.ui.theme.tabHeaderGradient
@@ -20051,9 +20743,10 @@ import com.mhq.salati.shared.ui.theme.tabHeaderGradient
 /**
  * Header shared by the tab screens.
  *
- * The height is a MINIMUM ([heightIn]), never a fixed value, so a larger font scale or Arabic
- * line heights grow the header instead of clipping it. The gradient runs edge to edge (behind the
- * status bar and any system bars); only the content is pushed clear of them.
+ * The height is a MINIMUM ([heightIn]), never a fixed value,
+ * so a larger font scale or Arabic line heights grow the header instead of clipping it.
+ * The gradient runs edge to edge (behind the status bar and any system bars);
+ * only the content is pushed clear of them.
  */
 @Composable
 fun TabHeader(
@@ -20071,10 +20764,11 @@ fun TabHeader(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.tabHeaderGradient)
             .statusBarsPadding()
-            // Updated from displayCutout to safeDrawing to dynamically avoid both camera cutouts and side navigation bars in landscape orientation
-            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+            .windowInsetsPadding(
+                WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
+            )
             .heightIn(min = if (isWide) 64.dp else 112.dp)
-            .padding(vertical = if (isWide) 8.dp else 24.dp, horizontal = 24.dp)
+            .padding(vertical = if (isWide) 8.dp else 24.dp, horizontal = ScreenHorizontalPadding)
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -20090,7 +20784,9 @@ fun TabHeader(
                     modifier = Modifier
                         .size(if (isWide) 40.dp else 56.dp)
                         .clip(RoundedCornerShape(if (isWide) 10.dp else 16.dp))
-                        .background(MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.12f)),
+                        .background(
+                            MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.12f)
+                        ),
                 ) {
                     Icon(
                         imageVector = icon,
@@ -21092,6 +21788,10 @@ package com.mhq.salati.shared.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.dp
+
+/** Horizontal margin shared by the tab header and the content of every tab screen. */
+val ScreenHorizontalPadding = 24.dp
 
 @Composable
 fun isWideLayout(): Boolean {
@@ -21813,6 +22513,28 @@ class SplashViewModel @Inject constructor(
             M46,95 L62,95 L62,86 C62,80.5 59,77 54,74.5 C49,77 46,80.5 46,86 Z
             M26,95 L38,95 L38,88 C38,83.5 36,80.5 32,78.5 C28,80.5 26,83.5 26,88 Z
             M70,95 L82,95 L82,88 C82,83.5 80,80.5 76,78.5 C72,80.5 70,83.5 70,88 Z"/>
+</vector>
+```
+
+## app\src\main\res\drawable\ic_salati_white.xml
+
+```xml
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="82"
+    android:viewportHeight="82">
+    <group android:translateX="-13" android:translateY="-14">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M18,69 L90,69 L90,95 L18,95 Z
+                M36,69 C33,57.5 38,47.5 45,41.5 C49,38.1 52.4,36.5 54,34
+                C55.6,36.5 59,38.1 63,41.5 C70,47.5 75,57.5 72,69 Z
+                M45.5,16 A11,11 0 1 0 62.5,16 A9,9 0 1 1 45.5,16 Z
+                M46,95 L62,95 L62,86 C62,80.5 59,77 54,74.5 C49,77 46,80.5 46,86 Z
+                M26,95 L38,95 L38,88 C38,83.5 36,80.5 32,78.5 C28,80.5 26,83.5 26,88 Z
+                M70,95 L82,95 L82,88 C82,83.5 80,80.5 76,78.5 C72,80.5 70,83.5 70,88 Z"/>
+    </group>
 </vector>
 ```
 

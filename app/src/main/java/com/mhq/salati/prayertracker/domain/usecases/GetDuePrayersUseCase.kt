@@ -14,14 +14,19 @@ import javax.inject.Inject
  *
  * - Past days: all of them.
  * - Future days: none.
- * - Today: only prayers whose time has arrived. If today's timings can't be found
- *   (no saved location or nothing cached), every prayer is allowed rather than blocking the user.
+ * - Today: only prayers whose time has arrived.
+ *   If today's timings can't be found (no saved location or nothing cached),
+ *   every prayer is allowed rather than blocking the user.
  */
 class GetDuePrayersUseCase @Inject constructor(
     private val clock: Clock,
     private val getSavedLocationUseCase: GetSavedLocationUseCase,
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase
 ) {
+    /**
+     * @param date the day the user is looking at
+     * @return the prayers that may be marked; empty for future days
+     */
     suspend operator fun invoke(date: LocalDate): Set<PrayerName> {
         val allPrayers = PrayerName.majorEntries.toSet()
         val today = clock.today()
@@ -33,12 +38,15 @@ class GetDuePrayersUseCase @Inject constructor(
         }
     }
 
+    /** For today, a prayer is due once its time has arrived (equal counts as arrived). */
     private suspend fun dueToday(allPrayers: Set<PrayerName>, today: LocalDate): Set<PrayerName> {
         val location = getSavedLocationUseCase().first() ?: return allPrayers
         val timings = getCachedPrayerTimesUseCase(today.toDateKey(), location.coordinates)
             ?.timings ?: return allPrayers
 
         val timeNow = clock.now().toLocalTime()
-        return allPrayers.filterTo(mutableSetOf()) { prayer -> !timeNow.isBefore(timings[prayer]) }
+        return allPrayers.filterTo(mutableSetOf()) {
+            prayer -> !timeNow.isBefore(timings[prayer])
+        }
     }
 }

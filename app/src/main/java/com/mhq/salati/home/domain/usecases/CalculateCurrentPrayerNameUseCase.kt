@@ -7,9 +7,20 @@ import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.domain.toMinuteOfDay
 import javax.inject.Inject
 
+/**
+ * The major prayer whose window is running right now,
+ * i.e. the latest of the five daily prayers whose time has already passed.
+ *
+ * Times before today's Fajr are normalized into the previous day's cycle,
+ * so a 03:00 "now" is treated as late in yesterday's timeline rather than before the day began.
+ */
 class CalculateCurrentPrayerNameUseCase @Inject constructor(
     private val clock: Clock
 ) {
+    /**
+     * @param timings the day's prayer timings
+     * @return the prayer in progress, or null when no prayer time has passed yet
+     */
     operator fun invoke(timings: PrayerTimings): PrayerName? {
         // Anything earlier than Fajr belongs to the tail of the previous day's cycle.
         val fajrMinutes = timings.fajr.toMinuteOfDay()

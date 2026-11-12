@@ -10,6 +10,14 @@ import com.mhq.salati.shared.domain.toDateKey
 import java.time.LocalDate
 import javax.inject.Inject
 
+/**
+ * The window the Home screen should count down, no matter which day is browsed.
+ *
+ * The countdown always runs to today's real next prayer, whichever day is being browsed.
+ * Today's own timings are used when available; the browsed ones are only a last resort.
+ * Resolution order for today's timings: the browsed timings when the browsed day is today,
+ * then today's cache, then a network fetch, then the browsed timings as a fallback.
+ */
 class ResolvePrayerWindowForDisplayUseCase @Inject constructor(
     private val clock: Clock,
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
@@ -17,8 +25,10 @@ class ResolvePrayerWindowForDisplayUseCase @Inject constructor(
     private val calculatePrayerWindowUseCase: CalculatePrayerWindowUseCase
 ) {
     /**
-     * The countdown always runs to today's real next prayer, whichever day is being browsed.
-     * Today's own timings are used when available; the browsed ones are only a last resort.
+     * @param browsedTimings the timings already loaded for the browsed day
+     * @param browsedDate the day currently on screen
+     * @param coordinates the location the timings were calculated for
+     * @return the window to today's next prayer, built from today's timings
      */
     suspend operator fun invoke(
         browsedTimings: PrayerTimings,

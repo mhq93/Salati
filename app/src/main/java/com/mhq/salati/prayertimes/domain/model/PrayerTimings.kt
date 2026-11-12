@@ -3,6 +3,11 @@ package com.mhq.salati.prayertimes.domain.model
 import com.mhq.salati.shared.domain.PrayerName
 import java.time.LocalTime
 
+/**
+ * All eleven timings of one day, in the order the calculation API returns them.
+ * Every [PrayerName] has a timing here, including the minor ones (Imsak,
+ * Shorouq, the third-of-night marks) that are displayed but not tracked.
+ */
 data class PrayerTimings(
     val imsak: LocalTime,
     val fajr: LocalTime,
@@ -16,9 +21,10 @@ data class PrayerTimings(
     val firstThird: LocalTime,
     val lastThird: LocalTime
 ) {
-    // Exhaustive `when` (no else):
-    // adding a PrayerName without deciding which timing it maps to
-    // becomes a compile error instead of a silent gap.
+    /**
+     * The time a [PrayerName] refers to on this day.
+     * Note the two renames the API needs: SHOROUQ maps to [sunrise].
+     */
     operator fun get(name: PrayerName): LocalTime = when (name) {
         PrayerName.IMSAK -> imsak
         PrayerName.FAJR -> fajr

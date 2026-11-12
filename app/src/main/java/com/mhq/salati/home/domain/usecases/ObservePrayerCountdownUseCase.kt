@@ -9,10 +9,18 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * One [PrayerCountdown] per second while [window] runs.
+ *
+ * Emits once a second until [window] ends; the flow completes right after the zero emission.
+ */
 class ObservePrayerCountdownUseCase @Inject constructor(
     private val clock: Clock
 ) {
-    /** Emits once a second until [window] ends; the flow completes right after the zero emission. */
+    /**
+     * @param window the countdown window to observe
+     * @return a flow of countdown snapshots, ending with the zero-remaining one
+     */
     operator fun invoke(window: PrayerWindow): Flow<PrayerCountdown> = flow {
         while (true) {
             val now = clock.instant()

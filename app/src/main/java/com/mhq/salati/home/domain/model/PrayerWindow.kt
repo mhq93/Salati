@@ -8,9 +8,15 @@ import java.time.ZoneId
 
 /**
  * The stretch of time leading up to [nextPrayer]:
- * it starts at the previous prayer time
- * and ends when [nextPrayer] begins.
+ * it starts at the previous prayer time and ends when [nextPrayer] begins.
  * Home's countdown ring and timer are drawn from it.
+ *
+ * Validated on construction: [end] may equal [start] (an instant window) but never precede it.
+ *
+ * @property nextPrayer the prayer whose time [end] points at
+ * @property start the instant the window opens, i.e. the previous prayer's time
+ * @property end the instant [nextPrayer] begins
+ * @throws IllegalArgumentException if [end] is before [start]
  */
 data class PrayerWindow(
     val nextPrayer: PrayerName,
@@ -23,11 +29,18 @@ data class PrayerWindow(
         }
     }
 
+    /**
+     * Time left until [end] as seen from [now];
+     * clamped to zero once the window has ended, so callers never see a negative countdown.
+     */
     fun remainingAt(now: Instant): Duration =
         Duration.between(now, end).coerceAtLeast(Duration.ZERO)
 
-    /** 0f when [now] is at (or before) the start,
-     * 1f at (or after) the end. */
+    /**
+     * How far through the window [now] sits,
+     * from 0f at (or before) the start to 1f at (or after) the end.
+     * A zero-length window is always 0f.
+     */
     fun progressAt(now: Instant): Float {
         val totalMillis = Duration.between(start, end).toMillis()
         if (totalMillis <= 0L) return 0f
@@ -35,8 +48,11 @@ data class PrayerWindow(
         return (elapsedMillis.toFloat() / totalMillis.toFloat()).coerceIn(0f, 1f)
     }
 
-    /** True when this window ends on a calendar day later than [day]
-     * (e.g. after Isha, running into tomorrow's Fajr). */
+    /**
+     * True when this window ends on a calendar day later than [day]
+     * (e.g. after Isha, running into tomorrow's Fajr);
+     * the signal for a day rollover when the browsed day is [day].
+     */
     fun endsAfterDay(day: LocalDate, zoneId: ZoneId): Boolean =
         end.atZone(zoneId).toLocalDate().isAfter(day)
 }

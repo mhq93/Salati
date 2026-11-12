@@ -3,7 +3,11 @@ package com.mhq.salati.location.domain.usecases
 import com.mhq.salati.location.domain.repo.LocationRepository
 import javax.inject.Inject
 
-/** Forgets the saved place, so the next lookup uses the device location again. */
+/**
+ * Forgets the saved place, so the next lookup uses the device location again.
+ *
+ * Thin pass-through over [LocationRepository.clearSavedLocation].
+ */
 class ClearSavedLocationUseCase @Inject constructor(
     private val locationRepository: LocationRepository
 ) {

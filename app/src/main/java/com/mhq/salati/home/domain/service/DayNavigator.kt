@@ -6,10 +6,15 @@ import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
-/** The rules for which day the Home screen may show. */
+/**
+ * The rules for which day the Home screen may show.
+ * Centralizes day arithmetic (today check, previous/next, month end, rollover)
+ * so every screen and use case browses days by the same rules.
+ */
 class DayNavigator @Inject constructor(
     private val clock: Clock
 ) {
+    /** True when [date] is today in the device's time zone. */
     fun isToday(date: LocalDate): Boolean =
         date == clock.today()
 
@@ -17,26 +22,35 @@ class DayNavigator @Inject constructor(
     fun today(): LocalDate =
         clock.today()
 
-    /** The day before [date], or null when [date] is today:
-     * browsing into the past isn't allowed. */
+    /**
+     * The day before [date], or null when [date] is today:
+     * browsing into the past isn't allowed.
+     */
     fun previousOrNull(date: LocalDate): LocalDate? =
         if (isToday(date))
             null
         else
             date.minusDays(1)
 
+    /** The day after [date]; browsing forward is always allowed. */
     fun next(date: LocalDate): LocalDate =
         date.plusDays(1)
 
-    /** The following day when [window] runs past [date]
-     * (after Isha, into tomorrow's Fajr); otherwise null. */
+    /**
+     * The following day when [window] runs past [date] (after Isha, into tomorrow's Fajr);
+     * otherwise null.
+     */
     fun rolloverDate(date: LocalDate, window: PrayerWindow?): LocalDate? =
         if (window?.endsAfterDay(date, clock.zone()) == true)
             date.plusDays(1)
         else
             null
 
-    /** The last day of [date]'s month; when [date] already is that day, the last day of the next month. */
+    /**
+     * The last day of [date]'s month;
+     * when [date] already is that day, the last day of the next month.
+     * Used to bound how far ahead one jump can go.
+     */
     fun endOfMonth(date: LocalDate): LocalDate {
         val lastDay = date.with(TemporalAdjusters.lastDayOfMonth())
         return if (date == lastDay) {

@@ -7,13 +7,26 @@ import com.mhq.salati.shared.domain.PrayerName
 import com.mhq.salati.shared.domain.toMinuteOfDay
 import javax.inject.Inject
 
+/**
+ * Every timing of the day (major and minor) whose time has already passed.
+ * Unlike [CalculateCurrentPrayerNameUseCase], this includes the minor timings,
+ * so Imsak and Shorouq that have gone by also count as past.
+ */
 class CalculatePastPrayersUseCase @Inject constructor(
     private val clock: Clock
 ) {
+    /**
+     * @param timings the day's prayer timings
+     * @return the timings whose time is at or before now
+     */
     operator fun invoke(timings: PrayerTimings): Set<PrayerName> {
-        // Imsak is the first timing of the day; anything earlier than it is treated as after midnight.
+        /** Imsak is the first timing of the day; anything earlier is treated as after midnight. */
         val imsakMinutes = timings.imsak.toMinuteOfDay()
-        fun normalize(minutes: Int) = if (minutes < imsakMinutes) minutes + MINUTES_PER_DAY else minutes
+        fun normalize(minutes: Int) =
+            if (minutes < imsakMinutes)
+                minutes + MINUTES_PER_DAY
+            else
+                minutes
 
         val nowMinutes = normalize(clock.now().toLocalTime().toMinuteOfDay())
 

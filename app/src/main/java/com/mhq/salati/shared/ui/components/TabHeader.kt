@@ -11,12 +11,12 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
@@ -36,15 +36,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mhq.salati.shared.ui.isWideLayout
+import com.mhq.salati.shared.ui.screenHorizontalMargin
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import com.mhq.salati.shared.ui.theme.tabHeaderGradient
 
 /**
  * Header shared by the tab screens.
  *
- * The height is a MINIMUM ([heightIn]), never a fixed value, so a larger font scale or Arabic
- * line heights grow the header instead of clipping it. The gradient runs edge to edge (behind the
- * status bar and any system bars); only the content is pushed clear of them.
+ * The height is a MINIMUM ([heightIn]), never a fixed value,
+ * so a larger font scale or Arabic line heights grow the header instead of clipping it.
+ * The gradient runs edge to edge (behind the status bar and any system bars);
+ * only the content is pushed clear of them.
  */
 @Composable
 fun TabHeader(
@@ -62,10 +64,11 @@ fun TabHeader(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.tabHeaderGradient)
             .statusBarsPadding()
-            // Updated from displayCutout to safeDrawing to dynamically avoid both camera cutouts and side navigation bars in landscape orientation
-            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+            .windowInsetsPadding(
+                WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal)
+            )
             .heightIn(min = if (isWide) 64.dp else 112.dp)
-            .padding(vertical = if (isWide) 8.dp else 24.dp, horizontal = 24.dp)
+            .padding(vertical = if (isWide) 8.dp else 24.dp, horizontal = screenHorizontalMargin())
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -81,7 +84,9 @@ fun TabHeader(
                     modifier = Modifier
                         .size(if (isWide) 40.dp else 56.dp)
                         .clip(RoundedCornerShape(if (isWide) 10.dp else 16.dp))
-                        .background(MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.12f)),
+                        .background(
+                            MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.12f)
+                        ),
                 ) {
                     Icon(
                         imageVector = icon,

@@ -15,15 +15,28 @@ import java.time.LocalDate
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
+/** Hard cap on the network fetch; past it the load reports [PrayerTimesError.TimedOut]. */
 private val FETCH_TIMEOUT = 5_000L.milliseconds
 
+/**
+ * Loads a day's prayer times as a one-shot [PrayerTimesLoad] flow.
+ *
+ * Cache first. It will only emit [PrayerTimesLoad.FetchingFromNetwork] on a cache miss and go online.
+ * Offline failures reported as [PrayerTimesError.Offline] regardless of the underlying exception,
+ * so the UI can show the right message.
+ */
 class LoadPrayerTimesUseCase @Inject constructor(
     private val getCachedPrayerTimesUseCase: GetCachedPrayerTimesUseCase,
     private val getPrayerTimesUseCase: GetPrayerTimesUseCase,
-    private val resolvePrayerWindowForDisplayUseCase: ResolvePrayerWindowForDisplayUseCase,    private val calculatePrayerStatusUseCase: CalculatePrayerStatusUseCase,
+    private val resolvePrayerWindowForDisplayUseCase: ResolvePrayerWindowForDisplayUseCase,
+    private val calculatePrayerStatusUseCase: CalculatePrayerStatusUseCase,
     private val connectivityChecker: ConnectivityChecker
 ) {
-    /** Cache first. Only on a cache miss does it emit [PrayerTimesLoad.FetchingFromNetwork] and go online. */
+    /**
+     * @param date the day to load
+     * @param coordinates the location to load times for
+     * @return a flow that emits the load's steps once each, then completes
+     */
     operator fun invoke(date: LocalDate, coordinates: Coordinates): Flow<PrayerTimesLoad> = flow {
         val dateKey = date.toDateKey()
 
@@ -52,6 +65,7 @@ class LoadPrayerTimesUseCase @Inject constructor(
         }
     }
 
+    /** Assembles a [PrayerTimesLoad.Loaded]: window and status resolved on top of the timings. */
     private suspend fun loaded(
         result: PrayerTimesResult,
         date: LocalDate,
@@ -65,6 +79,10 @@ class LoadPrayerTimesUseCase @Inject constructor(
         )
     }
 
+    /**
+     * Keeps [error] when the device is online,
+     * but reports [PrayerTimesError.Offline] when the real cause is a missing connection.
+     */
     private fun failureWhileOnlineOr(error: PrayerTimesError): PrayerTimesError =
         if (connectivityChecker.isConnected()) error else PrayerTimesError.Offline
 }

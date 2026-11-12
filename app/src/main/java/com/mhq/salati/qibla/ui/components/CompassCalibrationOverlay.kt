@@ -16,12 +16,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -47,6 +49,7 @@ import com.mhq.salati.R
 import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
+import com.mhq.salati.shared.ui.screenHorizontalMargin
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 import kotlin.math.PI
 import kotlin.math.cos
@@ -98,14 +101,17 @@ fun CompassCalibrationOverlay(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) { /* absorb clicks */ }
-            .safeDrawingPadding()
+            .windowInsetsPadding(WindowInsets.systemBars)
             .padding(bottom = BottomNavBarDefaults.Height),
     ) {
         if (isWide) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(CompassWideLayout.Padding),
+                    .padding(
+                        horizontal = screenHorizontalMargin(),
+                        vertical = CompassWideLayout.VerticalPadding
+                    ),
                 horizontalArrangement = Arrangement.spacedBy(CompassWideLayout.Spacing),
                 verticalAlignment = Alignment.CenterVertically
             ) {

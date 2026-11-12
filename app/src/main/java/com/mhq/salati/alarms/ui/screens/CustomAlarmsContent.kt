@@ -7,13 +7,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -41,11 +39,14 @@ import com.mhq.salati.alarms.ui.components.AddEditAlarmFormContent
 import com.mhq.salati.alarms.ui.components.AddEditAlarmSheet
 import com.mhq.salati.alarms.ui.components.CustomAlarmCard
 import com.mhq.salati.alarms.ui.state.AlarmFormState
+import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 import com.mhq.salati.shared.ui.components.TabHeader
 import com.mhq.salati.shared.ui.isWideLayout
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
+import com.mhq.salati.shared.ui.screenHorizontalMargin
+import com.mhq.salati.shared.ui.symmetricCutoutInset
 
-private val FabColumnWidth = 88.dp // FAB 56 + 20 end margin + 12 gap
+private val FabColumnWidth = 56.dp + ScreenHorizontalPadding + 12.dp
 
 @Composable
 fun CustomAlarmsContent(
@@ -72,13 +73,13 @@ fun CustomAlarmsContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .windowInsetsPadding(
-                        WindowInsets.navigationBars
-                            .union(WindowInsets.displayCutout)
-                            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
+                        WindowInsets.navigationBars.only(
+                            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
+                        )
                     )
                     .padding(
-                        start = 16.dp,
-                        end = FabColumnWidth,
+                        start = screenHorizontalMargin(),
+                        end = FabColumnWidth + symmetricCutoutInset(),
                         top = with(density) { headerHeightPx.toDp() } + 12.dp,
                         bottom = BottomNavBarDefaults.Height
                     ),
@@ -133,7 +134,7 @@ fun CustomAlarmsContent(
                 }
             }
         } else {
-            // Portrait view footprint restored
+            /** Portrait view footprint restored */
             if (state.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
@@ -144,8 +145,8 @@ fun CustomAlarmsContent(
             } else {
                 LazyColumn(
                     contentPadding = PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
+                        start = ScreenHorizontalPadding,
+                        end = ScreenHorizontalPadding,
                         top = with(density) { headerHeightPx.toDp() } + 16.dp,
                         bottom = BottomNavBarDefaults.Height + 80.dp
                     ),
@@ -165,7 +166,7 @@ fun CustomAlarmsContent(
             }
         }
 
-        // TabHeader strictly placed at Top across layout contexts
+        /** TabHeader strictly placed at Top across layout contexts */
         TabHeader(
             icon = Icons.Default.Alarm,
             title = stringResource(R.string.custom_alarms),
@@ -175,20 +176,17 @@ fun CustomAlarmsContent(
             }
         )
 
-        // Floating Action Button perfectly pinned to the absolute bottom-end area across screens
+        /** Floating Action Button pinned to the absolute bottom-end area across screens */
         FloatingActionButton(
             onClick = { onIntent(AlarmsContract.Intent.AddAlarm) },
             containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = MaterialTheme.colorScheme.onTertiary,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .windowInsetsPadding(
-                    WindowInsets.navigationBars
-                        .union(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
-                )
+                .windowInsetsPadding(WindowInsets.navigationBars)
                 .padding(
                     bottom = BottomNavBarDefaults.Height + 20.dp,
-                    end = 20.dp
+                    end = screenHorizontalMargin()
                 )
         ) {
             Icon(

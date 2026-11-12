@@ -10,19 +10,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -47,10 +42,12 @@ import com.mhq.salati.qibla.ui.components.CalibrationBanner
 import com.mhq.salati.qibla.ui.components.CompassWideLayout
 import com.mhq.salati.qibla.ui.components.RotatingCompassDial
 import com.mhq.salati.qibla.ui.components.sensorStatus
+import com.mhq.salati.shared.ui.ScreenHorizontalPadding
 import com.mhq.salati.shared.ui.isWideLayout
+import com.mhq.salati.shared.ui.screenHorizontalMargin
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
-private val NarrowCardMargin = 16.dp
+private val NarrowCardMargin = ScreenHorizontalPadding
 private val NarrowCardMaxWidth = 560.dp
 
 /**
@@ -79,17 +76,13 @@ fun QiblaContentSuccess(
     onRecalibrateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val contentModifier = modifier
-        .fillMaxSize()
-        .windowInsetsPadding(WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal))
-
     if (isWideLayout()) {
         QiblaWideContent(
             deviceHeading = deviceHeading,
             qiblaBearing = qiblaBearing,
             compassAccuracy = compassAccuracy,
             onRecalibrateClick = onRecalibrateClick,
-            modifier = contentModifier
+            modifier = modifier.fillMaxSize()
         )
     } else {
         QiblaNarrowContent(
@@ -97,7 +90,7 @@ fun QiblaContentSuccess(
             qiblaBearing = qiblaBearing,
             compassAccuracy = compassAccuracy,
             onRecalibrateClick = onRecalibrateClick,
-            modifier = contentModifier
+            modifier = modifier.fillMaxSize()
         )
     }
 }
@@ -110,70 +103,89 @@ private fun QiblaWideContent(
     onRecalibrateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(CompassWideLayout.Spacing),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(CompassWideLayout.Padding)
-    ) {
-        // The dial takes the largest square that fits this pane (5% left for its shadow).
-        BoxWithConstraints(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .weight(CompassWideLayout.DialPaneWeight)
-                .fillMaxHeight()
-        ) {
-            RotatingCompassDial(
-                deviceHeading = deviceHeading,
-                qiblaBearing = qiblaBearing,
-                modifier = Modifier.size(minOf(maxWidth, maxHeight) * 0.95f)
-            )
-        }
+    BoxWithConstraints(modifier = modifier) {
+        val margin = screenHorizontalMargin()
+        val paneWidth = (maxWidth - margin * 2 - CompassWideLayout.Spacing) / 2
+        val paneHeight = maxHeight - CompassWideLayout.VerticalPadding * 2
+        val dialSize = minOf(paneWidth, paneHeight) * 0.95f
+        val cardWidth = (paneWidth + dialSize) / 2
 
-        QiblaCard(
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(CompassWideLayout.Spacing),
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .weight(CompassWideLayout.SidePaneWeight)
-                .fillMaxHeight()
+                .fillMaxSize()
+                .padding(horizontal = margin, vertical = CompassWideLayout.VerticalPadding)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(24.dp)
+                    .weight(1f)
+                    .fillMaxHeight()
             ) {
-                val (label, dotColor) = compassAccuracy.sensorStatus()
+                RotatingCompassDial(
+                    deviceHeading = deviceHeading,
+                    qiblaBearing = qiblaBearing,
+                    modifier = Modifier.size(dialSize)
+                )
+            }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .background(dotColor, CircleShape)
-                    )
-                    Spacer(Modifier.width(10.dp))
-                    Text(
-                        text = label,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
-
-                Spacer(Modifier.height(24.dp))
-
-                TextButton(
-                    onClick = onRecalibrateClick,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-                    colors = ButtonDefaults.textButtonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                    ),
-                    modifier = Modifier.fillMaxWidth(0.8f)
+            Box(
+                contentAlignment = Alignment.CenterEnd,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            ) {
+                QiblaCard(
+                    modifier = Modifier
+                        .width(cardWidth)
+                        .fillMaxHeight()
                 ) {
-                    Text(
-                        text = stringResource(R.string.recalibrate),
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(24.dp)
+                    ) {
+                        val (label, dotColor) = compassAccuracy.sensorStatus()
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .background(dotColor, CircleShape)
+                            )
+                            Spacer(Modifier.width(10.dp))
+                            Text(
+                                text = label,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+
+                        Spacer(Modifier.height(24.dp))
+
+                        TextButton(
+                            onClick = onRecalibrateClick,
+                            border = BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                            ),
+                            colors = ButtonDefaults.textButtonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            ),
+                            modifier = Modifier.fillMaxWidth(0.8f)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.recalibrate),
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -190,7 +202,6 @@ private fun QiblaNarrowContent(
 ) {
     BoxWithConstraints(modifier = modifier) {
         val cardWidth = minOf(maxWidth - NarrowCardMargin * 2, NarrowCardMaxWidth)
-        // Limited by width first (as before), then by the height that is really left.
         val dialSize = minOf(cardWidth * 0.85f - 16.dp, maxHeight - NarrowChromeHeight)
             .coerceIn(MinDialSize, MaxDialSize)
 

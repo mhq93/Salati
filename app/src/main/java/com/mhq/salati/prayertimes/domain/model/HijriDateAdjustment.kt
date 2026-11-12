@@ -5,6 +5,17 @@ import java.time.chrono.HijrahDate
 import java.time.temporal.ChronoField
 import java.time.temporal.ChronoUnit
 
+/**
+ * Shifts a date's Hijri part by [offsetDays] while leaving the Gregorian part alone.
+ *
+ * Users can nudge it when local moon sighting differs from the computed one.
+ * A zero offset resets the date otherwise the date is re-derived from the adjusted [HijrahDate],
+ * rolling over months and years as needed.
+ *
+ * @receiver the date whose Hijri part to adjust
+ * @param offsetDays days to add (negative to subtract)
+ * @return a copy of the date with the adjusted Hijri part
+ */
 fun PrayerDate.applyHijriAdjustment(offsetDays: Int): PrayerDate {
     if (offsetDays == 0) return this
 
