@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mhq.salati.R
 import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.home.presentation.viewmodel.HomeViewModel
 import com.mhq.salati.location.ui.LocationPrerequisitesObserver
@@ -51,6 +52,13 @@ fun HomeContainer(
                 is HomeContract.Effect.ShowError -> {
                     scope.launch {
                         snackbarHostState.showSnackbar(effect.message.asString(context))
+                    }
+                }
+                is HomeContract.Effect.ShowNotificationsOffHint -> {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            context.getString(R.string.notifications_off_hint)
+                        )
                     }
                 }
             }

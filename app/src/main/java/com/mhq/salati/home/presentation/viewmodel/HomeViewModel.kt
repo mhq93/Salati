@@ -17,6 +17,7 @@ import com.mhq.salati.home.presentation.mapper.toUi
 import com.mhq.salati.location.presentation.handlers.LocationPrerequisitesHandler
 import com.mhq.salati.location.presentation.model.PrerequisitesUi
 import com.mhq.salati.prayertimes.domain.model.PrayerTimings
+import com.mhq.salati.settings.domain.usecases.ObserveNotificationsEnabledUseCase
 import com.mhq.salati.settings.domain.usecases.ObserveTimeFormatUseCase
 import com.mhq.salati.settings.presentation.mapper.toUi
 import com.mhq.salati.shared.domain.Coordinates
@@ -43,13 +44,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val dayNavigator: DayNavigator,
     private val locationHandler: HomeLocationHandler,
     private val prerequisitesHandler: LocationPrerequisitesHandler,
     private val prayerTimesHandler: PrayerTimesHandler,
     private val mutedPrayersHandler: MutedPrayersHandler,
     private val alarmsHandler: HomeAlarmsHandler,
-    private val observeTimeFormatUseCase: ObserveTimeFormatUseCase
+    private val dayNavigator: DayNavigator,
+    private val observeTimeFormatUseCase: ObserveTimeFormatUseCase,
+    private val observeNotificationsEnabledUseCase: ObserveNotificationsEnabledUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeContract.State())
@@ -78,6 +80,12 @@ class HomeViewModel @Inject constructor(
 
         observeTimeFormatUseCase()
             .onEach { format -> _state.update { it.copy(timeFormat = format.toUi()) } }
+            .launchIn(viewModelScope)
+
+        observeNotificationsEnabledUseCase()
+            .onEach { enabled ->
+                _state.update { it.copy(adhanUiState = it.adhanUiState.copy(notificationsEnabled = enabled)) }
+            }
             .launchIn(viewModelScope)
     }
 
@@ -132,11 +140,15 @@ class HomeViewModel @Inject constructor(
                 sendEffect(HomeContract.Effect.NavigateToLocationPicker)
 
             is HomeContract.Intent.ToggleMute -> {
-                viewModelScope.launch {
-                    mutedPrayersHandler.toggle(
-                        currentDate(),
-                        intent.prayerName.toDomain()
-                    )
+                if (!_state.value.adhanUiState.notificationsEnabled) {
+                    sendEffect(HomeContract.Effect.ShowNotificationsOffHint)
+                } else {
+                    viewModelScope.launch {
+                        mutedPrayersHandler.toggle(
+                            currentDate(),
+                            intent.prayerName.toDomain()
+                        )
+                    }
                 }
             }
 

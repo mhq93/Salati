@@ -79,6 +79,7 @@ fun HomeContent(
                         pastPrayers = state.prayerTimesUiState.pastPrayers,
                         isToday = state.dateBrowserUiState.isBrowsingToday,
                         timeFormat = state.timeFormat,
+                        notificationsEnabled = state.adhanUiState.notificationsEnabled,
                         onIntent = onIntent,
                         modifier = Modifier.weight(1f)
                     )

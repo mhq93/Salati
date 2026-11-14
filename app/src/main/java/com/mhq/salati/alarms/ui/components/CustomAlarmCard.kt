@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,7 @@ import java.time.format.TextStyle as DayNameStyle
 @Composable
 fun CustomAlarmCard(
     customAlarm: CustomAlarmUi,
+    areNotificationsOff: Boolean = false,
     onToggle: (Boolean) -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
@@ -53,15 +55,16 @@ fun CustomAlarmCard(
 ) {
     val colors = MaterialTheme.colorScheme
     val isEnabled = customAlarm.isEnabled
-    val contentAlpha = if (isEnabled) 1f else 0.45f
+    val isArmed = isEnabled && !areNotificationsOff
+    val contentAlpha = if (isArmed) 1f else 0.45f
     val configuration = LocalConfiguration.current
 
+    val borderColor = colors.outline.copy(alpha = if (isArmed) 0.15f else 0.08f)
+    val dividerColor = colors.outline.copy(alpha = 0.12f)
     val containerColor by animateColorAsState(
-        targetValue = if (isEnabled) colors.surfaceVariant.copy(alpha = 0.4f) else colors.surface,
+        targetValue = if (isArmed) colors.surfaceVariant.copy(alpha = 0.4f) else colors.surface,
         label = "cardContainerColor"
     )
-    val borderColor = colors.outline.copy(alpha = if (isEnabled) 0.15f else 0.08f)
-    val dividerColor = colors.outline.copy(alpha = 0.12f)
 
     val prayerName = stringResource(customAlarm.prayerName.labelRes)
     val repeatsEveryDay = customAlarm.everyDay ||
@@ -87,7 +90,7 @@ fun CustomAlarmCard(
                 ) {
                     Box(modifier = Modifier.weight(1f, fill = false)) {
                         if (repeatsEveryDay) {
-                            RepeatTag(isEnabled = isEnabled)
+                            RepeatTag(isEnabled = isArmed)
                         } else {
                             Spacer(modifier = Modifier.size(1.dp))
                         }
@@ -98,7 +101,8 @@ fun CustomAlarmCard(
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = colors.primary,
                             checkedTrackColor = colors.primary.copy(alpha = 0.5f)
-                        )
+                        ),
+                        modifier = Modifier.alpha(if (areNotificationsOff) 0.5f else 1f)
                     )
                 }
 
@@ -130,7 +134,7 @@ fun CustomAlarmCard(
                         DayCircle(
                             badge = badge,
                             isActive = customAlarm.everyDay || badge.calendarDay in customAlarm.activeDays,
-                            isAlarmEnabled = isEnabled,
+                            isAlarmEnabled = isArmed,
                             onClick = { onDayToggle(badge.calendarDay) },
                             modifier = Modifier.weight(1f)
                         )

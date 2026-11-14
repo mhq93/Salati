@@ -107,6 +107,7 @@ fun CustomAlarmsContent(
                             items(state.alarms, key = { it.id }) { alarm ->
                                 CustomAlarmCard(
                                     customAlarm = alarm,
+                                    areNotificationsOff = !state.notificationsEnabled,
                                     onToggle = { enabled -> onIntent(AlarmsContract.Intent.ToggleAlarm(alarm.id, enabled)) },
                                     onEdit = { onIntent(AlarmsContract.Intent.EditAlarm(alarm)) },
                                     onDelete = { onIntent(AlarmsContract.Intent.DeleteAlarm(alarm.id)) },
@@ -156,6 +157,7 @@ fun CustomAlarmsContent(
                     items(state.alarms, key = { it.id }) { alarm ->
                         CustomAlarmCard(
                             customAlarm = alarm,
+                            areNotificationsOff = !state.notificationsEnabled,
                             onToggle = { enabled -> onIntent(AlarmsContract.Intent.ToggleAlarm(alarm.id, enabled)) },
                             onEdit = { onIntent(AlarmsContract.Intent.EditAlarm(alarm)) },
                             onDelete = { onIntent(AlarmsContract.Intent.DeleteAlarm(alarm.id)) },

@@ -26,9 +26,7 @@ class MutedPrayersRepoImpl @Inject constructor(
     override suspend fun toggleMute(date: String, prayerName: PrayerName, muted: Boolean) {
         if (muted) {
             val epochDay = date.toLocalDateFromKey().toEpochDay()
-            mutedPrayerDao.mute(
-                MutedPrayerEntity(date, prayerName.storageKey, epochDay)
-            )
+            mutedPrayerDao.mute(MutedPrayerEntity(date, prayerName.storageKey, epochDay))
         } else {
             mutedPrayerDao.unmute(date, prayerName.storageKey)
         }

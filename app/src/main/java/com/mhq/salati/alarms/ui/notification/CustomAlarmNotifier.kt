@@ -35,6 +35,8 @@ class CustomAlarmNotifier @Inject constructor(
         offsetMinutes: Int,
         offsetDirectionKey: String?
     ) {
+        if (!presenter.notificationsEnabled()) return
+
         val sound = presenter.customAlarmSound()
         val channelId = channelIdFor(sound)
         ensureChannelExists(channelId, sound)

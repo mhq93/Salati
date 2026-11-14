@@ -28,9 +28,15 @@ fun PrayersList(
     currentTimingName: PrayerNameUi?,
     mutedTimings: Set<PrayerNameUi>,
     pastTimings: Set<PrayerNameUi>,
+    notificationsEnabled: Boolean = true,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    /** A prayer that has passed has nothing left to ring, so it keeps its saved look. */
+    fun looksMuted(prayer: PrayerNameUi): Boolean =
+        prayer in mutedTimings || (!notificationsEnabled && prayer !in pastTimings)
+
     Column(modifier = modifier.padding(top = 16.dp)) {
         prayers.forEachIndexed { index, (name, time) ->
             val (minorName, minorTime) = minorTimings[index]
@@ -41,7 +47,7 @@ fun PrayersList(
                         prayerName = stringResource(name.labelRes),
                         prayerTime = time,
                         isPrayerHighlighted = name == currentTimingName,
-                        isPrayerAdhanMuted = name in mutedTimings,
+                        isPrayerAdhanMuted = looksMuted(name),
                         isPrayerPassed = name in pastTimings,
                         onMutePrayerToggle = { onIntent(HomeContract.Intent.ToggleMute(name)) }
                     )
@@ -51,7 +57,7 @@ fun PrayersList(
                         prayerName = stringResource(minorName.labelRes),
                         prayerTime = minorTime,
                         isPrayerHighlighted = minorName == currentTimingName,
-                        isPrayerAdhanMuted = minorName in mutedTimings,
+                        isPrayerAdhanMuted = looksMuted(minorName),
                         isPrayerPassed = minorName in pastTimings,
                         onMutePrayerToggle = { onIntent(HomeContract.Intent.ToggleMute(minorName)) }
                     )

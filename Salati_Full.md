@@ -1,18 +1,19 @@
 # Salati project export
 
-- Generated: 2026-11-12 13:54
+- Generated: 2026-11-13 23:18
 - PowerShell: 5.1.19041.6456
 - Files embedded: 433
-- Files listed only (binary / too large / sensitive): 29
+- Files listed only (binary / too large / sensitive): 30
 - Secrets: local.properties, google-services.json, keystores and .env files are skipped; key/secret/password/token string literals are replaced with <REDACTED>.
 
 ## Git
 
 ```text
 branch: dev
-last commit: 36be703 2026-11-12 wip: realigning and centering Qibla, Tracker, Alarms and Settings screens + adding KDoc comments (domain models, done)
+last commit: 946b03d 2026-11-12 fix: dedupe annual fetches and purge stale cache rows, serialize whole-year Aladhan fetches with a Mutex and re-check the cache after taking the lock
 
 recent commits:
+  946b03d 2026-11-12 fix: dedupe annual fetches and purge stale cache rows, serialize whole-year Aladhan fetches with a Mutex and re-check the cache after taking the lock
   36be703 2026-11-12 wip: realigning and centering Qibla, Tracker, Alarms and Settings screens + adding KDoc comments (domain models, done)
   a4d0d79 2026-11-11 ` redesign: redesigned Custom Alarms Screen to handle different screen sizes and device rotation + Code refactor and cleanup + adding tests
   54af52c 2026-11-09 redesign: redesigned Tracker Screen to handle different screen sizes and device rotation
@@ -27,7 +28,6 @@ recent commits:
   fb1f440 2026-11-02 feature: added jump-date to DateBanner on Home Screem and locked prayer countdown to today's next prayer
   607639a 2026-11-02 feature: reworked and refactored Onboarding
   53d5ca3 2026-11-01 refactor: architecture cleanups, refactored datastore models, renamed intents and moved some files
-  da49d62 2026-11-01 refactor: stop Presentation from holding state and logic that belongs in Domain
 
 working tree changes (git status --short, first 80):
   (clean)
@@ -43,7 +43,7 @@ gradle\libs.versions.toml  (5.1 KB)
 gradle\wrapper\gradle-wrapper.jar  (44.4 KB)  [binary]
 gradle\wrapper\gradle-wrapper.properties  (0.4 KB)
 settings.gradle.kts  (0.6 KB)
-app\build.gradle.kts  (3.9 KB)
+app\build.gradle.kts  (3.5 KB)
 app\src\main\AndroidManifest.xml  (3.3 KB)
 app\src\main\java\com\mhq\salati\adhan\data\repoimpl\AdhanPlaybackRepoImpl.kt  (1.6 KB)
 app\src\main\java\com\mhq\salati\adhan\data\repoimpl\AlarmSchedulerImpl.kt  (1.1 KB)
@@ -248,8 +248,8 @@ app\src\main\java\com\mhq\salati\permissions\ui\rememberNotificationPermissionLa
 app\src\main\java\com\mhq\salati\permissions\ui\ShouldShowLocationRationale.kt  (0.8 KB)
 app\src\main\java\com\mhq\salati\prayertimes\data\mapper\CalendarMapper.kt  (0.8 KB)
 app\src\main\java\com\mhq\salati\prayertimes\data\mapper\TimingsMapper.kt  (4.8 KB)
-app\src\main\java\com\mhq\salati\prayertimes\data\repoimpl\PrayerTimesRepoImpl.kt  (3.2 KB)
-app\src\main\java\com\mhq\salati\prayertimes\datasource\database\PrayerTimesDao.kt  (0.6 KB)
+app\src\main\java\com\mhq\salati\prayertimes\data\repoimpl\PrayerTimesRepoImpl.kt  (4.8 KB)
+app\src\main\java\com\mhq\salati\prayertimes\datasource\database\PrayerTimesDao.kt  (1.2 KB)
 app\src\main\java\com\mhq\salati\prayertimes\datasource\database\PrayerTimesEntity.kt  (0.8 KB)
 app\src\main\java\com\mhq\salati\prayertimes\datasource\network\api\AladhanApiService.kt  (1.0 KB)
 app\src\main\java\com\mhq\salati\prayertimes\datasource\network\dto\CalendarResponseDto.kt  (0.2 KB)
@@ -475,6 +475,7 @@ app\src\main\res\xml\backup_rules.xml  (0.5 KB)
 app\src\main\res\xml\data_extraction_rules.xml  (0.5 KB)
 app\src\main\ic_launcher-playstore.png  (20.0 KB)  [binary]
 app\src\main\keepRules\rules.keep  (0.4 KB)  [binary]
+app\src\main\keepRules\salati.keep  (0.2 KB)  [binary]
 app\src\test\java\com\mhq\salati\home\domain\service\DayNavigatorTest.kt  (4.0 KB)
 app\src\test\java\com\mhq\salati\home\domain\usecases\LoadPrayerTimesUseCaseTest.kt  (7.0 KB)
 app\src\test\java\com\mhq\salati\home\domain\usecases\ResolvePrayerWindowForDisplayUseCaseTest.kt  (7.5 KB)
@@ -507,11 +508,11 @@ scripts\README.md  (2.9 KB)
 | .webp | 15 | 49.6 KB |
 | .mp3 | 5 | 4.3 MB |
 | .ps1 | 3 | 18.0 KB |
+| .keep | 2 | 0.6 KB |
 | .bat | 1 | 2.9 KB |
 | (none) | 1 | 8.5 KB |
 | .jar | 1 | 44.4 KB |
 | .png | 1 | 20.0 KB |
-| .keep | 1 | 0.4 KB |
 
 ---
 
@@ -737,17 +738,10 @@ android {
     buildTypes {
         release {
             optimization {
-                enable = false
+                enable = true
             }
         }
     }
-
-    //    buildTypes {
-    //        release {
-    //            isMinifyEnabled = false // Standard way to disable optimization/proguard in newer AGP
-    //            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-    //        }
-    //    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -780,7 +774,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation("androidx.core:core-splashscreen:1.2.0")
-    implementation(libs.androidx.ui)
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
@@ -806,7 +799,6 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.compose.material.icons.extended)
-    implementation("androidx.compose.material:material-icons-extended")
 
     implementation("org.osmdroid:osmdroid-android:6.1.20")
     implementation("io.coil-kt.coil3:coil-compose:3.5.0")
@@ -839,13 +831,12 @@ dependencies {
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name="com.mhq.salati.shared.app.SalatiApplication"
@@ -860,7 +851,6 @@ dependencies {
 
         <service
             android:name="com.mhq.salati.adhan.ui.service.AdhanPlaybackService"
-            android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
@@ -883,7 +873,7 @@ dependencies {
 
         <receiver
             android:name="com.mhq.salati.adhan.ui.receiver.BootReceiver"
-            android:exported="true">
+            android:exported="false">
 
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -12142,16 +12132,27 @@ private fun String.toPrayerTime(): LocalTime =
 ```kotlin
 package com.mhq.salati.prayertimes.data.repoimpl
 
-import com.mhq.salati.prayertimes.datasource.network.api.AladhanApiService
-import com.mhq.salati.prayertimes.datasource.database.PrayerTimesDao
 import com.mhq.salati.prayertimes.data.mapper.toDomain
 import com.mhq.salati.prayertimes.data.mapper.toEntityList
+import com.mhq.salati.prayertimes.datasource.database.PrayerTimesDao
+import com.mhq.salati.prayertimes.datasource.network.api.AladhanApiService
 import com.mhq.salati.prayertimes.domain.model.PrayerTimesResult
 import com.mhq.salati.prayertimes.domain.repo.PrayerTimesRepository
 import com.mhq.salati.settings.domain.model.Madhab
 import com.mhq.salati.shared.domain.Coordinates
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.math.abs
 
+/**
+ * Prayer times backed by a Room cache of whole-year Aladhan calendars.
+ *
+ * A cached day is valid only for the settings it was fetched with
+ * (method, madhab, Hijri adjustment, coordinates within [COORDINATE_TOLERANCE]).
+ * After a successful fetch, rows from any other settings are purged,
+ * so the table only ever holds one consistent settings set.
+ */
 class PrayerTimesRepoImpl(
     private val aladhanApiService: AladhanApiService,
     private val prayerTimesDao: PrayerTimesDao
@@ -12160,6 +12161,9 @@ class PrayerTimesRepoImpl(
     companion object {
         private const val COORDINATE_TOLERANCE = 0.01
     }
+
+    /** One annual fetch at a time; callers that waited re-check the cache and skip the network. */
+    private val fetchMutex = Mutex()
 
     override suspend fun getCachedTimings(
         date: String,
@@ -12176,8 +12180,8 @@ class PrayerTimesRepoImpl(
                 abs(cached.latitude - coordinates.latitude) < COORDINATE_TOLERANCE &&
                 abs(cached.longitude - coordinates.longitude) < COORDINATE_TOLERANCE
 
-        // A stored row that no longer parses is treated as a cache miss, so the caller falls
-        // through to a fresh fetch (which overwrites the bad row) instead of failing.
+        /** A stored row that no longer parses is treated as a cache miss,
+         * so the caller falls back to a fresh fetch (overwrites the bad row) instead of failing. */
         return if (isCacheValid) runCatching { cached!!.toDomain() }.getOrNull() else null
     }
 
@@ -12192,6 +12196,24 @@ class PrayerTimesRepoImpl(
             return Result.success(it)
         }
 
+        return fetchMutex.withLock {
+            // Another caller may have filled the cache while this one waited for the lock.
+            val filledMeanwhile = getCachedTimings(date, coordinates, method, madhab, adjustment)
+            if (filledMeanwhile != null) {
+                Result.success(filledMeanwhile)
+            } else {
+                fetchYearAndPick(date, coordinates, method, madhab, adjustment)
+            }
+        }
+    }
+
+    private suspend fun fetchYearAndPick(
+        date: String,
+        coordinates: Coordinates,
+        method: Int,
+        madhab: Madhab,
+        adjustment: Int
+    ): Result<PrayerTimesResult> {
         return try {
             val year = date.substringAfterLast("-").toInt()
 
@@ -12204,17 +12226,32 @@ class PrayerTimesRepoImpl(
                 adjustment = adjustment
             )
 
-            val entities = calendarResponse.toEntityList(coordinates.latitude, coordinates.longitude, method, madhab.schoolId, adjustment)
+            val entities = calendarResponse.toEntityList(
+                coordinates.latitude,
+                coordinates.longitude,
+                method,
+                madhab.schoolId,
+                adjustment
+            )
             prayerTimesDao.insertAll(entities)
+            /** Only after the new rows are safely stored: drop rows from other settings. */
+            prayerTimesDao.deleteWithOtherSettings(
+                method = method,
+                schoolId = madhab.schoolId,
+                adjustment = adjustment,
+                latitude = coordinates.latitude,
+                longitude = coordinates.longitude,
+                tolerance = COORDINATE_TOLERANCE
+            )
 
-            // Fixed: pull today's entity straight out of the list we just mapped from the
-            // API response instead of round-tripping Room for data we already have in memory.
-            val todayEntity = entities.find { it.date == date }
+            val requested = entities.find { it.date == date }
                 ?: return Result.failure(
                     IllegalStateException("Requested date not found in fetched calendar")
                 )
 
-            Result.success(todayEntity.toDomain())
+            Result.success(requested.toDomain())
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -12243,6 +12280,26 @@ interface PrayerTimesDao {
 
     @Query("SELECT * FROM prayer_timings WHERE date = :date LIMIT 1")
     suspend fun getByDate(date: String): PrayerTimesEntity?
+
+    /** Removes every row that was fetched with settings other than the given ones. */
+    @Query(
+        """
+        DELETE FROM prayer_timings
+        WHERE method != :method
+           OR schoolId != :schoolId
+           OR hijriAdjustment != :adjustment
+           OR ABS(latitude - :latitude) >= :tolerance
+           OR ABS(longitude - :longitude) >= :tolerance
+        """
+    )
+    suspend fun deleteWithOtherSettings(
+        method: Int,
+        schoolId: Int,
+        adjustment: Int,
+        latitude: Double,
+        longitude: Double,
+        tolerance: Double
+    )
 }
 ```
 

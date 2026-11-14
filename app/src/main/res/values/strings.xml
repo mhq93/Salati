@@ -116,6 +116,7 @@
     <string name="adhan_playing_body">It\'s time for Al-%1$s prayer</string>
     <string name="minor_timing_playing_title">%1$s</string>
     <string name="minor_timing_playing_body">It\'s time for %1$s</string>
+    <string name="notifications_off_hint">Turn notifications on from Settings to access prayer alerts and alarms.</string>
 
     <!-- Qibla -->
     <string name="face_the_kaaba_wherever_you_are">Face the Kaaba wherever you are</string>

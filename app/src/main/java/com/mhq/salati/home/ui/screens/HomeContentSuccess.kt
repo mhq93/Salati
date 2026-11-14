@@ -66,6 +66,7 @@ fun HomeContentSuccess(
     pastPrayers: Set<PrayerNameUi>,
     isToday: Boolean,
     timeFormat: TimeFormatUi = TimeFormatUi.FORMAT_12_HOUR,
+    notificationsEnabled: Boolean = true,
     onIntent: (HomeContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -151,6 +152,7 @@ fun HomeContentSuccess(
                         currentTimingName = currentPrayerName,
                         mutedTimings = mutedPrayers,
                         pastTimings = pastPrayers,
+                        notificationsEnabled = notificationsEnabled,
                         onIntent = onIntent,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -200,6 +202,7 @@ fun HomeContentSuccess(
                         currentTimingName = currentPrayerName,
                         mutedTimings = mutedPrayers,
                         pastTimings = pastPrayers,
+                        notificationsEnabled = notificationsEnabled,
                         onIntent = onIntent,
                         modifier = Modifier.widthIn(max = 560.dp).fillMaxWidth()
                     )

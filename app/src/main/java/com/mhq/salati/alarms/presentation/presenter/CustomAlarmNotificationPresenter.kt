@@ -20,6 +20,10 @@ class CustomAlarmNotificationPresenter @Inject constructor(
     suspend fun customAlarmSound(): CustomAlarmSoundUi =
         observeSettingsUseCase().first().customAlarmSound.toUi()
 
+    /** Whether notifications are still turned on in Settings. */
+    suspend fun notificationsEnabled(): Boolean =
+        observeSettingsUseCase().first().notificationsEnabled
+
     /** The prayer an Intent key stands for, or null when the key is unknown. */
     fun prayerNameFor(prayerKey: String): PrayerNameUi? =
         resolvePrayerNameUseCase(prayerKey)?.toUi()

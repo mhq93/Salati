@@ -116,6 +116,7 @@
     <string name="adhan_playing_body">حان الآن موعد صلاة %1$s</string>
     <string name="minor_timing_playing_title">%1$s</string>
     <string name="minor_timing_playing_body">حان الآن وقت %1$s</string>
+    <string name="notifications_off_hint">فعّل الإشعاارات من الإعدادات لاستخدام تنبيهات الصلاة والمنبهات.</string>
 
     <!-- Qibla -->
     <string name="face_the_kaaba_wherever_you_are">توجه ناحية القبلة أينما كنت</string>

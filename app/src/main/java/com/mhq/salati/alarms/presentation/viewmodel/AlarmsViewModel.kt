@@ -15,6 +15,7 @@ import com.mhq.salati.alarms.presentation.contract.AlarmsContract.State
 import com.mhq.salati.alarms.presentation.mapper.toDomain
 import com.mhq.salati.alarms.presentation.mapper.toUi
 import com.mhq.salati.alarms.presentation.model.CustomAlarmUi
+import com.mhq.salati.settings.domain.usecases.ObserveNotificationsEnabledUseCase
 import com.mhq.salati.shared.presentation.model.MessageUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
@@ -22,6 +23,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,7 +36,8 @@ class AlarmsViewModel @Inject constructor(
     private val saveCustomAlarmUseCase: SaveCustomAlarmUseCase,
     private val deleteCustomAlarmUseCase: DeleteCustomAlarmUseCase,
     private val toggleCustomAlarmUseCase: ToggleCustomAlarmUseCase,
-    private val toggleCustomAlarmDayUseCase: ToggleCustomAlarmDayUseCase
+    private val toggleCustomAlarmDayUseCase: ToggleCustomAlarmDayUseCase,
+    private val observeNotificationsEnabledUseCase: ObserveNotificationsEnabledUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(State())
@@ -42,7 +46,10 @@ class AlarmsViewModel @Inject constructor(
     private val _effect = Channel<Effect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
 
-    init { observeAlarms() }
+    init {
+        observeAlarms()
+        observeNotificationsEnabled()
+    }
 
     fun onIntent(intent: Intent) {
         when (intent) {
@@ -71,6 +78,12 @@ class AlarmsViewModel @Inject constructor(
                 _effect.send(Effect.ShowError(message))
             }
         }
+    }
+
+    private fun observeNotificationsEnabled() {
+        observeNotificationsEnabledUseCase()
+            .onEach { enabled -> _state.update { it.copy(notificationsEnabled = enabled) } }
+            .launchIn(viewModelScope)
     }
 
     private fun saveAlarm(alarm: CustomAlarmUi) {
@@ -108,6 +121,10 @@ class AlarmsViewModel @Inject constructor(
 
     private fun toggleAlarm(id: Long, enabled: Boolean) {
         viewModelScope.launch {
+            if (!_state.value.notificationsEnabled) {
+                _effect.send(Effect.ShowNotificationsOffHint)
+                return@launch
+            }
             try {
                 toggleCustomAlarmUseCase(id, enabled)
             } catch (e: CancellationException) {
@@ -120,6 +137,10 @@ class AlarmsViewModel @Inject constructor(
 
     private fun toggleAlarmDay(id: Long, calendarDay: Int) {
         viewModelScope.launch {
+            if (!_state.value.notificationsEnabled) {
+                _effect.send(Effect.ShowNotificationsOffHint)
+                return@launch
+            }
             try {
                 if (toggleCustomAlarmDayUseCase(id, calendarDay) == DayToggleResult.CONFLICT) {
                     _effect.send(Effect.ShowError(MessageUi.DUPLICATE_ALARM_EXISTS))

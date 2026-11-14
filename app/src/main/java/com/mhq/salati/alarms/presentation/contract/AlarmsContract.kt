@@ -37,7 +37,8 @@ object AlarmsContract {
         val alarms: List<CustomAlarmUi> = emptyList(),
         val isEditorVisible: Boolean = false,
         val editingAlarm: CustomAlarmUi? = null,
-        val errorMessage: MessageUi? = null
+        val errorMessage: MessageUi? = null,
+        val notificationsEnabled: Boolean = true
     )
 
     /** User actions and lifecycle events the alarms screen can send to its ViewModel. */
@@ -78,12 +79,14 @@ object AlarmsContract {
 
     /** One-shot side effects, consumed once by the container. */
     sealed interface Effect {
-
-        /** Shows [message] to the user as a transient error (for example, in a snackbar). */
-        data class ShowError(val message: MessageUi) : Effect
-
         /** Confirms that an alarm was saved.
          * [message] defaults to the standard "alarm saved" text. */
         data class AlarmSaved(val message: MessageUi = MessageUi.ALARM_SAVED) : Effect
+
+        /** The Settings notifications toggle is off, so alarm changes are not available. */
+        data object ShowNotificationsOffHint : Effect
+
+        /** Shows [message] to the user as a transient error (for example, in a snackbar). */
+        data class ShowError(val message: MessageUi) : Effect
     }
 }

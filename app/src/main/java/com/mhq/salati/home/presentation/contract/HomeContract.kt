@@ -37,7 +37,8 @@ class HomeContract {
     )
 
     data class AdhanUiState(
-        val mutedPrayers: Set<PrayerNameUi> = emptySet()
+        val mutedPrayers: Set<PrayerNameUi> = emptySet(),
+        val notificationsEnabled: Boolean = true
     )
 
     data class DateBrowserUiState(
@@ -72,5 +73,6 @@ class HomeContract {
         data object NavigateToLocationSettings : Effect
         data object NavigateToInternetSettings : Effect
         data object NavigateToLocationPicker : Effect
+        data object ShowNotificationsOffHint : Effect
     }
 }

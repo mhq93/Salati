@@ -12,10 +12,9 @@ class UpdateNotificationsEnabledUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(enabled: Boolean) {
         settingsRepository.setNotificationsEnabled(enabled)
-        if (!enabled) {
-            alarmScheduler.cancelAll()
-            return
-        }
+        if (!enabled) alarmScheduler.cancelAll()
+        /** Off: skips the prayer alarms and cancels the custom ones.
+         *  On: arms both. */
         rescheduleAllAlarmsUseCase()
     }
 }
