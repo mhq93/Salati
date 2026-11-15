@@ -69,6 +69,7 @@ import com.mhq.salati.R
 import com.mhq.salati.onboarding.presentation.contract.OnboardingContract
 import com.mhq.salati.onboarding.presentation.contract.OnboardingContract.Intent
 import com.mhq.salati.onboarding.presentation.contract.OnboardingContract.StepUi
+import com.mhq.salati.onboarding.ui.components.LocationStepFields
 import com.mhq.salati.onboarding.ui.components.OnboardingPageIndicator
 import com.mhq.salati.onboarding.ui.components.OnboardingSelectionSheet
 import com.mhq.salati.onboarding.ui.icon
@@ -93,10 +94,11 @@ fun OnboardingContent(
     onIntent: (Intent) -> Unit
 ) {
     val isFirstStep = state.step == StepUi.WELCOME
+    val canGoBack = !isFirstStep && !state.isLoading
     var activeSelector by remember { mutableStateOf<OnboardingContract.SelectorUi?>(null) }
     var isStepSettled by remember { mutableStateOf(true) }
 
-    BackHandler(enabled = !isFirstStep) {
+    BackHandler(enabled = canGoBack) {
         onIntent(Intent.BackRequested)
     }
 
@@ -114,7 +116,7 @@ fun OnboardingContent(
                 state = state,
                 stepTransition = stepTransition,
                 isRtl = isRtl,
-                isFirstStep = isFirstStep,
+                canGoBack = canGoBack,
                 isStepSettled = isStepSettled,
                 onIntent = onIntent,
                 onOpenSelector = { activeSelector = it }
@@ -128,7 +130,7 @@ fun OnboardingContent(
                         .height(56.dp)
                         .padding(horizontal = 8.dp)
                 ) {
-                    if (!isFirstStep) {
+                    if (canGoBack) {
                         IconButton(
                             onClick = { onIntent(Intent.BackRequested) },
                             modifier = Modifier.align(Alignment.CenterStart)
@@ -207,104 +209,7 @@ private fun OnboardingStepBody(
     ) {
         OnboardingStepHeader(step)
         Spacer(modifier = Modifier.height(28.dp))
-        when (step) {
-            StepUi.WELCOME -> Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            ) {
-                GroupCard {
-                    ActionRow(
-                        icon = Icons.Default.Language,
-                        title = stringResource(R.string.language),
-                        valueLabel = stringResource(state.language.displayNameRes),
-                        onClick = { onOpenSelector(OnboardingContract.SelectorUi.LANGUAGE) }
-                    )
-                    GroupDivider()
-                    ActionRow(
-                        icon = Icons.Default.DarkMode,
-                        title = stringResource(R.string.theme),
-                        valueLabel = stringResource(state.themeMode.displayNameRes),
-                        onClick = { onOpenSelector(OnboardingContract.SelectorUi.THEME) }
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.onboarding_change_later_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.70f),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            StepUi.CALCULATION -> Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            ) {
-                GroupCard {
-                    ActionRow(
-                        icon = Icons.Default.Explore,
-                        title = stringResource(R.string.calculation_method),
-                        valueLabel = stringResource(state.calculationMethod.displayNameRes),
-                        onClick = { onOpenSelector(OnboardingContract.SelectorUi.CALCULATION_METHOD) }
-                    )
-                    GroupDivider()
-                    ActionRow(
-                        icon = Icons.AutoMirrored.Filled.MenuBook,
-                        title = stringResource(R.string.asr_madhab),
-                        valueLabel = stringResource(state.madhab.displayNameRes),
-                        onClick = { onOpenSelector(OnboardingContract.SelectorUi.MADHAB) }
-                    )
-                    GroupDivider()
-                    ActionRow(
-                        icon = Icons.Default.Schedule,
-                        title = stringResource(R.string.time_format),
-                        valueLabel = stringResource(state.timeFormat.displayNameRes),
-                        onClick = { onOpenSelector(OnboardingContract.SelectorUi.TIME_FORMAT) }
-                    )
-                }
-            }
-
-            StepUi.ALERTS -> Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                GroupCard {
-                    SettingsSwitchRow(
-                        icon = Icons.Default.NotificationsActive,
-                        title = stringResource(R.string.onboarding_notifications_toggle_title),
-                        subtitle = stringResource(R.string.onboarding_notifications_toggle_subtitle),
-                        isChecked = state.notificationsEnabled && state.isNotificationPermissionGranted,
-                        onCheckedChange = { onIntent(Intent.NotificationsToggled(it)) }
-                    )
-                    GroupDivider()
-                    ActionRow(
-                        icon = Icons.Default.MusicNote,
-                        title = stringResource(R.string.adhan_sound),
-                        valueLabel = stringResource(state.adhanSound.displayNameRes),
-                        isEnabled = state.notificationsEnabled,
-                        onClick = { onOpenSelector(OnboardingContract.SelectorUi.ADHAN_SOUND) }
-                    )
-                }
-
-                if (state.notificationsEnabled &&
-                    state.isNotificationPermissionGranted &&
-                    !state.isExactAlarmGranted
-                ) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = stringResource(R.string.onboarding_exact_alarm_note),
-                        style = MaterialTheme.typography.bodySmall,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f),
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
-                }
-            }
-        }
+        OnboardingStepFields(step, state, onIntent, onOpenSelector)
     }
 }
 
@@ -325,6 +230,7 @@ private fun OnboardingStepHeader(step: StepUi) {
     }
 }
 
+/** The step's fields, shared by the narrow and the wide layout. */
 @Composable
 private fun OnboardingStepFields(
     step: StepUi,
@@ -428,7 +334,16 @@ private fun OnboardingStepFields(
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
             }
-        }    }
+        }
+
+        StepUi.LOCATION -> Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        ) {
+            LocationStepFields(state = state, onIntent = onIntent)
+        }
+    }
 }
 
 /** Page indicator, primary button and "Not now". [isCompact] trims spacing for short windows. */
@@ -453,7 +368,7 @@ private fun OnboardingActions(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
         ),
-        enabled = !state.isLoading && isStepSettled,
+        enabled = state.isPrimaryEnabled && isStepSettled,
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = if (isCompact) 48.dp else 56.dp)
@@ -503,7 +418,7 @@ private fun OnboardingWideLayout(
     state: OnboardingContract.State,
     stepTransition: Transition<StepUi>,
     isRtl: Boolean,
-    isFirstStep: Boolean,
+    canGoBack: Boolean,
     isStepSettled: Boolean,
     onIntent: (Intent) -> Unit,
     onOpenSelector: (OnboardingContract.SelectorUi) -> Unit
@@ -533,7 +448,7 @@ private fun OnboardingWideLayout(
                 }
             }
 
-            if (!isFirstStep) {
+            if (canGoBack) {
                 IconButton(
                     onClick = { onIntent(Intent.BackRequested) },
                     modifier = Modifier

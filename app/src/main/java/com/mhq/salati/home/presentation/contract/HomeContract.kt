@@ -13,6 +13,7 @@ class HomeContract {
 
     data class State(
         val isLoading: Boolean = false,
+        val loadingStage: LoadingStageUi = LoadingStageUi.FINDING_PLACE,
         val locationUiState: LocationUiState = LocationUiState(),
         val prayerTimesUiState: PrayerTimesUiState = PrayerTimesUiState(),
         val timeFormat: TimeFormatUi = TimeFormatUi.FORMAT_12_HOUR,
@@ -35,6 +36,9 @@ class HomeContract {
     data class LocationUiState(
         val locationName: String? = null
     )
+
+    /** Which part of the first load the loader announces. */
+    enum class LoadingStageUi { FINDING_PLACE, READING_SKY }
 
     data class AdhanUiState(
         val mutedPrayers: Set<PrayerNameUi> = emptySet(),

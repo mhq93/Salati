@@ -260,7 +260,13 @@ class HomeViewModel @Inject constructor(
             is HomeLocationLoad.LookingUpCurrentLocation -> {
                 // A blocked screen gives way to the spinner; an error screen waits for the result.
                 if (_state.value.errorMessage == null) {
-                    _state.update { it.copy(isLoading = true, prerequisites = null) }
+                    _state.update {
+                        it.copy(
+                            isLoading = true,
+                            prerequisites = null,
+                            loadingStage = HomeContract.LoadingStageUi.FINDING_PLACE
+                        )
+                    }
                 }
             }
 
@@ -317,11 +323,14 @@ class HomeViewModel @Inject constructor(
         prayerTimesHandler.load(currentDate(), coordinates).collect { load ->
             when (load) {
                 is PrayerTimesLoad.FetchingFromNetwork -> {
-                    val isScreenCompletelyEmpty =
-                        _state.value.locationUiState.locationName == null &&
-                                _state.value.prayerTimesUiState.timings == null
-                    if (isScreenCompletelyEmpty) {
-                        _state.update { it.copy(isLoading = true) }
+                    // Nothing to show yet: keep the loader up. Browsing days keeps the old screen.
+                    if (_state.value.prayerTimesUiState.timings == null) {
+                        _state.update {
+                            it.copy(
+                                isLoading = true,
+                                loadingStage = HomeContract.LoadingStageUi.READING_SKY
+                            )
+                        }
                     }
                 }
 

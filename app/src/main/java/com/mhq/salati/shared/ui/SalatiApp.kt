@@ -157,6 +157,9 @@ private fun SalatiNavHost(
     ) {
         composable(NavigationScreen.Onboarding.route) {
             OnboardingContainer(
+                onNavigateToLocationPicker = {
+                    navController.navigate(NavigationScreen.LocationPicker.route)
+                },
                 onFinished = {
                     navController.navigate(NavigationScreen.Home.route) {
                         popUpTo(NavigationScreen.Onboarding.route) { inclusive = true }

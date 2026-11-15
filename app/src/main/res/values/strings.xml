@@ -77,6 +77,22 @@
     <string name="prerequisite_action_allow">Allow</string>
     <string name="prerequisite_action_choose_manually">Choose location manually</string>
 
+    <!-- Onboarding: location step -->
+    <string name="onboarding_location_title">Your location</string>
+    <string name="onboarding_location_subtitle">Prayer times and Qibla depend on where you are. Turn these on, or pick your city yourself.</string>
+    <string name="onboarding_location_action">Allow location</string>
+    <string name="onboarding_services_action">Turn on location</string>
+    <string name="onboarding_internet_action">Connect to the internet</string>
+    <string name="onboarding_requirement_done">Done</string>
+    <string name="onboarding_place_chosen">Location chosen</string>
+    <string name="onboarding_place_change">Change</string>
+
+    <!-- Loading -->
+    <string name="loading_finding_place">Finding your place…</string>
+    <string name="loading_reading_sky">Reading the sky…</string>
+    <string name="loading_finding_qibla">Finding the Qibla…</string>
+    <string name="loading_setting_up">Setting up your prayers…</string>
+
     <!-- Home -->
     <string name="next_prayer">Next Prayer: %1$s</string>
     <string name="imsak">Imsak</string>

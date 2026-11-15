@@ -18,14 +18,18 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mhq.salati.location.ui.LocationPrerequisitesObserver
+import com.mhq.salati.location.ui.rememberLocationPrerequisitesActions
 import com.mhq.salati.onboarding.presentation.contract.OnboardingContract
 import com.mhq.salati.onboarding.presentation.viewmodel.OnboardingViewModel
 import com.mhq.salati.permissions.ui.rememberNotificationPermissionLauncher
+import com.mhq.salati.permissions.ui.shouldShowLocationRationale
 import com.mhq.salati.shared.ui.asString
 
 @Composable
 fun OnboardingContainer(
     onboardingViewModel: OnboardingViewModel = hiltViewModel(),
+    onNavigateToLocationPicker: () -> Unit,
     onFinished: () -> Unit
 ) {
     val context = LocalContext.current
@@ -45,15 +49,19 @@ fun OnboardingContainer(
         }
     )
 
+    val locationActions = rememberLocationPrerequisitesActions(
+        onPermissionGranted = {
+            onboardingViewModel.onIntent(OnboardingContract.Intent.LocationPermissionGranted)
+        },
+        onPermissionDenied = { showRationale ->
+            onboardingViewModel.onIntent(OnboardingContract.Intent.LocationPermissionDenied(showRationale))
+        }
+    )
+
     LaunchedEffect(Unit) {
         onboardingViewModel.effect.collect { effect ->
             when (effect) {
-                is OnboardingContract.Effect.OpenAppSettings -> {
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts("package", context.packageName, null)
-                    }
-                    context.startActivitySafely(intent)
-                }
+                is OnboardingContract.Effect.OpenAppSettings -> locationActions.openAppSettings()
 
                 is OnboardingContract.Effect.RequestNotificationPermission -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -74,22 +82,47 @@ fun OnboardingContainer(
                     }
                 }
 
+                is OnboardingContract.Effect.RequestLocationPermission -> locationActions.requestPermission()
+                is OnboardingContract.Effect.OpenLocationSettings -> locationActions.openLocationSettings()
+                is OnboardingContract.Effect.OpenInternetSettings -> locationActions.openInternetSettings()
+                is OnboardingContract.Effect.NavigateToLocationPicker -> onNavigateToLocationPicker()
+
                 is OnboardingContract.Effect.ApplyLanguage ->
                     AppCompatDelegate.setApplicationLocales(
                         LocaleListCompat.forLanguageTags(effect.languageCode)
                     )
 
                 is OnboardingContract.Effect.ShowError ->
-                    Toast.makeText(context, effect.message.asString(context), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        effect.message.asString(context),
+                        Toast.LENGTH_SHORT).show()
 
                 is OnboardingContract.Effect.NavigateToHome -> onFinished()
             }
         }
     }
 
+    // Coming back from system settings or from the city picker.
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        onboardingViewModel.onIntent(OnboardingContract.Intent.ScreenResumed)
+        onboardingViewModel.onIntent(
+            OnboardingContract.Intent.ScreenResumed(
+                context.shouldShowLocationRationale()
+            )
+        )
     }
+
+    // Location services and connectivity change outside the app; the rows follow live.
+    LocationPrerequisitesObserver(
+        onServicesChanged = { enabled ->
+            onboardingViewModel.onIntent(OnboardingContract.Intent.LocationServicesToggled(enabled))
+        },
+        onConnectivityChanged = { connected ->
+            onboardingViewModel.onIntent(
+                OnboardingContract.Intent.ConnectivityChanged(connected)
+            )
+        }
+    )
 
     OnboardingContent(
         state = state,

@@ -2,8 +2,11 @@ package com.mhq.salati.onboarding.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mhq.salati.location.domain.usecases.GetSavedLocationUseCase
+import com.mhq.salati.location.presentation.handlers.LocationPrerequisitesHandler
 import com.mhq.salati.onboarding.domain.usecases.CheckOnboardingPermissionsUseCase
 import com.mhq.salati.onboarding.domain.usecases.CompleteOnboardingUseCase
+import com.mhq.salati.onboarding.domain.usecases.PrepareFirstLaunchUseCase
 import com.mhq.salati.onboarding.presentation.contract.OnboardingContract
 import com.mhq.salati.onboarding.presentation.contract.OnboardingContract.Effect
 import com.mhq.salati.onboarding.presentation.contract.OnboardingContract.Intent
@@ -29,9 +32,11 @@ import com.mhq.salati.settings.presentation.model.TimeFormatUi
 import com.mhq.salati.shared.presentation.model.MessageUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -50,6 +55,9 @@ class OnboardingViewModel @Inject constructor(
     private val updateAdhanSoundUseCase: UpdateAdhanSoundUseCase,
     private val updateNotificationsEnabledUseCase: UpdateNotificationsEnabledUseCase,
     private val checkOnboardingPermissionsUseCase: CheckOnboardingPermissionsUseCase,
+    private val prerequisitesHandler: LocationPrerequisitesHandler,
+    private val getSavedLocationUseCase: GetSavedLocationUseCase,
+    private val prepareFirstLaunchUseCase: PrepareFirstLaunchUseCase,
     private val completeOnboardingUseCase: CompleteOnboardingUseCase
 ) : ViewModel() {
 
@@ -59,17 +67,28 @@ class OnboardingViewModel @Inject constructor(
     private val _effect = Channel<Effect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
 
+    private var locationStatusJob: Job? = null
+
+    /** Last value the UI reported: the system would still show its dialog for the location permission. */
+    private var showLocationRationale = false
+
     init {
         observeSettingsUseCase()
             .onEach { settings -> applySettingsToState(settings) }
             .launchIn(viewModelScope)
 
         refreshPermissions()
+        refreshLocationStatus()
     }
 
     fun onIntent(intent: Intent) {
         when (intent) {
-            is Intent.ScreenResumed -> refreshPermissions()
+            is Intent.ScreenResumed -> {
+                showLocationRationale = intent.showLocationRationale
+                refreshPermissions()
+                refreshLocationStatus()
+            }
+
             is Intent.LanguageSelected -> selectLanguage(intent.language)
             is Intent.ThemeSelected -> selectTheme(intent.mode)
             is Intent.TimeFormatSelected -> selectTimeFormat(intent.format)
@@ -78,10 +97,29 @@ class OnboardingViewModel @Inject constructor(
             is Intent.AdhanSoundSelected -> selectAdhanSound(intent.sound)
             is Intent.NotificationsToggled -> toggleNotifications(intent.enabled)
             is Intent.NotificationPermissionResult -> onNotificationPermissionResult(intent.granted, intent.permanentlyDenied)
+
+            is Intent.LocationPermissionRequested -> viewModelScope.launch { requestLocationPermission() }
+            is Intent.LocationPermissionGranted -> refreshLocationStatus()
+            is Intent.LocationPermissionDenied -> {
+                showLocationRationale = intent.showRationale
+                refreshLocationStatus()
+            }
+
+            is Intent.LocationServicesToggled -> refreshLocationStatus()
+            is Intent.ConnectivityChanged -> refreshLocationStatus()
+            is Intent.AppSettingsRequested -> sendEffect(Effect.OpenAppSettings)
+            is Intent.LocationSettingsRequested -> sendEffect(Effect.OpenLocationSettings)
+            is Intent.InternetSettingsRequested -> sendEffect(Effect.OpenInternetSettings)
+            is Intent.LocationPickerRequested -> sendEffect(Effect.NavigateToLocationPicker)
+
             is Intent.PrimaryActionRequested -> performPrimaryAction()
             is Intent.Skipped -> skipStep()
             is Intent.BackRequested -> goBack()
         }
+    }
+
+    private fun sendEffect(effect: Effect) {
+        viewModelScope.launch { _effect.send(effect) }
     }
 
     private fun applySettingsToState(settings: AppSettings) {
@@ -215,23 +253,55 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
+    // ---- Location step ------------------------------------------------------
+
+    /**
+     * Re-reads the three requirements and the saved place. Only the latest check counts, so a slow
+     * one can never overwrite a newer result.
+     */
+    private fun refreshLocationStatus() {
+        locationStatusJob?.cancel()
+        locationStatusJob = viewModelScope.launch {
+            val saved = getSavedLocationUseCase().first()
+            val prerequisites = prerequisitesHandler.current(showLocationRationale)
+            _state.update {
+                it.copy(
+                    prerequisites = prerequisites,
+                    hasSavedPlace = saved != null,
+                    savedPlaceName = saved?.displayName
+                )
+            }
+        }
+    }
+
+    /** Remembers the dialog was asked for, so a later silent refusal reads as permanent. */
+    private suspend fun requestLocationPermission() {
+        prerequisitesHandler.onPermissionRequested()
+        _effect.send(Effect.RequestLocationPermission)
+    }
+
     // ---- Navigation ---------------------------------------------------------
 
     private fun performPrimaryAction() {
         viewModelScope.launch {
             when (_state.value.primaryAction) {
                 PrimaryActionUi.CONTINUE -> advance()
-                PrimaryActionUi.GET_STARTED -> finish()
+                PrimaryActionUi.GET_STARTED -> finish(prepare = true)
                 PrimaryActionUi.ALLOW_NOTIFICATIONS,
-                PrimaryActionUi.OPEN_APP_SETTINGS,
                 PrimaryActionUi.ALLOW_EXACT_ALARMS -> requestMissingAlarmAccess()
+
+                PrimaryActionUi.OPEN_APP_SETTINGS -> _effect.send(Effect.OpenAppSettings)
+                PrimaryActionUi.ALLOW_LOCATION -> requestLocationPermission()
+                PrimaryActionUi.ENABLE_LOCATION_SERVICES -> _effect.send(Effect.OpenLocationSettings)
+                PrimaryActionUi.CONNECT_INTERNET -> _effect.send(Effect.OpenInternetSettings)
             }
         }
     }
 
     private fun skipStep() {
-        if (_state.value.step == StepUi.ALERTS) {
-            finish()
+        if (_state.value.step == StepUi.LOCATION) {
+            // Home shows its own blocked screen for whatever is still missing.
+            finish(prepare = false)
         } else {
             advance()
         }
@@ -246,22 +316,25 @@ class OnboardingViewModel @Inject constructor(
 
     private fun goBack() {
         _state.update {
+            if (it.isLoading) return@update it
             val previous = StepUi.entries.getOrNull(it.step.ordinal - 1) ?: return@update it
             it.copy(step = previous, isMovingForward = false)
         }
     }
 
-    private fun finish() {
+    /** Warms up the first launch when asked, marks onboarding done, then leaves for Home. */
+    private fun finish(prepare: Boolean) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isLoading = true, isPreparing = prepare) }
             try {
+                if (prepare) prepareFirstLaunchUseCase()
                 completeOnboardingUseCase()
                 _effect.send(Effect.NavigateToHome)
             } catch (e: CancellationException) {
-                _state.update { it.copy(isLoading = false) }
+                _state.update { it.copy(isLoading = false, isPreparing = false) }
                 throw e
             } catch (e: Exception) {
-                _state.update { it.copy(isLoading = false) }
+                _state.update { it.copy(isLoading = false, isPreparing = false) }
                 _effect.send(Effect.ShowError(MessageUi.SOMETHING_WENT_WRONG))
             }
         }

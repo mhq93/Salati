@@ -3,6 +3,7 @@ package com.mhq.salati.onboarding.ui
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.mhq.salati.R
@@ -15,6 +16,7 @@ val StepUi.icon: ImageVector?
         StepUi.WELCOME -> null
         StepUi.CALCULATION -> Icons.AutoMirrored.Filled.MenuBook
         StepUi.ALERTS -> Icons.Default.NotificationsActive
+        StepUi.LOCATION -> Icons.Default.LocationOn
     }
 
 val StepUi.titleRes: Int
@@ -22,6 +24,7 @@ val StepUi.titleRes: Int
         StepUi.WELCOME -> R.string.app_name
         StepUi.CALCULATION -> R.string.onboarding_times_title
         StepUi.ALERTS -> R.string.notifications
+        StepUi.LOCATION -> R.string.onboarding_location_title
     }
 
 val StepUi.subtitleRes: Int
@@ -29,6 +32,7 @@ val StepUi.subtitleRes: Int
         StepUi.WELCOME -> R.string.app_motto
         StepUi.CALCULATION -> R.string.onboarding_calculation_subtitle
         StepUi.ALERTS -> R.string.onboarding_notifications_subtitle
+        StepUi.LOCATION -> R.string.onboarding_location_subtitle
     }
 
 val PrimaryActionUi.labelRes: Int
@@ -38,4 +42,7 @@ val PrimaryActionUi.labelRes: Int
         PrimaryActionUi.ALLOW_NOTIFICATIONS -> R.string.onboarding_notifications_action
         PrimaryActionUi.ALLOW_EXACT_ALARMS -> R.string.onboarding_exact_alarm_action
         PrimaryActionUi.OPEN_APP_SETTINGS -> R.string.action_open_settings
+        PrimaryActionUi.ALLOW_LOCATION -> R.string.onboarding_location_action
+        PrimaryActionUi.ENABLE_LOCATION_SERVICES -> R.string.onboarding_services_action
+        PrimaryActionUi.CONNECT_INTERNET -> R.string.onboarding_internet_action
     }

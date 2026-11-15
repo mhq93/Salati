@@ -9,12 +9,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.mhq.salati.R
 import com.mhq.salati.home.presentation.contract.HomeContract
 import com.mhq.salati.location.ui.components.PrerequisitesError
 import com.mhq.salati.shared.presentation.model.MessageUi
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.asString
+import com.mhq.salati.shared.ui.components.SunRingLoader
 import com.mhq.salati.shared.ui.screens.LoadingContent
 import com.mhq.salati.shared.ui.theme.SalatiTheme
 
@@ -52,7 +55,17 @@ fun HomeContent(
                 }
 
                 state.isLoading -> {
-                    LoadingContent(modifier = Modifier.weight(1f))
+                    LoadingContent(
+                        caption = stringResource(
+                            when (state.loadingStage) {
+                                HomeContract.LoadingStageUi.FINDING_PLACE -> R.string.loading_finding_place
+                                HomeContract.LoadingStageUi.READING_SKY -> R.string.loading_reading_sky
+                            }
+                        ),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        SunRingLoader()
+                    }
                 }
 
                 state.errorMessage != null -> {

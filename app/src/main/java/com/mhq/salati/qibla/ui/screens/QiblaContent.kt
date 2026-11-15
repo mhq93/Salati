@@ -22,6 +22,7 @@ import com.mhq.salati.qibla.presentation.contract.QiblaContract
 import com.mhq.salati.qibla.presentation.model.CompassAccuracyUi
 import com.mhq.salati.shared.presentation.model.MessageUi
 import com.mhq.salati.shared.ui.asString
+import com.mhq.salati.shared.ui.components.CompassNeedleLoader
 import com.mhq.salati.shared.ui.components.TabHeader
 import com.mhq.salati.shared.ui.navigation.BottomNavBarDefaults
 import com.mhq.salati.shared.ui.screens.LoadingContent
@@ -66,7 +67,12 @@ fun QiblaContent(
                 }
 
                 state.isLoading -> {
-                    LoadingContent(modifier = Modifier.weight(1f))
+                    LoadingContent(
+                        caption = stringResource(R.string.loading_finding_qibla),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        CompassNeedleLoader()
+                    }
                 }
 
                 state.errorMessage != null -> {

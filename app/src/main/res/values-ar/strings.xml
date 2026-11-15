@@ -77,6 +77,22 @@
     <string name="prerequisite_action_allow">السماح</string>
     <string name="prerequisite_action_choose_manually">اختيار الموقع يدويًا</string>
 
+    <!-- Onboarding: location step -->
+    <string name="onboarding_location_title">موقعك</string>
+    <string name="onboarding_location_subtitle">تعتمد مواقيت الصلاة والقبلة على مكانك. فعّل ما يلزم، أو اختر مدينتك بنفسك.</string>
+    <string name="onboarding_location_action">السماح بالموقع</string>
+    <string name="onboarding_services_action">تشغيل الموقع</string>
+    <string name="onboarding_internet_action">الاتصال بالإنترنت</string>
+    <string name="onboarding_requirement_done">تم</string>
+    <string name="onboarding_place_chosen">تم اختيار الموقع</string>
+    <string name="onboarding_place_change">تغيير</string>
+
+    <!-- Loading -->
+    <string name="loading_finding_place">جارٍ تحديد موقعك…</string>
+    <string name="loading_reading_sky">جارٍ حساب المواقيت…</string>
+    <string name="loading_finding_qibla">جارٍ تحديد القبلة…</string>
+    <string name="loading_setting_up">جارٍ تجهيز صلواتك…</string>
+
     <!-- Home -->
     <string name="next_prayer">الصلاة التالية: %1$s</string>
     <string name="imsak">الإمساك</string>

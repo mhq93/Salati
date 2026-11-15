@@ -16,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,19 +25,25 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
- * Drives the Qibla screen: resolves the user's location (saved or fresh GPS fix), computes the
- * Qibla bearing from it, and streams live compass heading while the screen is active.
+ * Drives the Qibla screen:
+ * resolves the user's location (saved or fresh GPS fix),
+ * computes the Qibla bearing from it, and streams live compass heading while the screen is active.
  *
  * Location resolution hard-blocks on connectivity.
  * With nothing saved, the first lookup needs the internet.
  *
  * Compass streaming is explicitly lifecycle-scoped via [QiblaContract.Intent.ScreenPaused] /
- * [QiblaContract.Intent.CompassResumed] rather than tied to the ViewModel's own lifetime, since a
- * ViewModel surviving a bottom-nav tab switch would otherwise keep the sensor listener alive
+ * [QiblaContract.Intent.CompassResumed] rather than tied to the ViewModel's own lifetime,
+ * since a ViewModel surviving a bottom-nav tab switch would otherwise keep the sensor listener alive
  * (and draining battery) while the user is on a different tab.
  */
+
+/** A saved place resolves well within this, so the loader never flashes for it. */
+private const val LOADER_DELAY_MS = 150L
+
 @HiltViewModel
 class QiblaViewModel @Inject constructor(
     private val locationHandler: QiblaLocationHandler,
@@ -116,7 +123,7 @@ class QiblaViewModel @Inject constructor(
                 when {
                     hasValidData -> onIntent(QiblaContract.Intent.CompassResumed)
                     current.prerequisites != null -> reevaluatePrerequisites()
-                    current.errorMessage == null && !current.isLoading -> loadQibla()
+                    current.errorMessage == null && loadQiblaJob?.isActive != true -> loadQibla()
                 }
             }
 
@@ -145,25 +152,34 @@ class QiblaViewModel @Inject constructor(
      * fresh GPS fix. Cancels any in-flight load so rapid re-triggers (tab switches, retries)
      * can't race each other.
      *
-     * If a bearing + location name are already held in memory, the loading spinner is skipped,
-     * which keeps re-entering the tab from flashing back to a loading state when we already have
-     * something valid to show.
-     */
+     * The loader only shows if the load takes longer than a moment, so opening the tab with a
+     * saved place never flashes it; with a bearing already held it is skipped entirely.*/
     private fun loadQibla() {
-        val current = _state.value
-        val hasCalculatedData = current.qiblaBearing != null
+        val hasCalculatedData = _state.value.qiblaBearing != null
         loadQiblaJob?.cancel()
 
         loadQiblaJob = viewModelScope.launch {
             try {
-                if (!hasCalculatedData) {
-                    val latest = _state.value
-                    if (latest.errorMessage == null && latest.prerequisites == null) {
-                        _state.update { it.copy(isLoading = true) }
+                val loaderJob = if (hasCalculatedData) {
+                    null
+                } else {
+                    launch {
+                        delay(LOADER_DELAY_MS.milliseconds)
+                        val latest = _state.value
+                        if (latest.qiblaBearing == null &&
+                            latest.errorMessage == null &&
+                            latest.prerequisites == null
+                        ) {
+                            _state.update { it.copy(isLoading = true) }
+                        }
                     }
                 }
 
-                locationHandler.load().collect { load -> handleLocationLoad(load) }
+                try {
+                    locationHandler.load().collect { load -> handleLocationLoad(load) }
+                } finally {
+                    loaderJob?.cancel()
+                }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {

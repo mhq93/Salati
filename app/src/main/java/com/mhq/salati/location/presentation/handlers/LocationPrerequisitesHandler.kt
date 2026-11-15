@@ -27,6 +27,10 @@ class LocationPrerequisitesHandler @Inject constructor(
         return if (prerequisites.areMet) null else toUi(prerequisites, showRationale)
     }
 
+    /** The three checks as the screen shows them, even when nothing is missing (onboarding lists all three). */
+    suspend fun current(showRationale: Boolean): PrerequisitesUi =
+        toUi(checkLocationPrerequisitesUseCase(), showRationale)
+
     suspend fun toUi(prerequisites: LocationPrerequisites, showRationale: Boolean): PrerequisitesUi =
         prerequisites.toPrerequisitesUi(
             permissionPermanentlyDenied = !prerequisites.permissionGranted &&
